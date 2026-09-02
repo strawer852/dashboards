@@ -1,0 +1,17 @@
+id: us.employment.nonfarm-payroll
+path: us/employment/nonfarm-payroll
+region: United States
+topic: Employment
+title: Nonfarm Payroll
+# The stamp under the title comes from this release, and only this one.
+release: bls.employment_situation
+include_releases:
+  - bls.employment_situation
+# Wage and productivity context from other releases. Each carries its own
+# release date, so the page must not present these under the payroll stamp.
+include_series:
+  - ECIALLCIV
+  - ECIWAG
+  - FRBATLWGT3MMAUMHWGO
+  - OPHNFB
+  - ULCNFB

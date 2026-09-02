@@ -1,0 +1,12 @@
+id: us.employment.weekly-claims
+path: us/employment/weekly-claims
+region: United States
+topic: Employment
+title: Weekly Claims
+release: eta.claims
+include_releases:
+  - eta.claims
+# Claims lead payrolls; showing the monthly series alongside is the point.
+include_series:
+  - PAYEMS
+  - UNRATE

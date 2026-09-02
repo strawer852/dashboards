@@ -1,0 +1,12 @@
+id: us.employment.jolts
+path: us/employment/jolts
+region: United States
+topic: Employment
+title: JOLTS
+release: bls.jolts
+include_releases:
+  - bls.jolts
+# The Beveridge curve and the vacancy-to-unemployment ratio both need the
+# household unemployment rate, which belongs to a different release.
+include_series:
+  - UNRATE
