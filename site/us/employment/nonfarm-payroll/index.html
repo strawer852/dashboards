@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nonfarm Payroll — BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <div class="brand">BigRiceBowl<span>Data</span></div>
+    <nav aria-label="Dashboards">
+      <div class="region">United States</div>
+      <button class="topic" type="button" aria-expanded="true" aria-controls="g-emp"><span class="mk"></span>Employment</button>
+      <div class="grp" id="g-emp">
+        <a href="/us/employment/nonfarm-payroll/" aria-current="page">Nonfarm Payroll</a>
+        <a href="/us/employment/jolts/" class="soon">JOLTS</a>
+        <a href="/us/employment/weekly-claims/" class="soon">Weekly Claims</a>
+      </div>
+      <button class="topic" type="button" aria-expanded="false" aria-controls="g-inf"><span class="mk"></span>Inflation</button>
+      <div class="grp" id="g-inf" hidden>
+        <a href="#" class="soon">CPI</a>
+        <a href="#" class="soon">PPI</a>
+      </div>
+      <div class="inpage">
+        <div class="h">In this report</div>
+        <a href="#t1"><span>1</span>Payroll change</a>
+        <a href="#t2"><span>2</span>Unemployment</a>
+        <a href="#t3"><span>3</span>Participation</a>
+        <a href="#t4"><span>4</span>Supersectors</a>
+        <a href="#t5"><span>5</span>Contribution</a>
+        <a href="#t6"><span>6</span>Earnings</a>
+        <a href="#t7"><span>7</span>Hours</a>
+        <a href="#t8"><span>8</span>Two surveys</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Nonfarm Payroll</div>
+    <div class="mast">
+      <h1>Nonfarm Payroll</h1>
+      <div class="stamp" id="stamp"></div>
+    </div>
+
+    <div id="status" hidden></div>
+
+    <p class="lede">The establishment and household surveys of the monthly Employment
+    Situation, with every figure carrying its full revision history.</p>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="row one">
+      <div class="t" id="t1">
+        <div class="th"><span class="n">Table 1</span><span class="ti">Change in nonfarm payroll employment</span><span class="u">Thousands, s.a.</span></div>
+        <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month.</p>
+        <p class="key"><i class="k1">Monthly change</i><i class="k2">As first reported</i></p>
+        <div class="chart" id="cPay" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t2">
+        <div class="th"><span class="n">Table 2</span><span class="ti">Unemployment</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">U-3 is the headline rate. U-6 adds the underemployed and those marginally attached. Both break at October 2025, when the household survey was not collected.</p>
+        <p class="key"><i class="k1">U-3</i><i class="k2">U-6</i></p>
+        <div class="chart" id="cUn" style="height:215px"></div>
+      </div>
+      <div class="t" id="t3">
+        <div class="th"><span class="n">Table 3</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
+        <p class="note">Shown as change rather than level: at roughly 61, 59 and 63 percent these sit too far apart to share an axis, and their <b>movement</b> is the point.</p>
+        <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i></p>
+        <div class="chart" id="cPart" style="height:215px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t4">
+        <div class="th"><span class="n">Table 4</span><span class="ti">Payroll change by supersector</span><span class="u">Thousands, 24 months</span></div>
+        <p class="note">The fourteen supersectors sum to total nonfarm across 655 months with a worst residual of 0.5k &mdash; rounding, which is how you know none is missing.</p>
+        <div class="chart" id="cHeat" style="height:360px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">Sector contribution, latest month</span><span class="u">Thousands, s.a.</span></div>
+        <div class="chart" id="cSec" style="height:300px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
+        <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first.</p>
+        <p class="key"><i class="k1">All employees</i><i class="k2">Production &amp; nonsupervisory</i></p>
+        <div class="chart" id="cWage" style="height:215px"></div>
+      </div>
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">Average weekly hours</span><span class="u">Hours, s.a.</span></div>
+        <p class="note">Hours move before headcount. The whole range is half an hour and the series is published to one decimal, so the monthly line is a square wave and the three-month average carries the trend.</p>
+        <p class="key"><i class="k1">3-month average</i><i class="k2">Monthly</i></p>
+        <div class="chart" id="cHours" style="height:215px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">The two surveys</span><span class="u">Index, 5 years ago = 100</span></div>
+        <p class="note">The establishment survey counts jobs; the household survey counts people. When they diverge, the argument starts.</p>
+        <p class="key"><i class="k1">Establishment (CES)</i><i class="k2">Household (CPS)</i></p>
+        <div class="chart" id="cTwo" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: BLS Employment Situation, via FRED / ALFRED</span>
+      <span>Seasonally adjusted</span>
+    </div>
+  </main>
+</div>
+
+<script src="/assets/echarts-5.6.0.min.js"></script>
+<script src="/assets/brb-dash.js"></script>
+<script>
+document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+const SECTORS = ["USMINE","USCONS","MANEMP","USWTRADE","USTRADE","CES4300000001",
+                 "CES4422000001","USINFO","USFIRE","USPBS","USEHS","USLAH",
+                 "USSERV","USGOVT"].map(id => ({ id }));
+
+BRB.render({
+  bundle: "/data/v1/dashboards/us-employment-nonfarm-payroll.json",
+  summary: [
+    { label: "Payrolls", series: "PAYEMS", transform: "diff", format: "signed",
+      signed: true, source: "CES", note1: "month on month" },
+    { label: "Unemployment",  series: "UNRATE",  format: "pct", source: "CPS" },
+    { label: "Participation", series: "CIVPART", format: "pct", source: "CPS" },
+    { label: "Emp-pop ratio", series: "EMRATIO", format: "pct", source: "CPS" },
+    { label: "Hourly pay",    series: "CES0500000003", transform: "yoy",
+      format: "pct", source: "CES", note1: "year over year" },
+    { label: "Weekly hours",  series: "AWHAETP", format: "hours", source: "CES" },
+  ],
+  panels: [
+    // Windows matter: payrolls run from 1939, and the war years plus 2020 put
+    // the axis at +/-5,000k, flattening everything recent into the zero line.
+    { el: "cPay", type: "bars", series: { id: "PAYEMS", transform: "diff" },
+      window: 36, average: 3, first_reported: true,
+      format: "signed", axisFormat: "k", tick: 3, label: "Change" },
+    { el: "cUn", type: "line", format: "pct", tick: 11, window: 60,
+      series: [{ id: "UNRATE", label: "U-3" }, { id: "U6RATE", label: "U-6", color: "alt" }] },
+    { el: "cPart", type: "line", format: "pt", tick: 11, window: 60,
+      series: [{ id: "CIVPART", label: "Participation", transform: "delta0" },
+               { id: "EMRATIO", label: "Emp-pop", transform: "delta0", color: "alt" }] },
+    { el: "cHeat", type: "heatmap", series: SECTORS, months: 24, cap: 45 },
+    { el: "cSec",  type: "contribution", series: SECTORS },
+    { el: "cWage", type: "line", format: "pct2", tick: 11, window: 60,
+      series: [{ id: "CES0500000003", label: "All employees", transform: "yoy" },
+               { id: "AHETPI", label: "Prod & nonsup", transform: "yoy", color: "alt" }] },
+    { el: "cHours", type: "line", format: "hours", tick: 11, left: 40, window: 60,
+      series: [{ id: "AWHAETP", label: "3-month average", transform: "ma", window: 3, width: 1.8 },
+               { id: "AWHAETP", label: "Monthly", color: "muted", width: 1 }] },
+    { el: "cTwo", type: "line", format: "num", tick: 11, left: 42, window: 60,
+      series: [{ id: "PAYEMS", label: "Establishment", transform: "index100" },
+               { id: "CE16OV", label: "Household", transform: "index100", color: "alt" }] },
+  ],
+});
+</script>
+</body>
+</html>

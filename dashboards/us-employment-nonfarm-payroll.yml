@@ -15,3 +15,8 @@ include_series:
   - FRBATLWGT3MMAUMHWGO
   - OPHNFB
   - ULCNFB
+
+# The as-first-reported change must be computed server-side from the vintage
+# matrix; it cannot be derived from first_print levels on the page.
+first_reported_change:
+  - PAYEMS

@@ -39,6 +39,29 @@ NEXT_RELEASE = {
 
 STEP_DAYS = {"D": 1, "W": 7}
 
+# The period-on-period change AS FIRST PUBLISHED. This cannot be derived on the
+# page from the first_print levels: differencing two first prints subtracts
+# values from two DIFFERENT vintages. The real figure reads both periods at the
+# vintage of the later one's first print — which is what the release quotes.
+# Verified against USDL-26-1291: June first reported +57k, revised to +20k.
+FIRST_REPORTED_SQL = """
+WITH firsts AS (
+  SELECT observation_dt, min(vintage_dt) AS v
+  FROM macro_observations WHERE series_id = %(sid)s GROUP BY 1
+)
+SELECT f.observation_dt,
+       (SELECT o.value FROM macro_observations o
+         WHERE o.series_id = %(sid)s AND o.observation_dt = f.observation_dt
+           AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1)
+     - (SELECT o.value FROM macro_observations o
+         WHERE o.series_id = %(sid)s
+           AND o.observation_dt = (f.observation_dt - %(step)s::interval)::date
+           AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1)
+FROM firsts f ORDER BY 1
+"""
+STEP_INTERVAL = {"M": "1 month", "Q": "3 months", "A": "1 year",
+                 "W": "7 days", "D": "1 day"}
+
 
 def regular_step(dates: list[date], freq: str):
     """Return a step token if the dates are evenly spaced, else None."""
@@ -137,6 +160,11 @@ def main() -> int:
                     entry["dates"] = [d.isoformat() for d in dates]
                 if first_print:
                     entry["first_print"] = first_print
+                if sid in spec.get("first_reported_change", []):
+                    cur.execute(FIRST_REPORTED_SQL,
+                                {"sid": sid, "step": STEP_INTERVAL[freq]})
+                    frd = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}
+                    entry["first_reported_diff"] = [frd.get(d) for d in dates]
                 series_out[sid] = entry
 
             rel_ids = sorted({v["release"] for v in series_out.values()})

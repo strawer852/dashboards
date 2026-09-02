@@ -128,6 +128,31 @@ def main() -> int:
             if not ok:
                 fails.append(f"{sid} {month} as of {asof}: got {got}, want {want}")
 
+        print("\n=== supersector decomposition ===")
+        # The strongest integrity check available for the sector panels: if the
+        # fourteen supersectors do not sum to total nonfarm, one is missing,
+        # duplicated, or is not actually a supersector. Rounding alone should
+        # leave well under 1k.
+        cur.execute("""
+            WITH sect AS (
+              SELECT observation_dt, sum(value) AS parts
+              FROM macro_observations_current
+              WHERE series_id IN ('USMINE','USCONS','MANEMP','USWTRADE','USTRADE',
+                                  'CES4300000001','CES4422000001','USINFO','USFIRE',
+                                  'USPBS','USEHS','USLAH','USSERV','USGOVT')
+              GROUP BY 1 HAVING count(*) = 14),
+                 tot AS (SELECT observation_dt, value AS total
+                         FROM macro_observations_current WHERE series_id='PAYEMS')
+            SELECT count(*), max(abs(s.parts - t.total))
+            FROM tot t JOIN sect s USING (observation_dt)""")
+        months, worst = cur.fetchone()
+        checks += 1
+        ok = months > 600 and worst is not None and float(worst) < 1.0
+        print(f"  {'OK ' if ok else 'FAIL'}  14 supersectors sum to PAYEMS over {months} months, "
+              f"worst residual {worst}k  (expect <1k)")
+        if not ok:
+            fails.append(f"supersector decomposition: {months} months, worst residual {worst}")
+
         print("\n=== structural ===")
         cur.execute("""
             SELECT count(*) FROM (
