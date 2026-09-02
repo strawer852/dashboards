@@ -44,6 +44,33 @@ NULLS = [
 ]
 
 
+# Revision facts the July release states outright. These exercise the vintage
+# store, which nothing else can: they are wrong the moment point-in-time reads
+# break.
+#
+# NOTE the release phrases a revision against the PREVIOUSLY PUBLISHED figure,
+# not the first print. May 2026 went 172 -> 129 -> 63 across three releases; the
+# PDF's "revised down by 66,000, from +129,000 to +63,000" is the last step.
+CHANGE_AS_OF = [
+    ("PAYEMS", "2026-06-01", "2026-07-02",  57.0, "June, as first reported"),
+    ("PAYEMS", "2026-06-01", "2026-08-07",  20.0, "June, as revised in the July release"),
+    ("PAYEMS", "2026-05-01", "2026-06-05", 172.0, "May, as first reported"),
+    ("PAYEMS", "2026-05-01", "2026-07-02", 129.0, "May, as the July release quotes it"),
+    ("PAYEMS", "2026-05-01", "2026-08-07",  63.0, "May, as revised"),
+    ("PAYEMS", "2026-07-01", "2026-08-07", -23.0, "July, first and only print"),
+]
+
+CHANGE_SQL = """
+SELECT (SELECT o.value FROM macro_observations o
+         WHERE o.series_id=%(sid)s AND o.observation_dt=%(m)s
+           AND o.vintage_dt <= %(asof)s ORDER BY o.vintage_dt DESC LIMIT 1)
+     - (SELECT o.value FROM macro_observations o
+         WHERE o.series_id=%(sid)s
+           AND o.observation_dt=(%(m)s::date - interval '1 month')::date
+           AND o.vintage_dt <= %(asof)s ORDER BY o.vintage_dt DESC LIMIT 1)
+"""
+
+
 def val(cur, sid, obs):
     cur.execute(
         "SELECT value FROM macro_observations_current "
@@ -89,6 +116,18 @@ def main() -> int:
             if not ok:
                 fails.append(f"{sid} {obs}: {state}, expected {'NULL' if want_null else 'value'}")
 
+        print("\n=== revisions, read point-in-time ===")
+        for sid, month, asof, want, note in CHANGE_AS_OF:
+            cur.execute(CHANGE_SQL, {"sid": sid, "m": month, "asof": asof})
+            row = cur.fetchone()
+            got = None if row is None or row[0] is None else float(row[0])
+            checks += 1
+            ok = got is not None and abs(got - want) < 1e-6
+            print(f"  {'OK ' if ok else 'FAIL'}  {sid} {month} as of {asof}  "
+                  f"got {got}  want {want}   {note}")
+            if not ok:
+                fails.append(f"{sid} {month} as of {asof}: got {got}, want {want}")
+
         print("\n=== structural ===")
         cur.execute("""
             SELECT count(*) FROM (
@@ -111,9 +150,10 @@ def main() -> int:
         if empty:
             fails.append(f"{empty} series have no data")
 
-        cur.execute("SELECT count(*), min(observation_dt), max(observation_dt) FROM macro_observations")
-        n, lo, hi = cur.fetchone()
-        print(f"\n  {n} observations, {lo} .. {hi}")
+        cur.execute("SELECT count(*), count(DISTINCT (series_id, observation_dt)), "
+                    "min(observation_dt), max(observation_dt) FROM macro_observations")
+        rows, obs, lo, hi = cur.fetchone()
+        print(f"\n  {rows} vintage rows over {obs} observations, {lo} .. {hi}")
 
     print(f"\n{checks - len(fails)}/{checks} checks passed")
     if fails:
