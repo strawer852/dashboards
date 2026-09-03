@@ -289,8 +289,10 @@ validate *inside* the container and `caddy reload`, never restart.
 > the July teardown and no longer exists, and `fail()` exits before restic runs.
 > Its restic paths never included `~/dashboards`, and this repo has **no git
 > remote**, so the code, the archive and the `macro` database all live on one
-> disk. Fixing it needs root and is outside this repo; it is the most important
-> open item here regardless.
+> disk. **A corrected script, a watchdog that alarms on snapshot age, systemd
+> units and step-by-step notes are staged in `ops/`.** Nothing is applied:
+> every step needs root, and `/etc/restic/env` is `root:root`, so repository
+> reachability could not be verified from here. Read `ops/INSTALL.md` first.
 
 - 53 series, 6 releases, ~231,000 vintage rows, 24/24 validations passing.
 - Three dashboards live; CPI is the next to build and the real test of whether
