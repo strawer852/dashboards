@@ -282,7 +282,28 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
-## State as of 3 September 2026
+## State as of 3 September 2026, end of day
+
+**78 series across 7 releases, ~259,000 vintage rows, 34/34 validations, and
+every exported series drawn by its page on all three dashboards.** Nonfarm
+Payroll runs to 22 numbered tables, JOLTS 7, Weekly Claims 6.
+
+Two sources. FRED/ALFRED for anything it carries; the BLS API **only** for what
+it does not — the diffusion indexes, `LNS16000000`, real earnings and seasonally
+adjusted marginal attachment. Those carry no vintage history at all (trap 15).
+
+Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all with
+`Persistent=true`. Lingering is on; without it none of them run.
+
+| Timer | Fires | Runs |
+|---|---|---|
+| `macro-refresh-employment` | 08:35–09:55 ET, weekdays | Employment Situation + Weekly Claims |
+| `macro-refresh-jolts` | 10:05–10:55 ET, weekdays | JOLTS |
+| `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
+| `dashboards-push` | 23:30 local daily | push to GitHub, then verify by hash |
+
+Root-owned system timers: `bigricebowl-backup` 03:00, `bigricebowl-backup-check`
+11:00. `systemctl --user list-timers` and `systemctl list-timers` show them.
 
 > **Backups, fixed 3 September 2026.** They had not run since 18 June: nothing
 > scheduled `/usr/local/bin/bigricebowl-backup` any more — no root crontab, no
@@ -305,19 +326,43 @@ validate *inside* the container and `caddy reload`, never restart.
 > **The repository has a 77-day hole, 18 June to 3 September 2026.** Everything
 > before it survived — `forget --prune` had not been running either.
 
-- 53 series, 6 releases, ~231,000 vintage rows, 24/24 validations passing.
-- Three dashboards live; CPI is the next to build and the real test of whether
-  the engine generalises beyond employment.
-- Alerting is ntfy.sh (public relay). **William prefers to self-host** — swap
-  `NTFY_URL` for an own instance behind Caddy when convenient.
-- ~~Cron cannot catch up a missed run.~~ **Done 3 Sept 2026** — timers with
-  `Persistent=true`, after the cron was found to be firing five hours early.
-  Catalog-driven scheduling (`pub_lag_days`, `staleness_mode`) is still open.
-  The retired stack used **systemd timers**
-  (`Persistent=true`, `RandomizedDelaySec`) for exactly this reason; move to
-  timers with catalog-driven scheduling (`pub_lag_days`, `staleness_mode` are
-  already in `macro_series_meta`) when the second country arrives.
+The repo **does** now have a remote: `git@github.com:strawer852/dashboards.git`,
+pushed nightly and verified by comparing hashes rather than trusting an exit
+code. A second clone sits at `C:\Bigricebowl\dashboards` on the laptop. The
+GitHub key is an **account** key, not a repo deploy key, so it can write to every
+repository on the account — narrow it if that ever matters.
+
+- Alerting is ntfy.sh for the pipeline and Telegram for ops. **William prefers to
+  self-host ntfy** — swap `NTFY_URL` when convenient. The Telegram path has been
+  fired and confirmed delivered; ntfy has not been tested end to end.
+- Catalog-driven scheduling (`pub_lag_days`, `staleness_mode`, already columns in
+  `macro_series_meta`) is still open, and is what the retired stack converged on.
 - The retired `investment` stack's code survives at `~/bigricebowl/workers/` and
-  `~/bigricebowl/postgres/migrations/` — 25,078 series across many countries.
-  Its data is gone; `FINDINGS_revision_handling.md` and `MACRO_FINDINGS.md` are
-  worth reading before extending the pipeline.
+  `~/bigricebowl/postgres/migrations/` — 25,078 series across many countries. Its
+  data is gone; `FINDINGS_revision_handling.md` and `MACRO_FINDINGS.md` are worth
+  reading before extending the pipeline.
+- n8n is dormant, not gone: 22 MB of workflows in `~/bigricebowl/n8n`, its own
+  `n8n` database, no container running. Not the right tool for scheduling this
+  pipeline (the code lives on the host and n8n has no catch-up), but a real
+  option if a broader automation surface is ever wanted.
+
+### Open right now
+
+Dated deliberately: this block is the only part of this file that is about a
+moment rather than about the system, and it should look stale when it is.
+
+1. **Friday 4 September, 08:35 ET — the August Employment Situation.** The first
+   live release through the corrected schedule, the vintage-pinned acceptance
+   tests and the three new invariants. Read `logs/refresh.log` after it: expect
+   an ingest that inserts rows, `validate rc=0 34/34`, an export, and an ntfy
+   push. **July's payroll change will be revised**, which is exactly what the
+   pinning was for — if validation fails on a July figure, the pinning is wrong,
+   not the data.
+2. **Two commits are ahead of the remote** at the time of writing (`226274f`,
+   `9f4f7c0`); the 23:30 timer will carry them.
+3. **CPI is dashboard #4** and the real test that the engine generalises beyond
+   employment. A spec file, catalog rows, and no new JavaScript — if it needs
+   any, that is an engine defect.
+4. Smaller: `tools/crontab.installed` is a stale copy of the retired cron and
+   could go; `deploy-nginx.conf` should be checked against what the container
+   actually mounts.
