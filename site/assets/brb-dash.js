@@ -51,7 +51,9 @@
    */
   const T = {
     level: v => v.slice(),
-    diff: v => v.map((x, i) => (i === 0 || x == null || v[i - 1] == null ? null : +(x - v[i - 1]).toFixed(3))),
+    diff: (v, per) => { const n = per || 1;
+      return v.map((x, i) => (i < n || x == null || v[i - n] == null
+        ? null : +(x - v[i - n]).toFixed(3))); },
     yoy: (v, per) => v.map((x, i) => {
       const p = v[i - per];
       return (i < per || x == null || p == null || !p) ? null : +((x / p - 1) * 100).toFixed(3);
@@ -71,12 +73,12 @@
     let v = series.values.slice();
     const t = spec.transform;
     if (!t || t === "level") return v;
-    if (t === "diff") return T.diff(v);
+    if (t === "diff") return T.diff(v, spec.periods || 1);
     if (t === "yoy") return T.yoy(v, spec.periods || perYear(series.frequency));
     if (t === "ma") return T.ma(v, spec.window || 3);
     if (t === "delta0") return T.delta0(v);
     if (t === "index100") return T.index100(v);
-    if (t === "diff_ma") return T.ma(T.diff(v), spec.window || 3);
+    if (t === "diff_ma") return T.ma(T.diff(v, spec.periods || 1), spec.window || 3);
     throw new Error("unknown transform: " + t);
   }
   const perYear = f => ({ M: 12, Q: 4, W: 52, D: 365, A: 1 }[f] || 12);
@@ -186,7 +188,8 @@
         return {
           name: sp.label || r.s.title, type: "line", data,
           connectNulls: !!sp.connect, symbol: "none", yAxisIndex: sp.axis || 0,
-          lineStyle: { color: P[sp.color || ["pos", "alt", "neg"][i] || "muted"], width: sp.width || 1.6 },
+          lineStyle: { color: P[sp.color || ["pos", "alt", "neg"][i] || "muted"],
+                       width: sp.width || 1.6, type: sp.dash ? "dashed" : "solid" },
           markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
         };
       }),

@@ -55,3 +55,39 @@ derived:
     title: Share of the trailing 24 months distinguishable from zero at 90%
     unit: Percent
     importance: 4
+  # Accounting identities, not models. Breakeven is the labour force's own
+  # growth net of the share that stays unemployed; January is dropped because
+  # its change is a population-control level break (CLAUDE.md trap 14).
+  - id: LF.breakeven
+    kind: breakeven
+    of: [CLF16OV, UNRATE]
+    window: 6
+    title: Employment growth that would hold the unemployment rate flat
+    unit: Thousands of Persons
+    importance: 5
+  # EPOP = participation x (1 - u), so its move separates exactly.
+  - id: EMRATIO.participation_effect
+    kind: epop_participation_effect
+    of: [CIVPART, UNRATE]
+    periods: 12
+    title: Employment-population change from participation, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: EMRATIO.unemployment_effect
+    kind: epop_unemployment_effect
+    of: [CIVPART, UNRATE]
+    periods: 12
+    title: Employment-population change from unemployment, over 12 months
+    unit: Percentage points
+    importance: 4
+  # The same identity on a longer window. Both are drawn: the estimate is
+  # sensitive to the window and the reader should see that, not a choice made
+  # here. min_obs 8 because October 2025 costs two months and January one.
+  - id: LF.breakeven12
+    kind: breakeven
+    of: [CLF16OV, UNRATE]
+    window: 12
+    min_obs: 8
+    title: Employment growth that would hold the unemployment rate flat, 12-month
+    unit: Thousands of Persons
+    importance: 4

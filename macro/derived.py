@@ -5,10 +5,15 @@ page renders it with the existing panel types and `brb-dash.js` needs no new
 maths. That keeps the rule in CLAUDE.md intact: a new dashboard is a spec plus a
 panel list, and per-dashboard arithmetic never leaks into the engine.
 
-Anything combining two vintages, or two series of different length, belongs
-here rather than in the browser. The precedent is `first_reported_diff` in
-export.py: derived in SQL because differencing first prints on the page reads
-two different vintages and gets the answer wrong.
+Anything combining two vintages, or two series, belongs here rather than in the
+browser. The precedent is `first_reported_diff` in export.py: derived in SQL
+because differencing first prints on the page reads two different vintages and
+gets the answer wrong.
+
+Multi-input measures align their inputs BY DATE. Two series in one bundle can
+start in different years -- CLF16OV in 1948, UNRATE in 1948, JTSJOL in 2000 --
+and zipping them positionally would silently pair one year's value with
+another's. CLAUDE.md trap 6.
 
 Every derived entry carries `derived: true` and a `formula` string. The page is
 required to label them; a reader must never mistake an analyst construct for a
@@ -17,56 +22,109 @@ published statistic.
 from __future__ import annotations
 
 
-def _diff(values: list[float | None]) -> list[float | None]:
-    """Month-on-month change. Nulls propagate: a published gap stays a gap."""
-    out: list[float | None] = [None]
-    for i in range(1, len(values)):
-        a, b = values[i], values[i - 1]
-        out.append(None if a is None or b is None else a - b)
+# ---------------------------------------------------------------- date axes --
+def axis(entry: dict) -> list[str]:
+    """The entry's own observation dates as YYYY-MM(-DD) strings."""
+    if "dates" in entry:
+        return list(entry["dates"])
+    start, step = entry["start"], entry["step"]
+    y, m = int(start[:4]), int(start[5:7])
+    k = {"M": 1, "Q": 3, "A": 12}.get(step)
+    if k is None:                      # weekly or daily: dates are explicit
+        raise ValueError(f"cannot rebuild a {step} axis without explicit dates")
+    out = []
+    for i in range(len(entry["values"])):
+        mm = (m - 1) + i * k
+        out.append(f"{y + mm // 12:04d}-{mm % 12 + 1:02d}")
     return out
 
 
-def revision(entry: dict) -> list[float | None]:
+def on_axis(entry: dict, dates: list[str]) -> list[float | None]:
+    """Line an entry's values up against `dates`, matched exactly by date."""
+    have = dict(zip(axis(entry), entry["values"]))
+    return [have.get(d) for d in dates]
+
+
+# ------------------------------------------------------------- small helpers --
+def _diff(values, periods: int = 1, drop_month: int | None = None,
+          dates: list[str] | None = None):
+    """Change over `periods`. Nulls propagate: a published gap stays a gap.
+
+    `drop_month` suppresses the change into a given calendar month. January's
+    civilian labour force carries new population controls and BLS does not
+    revise prior months, so the January change is a level break rather than a
+    flow -- 2026 shows -1,030k where nothing of the kind happened. CLAUDE.md
+    trap 14.
+    """
+    out: list[float | None] = [None] * min(periods, len(values))
+    for i in range(periods, len(values)):
+        a, b = values[i], values[i - periods]
+        v = None if a is None or b is None else a - b
+        if v is not None and drop_month is not None and dates is not None \
+                and int(dates[i][5:7]) == drop_month:
+            v = None
+        out.append(v)
+    return out
+
+
+def _trailing_mean(values, window: int, min_obs: int | None = None):
+    """Rolling mean tolerating a few holes -- one per year, by construction."""
+    need = window if min_obs is None else min_obs
+    out: list[float | None] = []
+    for i in range(len(values)):
+        if i < window - 1:
+            out.append(None)
+            continue
+        got = [v for v in values[i - window + 1: i + 1] if v is not None]
+        out.append(round(sum(got) / len(got), 3) if len(got) >= need else None)
+    return out
+
+
+# ------------------------------------------------------------------- kinds ---
+def revision(srcs, **_):
     """Latest change minus the change as first reported.
 
     Both inputs are already correct: `values` is the current vintage and
     `first_reported_diff` was computed in SQL reading both periods at the
     vintage of the later one's first print. Differencing `first_print` levels
-    here instead would subtract across two vintages -- the mistake CLAUDE.md
-    trap 2 records having been made twice.
+    here instead would subtract across two vintages -- CLAUDE.md trap 2.
     """
-    frd = entry.get("first_reported_diff")
+    e = srcs[0]
+    frd = e.get("first_reported_diff")
     if not frd:
         raise ValueError("revision needs first_reported_diff on the source series")
-    cur = _diff(entry["values"])
+    cur = _diff(e["values"])
     return [None if (a is None or b is None) else round(a - b, 3)
             for a, b in zip(cur, frd)]
 
 
-def revision_mean(entry: dict, window: int = 12) -> list[float | None]:
-    """Rolling mean revision. The bias, rather than any single month's surprise."""
-    rev = revision(entry)
-    out: list[float | None] = []
-    for i in range(len(rev)):
-        if i < window - 1:
-            out.append(None)
-            continue
-        win = rev[i - window + 1: i + 1]
-        got = [v for v in win if v is not None]
-        # A rolling mean over a partly-unrevised window would drift towards zero
-        # as the newest months carry no revision yet. Require the whole window.
-        out.append(round(sum(got) / len(got), 3) if len(got) == window else None)
-    return out
+def revision_mean(srcs, window: int = 12, **_):
+    """Rolling mean revision: the bias, rather than any month's surprise."""
+    rev = revision(srcs)
+    return _trailing_mean(rev, window, min_obs=window)
 
 
-def signif_share(entry: dict, threshold: float, window: int = 24) -> list[float | None]:
+def abs_revision_mean(srcs, window: int = 12, **_):
+    """Rolling mean ABSOLUTE revision: the size of the typical correction.
+
+    First-to-latest, so it includes the annual benchmark rewrite and runs far
+    above the first-to-final figure usually quoted (87.5k against about 51k over
+    the full history). Both are true of different questions; the page must say
+    which one it is showing.
+    """
+    rev = revision(srcs)
+    return _trailing_mean([None if v is None else abs(v) for v in rev],
+                          window, min_obs=window)
+
+
+def signif_share(srcs, threshold: float = 122.0, window: int = 24, **_):
     """Share of the trailing window whose change exceeds a sampling interval.
 
     The release states a 90% confidence interval of +/-122,000 on the monthly
     change in total nonfarm employment. This asks how often the published figure
     is large enough to be distinguishable from no change at all.
     """
-    ch = _diff(entry["values"])
+    ch = _diff(srcs[0]["values"])
     out: list[float | None] = []
     for i in range(len(ch)):
         if i < window - 1:
@@ -80,72 +138,152 @@ def signif_share(entry: dict, threshold: float, window: int = 24) -> list[float 
     return out
 
 
-def abs_revision_mean(entry: dict, window: int = 12) -> list[float | None]:
-    """Rolling mean ABSOLUTE revision: the size of the typical correction.
+def breakeven(srcs, window: int = 6, drop_month: int = 1,
+              min_obs: int | None = None, **_):
+    """Employment growth that would hold the unemployment rate flat.
 
-    First-to-latest, so it includes the annual benchmark rewrite and runs far
-    above the first-to-final figure usually quoted (87.5k against about 51k over
-    the full history). Both are true of different questions; the page must say
-    which one it is showing.
+    of: [civilian labour force, unemployment rate]
+
+    An accounting identity, not a model. Unemployment is unchanged when
+    employment grows with the labour force, so the monthly employment gain
+    required is the labour force's own growth net of the share that stays
+    unemployed:
+
+        breakeven = mean(dLF over `window` months) x (1 - u)
+
+    January's change is dropped: it carries new population controls that BLS
+    does not apply to prior months, so it is a level break and not a flow.
+    The trailing mean therefore averages the months it has -- eleven in any
+    window that spans a January.
+
+    On the household concept, since the labour force and the unemployment rate
+    are both household-survey measures. Comparing it with a payroll figure is
+    indicative rather than exact: CES counts jobs and CPS counts people.
     """
-    rev = revision(entry)
-    out: list[float | None] = []
-    for i in range(len(rev)):
-        if i < window - 1:
-            out.append(None)
-            continue
-        win = rev[i - window + 1: i + 1]
-        got = [abs(v) for v in win if v is not None]
-        out.append(round(sum(got) / len(got), 3) if len(got) == window else None)
+    lf, ur = srcs[0], srcs[1]
+    dates = axis(lf)
+    d_lf = _diff(lf["values"], drop_month=drop_month, dates=dates)
+    # October 2025 costs two months of change on its own -- the household
+    # survey was not collected -- and January is dropped every year, so a
+    # twelve-month window needs a lower floor than an eleven-of-twelve one.
+    trend = _trailing_mean(d_lf, window,
+                           min_obs=min_obs if min_obs else window - 1)
+    u = on_axis(ur, dates)
+    return [None if (t is None or x is None) else round(t * (1 - x / 100.0), 3)
+            for t, x in zip(trend, u)]
+
+
+def epop_participation_effect(srcs, periods: int = 12, **_):
+    """The part of the employment-population move that participation explains.
+
+    of: [participation rate, unemployment rate]
+
+    EPOP = participation x (1 - u) exactly, so the change over `periods`
+    separates into
+
+        participation effect = dP  x (1 - u0)
+        unemployment effect  = -P0 x du
+
+    with a small interaction left over. Reported in percentage points.
+    """
+    p, u = on_axis(srcs[0], axis(srcs[0])), on_axis(srcs[1], axis(srcs[0]))
+    out: list[float | None] = [None] * min(periods, len(p))
+    for i in range(periods, len(p)):
+        p1, p0, u0 = p[i], p[i - periods], u[i - periods]
+        out.append(None if None in (p1, p0, u0)
+                   else round((p1 - p0) * (1 - u0 / 100.0), 3))
+    return out
+
+
+def epop_unemployment_effect(srcs, periods: int = 12, **_):
+    """The part of the employment-population move that unemployment explains.
+
+    of: [participation rate, unemployment rate]. See the sibling above.
+    """
+    p, u = on_axis(srcs[0], axis(srcs[0])), on_axis(srcs[1], axis(srcs[0]))
+    out: list[float | None] = [None] * min(periods, len(p))
+    for i in range(periods, len(p)):
+        p0, u1, u0 = p[i - periods], u[i], u[i - periods]
+        out.append(None if None in (p0, u1, u0)
+                   else round(-(p0 / 100.0) * (u1 - u0), 3))
     return out
 
 
 KINDS = {
-    "revision":         (revision,         "latest monthly change minus the change as first reported"),
-    "revision_mean":    (revision_mean,    "rolling {window}-month mean revision, first reported to latest"),
-    "abs_revision_mean":(abs_revision_mean,"rolling {window}-month mean absolute revision, first reported to latest"),
-    "signif_share":     (signif_share,     "share of the trailing {window} months whose change exceeds +/-{threshold}k"),
+    "revision":          (revision, 1,
+                          "latest monthly change minus the change as first reported"),
+    "revision_mean":     (revision_mean, 1,
+                          "rolling {window}-month mean revision, first reported to latest"),
+    "abs_revision_mean": (abs_revision_mean, 1,
+                          "rolling {window}-month mean absolute revision, first reported to latest"),
+    "signif_share":      (signif_share, 1,
+                          "share of the trailing {window} months whose change exceeds +/-{threshold}k"),
+    "breakeven":         (breakeven, 2,
+                          "trailing {window}-month mean change in the labour force, "
+                          "January excluded as a population-control break, times (1 - u)"),
+    "epop_participation_effect": (epop_participation_effect, 2,
+                          "change in participation over {periods} months times (1 - u) at the start"),
+    "epop_unemployment_effect":  (epop_unemployment_effect, 2,
+                          "minus participation at the start times the change in u over {periods} months"),
 }
 
-_PASS = {"revision": (), "revision_mean": ("window",),
-         "abs_revision_mean": ("window",), "signif_share": ("threshold", "window")}
+_PASS = {
+    "revision": (),
+    "revision_mean": ("window",),
+    "abs_revision_mean": ("window",),
+    "signif_share": ("threshold", "window"),
+    "breakeven": ("window", "drop_month", "min_obs"),
+    "epop_participation_effect": ("periods",),
+    "epop_unemployment_effect": ("periods",),
+}
+
+_DEFAULTS = {"window": 12, "threshold": 122, "periods": 12, "drop_month": 1}
 
 
 def build(spec: dict, series_out: dict) -> list[str]:
-    """Append every `derived:` entry in the spec to series_out. Returns the ids added."""
+    """Append every `derived:` entry in the spec to series_out. Returns ids added."""
     added = []
     for d in spec.get("derived", []) or []:
         kind = d["kind"]
         if kind not in KINDS:
             raise SystemExit(f"unknown derived kind {kind!r} in {spec['id']}")
-        src_id = d["of"]
-        src = series_out.get(src_id)
-        if src is None:
-            raise SystemExit(f"{spec['id']}: derived {d['id']} needs {src_id}, "
-                             "which the bundle does not carry")
-        fn, formula = KINDS[kind]
+        fn, arity, formula = KINDS[kind]
+
+        of = d["of"]
+        src_ids = [of] if isinstance(of, str) else list(of)
+        if len(src_ids) != arity:
+            raise SystemExit(f"{spec['id']}: {d['id']} ({kind}) takes {arity} "
+                             f"input(s), got {len(src_ids)}")
+        srcs = []
+        for sid in src_ids:
+            if sid not in series_out:
+                raise SystemExit(f"{spec['id']}: derived {d['id']} needs {sid}, "
+                                 "which the bundle does not carry")
+            srcs.append(series_out[sid])
+
         kwargs = {k: d[k] for k in _PASS[kind] if k in d}
-        values = fn(src, **kwargs)
+        values = fn(srcs, **kwargs)
+        shown = {**{k: _DEFAULTS.get(k, "") for k in _PASS[kind]}, **kwargs}
 
         entry = {
             "title": d["title"],
-            "frequency": src["frequency"],
-            "sa": src["sa"],
-            "release": d.get("release", src["release"]),
+            "frequency": srcs[0]["frequency"],
+            "sa": srcs[0]["sa"],
+            "release": d.get("release", srcs[0]["release"]),
             "importance": d.get("importance", 3),
-            "source_url": src.get("source_url"),
+            "source_url": srcs[0].get("source_url"),
             "values": values,
             "derived": True,
-            "formula": formula.format(**{**{"window": "", "threshold": ""}, **kwargs}),
-            "derived_from": [src_id],
+            "formula": formula.format(**shown),
+            "derived_from": src_ids,
         }
         if d.get("unit"):
             entry["unit"] = d["unit"]
-        # Carry the source's own date axis: a derived series is defined on the
-        # same observations, so a separate axis could only ever disagree.
+        # Carry the first input's date axis: a derived series is defined on those
+        # observations, so a separate axis could only ever disagree.
         for k in ("start", "step", "dates"):
-            if k in src:
-                entry[k] = src[k]
+            if k in srcs[0]:
+                entry[k] = srcs[0][k]
         series_out[d["id"]] = entry
         added.append(d["id"])
     return added

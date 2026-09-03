@@ -86,7 +86,26 @@ LF monthly change, 2026:  Jan -1030   Feb  +18   Mar -396
 > `https://www.bls.gov/cps/smoothed_emp.xlsx`, which exists for exactly this reason.
 
 Monthly CPS sampling error on the labour force runs to several hundred thousand,
-so six months is the shortest defensible window. Population grew +1,497k over
+so six months is the shortest defensible window.
+
+**Amended 3 September 2026, on building the panel.** The estimate is far more
+window-sensitive than this first pass recorded. At July 2026, with January
+dropped throughout:
+
+| Trailing window | Usable months | Mean ΔLF | Breakeven |
+|---|---:|---:|---:|
+| 3 months | 3 | −300.3k | −288.0k |
+| 6 months | 6 | −228.5k | −219.1k |
+| 9 months | 7 | −202.4k | −194.1k |
+| 12 months | 9 | −63.1k | −60.5k |
+| 18 months | 15 | −56.8k | −54.5k |
+| 24 months | 20 | −37.0k | −35.5k |
+
+The step between nine and twelve months is August and September 2025 entering
+the window at +338k and +511k. **Negative on every window — the conclusion is
+robust and the magnitude is not**, so the dashboard plots six and twelve
+together rather than choosing one silently. October 2025 costs two months of
+change on its own, because a null level nulls the changes on both sides of it. Population grew +1,497k over
 the year while the labour force fell — participation, not employment, is doing
 the work.
 

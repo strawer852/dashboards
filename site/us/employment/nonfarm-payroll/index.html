@@ -37,6 +37,8 @@
         <a href="#t8"><span>8</span>Two surveys</a>
         <a href="#t9"><span>9</span>Revisions</a>
         <a href="#t10"><span>10</span>Signal</a>
+        <a href="#t11"><span>11</span>Breakeven</a>
+        <a href="#t12"><span>12</span>Why the ratio moved</a>
       </div>
     </nav>
   </aside>
@@ -58,7 +60,7 @@
     <div class="row one">
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Change in nonfarm payroll employment</span><span class="u">Thousands, s.a.</span></div>
-        <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month. The paper band is the release’s own 90% sampling interval of ±122,000 — a bar inside it cannot be distinguished from no change at all.</p>
+        <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month. The paper band is the release’s own 90% sampling interval of ±122,000 — a bar inside it cannot be distinguished from no change at all. Whether a given month is <em>weak</em> depends on what it is measured against; Table 11 supplies that.</p>
         <p class="key"><i class="k1">Monthly change</i><i class="k2">As first reported</i></p>
         <div class="chart" id="cPay" style="height:250px"></div>
       </div>
@@ -73,7 +75,7 @@
       </div>
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
-        <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell.</p>
+        <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell. Table 12 separates that fall into its two causes.</p>
         <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i><i class="k4">Prime-age emp-pop, 25&ndash;54</i></p>
         <div class="chart" id="cPart" style="height:215px"></div>
       </div>
@@ -132,6 +134,21 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">Breakeven employment growth</span><span class="u">Thousands per month, s.a.</span></div>
+        <p class="note">Unemployment holds steady when employment grows with the labour force, so the gain required is the labour force&rsquo;s own growth net of the share that stays unemployed &mdash; an accounting identity, not a forecast. The labour force is shrinking, so breakeven has fallen through zero and a negative payroll print can still sit above it. Two windows are drawn because the estimate is <b>sensitive to how far back it looks</b>, the monthly change carrying sampling error of several hundred thousand; it is negative on both. <b>January is excluded</b> as a population-control level break rather than a flow, and the line breaks where the October 2025 household survey was not collected. Breakeven is on the household concept while payrolls count jobs, so the comparison is indicative. <b>Analyst-derived.</b></p>
+        <p class="key"><i class="k4">Breakeven, 6-month</i><i class="k4">Breakeven, 12-month (dashed)</i><i class="k1">Payrolls, 3-month average</i></p>
+        <div class="chart" id="cBrk" style="height:225px"></div>
+      </div>
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">Why the employment ratio moved</span><span class="u">Points, change over 12 months</span></div>
+        <p class="note">The employment-population ratio is participation multiplied by the share of the labour force in work, so its twelve-month change separates exactly into the two. Through the 2021&ndash;22 recovery the move came mostly from unemployment falling; the decline since is almost entirely participation, which makes it demographic and behavioural rather than a sign of rising joblessness. The gap between the ink line and the two components is the interaction between them. <b>Analyst-derived.</b></p>
+        <p class="key"><i class="k4">Emp-pop ratio</i><i class="k1">From participation</i><i class="k2">From unemployment</i></p>
+        <div class="chart" id="cEpop" style="height:225px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: BLS Employment Situation, via FRED / ALFRED</span>
@@ -141,7 +158,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=c6f4fcb03b"></script>
+<script src="/assets/brb-dash.js?v=cf61f2a075"></script>
 <script>
 document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -203,6 +220,23 @@ BRB.render({
     { el: "cSig", type: "line", format: "pct", tick: 23, left: 40, window: 240,
       series: [{ id: "PAYEMS.signif_share", label: "Distinguishable from zero",
                   color: "ink" }] },
+    // Breakeven against the payroll trend. Both are monthly changes in
+    // thousands, so they share an axis; the note carries the concept caveat.
+    { el: "cBrk", type: "line", format: "k", tick: 5, left: 46, window: 36,
+      series: [{ id: "LF.breakeven", label: "Breakeven, 6-month", color: "ink", width: 1.8 },
+               { id: "LF.breakeven12", label: "Breakeven, 12-month", color: "ink",
+                 width: 1.2, dash: true },
+               { id: "PAYEMS", label: "Payrolls, 3-month average", color: "pos",
+                 transform: "diff_ma", window: 3 }] },
+    // The identity. The ink line is the actual move; the two components should
+    // account for it bar a small interaction.
+    { el: "cEpop", type: "line", format: "pt", tick: 11, left: 42, window: 60,
+      series: [{ id: "EMRATIO", label: "Emp-pop ratio", transform: "diff",
+                 periods: 12, color: "ink", width: 1.9 },
+               { id: "EMRATIO.participation_effect", label: "From participation",
+                 color: "pos", width: 1.3 },
+               { id: "EMRATIO.unemployment_effect", label: "From unemployment",
+                 color: "alt", width: 1.3 }] },
   ],
 });
 </script>
