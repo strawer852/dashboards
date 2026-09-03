@@ -1,7 +1,149 @@
-<!doctype html><meta charset="utf-8"><title>BigRiceBowl Data</title>
-<body style="font:14px/1.6 system-ui;margin:3rem auto;max-width:40rem;color:#14161a;background:#f7f7f4">
-<h1 style="font-weight:600">BigRiceBowl Data</h1>
-<p>Placeholder. Dashboards land here in Phase 2.</p>
-<ul><li><a href="/data/v1/dashboards/us-employment-nonfarm-payroll.json">Nonfarm Payroll bundle</a></li>
-<li><a href="/data/v1/dashboards/us-employment-jolts.json">JOLTS bundle</a></li>
-<li><a href="/data/v1/dashboards/us-employment-weekly-claims.json">Weekly Claims bundle</a></li></ul>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css">
+<style>
+  .idx { border-top: 2px solid var(--ink); margin-top: 26px; }
+  .idx a.row {
+    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 24px;
+    align-items: baseline; padding: 18px 0 17px;
+    border-bottom: 1px solid var(--rule); text-decoration: none; color: inherit;
+  }
+  .idx a.row:hover { background: var(--panel); }
+  .idx .nm {
+    font-family: var(--serif), Georgia, serif; font-weight: 600; font-size: 21px;
+    letter-spacing: -.01em; color: var(--ink);
+  }
+  .idx .agency {
+    font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); text-align: right; white-space: nowrap;
+  }
+  .idx .desc { font-size: 13.5px; color: var(--muted); max-width: 62ch; grid-column: 1; }
+  .idx .meta {
+    grid-column: 2; text-align: right; font-family: var(--mono), monospace;
+    font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .idx .meta b { color: var(--ink-2); font-weight: 500; }
+  .idx .meta .stale { color: var(--neg); }
+  @media (max-width: 620px) {
+    .idx a.row { grid-template-columns: 1fr; }
+    .idx .agency, .idx .meta { grid-column: 1; text-align: left; }
+  }
+  .coming { color: var(--faint); }
+  .coming .nm { color: var(--faint); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <div class="brand">BigRiceBowl<span>Data</span></div>
+    <nav aria-label="Dashboards">
+      <div class="region">United States</div>
+      <button class="topic" type="button" aria-expanded="true" aria-controls="g-emp"><span class="mk"></span>Employment</button>
+      <div class="grp" id="g-emp">
+        <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+        <a href="/us/employment/jolts/">JOLTS</a>
+        <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+      </div>
+      <button class="topic" type="button" aria-expanded="false" aria-controls="g-inf"><span class="mk"></span>Inflation</button>
+      <div class="grp" id="g-inf" hidden>
+        <a href="#" class="soon">CPI</a>
+        <a href="#" class="soon">PPI</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="mast">
+      <h1>BigRiceBowl Data</h1>
+      <div class="stamp">
+        <span><b>53 series</b> &middot; 231,000 vintage rows</span>
+        <span>Every figure carries its revision history</span>
+      </div>
+    </div>
+
+    <p class="lede">Economic dashboards built from the source releases, with each
+    observation stored at every vintage it was ever published at &mdash; so a figure
+    can always be read as it stands today, or as it was first reported.</p>
+
+    <div class="idx" id="idx">
+      <a class="row" href="/us/employment/nonfarm-payroll/">
+        <span class="nm">Nonfarm Payroll</span>
+        <span class="agency">BLS &middot; Employment Situation</span>
+        <span class="desc">Payrolls, unemployment, participation, wages and hours, with the
+          fourteen supersectors and the first-print revision overlay.</span>
+        <span class="meta" data-bundle="us-employment-nonfarm-payroll">&hellip;</span>
+      </a>
+      <a class="row" href="/us/employment/jolts/">
+        <span class="nm">Job Openings &amp; Labor Turnover</span>
+        <span class="agency">BLS &middot; JOLTS</span>
+        <span class="desc">Openings, hires, quits and layoffs, vacancies per jobseeker,
+          and the Beveridge curve.</span>
+        <span class="meta" data-bundle="us-employment-jolts">&hellip;</span>
+      </a>
+      <a class="row" href="/us/employment/weekly-claims/">
+        <span class="nm">Weekly Claims</span>
+        <span class="agency">ETA &middot; UI Weekly Claims</span>
+        <span class="desc">Initial and continuing claims and the insured rate &mdash; the
+          highest-frequency read, five weeks ahead of the payroll report.</span>
+        <span class="meta" data-bundle="us-employment-weekly-claims">&hellip;</span>
+      </a>
+      <div class="row coming">
+        <span class="nm">Consumer Prices</span>
+        <span class="agency">BLS &middot; CPI</span>
+        <span class="desc">Next to be built.</span>
+        <span class="meta">&mdash;</span>
+      </div>
+    </div>
+
+    <div class="src">
+      <span>Source: BLS and ETA, via FRED and ALFRED</span>
+      <span>Private &middot; family access only</span>
+    </div>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MFULL = ["January","February","March","April","May","June","July",
+               "August","September","October","November","December"];
+const fmtDate = iso => { const d = new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso);
+  return `${d.getUTCDate()} ${MN[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
+
+// Each row shows its own release's freshness, read from that dashboard's own
+// bundle. The three releases run on different clocks, so one shared "as of"
+// line at the top would be wrong for at least two of them.
+document.querySelectorAll(".meta[data-bundle]").forEach(async el => {
+  try {
+    const r = await fetch(`/data/v1/dashboards/${el.dataset.bundle}.json`,
+                          { credentials: "same-origin", cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const b = await r.json();
+    const rel = b.releases[b.release];
+    const rp = rel.ref_period.split("-");
+    const period = rel.cadence === "weekly"
+      ? `week to ${fmtDate(rel.ref_period)}`
+      : `${MFULL[+rp[1] - 1]} ${rp[0]}`;
+    const days = Math.floor((Date.now() - new Date(rel.released_at)) / 86400000);
+    el.innerHTML = `<b>${period}</b><br>released ${fmtDate(rel.released_at)}` +
+      (rel.next_at ? `<br>next ${fmtDate(rel.next_at)}` : "") +
+      (days > 45 ? `<br><span class="stale">${days} days old</span>` : "");
+  } catch (e) {
+    el.innerHTML = `<span class="stale">data unavailable</span>`;
+  }
+});
+</script>
+</body>
+</html>
