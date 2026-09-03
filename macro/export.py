@@ -107,7 +107,8 @@ def main() -> int:
             by_release[rel].append(sid)
 
         cur.execute("SELECT series_id, title, frequency, seasonal_adjustment, "
-                    "companion_series_id, importance, release_id, source_url, unit "
+                    "companion_series_id, importance, release_id, source_url, unit, "
+                    "vintage_mode "
                     "FROM macro_series_meta")
         meta = {r[0]: r for r in cur.fetchall()}
 
@@ -140,7 +141,8 @@ def main() -> int:
                 if all(a == b for a, b in zip(first_print, values)):
                     first_print = None
 
-                _, title, freq, sa, companion, importance, rel, url, unit = meta[sid]
+                (_, title, freq, sa, companion, importance, rel, url, unit,
+                 vintage_mode) = meta[sid]
                 entry = {
                     "title": title,
                     "frequency": freq,
@@ -152,6 +154,12 @@ def main() -> int:
                 }
                 if unit:
                     entry["unit"] = unit
+                # 'fetch_date' means the source has no point-in-time history, so
+                # the earliest stored vintage is the day ingestion began rather
+                # than anything the agency ever published. Say so in the bundle.
+                if vintage_mode == "fetch_date":
+                    entry["vintages"] = "since_ingestion"
+                    first_print = None
                 if companion:
                     entry["companion"] = companion
                 step = regular_step(dates, freq)
@@ -163,6 +171,11 @@ def main() -> int:
                 if first_print:
                     entry["first_print"] = first_print
                 if sid in spec.get("first_reported_change", []):
+                    if vintage_mode == "fetch_date":
+                        print(f"!! {spec['id']}: first_reported_change asks for "
+                              f"{sid}, whose source has no vintage history",
+                              file=sys.stderr)
+                        return 1
                     cur.execute(FIRST_REPORTED_SQL,
                                 {"sid": sid, "step": STEP_INTERVAL[freq]})
                     frd = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}

@@ -18,6 +18,7 @@ import sys
 import httpx
 import psycopg
 
+import bls
 import fred
 
 DSN = os.environ["MACRO_DSN"]
@@ -28,9 +29,9 @@ INSERT INTO macro_series_meta
    seasonal_adjustment, validation_mode, originator, dataset, release_id,
    source_url, unit, vintage_mode)
 VALUES
-  (%(sid)s, 'fred', %(title)s, %(freq)s, 'US', %(cat)s, %(imp)s,
+  (%(sid)s, %(source)s, %(title)s, %(freq)s, 'US', %(cat)s, %(imp)s,
    %(sa)s, 'zscore', %(orig)s, %(dataset)s, %(rel)s,
-   %(url)s, %(unit)s, 'from_row')
+   %(url)s, %(unit)s, %(vmode)s)
 ON CONFLICT (series_id) DO UPDATE SET
   title = EXCLUDED.title, frequency = EXCLUDED.frequency,
   seasonal_adjustment = EXCLUDED.seasonal_adjustment,
@@ -60,6 +61,9 @@ def main() -> int:
     ap.add_argument("--release", required=True)
     ap.add_argument("--category", default="employment")
     ap.add_argument("--importance", type=int, default=5)
+    ap.add_argument("--source", choices=("fred", "bls"), default="fred",
+                    help="FRED wherever both carry the series: it is the "
+                         "only free source of vintages.")
     args = ap.parse_args()
 
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
@@ -69,22 +73,46 @@ def main() -> int:
             raise SystemExit(f"unknown release_id {args.release!r}")
         dataset = row[0]
 
+        bls_cat = bls.get_catalog(args.series) if args.source == "bls" else {}
+
         for sid in args.series:
-            info = series_info(sid)
-            freq = FREQ.get(info.get("frequency", ""))
-            if freq is None:
-                print(f"!! {sid}: unmapped frequency {info.get('frequency')!r}", file=sys.stderr)
-                return 1
-            sa = "SA" if info.get("seasonal_adjustment_short") == "SA" else "NSA"
+            if args.source == "bls":
+                cat = bls_cat.get(sid)
+                if not cat:
+                    print(f"!! {sid}: BLS returned no catalog block. Metadata is "
+                          "not available for every series; add it by hand rather "
+                          "than guessing.", file=sys.stderr)
+                    return 1
+                title = cat.get("series_title") or cat.get("measure_data_type")
+                freq = "M"          # every BLS series in this catalog is monthly
+                sa = "SA" if str(cat.get("seasonality", "")).lower().startswith("s") else "NSA"
+                unit = cat.get("measure_data_type")
+                url = f"https://data.bls.gov/timeseries/{sid}"
+                # No ALFRED equivalent, so the vintage IS the fetch date and
+                # revision history accrues only from ingestion onward. The
+                # schema already had a word for that; don't invent another.
+                vmode = "fetch_date"
+            else:
+                info = series_info(sid)
+                freq = FREQ.get(info.get("frequency", ""))
+                if freq is None:
+                    print(f"!! {sid}: unmapped frequency {info.get('frequency')!r}",
+                          file=sys.stderr)
+                    return 1
+                title = info["title"]
+                sa = "SA" if info.get("seasonal_adjustment_short") == "SA" else "NSA"
+                unit = info.get("units_short")
+                url = f"https://fred.stlouisfed.org/series/{sid}"
+                vmode = "from_row"
+
             cur.execute(UPSERT, {
-                "sid": sid, "title": info["title"], "freq": freq,
+                "sid": sid, "title": title, "freq": freq,
                 "cat": args.category, "imp": args.importance, "sa": sa,
                 "orig": "U.S. Bureau of Labor Statistics", "dataset": dataset,
-                "rel": args.release,
-                "url": f"https://fred.stlouisfed.org/series/{sid}",
-                "unit": info.get("units_short"),
+                "rel": args.release, "url": url, "unit": unit,
+                "source": args.source, "vmode": vmode,
             })
-            print(f"  {sid:<16} {freq} {sa:<4} {info['title'][:58]}")
+            print(f"  {sid:<16} {freq} {sa:<4} {args.source:<4} {str(title)[:52]}")
         conn.commit()
 
     print(f"\n{len(args.series)} series upserted into {args.release}")

@@ -25,6 +25,13 @@ LEVELS = [
     ("AWHAETP",       "2026-07-01",  34.3,   "average weekly hours"),
     ("U6RATE",        "2026-07-01",   7.9,   "U-6"),
     ("JTSJOL",        "2026-07-01", 7271.0,  "job openings (7.3m)"),
+    # BLS-sourced. 1-, 3- and 6-month spans are seasonally adjusted; the
+    # 12-month span exists only unadjusted, which is why it is a CEU id.
+    ("CES0500000021", "2026-07-01",   51.8,   "diffusion, 1-month span"),
+    ("CES0500000022", "2026-07-01",   50.8,   "diffusion, 3-month span"),
+    ("CES0500000023", "2026-07-01",   55.0,   "diffusion, 6-month span"),
+    ("CEU0500000024", "2026-07-01",   51.8,   "diffusion, 12-month span, NSA"),
+    ("LNS16000000",   "2026-07-01", 156497.0, "CPS employment on the CES concept"),
 ]
 
 # Month-on-month changes the release states explicitly.

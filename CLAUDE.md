@@ -24,6 +24,8 @@ no local build step.
 | `macro/backfill.py` | Full ALFRED vintage history |
 | `macro/add_series.py` | Add series, metadata read from FRED rather than typed |
 | `macro/validate.py` | Asserts the data reproduces the published releases |
+| `macro/bls.py` | BLS API v2 client. Second source; **no vintage history** |
+| `macro/derived.py` | Derived measures, shipped as ordinary series |
 | `macro/export.py` | Bundles → `data/v1/dashboards/*.json` |
 | `macro/refresh.py` | The orchestrator cron runs |
 | `dashboards/*.yml` | One spec per dashboard — the only per-dashboard data file |
@@ -141,6 +143,16 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     ingestion starts, so `vintage_mode` must record that and the page must never
     offer a revision overlay on them. `ingest.py` selects `WHERE source='fred'`;
     that has to become a dispatch before any non-FRED series is added.
+
+16. **`delta0` and `index100` baseline on the first value of the WHOLE series,
+    and transforms run BEFORE the trailing window.** This has now produced two
+    live charts whose captions did not match them: Table 3 said "change over 5
+    years" while plotting change since 1948, and the two-survey panel said
+    "5 years ago = 100" while indexing to 1939 and plotting 531. Two series far
+    from 100 look enough like an index that nobody queries it; a third gave it
+    away. On any panel with a window use the series option **`rebase`** — `true`
+    subtracts the window's first value, `"index"` divides by it — which runs
+    after the window, where the caption's "5 years ago" actually exists.
 
 ## How it runs
 

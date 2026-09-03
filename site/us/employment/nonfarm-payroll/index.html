@@ -33,12 +33,13 @@
         <a href="#t4"><span>4</span>Signal</a>
         <a href="#t5"><span>5</span>Supersectors</a>
         <a href="#t6"><span>6</span>Contribution</a>
-        <a href="#t7"><span>7</span>Unemployment</a>
-        <a href="#t8"><span>8</span>Participation</a>
-        <a href="#t9"><span>9</span>Why the ratio moved</a>
-        <a href="#t10"><span>10</span>Earnings</a>
-        <a href="#t11"><span>11</span>Hours</a>
-        <a href="#t12"><span>12</span>Two surveys</a>
+        <a href="#t7"><span>7</span>Breadth</a>
+        <a href="#t8"><span>8</span>Unemployment</a>
+        <a href="#t9"><span>9</span>Participation</a>
+        <a href="#t10"><span>10</span>Why the ratio moved</a>
+        <a href="#t11"><span>11</span>Earnings</a>
+        <a href="#t12"><span>12</span>Hours</a>
+        <a href="#t13"><span>13</span>Two surveys</a>
       </div>
     </nav>
   </aside>
@@ -104,24 +105,33 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row one">
       <div class="t" id="t7">
-        <div class="th"><span class="n">Table 7</span><span class="ti">Unemployment</span><span class="u">Percent, s.a.</span></div>
+        <div class="th"><span class="n">Table 7</span><span class="ti">Breadth of the payroll change</span><span class="u">Diffusion index, 50 = balance</span></div>
+        <p class="note">The heatmap above splits fourteen supersectors; these indexes count roughly <b>250 private industries</b>, scoring each span as the share expanding plus half the share unchanged. Above 50 more industries are adding than shedding. It answers a question the headline cannot: whether a move is broad or the work of a few sectors. July&rsquo;s reading sat <b>above 50 while total payrolls fell</b>. The <b>twelve-month span is not seasonally adjusted</b> &mdash; no adjusted version is published &mdash; so it is drawn dashed and sits on a different basis from the other three. Source: BLS, which has no revision history for these, so they carry no first-print line.</p>
+        <p class="key"><i class="k1">1-month</i><i class="k2">3-month</i><i class="k4">6-month</i><i class="k4">12-month (dashed, NSA)</i></p>
+        <div class="chart" id="cDiff" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">Unemployment</span><span class="u">Percent, s.a.</span></div>
         <p class="note">U-3 is the headline rate. U-6 adds the underemployed and those marginally attached. Both break at October 2025, when the household survey was not collected.</p>
         <p class="key"><i class="k1">U-3</i><i class="k2">U-6</i></p>
         <div class="chart" id="cUn" style="height:215px"></div>
       </div>
-      <div class="t" id="t8">
-        <div class="th"><span class="n">Table 8</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
-        <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell. Table 9 separates that fall into its two causes.</p>
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
+        <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell. Table 10 separates that fall into its two causes.</p>
         <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i><i class="k4">Prime-age emp-pop, 25&ndash;54</i></p>
         <div class="chart" id="cPart" style="height:215px"></div>
       </div>
     </div>
 
     <div class="row one">
-      <div class="t" id="t9">
-        <div class="th"><span class="n">Table 9</span><span class="ti">Why the employment ratio moved</span><span class="u">Points, change over 12 months</span></div>
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">Why the employment ratio moved</span><span class="u">Points, change over 12 months</span></div>
         <p class="note">The employment-population ratio is participation multiplied by the share of the labour force in work, so its twelve-month change separates exactly into the two. Through the 2021&ndash;22 recovery the move came mostly from unemployment falling; the decline since is almost entirely participation, which makes it demographic and behavioural rather than a sign of rising joblessness. The gap between the ink line and the two components is the interaction between them. <b>Analyst-derived.</b></p>
         <p class="key"><i class="k4">Emp-pop ratio</i><i class="k1">From participation</i><i class="k2">From unemployment</i></p>
         <div class="chart" id="cEpop" style="height:250px"></div>
@@ -129,14 +139,14 @@
     </div>
 
     <div class="row">
-      <div class="t" id="t10">
-        <div class="th"><span class="n">Table 10</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
         <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first.</p>
         <p class="key"><i class="k1">All employees</i><i class="k2">Production &amp; nonsupervisory</i></p>
         <div class="chart" id="cWage" style="height:215px"></div>
       </div>
-      <div class="t" id="t11">
-        <div class="th"><span class="n">Table 11</span><span class="ti">Average weekly hours</span><span class="u">Hours, s.a.</span></div>
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">Average weekly hours</span><span class="u">Hours, s.a.</span></div>
         <p class="note">Hours move before headcount. The whole range is half an hour and the series is published to one decimal, so the monthly line is a square wave and the three-month average carries the trend.</p>
         <p class="key"><i class="k1">3-month average</i><i class="k2">Monthly</i></p>
         <div class="chart" id="cHours" style="height:215px"></div>
@@ -144,10 +154,10 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t12">
-        <div class="th"><span class="n">Table 12</span><span class="ti">The two surveys</span><span class="u">Index, 5 years ago = 100</span></div>
-        <p class="note">The establishment survey counts jobs; the household survey counts people. When they diverge, the argument starts.</p>
-        <p class="key"><i class="k1">Establishment (CES)</i><i class="k2">Household (CPS)</i></p>
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">The two surveys</span><span class="u">Index, 5 years ago = 100</span></div>
+        <p class="note">The establishment survey counts jobs; the household survey counts people, and a second job counts once. BLS publishes a <b>research series</b> that restates household employment on the payroll survey&rsquo;s own concept &mdash; removing agriculture, the unincorporated self-employed and unpaid family workers, and netting out multiple jobholding &mdash; which is the like-for-like line to read against payrolls. All three break at October 2025, when the household survey was not collected.</p>
+        <p class="key"><i class="k1">Establishment (CES)</i><i class="k2">Household (CPS)</i><i class="k4">Household on the CES concept</i></p>
         <div class="chart" id="cTwo" style="height:230px"></div>
       </div>
     </div>
@@ -161,7 +171,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=cf61f2a075"></script>
+<script src="/assets/brb-dash.js?v=eb77760812"></script>
 <script>
 document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -186,6 +196,7 @@ BRB.render({
     { label: "Weekly hours",  series: "AWHAETP", format: "hours", source: "CES" },
   ],
   panels: [
+
 
     // Windows matter: payrolls run from 1939, and the war years plus 2020 put
     // the axis at +/-5,000k, flattening everything recent into the zero line.
@@ -216,6 +227,13 @@ BRB.render({
                   color: "ink" }] },
     { el: "cHeat", type: "heatmap", series: SECTORS, months: 24, cap: 45 },
     { el: "cSec",  type: "contribution", series: SECTORS },
+    { el: "cDiff", type: "line", format: "num", tick: 11, left: 34, window: 60,
+      hline: 50, hlineLabel: "50",
+      series: [{ id: "CES0500000021", label: "1-month", color: "pos", width: 1.2 },
+               { id: "CES0500000022", label: "3-month", color: "alt", width: 1.2 },
+               { id: "CES0500000023", label: "6-month", color: "ink", width: 1.9 },
+               { id: "CEU0500000024", label: "12-month (NSA)", color: "ink",
+                 width: 1.1, dash: true }] },
     { el: "cUn", type: "line", format: "pct", tick: 11, window: 60,
       series: [{ id: "UNRATE", label: "U-3" }, { id: "U6RATE", label: "U-6", color: "alt" }] },
     { el: "cPart", type: "line", format: "pt", tick: 11, window: 60,
@@ -239,8 +257,10 @@ BRB.render({
       series: [{ id: "AWHAETP", label: "3-month average", transform: "ma", window: 3, width: 1.8 },
                { id: "AWHAETP", label: "Monthly", color: "muted", width: 1 }] },
     { el: "cTwo", type: "line", format: "num", tick: 11, left: 42, window: 60,
-      series: [{ id: "PAYEMS", label: "Establishment", transform: "index100" },
-               { id: "CE16OV", label: "Household", transform: "index100", color: "alt" }] },
+      series: [{ id: "PAYEMS", label: "Establishment", rebase: "index", color: "pos" },
+               { id: "CE16OV", label: "Household", rebase: "index", color: "alt" },
+               { id: "LNS16000000", label: "Household, CES concept",
+                 rebase: "index", color: "ink" }] },
   ],
 });
 </script>

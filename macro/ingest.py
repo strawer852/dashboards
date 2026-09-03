@@ -29,10 +29,15 @@ from datetime import datetime, timezone
 
 import psycopg
 
+import bls
 import fred
 
 DSN = os.environ.get("MACRO_DSN", "postgresql://strawer@127.0.0.1:5432/macro")
-PROVISIONAL_SOURCE = "fred_csv"
+# Row-level provenance, distinct from the catalog's source. The FRED CSV path
+# is PROVISIONAL: the ALFRED backfill replaces those rows per series with
+# true realtime_start vintages. Nothing replaces the BLS rows, because the
+# API has no point-in-time history at all -- see CLAUDE.md trap 15.
+ROW_SOURCE = {"fred": "fred_csv", "bls": "bls_api"}
 
 UPSERT = """
 WITH incoming AS (
@@ -68,10 +73,14 @@ def main() -> int:
     with psycopg.connect(DSN, autocommit=False) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT series_id, title FROM macro_series_meta "
-                "WHERE source = 'fred' ORDER BY importance DESC, series_id"
+                "SELECT series_id, title, source FROM macro_series_meta "
+                "ORDER BY importance DESC, series_id"
             )
             catalog = cur.fetchall()
+        unknown = sorted({r[2] for r in catalog} - set(ROW_SOURCE))
+        if unknown:
+            print(f"!! catalog has unknown source(s): {unknown}", file=sys.stderr)
+            return 1
 
         if args.series:
             wanted = set(args.series)
@@ -80,17 +89,37 @@ def main() -> int:
             if missing:
                 print(f"!! not in catalog: {sorted(missing)}", file=sys.stderr)
 
+        # BLS batches: one call carries fifty series, so fetch them all up front
+        # rather than paying a round trip each.
+        bls_ids = [r[0] for r in catalog if r[2] == "bls"]
+        bls_rows: dict[str, list] = {}
+        if bls_ids:
+            try:
+                bls_rows = bls.get_observations(bls_ids)
+            except Exception as exc:                      # noqa: BLE001
+                for sid in bls_ids:
+                    failures.append((sid, f"{type(exc).__name__}: {exc}"))
+                print(f"!! BLS batch failed: {exc}", file=sys.stderr)
+
         print(f"{len(catalog)} series to load\n")
         print(f"{'series':<22} {'rows':>6} {'new':>6}  {'from':<8} {'to':<8}")
         print("-" * 56)
 
-        for sid, _title in catalog:
-            try:
-                rows = fred.get_observations_csv(sid)
-            except Exception as exc:                      # noqa: BLE001
-                failures.append((sid, f"{type(exc).__name__}: {exc}"))
-                print(f"{sid:<22} {'FAIL':>6}  {exc!s:.40}")
-                continue
+        for sid, _title, source in catalog:
+            if source == "bls":
+                rows = bls_rows.get(sid)
+                if not rows:
+                    if sid not in [f[0] for f in failures]:
+                        failures.append((sid, "BLS returned no observations"))
+                        print(f"{sid:<22} {'FAIL':>6}  no observations")
+                    continue
+            else:
+                try:
+                    rows = fred.get_observations_csv(sid)
+                except Exception as exc:                  # noqa: BLE001
+                    failures.append((sid, f"{type(exc).__name__}: {exc}"))
+                    print(f"{sid:<22} {'FAIL':>6}  {exc!s:.40}")
+                    continue
 
             fetched_total += len(rows)
             dates = [d for d, _ in rows]
@@ -102,7 +131,7 @@ def main() -> int:
                 with conn.cursor() as cur:
                     cur.execute(UPSERT, {
                         "dates": dates, "vals": vals, "sid": sid,
-                        "src": PROVISIONAL_SOURCE, "vin": vintage,
+                        "src": ROW_SOURCE[source], "vin": vintage,
                     })
                     n = cur.rowcount
                 conn.commit()

@@ -63,6 +63,11 @@
       const win = v.slice(i - w + 1, i + 1);
       return win.some(x => x == null) ? null : +(win.reduce((a, b) => a + b, 0) / w).toFixed(3);
     }),
+    // delta0 and index100 baseline on the first value of the WHOLE series, and
+    // transforms run BEFORE the trailing window. On a panel with a window --
+    // which is nearly all of them -- what you almost certainly want is the
+    // series option `rebase`, which baselines inside the window instead. Both
+    // of these have already produced a chart whose caption did not match it.
     delta0: v => { const b = v.find(x => x != null);
       return b == null ? v.map(() => null) : v.map(x => (x == null ? null : +(x - b).toFixed(3))); },
     index100: v => { const b = v.find(x => x != null);
@@ -182,8 +187,10 @@
         // when each starts the window at zero.
         if (sp.rebase) {
           const b = data.find(x => x != null);
-          data = b == null ? data
-               : data.map(x => (x == null ? null : +(x - b).toFixed(3)));
+          const idx = sp.rebase === "index";
+          data = (b == null || (idx && !b)) ? data
+               : data.map(x => (x == null ? null
+                   : +(idx ? (x / b * 100) : (x - b)).toFixed(3)));
         }
         return {
           name: sp.label || r.s.title, type: "line", data,
@@ -191,6 +198,17 @@
           lineStyle: { color: P[sp.color || ["pos", "alt", "neg"][i] || "muted"],
                        width: sp.width || 1.6, type: sp.dash ? "dashed" : "solid" },
           markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
+          // A reference level the series is read against -- 50 on a diffusion
+          // index, where more industries add than shed. Hairline and unlabelled
+          // in the plot: it is a constant, not a value.
+          markLine: (i === 0 && p.hline != null) ? {
+            silent: true, symbol: "none",
+            lineStyle: { color: P.ruleHi, width: 1, type: "dashed" },
+            label: { show: true, position: "end", color: P.muted,
+                     fontFamily: P.mono, fontSize: 9,
+                     formatter: () => p.hlineLabel || String(p.hline) },
+            data: [{ yAxis: p.hline }],
+          } : undefined,
         };
       }),
     });
