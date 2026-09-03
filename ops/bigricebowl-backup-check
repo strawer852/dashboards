@@ -19,10 +19,14 @@ notify_telegram() {
         -d chat_id="${TELEGRAM_CHAT_ID}" -d text="$1" > /dev/null
 }
 
-LATEST=$(restic snapshots --latest 1 --json 2>/dev/null \
-         | python3 -c 'import json,sys
-d=json.load(sys.stdin)
-print(d[0]["time"] if d else "")' 2>/dev/null)
+# The maximum timestamp, not an element by position: restic emits the array
+# oldest-first, and --latest did not narrow it, so reading d[0] reported the
+# age of the FIRST snapshot ever taken and would have alarmed every night.
+LATEST=$(restic snapshots --json 2>/dev/null \
+         | python3 -c 'import json,sys,datetime
+d = json.load(sys.stdin)
+print(max((datetime.datetime.fromisoformat(s["time"]) for s in d)).isoformat()
+      if d else "")' 2>/dev/null)
 
 if [ -z "$LATEST" ]; then
     echo "[${TS}] CHECK: no snapshot found, or the repository is unreachable" >> "$LOG"
