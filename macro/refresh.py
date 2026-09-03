@@ -7,7 +7,8 @@ validation pass and a re-export.
 
 Order matters and is not negotiable: validate BEFORE export. A release that
 fails its assertions must leave the previous bundles in place rather than
-publish figures that disagree with the source.
+publish figures that disagree with the source. That failure is invisible on the
+page - a stale dashboard looks entirely normal - so it is also pushed.
 
 Usage:
   refresh.py                      # every series
@@ -24,6 +25,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import httpx
 import psycopg
 
 HERE = Path(__file__).resolve().parent
@@ -31,10 +33,28 @@ ROOT = HERE.parent
 PY = str(ROOT / "venv" / "bin" / "python")
 DSN = os.environ["MACRO_DSN"]
 STATUS = ROOT / "data" / "v1" / "status.json"
+NL = "\n"
 
 
 def log(msg: str) -> None:
     print(f"{datetime.now(timezone.utc):%Y-%m-%d %H:%M:%S}Z  {msg}", flush=True)
+
+
+def notify(title: str, body: str, priority: str = "default", tags: str = "") -> None:
+    """Push an alert, if one is configured.
+
+    Alerting must never be able to break the pipeline: a push failure is logged
+    and swallowed. The refresh succeeding matters more than being told about it.
+    """
+    url = os.environ.get("NTFY_URL", "").strip()
+    if not url:
+        return
+    try:
+        httpx.post(url, content=body.encode("utf-8"), timeout=10,
+                   headers={"Title": title, "Priority": priority, "Tags": tags})
+        log(f"notified: {title}")
+    except Exception as exc:                                   # noqa: BLE001
+        log(f"notify failed ({type(exc).__name__}); continuing")
 
 
 def run(script: str, *args: str) -> tuple[int, str]:
@@ -84,7 +104,7 @@ def main() -> int:
     if STATUS.exists():
         try:
             prior = json.loads(STATUS.read_text(encoding="utf-8"))
-        except Exception:                                  # noqa: BLE001
+        except Exception:                                      # noqa: BLE001
             prior = {}
 
     status = {
@@ -96,22 +116,25 @@ def main() -> int:
         "last_change": prior.get("last_change"),
     }
 
+    def fail(stage: str, title: str, body: str, out: str, tags: str) -> int:
+        status.update(ok=False, error=stage)
+        write_status(status)
+        notify(title, body, "high", tags)
+        print(out[-3000:], file=sys.stderr)
+        return 1
+
     sids = series_for(args.releases)
     if not sids:
-        status["ok"] = False
-        status["error"] = f"no series for releases {args.releases}"
-        write_status(status)
-        log(status["error"])
-        return 1
+        return fail(f"no series for releases {args.releases}",
+                    "Dashboard refresh misconfigured",
+                    f"No catalogued series for {label}.", "", "warning")
 
     rc, out = run("ingest.py", "--series", *sids)
     tail = [l for l in out.strip().splitlines() if l.strip()][-1:]
     log(f"ingest rc={rc} {tail[0] if tail else ''}")
     if rc != 0:
-        status.update(ok=False, error="ingest failed")
-        write_status(status)
-        print(out[-2000:], file=sys.stderr)
-        return 1
+        return fail("ingest failed", "Dashboard refresh failed",
+                    f"Fetch failed ({label}).{NL}{NL}{out[-600:]}", out, "warning")
 
     changed = changed_since(started)
     status["changed"] = changed
@@ -125,38 +148,44 @@ def main() -> int:
         log(f"changed: {', '.join(changed)}")
         # ALFRED is authoritative. The rows just written carry a fetch-time
         # vintage as a placeholder; this replaces them with real realtime_start
-        # vintages for the affected series only.
+        # vintages, for the affected series only.
         rc, out = run("backfill.py", "--series", *changed)
-        log(f"backfill rc={rc} {out.strip().splitlines()[-1] if out.strip() else ''}")
+        last = out.strip().splitlines()[-1] if out.strip() else ""
+        log(f"backfill rc={rc} {last}")
         if rc != 0:
-            status.update(ok=False, error="backfill failed")
-            write_status(status)
-            print(out[-2000:], file=sys.stderr)
-            return 1
+            return fail("backfill failed", "Dashboard refresh failed",
+                        f"ALFRED backfill failed for {', '.join(changed)}."
+                        f"{NL}{NL}{out[-600:]}", out, "warning")
 
     rc, out = run("validate.py")
     passed = [l for l in out.splitlines() if "checks passed" in l]
     log(f"validate rc={rc} {passed[0].strip() if passed else ''}")
     if rc != 0:
-        # Deliberately do NOT export. The previous bundles keep serving.
-        status.update(ok=False, error="validation failed; bundles left untouched")
-        write_status(status)
-        print(out[-3000:], file=sys.stderr)
-        return 1
+        # Deliberately do NOT export. The previous bundles keep serving, so the
+        # site never shows figures that disagree with the published release.
+        fails = [l.strip() for l in out.splitlines() if l.strip().startswith("FAIL")]
+        detail = NL.join(fails[:8]) or out[-600:]
+        return fail("validation failed; bundles left untouched",
+                    "Dashboard data FAILED validation",
+                    "New data disagrees with the published release. The previous "
+                    "bundles are still serving, so the site is not showing wrong "
+                    f"numbers.{NL}{NL}{detail}", out, "rotating_light")
 
     rc, out = run("export.py")
     log(f"export rc={rc}")
     if rc != 0:
-        status.update(ok=False, error="export failed")
-        write_status(status)
-        print(out[-2000:], file=sys.stderr)
-        return 1
+        return fail("export failed", "Dashboard export failed",
+                    out[-600:], out, "warning")
     for line in out.strip().splitlines():
         if line.strip():
             log("  " + line.strip())
 
     if changed:
         status["last_change"] = status["last_run"]
+        shown = ", ".join(changed[:14]) + ("..." if len(changed) > 14 else "")
+        notify(f"New data: {label}",
+               f"{len(changed)} series updated and published.{NL}{shown}",
+               "default", "chart_with_upwards_trend")
     write_status(status)
     log("refresh done")
     return 0
