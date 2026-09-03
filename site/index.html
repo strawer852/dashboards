@@ -103,6 +103,7 @@
     </div>
 
     <div class="src">
+      <span id="health">&hellip;</span>
       <span>Source: BLS and ETA, via FRED and ALFRED</span>
       <span>Private &middot; family access only</span>
     </div>
@@ -121,6 +122,27 @@ const MFULL = ["January","February","March","April","May","June","July",
                "August","September","October","November","December"];
 const fmtDate = iso => { const d = new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso);
   return `${d.getUTCDate()} ${MN[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
+
+// Pipeline health. A refresh that fails validation deliberately leaves the old
+// bundles in place, which means a stale dashboard looks entirely normal — so the
+// failure has to be stated somewhere the eye lands.
+(async () => {
+  const el = document.getElementById("health");
+  try {
+    const r = await fetch("/data/v1/status.json", { credentials: "same-origin", cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const st = await r.json();
+    const mins = Math.round((Date.now() - new Date(st.last_run)) / 60000);
+    const ago = mins < 90 ? `${mins} min ago`
+              : mins < 2880 ? `${Math.round(mins / 60)} h ago`
+              : `${Math.round(mins / 1440)} days ago`;
+    el.innerHTML = st.ok
+      ? `Last checked ${ago}`
+      : `<span class="stale">Refresh failing: ${st.error}</span>`;
+  } catch (e) {
+    el.innerHTML = `<span class="stale">Pipeline status unavailable</span>`;
+  }
+})();
 
 // Each row shows its own release's freshness, read from that dashboard's own
 // bundle. The three releases run on different clocks, so one shared "as of"

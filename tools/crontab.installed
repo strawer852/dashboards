@@ -1,0 +1,14 @@
+15 3 * * * mkdir -p /home/strawer/backups/everos && tar -C /home/strawer/bigricebowl -czf /home/strawer/backups/everos/everos-$(date +\%F).tar.gz everos-data && find /home/strawer/backups/everos -name 'everos-*.tar.gz' -mtime +14 -delete
+# --- bigricebowl dashboards -------------------------------------------------
+# Scheduled in EASTERN time, not UTC: the releases are defined at 08:30 and
+# 10:00 ET, and a UTC schedule would drift by an hour twice a year and miss
+# the release entirely on the far side of each DST change.
+CRON_TZ=America/New_York
+# Employment Situation and Weekly Claims embargo at 08:30 ET.
+25,35,45,55 8 * * 1-5 /home/strawer/dashboards/tools/refresh.sh --releases bls.employment_situation eta.claims
+5,15,25,35,45 9 * * 1-5 /home/strawer/dashboards/tools/refresh.sh --releases bls.employment_situation eta.claims
+# JOLTS embargoes at 10:00 ET.
+55 9 * * 1-5 /home/strawer/dashboards/tools/refresh.sh --releases bls.jolts
+5,15,25,35,45 10 * * 1-5 /home/strawer/dashboards/tools/refresh.sh --releases bls.jolts
+# Catch-all: anything off-calendar, plus quarterly ECI and productivity.
+40 1 * * * /home/strawer/dashboards/tools/refresh.sh
