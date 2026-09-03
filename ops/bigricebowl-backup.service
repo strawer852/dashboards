@@ -1,0 +1,11 @@
+[Unit]
+Description=BigRiceBowl nightly backup (Postgres dumps and restic)
+Documentation=file:/usr/local/bin/bigricebowl-backup
+Wants=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bigricebowl-backup
+# The dumps are written to a mktemp directory the script removes on exit.
+TimeoutStartSec=2h

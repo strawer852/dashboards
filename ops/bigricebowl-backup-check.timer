@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the backup is still happening
+
+[Timer]
+# Late morning, so a failed 03:00 run has already happened and the alarm
+# arrives at an hour someone might read it.
+OnCalendar=*-*-* 11:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

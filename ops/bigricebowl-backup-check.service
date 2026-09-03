@@ -1,0 +1,7 @@
+[Unit]
+Description=Alarm if the newest restic snapshot is too old
+Documentation=file:/usr/local/bin/bigricebowl-backup-check
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bigricebowl-backup-check

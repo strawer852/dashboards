@@ -1,0 +1,46 @@
+#!/bin/bash
+# Alarm when the newest snapshot is too old.
+#
+# The failure that actually happened was not a backup that broke loudly, it was
+# a backup that stopped running and said nothing for two and a half months. A
+# script can only report its own failures; nothing reports its absence. This
+# does, by looking at the repository rather than at the script.
+set -uo pipefail
+
+source /etc/restic/env
+source /home/strawer/bigricebowl/.env
+
+MAX_AGE_HOURS=${MAX_AGE_HOURS:-48}
+LOG="/var/log/bigricebowl-backup.log"
+TS=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+notify_telegram() {
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" -d text="$1" > /dev/null
+}
+
+LATEST=$(restic snapshots --latest 1 --json 2>/dev/null \
+         | python3 -c 'import json,sys
+d=json.load(sys.stdin)
+print(d[0]["time"] if d else "")' 2>/dev/null)
+
+if [ -z "$LATEST" ]; then
+    echo "[${TS}] CHECK: no snapshot found, or the repository is unreachable" >> "$LOG"
+    notify_telegram "🚨 Backup check: no snapshot found, or the restic repository is unreachable."
+    exit 1
+fi
+
+AGE_H=$(python3 -c "
+import datetime, sys
+t = datetime.datetime.fromisoformat('${LATEST}')
+now = datetime.datetime.now(datetime.timezone.utc)
+print(int((now - t).total_seconds() // 3600))")
+
+if [ "$AGE_H" -gt "$MAX_AGE_HOURS" ]; then
+    echo "[${TS}] CHECK: newest snapshot is ${AGE_H}h old (limit ${MAX_AGE_HOURS}h)" >> "$LOG"
+    notify_telegram "🚨 Backup check: newest snapshot is ${AGE_H}h old (limit ${MAX_AGE_HOURS}h). The nightly backup may have stopped running."
+    exit 1
+fi
+
+echo "[${TS}] CHECK: newest snapshot ${AGE_H}h old — OK" >> "$LOG"
+exit 0

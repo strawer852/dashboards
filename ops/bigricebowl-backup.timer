@@ -1,0 +1,13 @@
+[Unit]
+Description=Run the nightly backup
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+# The box was off, or the timer was absent, and nobody noticed for ten weeks.
+# Persistent makes a missed night run at the next opportunity instead of being
+# skipped in silence.
+Persistent=true
+RandomizedDelaySec=15m
+
+[Install]
+WantedBy=timers.target

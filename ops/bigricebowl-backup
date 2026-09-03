@@ -1,0 +1,119 @@
+#!/bin/bash
+# Nightly backup: Postgres dumps, then restic.
+#
+# Revised 3 September 2026, after the original was found not to have run since
+# 18 June. Three things were wrong with it and all three are fixed here.
+#
+#   1. It dumped `investment`, a database dropped in the July teardown. The live
+#      databases are now enumerated from the server rather than named here, so
+#      adding or dropping one never silently breaks the backup again.
+#
+#   2. `fail()` exits, and the dump ran FIRST. So one broken database did not
+#      merely lose that dump, it prevented restic from running at all: every
+#      file path in the list went unbacked because of a database name. The dumps
+#      are now best-effort, restic always runs, and the script reports failure at
+#      the end. A partial backup beats none.
+#
+#   3. Its restic paths never included /home/strawer/dashboards, which holds the
+#      raw archive -- the only copy of the BLS vintages, since that API serves no
+#      point-in-time history -- and a git repo with no remote.
+#
+# Anything that stops this running silently is the real hazard, so
+# bigricebowl-backup-check runs separately and alarms on snapshot age. A failure
+# here is loud; a script that never starts is not, and that is what happened.
+
+set -uo pipefail        # NOT -e: a failed dump must not skip the file backup
+
+source /etc/restic/env                      # RESTIC_REPOSITORY, RESTIC_PASSWORD
+source /home/strawer/bigricebowl/.env       # TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+
+LOG="/var/log/bigricebowl-backup.log"
+TS=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+DUMPDIR=$(mktemp -d /tmp/bigricebowl-backup.XXXXXX)
+PROBLEMS=()
+
+trap 'rm -rf "$DUMPDIR"' EXIT
+
+log() { echo "[${TS}] $*" >> "$LOG"; }
+
+notify_telegram() {
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" -d text="$1" > /dev/null
+}
+
+log "=== Backup starting ==="
+
+# ── Step 1: dump every live database ────────────────────────────────────────
+# Enumerated, not hardcoded. Hardcoding a database name is what broke this.
+DBS=$(docker exec postgres psql -U strawer -d postgres -At \
+        -c "SELECT datname FROM pg_database
+            WHERE datistemplate = false AND datname <> 'postgres'
+            ORDER BY datname" 2>>"$LOG")
+
+if [ -z "$DBS" ]; then
+    PROBLEMS+=("could not list databases")
+    log "WARN: no databases listed; continuing to the file backup regardless"
+fi
+
+for db in $DBS; do
+    out="$DUMPDIR/${db}.dump"
+    if docker exec postgres pg_dump -U strawer --format=custom --compress=9 "$db" > "$out" 2>>"$LOG"; then
+        log "dumped ${db} ($(du -h "$out" | cut -f1))"
+    else
+        PROBLEMS+=("pg_dump failed for ${db}")
+        log "WARN: pg_dump failed for ${db}"
+        rm -f "$out"
+    fi
+done
+
+# ── Step 2: restic, which now always runs ───────────────────────────────────
+# /home/strawer/dashboards carries the raw archive and a git repo with no
+# remote. venv is excluded: it is large and pip rebuilds it from requirements.
+restic backup \
+    /data/vault \
+    /data/filings \
+    /data/transcripts \
+    /data/iip_raw \
+    /home/strawer/bigricebowl/docker-compose.yml \
+    /home/strawer/bigricebowl/.env \
+    /home/strawer/bigricebowl/litellm/config.yaml \
+    /home/strawer/bigricebowl/prometheus/prometheus.yml \
+    /home/strawer/dashboards \
+    "$DUMPDIR" \
+    --exclude /home/strawer/dashboards/venv \
+    --exclude '*.pyc' \
+    --exclude __pycache__ \
+    --tag nightly \
+    >> "$LOG" 2>&1 \
+    || PROBLEMS+=("restic backup failed")
+
+# ── Step 3: retention ───────────────────────────────────────────────────────
+# UNCHANGED from the original policy, deliberately. With --prune this step
+# is destructive, and a retention window is the owner's decision, not a
+# detail to tidy while fixing something else.
+restic forget \
+    --keep-daily 14 \
+    --keep-weekly 12 \
+    --keep-monthly 36 \
+    --prune >> "$LOG" 2>&1 \
+    || PROBLEMS+=("restic forget/prune failed")
+
+# Weekly integrity check, Sundays only - as the original did.
+if [ "$(date +%u)" = "7" ]; then
+    restic check >> "$LOG" 2>&1 || PROBLEMS+=("restic check failed")
+fi
+
+# ── Step 4: say what is actually in the repository now ──────────────────────
+# Proof in the log that a snapshot exists, rather than an absence of errors.
+restic snapshots --latest 1 >> "$LOG" 2>&1 \
+    || PROBLEMS+=("restic snapshots unreadable")
+
+if [ ${#PROBLEMS[@]} -gt 0 ]; then
+    msg="⚠️ Backup finished with problems at ${TS}: $(IFS='; '; echo "${PROBLEMS[*]}")"
+    log "FINISHED WITH PROBLEMS: ${PROBLEMS[*]}"
+    notify_telegram "$msg"
+    exit 1
+fi
+
+log "=== Backup completed successfully ==="
+exit 0
