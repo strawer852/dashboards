@@ -18,6 +18,12 @@
 #      raw archive -- the only copy of the BLS vintages, since that API serves no
 #      point-in-time history -- and a git repo with no remote.
 #
+#   4. Six of its ten paths no longer existed: /data/{vault,filings,transcripts,
+#      iip_raw}, docker-compose.yml and prometheus/prometheus.yml all went in the
+#      July teardown. restic skips a missing source with a warning and exits 0,
+#      so the run reported success while storing 7.4 MiB against June's 232 MiB.
+#      Sources are now directories, and every one is checked before restic runs.
+#
 # Anything that stops this running silently is the real hazard, so
 # bigricebowl-backup-check runs separately and alarms on snapshot age. A failure
 # here is loud; a script that never starts is not, and that is what happened.
@@ -66,26 +72,49 @@ for db in $DBS; do
     fi
 done
 
-# ── Step 2: restic, which now always runs ───────────────────────────────────
-# /home/strawer/dashboards carries the raw archive and a git repo with no
-# remote. venv is excluded: it is large and pip rebuilds it from requirements.
-restic backup \
-    /data/vault \
-    /data/filings \
-    /data/transcripts \
-    /data/iip_raw \
-    /home/strawer/bigricebowl/docker-compose.yml \
-    /home/strawer/bigricebowl/.env \
-    /home/strawer/bigricebowl/litellm/config.yaml \
-    /home/strawer/bigricebowl/prometheus/prometheus.yml \
-    /home/strawer/dashboards \
-    "$DUMPDIR" \
-    --exclude /home/strawer/dashboards/venv \
-    --exclude '*.pyc' \
-    --exclude __pycache__ \
-    --tag nightly \
-    >> "$LOG" 2>&1 \
-    || PROBLEMS+=("restic backup failed")
+# ── Step 2: the file backup, source list checked first ───────────────────
+# Directories, not individually named files. The original named /data/vault,
+# /data/filings, /data/transcripts, /data/iip_raw, docker-compose.yml and
+# prometheus/prometheus.yml -- every one of which was removed or renamed in the
+# July teardown. restic skips a missing source with a warning and still exits 0,
+# so the first run of this script reported success while storing 7.4 MiB where
+# June stored 232 MiB. The directories that hold these things did not move; the
+# files inside them did.
+#
+# Each source is checked before restic is called, so a path that disappears in
+# some future reorganisation fails the run instead of quietly shrinking it.
+# /data/postgres is deliberately absent: it is the live PGDATA, and copying it
+# from under a running server is worse than useless. The dumps are the backup.
+SOURCES=(
+    /home/strawer/bigricebowl
+    /home/strawer/dashboards
+    "$DUMPDIR"
+)
+
+PRESENT=()
+for src in "${SOURCES[@]}"; do
+    if [ -e "$src" ]; then
+        PRESENT+=("$src")
+    else
+        PROBLEMS+=("source path missing: $src")
+        log "WARN: source missing, NOT backed up: $src"
+    fi
+done
+
+if [ ${#PRESENT[@]} -eq 0 ]; then
+    PROBLEMS+=("no source paths exist; restic not run")
+    log "ERROR: no source paths exist at all"
+else
+    restic backup \
+        "${PRESENT[@]}" \
+        --exclude /home/strawer/dashboards/venv \
+        --exclude /home/strawer/bigricebowl/backups \
+        --exclude '*.pyc' \
+        --exclude __pycache__ \
+        --tag nightly \
+        >> "$LOG" 2>&1 \
+        || PROBLEMS+=("restic backup failed")
+fi
 
 # ── Step 3: retention ───────────────────────────────────────────────────────
 # UNCHANGED from the original policy, deliberately. With --prune this step
