@@ -27,6 +27,8 @@ from pathlib import Path
 import psycopg
 import yaml
 
+import derived
+
 DSN = os.environ["MACRO_DSN"]
 SPEC_DIR = Path(__file__).resolve().parent.parent / "dashboards"
 SCHEMA_VERSION = 1
@@ -166,6 +168,12 @@ def main() -> int:
                     frd = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}
                     entry["first_reported_diff"] = [frd.get(d) for d in dates]
                 series_out[sid] = entry
+
+            # Derived measures enter as ordinary series so the page renders them
+            # with the existing panel types. Anything combining two vintages or
+            # two series belongs here, never in the browser.
+            for did in derived.build(spec, series_out):
+                consumed.add(did)
 
             rel_ids = sorted({v["release"] for v in series_out.values()})
             cur.execute(

@@ -20,3 +20,38 @@ include_series:
 # matrix; it cannot be derived from first_print levels on the page.
 first_reported_change:
   - PAYEMS
+
+# Derived measures. Computed in macro/derived.py and shipped as ordinary series
+# so the page renders them with the existing panel types; see
+# FINDINGS_derived_measures.md for why each one earns its place. Every entry
+# carries derived: true and a formula string, and the page must label them.
+derived:
+  - id: PAYEMS.revision
+    kind: revision
+    of: PAYEMS
+    title: Revision to the monthly payroll change, first reported to latest
+    unit: Thousands of Persons
+    importance: 5
+  - id: PAYEMS.revision_mean
+    kind: revision_mean
+    of: PAYEMS
+    window: 12
+    title: Mean revision to the monthly payroll change, trailing 12 months
+    unit: Thousands of Persons
+    importance: 4
+  - id: PAYEMS.abs_revision_mean
+    kind: abs_revision_mean
+    of: PAYEMS
+    window: 12
+    title: Mean absolute revision, trailing 12 months
+    unit: Thousands of Persons
+    importance: 3
+  # The release states a 90% interval of +/-122,000 on the monthly change.
+  - id: PAYEMS.signif_share
+    kind: signif_share
+    of: PAYEMS
+    window: 24
+    threshold: 122
+    title: Share of the trailing 24 months distinguishable from zero at 90%
+    unit: Percent
+    importance: 4

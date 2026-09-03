@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nonfarm Payroll — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=7f12149095">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=67ba84f078">
 </head>
 <body>
 <div class="app">
@@ -35,6 +35,8 @@
         <a href="#t6"><span>6</span>Earnings</a>
         <a href="#t7"><span>7</span>Hours</a>
         <a href="#t8"><span>8</span>Two surveys</a>
+        <a href="#t9"><span>9</span>Revisions</a>
+        <a href="#t10"><span>10</span>Signal</a>
       </div>
     </nav>
   </aside>
@@ -56,7 +58,7 @@
     <div class="row one">
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Change in nonfarm payroll employment</span><span class="u">Thousands, s.a.</span></div>
-        <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month.</p>
+        <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month. The paper band is the release’s own 90% sampling interval of ±122,000 — a bar inside it cannot be distinguished from no change at all.</p>
         <p class="key"><i class="k1">Monthly change</i><i class="k2">As first reported</i></p>
         <div class="chart" id="cPay" style="height:250px"></div>
       </div>
@@ -71,8 +73,8 @@
       </div>
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
-        <p class="note">Shown as change rather than level: at roughly 61, 59 and 63 percent these sit too far apart to share an axis, and their <b>movement</b> is the point.</p>
-        <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i></p>
+        <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell.</p>
+        <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i><i class="k4">Prime-age emp-pop, 25&ndash;54</i></p>
         <div class="chart" id="cPart" style="height:215px"></div>
       </div>
     </div>
@@ -116,6 +118,20 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Revision to the monthly change</span><span class="u">Thousands, first reported to latest</span></div>
+        <p class="note">How far each month moved after it was first published. Bars are the revision itself, the ink line its trailing twelve-month mean &mdash; the bias, rather than any single month's surprise. First-to-latest includes the annual benchmark, so it runs well above the first-to-final figure usually quoted. The newest two months are preliminary and barely revised yet. <b>Analyst-derived</b> from the vintage history.</p>
+        <p class="key"><i class="k4">12-month mean revision</i></p>
+        <div class="chart" id="cRev" style="height:215px"></div>
+      </div>
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">Months distinguishable from zero</span><span class="u">Percent of the trailing 24 months</span></div>
+        <p class="note">The release states a 90% confidence interval of &plusmn;122,000 on the monthly change. This is the share of the last twenty-four months whose published change exceeded it &mdash; how often the headline is large enough to mean anything at all. Roughly <b>70%</b> of months since 1990 clear that bar. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cSig" style="height:215px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: BLS Employment Situation, via FRED / ALFRED</span>
@@ -125,7 +141,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=3b66abbcd4"></script>
+<script src="/assets/brb-dash.js?v=c6f4fcb03b"></script>
 <script>
 document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -154,12 +170,17 @@ BRB.render({
     // the axis at +/-5,000k, flattening everything recent into the zero line.
     { el: "cPay", type: "bars", series: { id: "PAYEMS", transform: "diff" },
       window: 36, average: 3, first_reported: true,
+      // The release's own 90% interval on the monthly change. Paper-toned and
+      // behind the bars: it bounds what the figure supports, it is not a value.
+      band: { value: 122, label: "\u00b1122k \u00b7 90% interval" },
       format: "signed", axisFormat: "k", tick: 3, label: "Change" },
     { el: "cUn", type: "line", format: "pct", tick: 11, window: 60,
       series: [{ id: "UNRATE", label: "U-3" }, { id: "U6RATE", label: "U-6", color: "alt" }] },
     { el: "cPart", type: "line", format: "pt", tick: 11, window: 60,
-      series: [{ id: "CIVPART", label: "Participation", transform: "delta0" },
-               { id: "EMRATIO", label: "Emp-pop", transform: "delta0", color: "alt" }] },
+      series: [{ id: "CIVPART", label: "Participation", rebase: true },
+               { id: "EMRATIO", label: "Emp-pop", rebase: true, color: "alt" },
+               { id: "LNS12300060", label: "Prime-age emp-pop", rebase: true,
+                 color: "ink" }] },
     { el: "cHeat", type: "heatmap", series: SECTORS, months: 24, cap: 45 },
     { el: "cSec",  type: "contribution", series: SECTORS },
     { el: "cWage", type: "line", format: "pct2", tick: 11, window: 60,
@@ -171,6 +192,17 @@ BRB.render({
     { el: "cTwo", type: "line", format: "num", tick: 11, left: 42, window: 60,
       series: [{ id: "PAYEMS", label: "Establishment", transform: "index100" },
                { id: "CE16OV", label: "Household", transform: "index100", color: "alt" }] },
+    // Revisions and signal. Both series are derived in macro/derived.py rather
+    // than recomputed here, so the chart and the figures quoted in the notes
+    // cannot drift apart.
+    { el: "cRev", type: "bars", series: { id: "PAYEMS.revision" },
+      // 36 months, matching Table 1 so the two read together. At 60 the 2021
+      // benchmark revisions reach 470k and flatten everything since.
+      window: 36, format: "signed", axisFormat: "k", tick: 5, label: "Revision",
+      overlay: [{ id: "PAYEMS.revision_mean", label: "12-month mean", color: "ink" }] },
+    { el: "cSig", type: "line", format: "pct", tick: 23, left: 40, window: 240,
+      series: [{ id: "PAYEMS.signif_share", label: "Distinguishable from zero",
+                  color: "ink" }] },
   ],
 });
 </script>

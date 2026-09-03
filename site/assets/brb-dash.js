@@ -114,6 +114,7 @@
       panel: g("--panel"), ink: g("--ink"), ink2: g("--ink-2"), muted: g("--muted"),
       rule: g("--rule"), ruleHi: g("--rule-hi"), grid: g("--grid"),
       pos: g("--pos"), neg: g("--neg"), alt: g("--alt"), cursor: g("--cursor"),
+      band: g("--band"),
       mono: g("--mono").replace(/["']/g, "") + ", ui-monospace, monospace",
       hm: [g("--hm-3"), g("--hm-1"), g("--hm-0"), g("--hm1"), g("--hm3")],
     };
@@ -171,7 +172,17 @@
         // share a frequency and end on the same date. It breaks outright when a
         // panel mixes weekly claims with monthly payrolls, and would quietly
         // plot monthly values against weekly dates.
-        const data = tail(alignAsOf(cats, r.cats, r.values), p.window);
+        let data = tail(alignAsOf(cats, r.cats, r.values), p.window);
+        // Rebase AFTER the window. `delta0` subtracts the first value of the
+        // whole series, which for a 1948 series is not the change this panel
+        // claims to show. Series far apart in level -- participation 61,
+        // employment-population 59, prime-age 80 -- only become comparable
+        // when each starts the window at zero.
+        if (sp.rebase) {
+          const b = data.find(x => x != null);
+          data = b == null ? data
+               : data.map(x => (x == null ? null : +(x - b).toFixed(3)));
+        }
         return {
           name: sp.label || r.s.title, type: "line", data,
           connectNulls: !!sp.connect, symbol: "none", yAxisIndex: sp.axis || 0,
@@ -208,6 +219,20 @@
       console.warn("panel asked for first_reported but the bundle has no "
                    + "first_reported_diff for " + p.series.id);
     }
+    // Overlay lines from other series in the bundle, aligned BY DATE onto the
+    // bars' own axis. Used for a rolling mean that is itself a named derived
+    // series, so the chart and any printed figure read the same definition.
+    (p.overlay || []).forEach((sp, i) => {
+      const r = resolve(ctx, sp);
+      extra.push({
+        name: sp.label || r.s.title, type: "line", symbol: "none",
+        data: tail(alignAsOf(cats, r.cats, r.values), p.window),
+        connectNulls: !!sp.connect,
+        lineStyle: { color: P[sp.color || ["ink", "alt", "muted"][i] || "muted"],
+                     width: sp.width || 1.4, type: sp.dash ? "dashed" : "solid" },
+        z: 5,
+      });
+    });
     mount(el, Object.assign(base(P), {
       grid: { left: p.left || 46, right: 14, top: 14, bottom: 26 },
       tooltip: Object.assign(base(P).tooltip, {
@@ -228,6 +253,16 @@
       series: [{
         name: p.label || "Change", type: "bar", data: vals, barMaxWidth: p.width || 13,
         itemStyle: { color: pr => (vals[pr.dataIndex] < 0 ? P.neg : P.pos) },
+        // A symmetric band for a published sampling interval. Paper-toned and
+        // behind everything: it bounds what the figure can support and is not
+        // itself a value, so it must never read as a series.
+        markArea: p.band ? {
+          silent: true, itemStyle: { color: P.band },
+          data: [[{ yAxis: -p.band.value }, { yAxis: p.band.value }]],
+          // No label: inside the plot it sits behind the bars and cannot be
+          // read. The panel's note carries the interval instead.
+          label: { show: false },
+        } : undefined,
         // The cursor is ink and marks the latest period. It never encodes a
         // value, so it cannot be confused with the terracotta of a loss.
         markLine: {

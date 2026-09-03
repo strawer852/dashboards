@@ -8,6 +8,7 @@
   --rule:#dddcd5; --rule-hi:#c5c4ba; --grid:#e8e7e0;
   --pos:#35566b; --neg:#8c2f27; --alt:#8a7b4f; --cursor:#14161a;
   --hm-3:#8c2f27; --hm-1:#e0bdb8; --hm-0:#f2f1ec; --hm1:#b4c3ce; --hm3:#2c4b60;
+  --band:#ebeae2;
   --serif:"Source Serif 4"; --sans:"Archivo"; --mono:"JetBrains Mono";
 }
 
@@ -155,6 +156,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .key i { font-style: normal; display: inline-flex; align-items: center; gap: 5px; }
 .key i::before { content: ""; width: 13px; height: 2px; background: currentColor; display: block; }
 .key .k1 { color: var(--pos); } .key .k2 { color: var(--alt); } .key .k3 { color: var(--neg); }
+.key .k4 { color: var(--ink); }
 .chart { width: 100%; }
 .panel-error {
   font-family: var(--mono), monospace; font-size: 11px; color: var(--neg);
