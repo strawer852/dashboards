@@ -8,37 +8,43 @@ Usage:  venv/bin/python validate.py
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
+from datetime import date, timedelta
+from pathlib import Path
 
 import psycopg
 
 DSN = os.environ["MACRO_DSN"]
 
-# (series, observation, expected, note) — from USDL-26-1291 and USDL-26-1432.
+# Every published figure below is asserted AS OF a vintage, never against the
+# current one. A revision then cannot break it: what the July 2026 release said
+# is a permanent fact, and a test pinned to it needs no maintenance. Tests that
+# must hold for TODAY's data -- the shutdown gap, the supersector sum, and the
+# invariants at the bottom -- deliberately read the current vintage instead.
+ES = "2026-08-07"   # Employment Situation, July 2026 (USDL-26-1291)
+JT = "2026-09-01"   # JOLTS, July 2026 (USDL-26-1432)
+BL = "2026-09-03"   # BLS-API series: no vintage history, so ingestion is all
+                    # there is. Pinning still freezes the value we first saw.
+
+# (series, observation, as-of vintage, expected, note) — USDL-26-1291 / -26-1432.
 LEVELS = [
-    ("UNRATE",        "2026-07-01",   4.1,   "unemployment rate"),
-    ("CIVPART",       "2026-07-01",  61.4,   "participation rate"),
-    ("EMRATIO",       "2026-07-01",  58.9,   "employment-population ratio"),
-    ("CES0500000003", "2026-07-01",  37.62,  "avg hourly earnings, all employees"),
-    ("AHETPI",        "2026-07-01",  32.40,  "avg hourly earnings, prod & nonsup"),
-    ("AWHAETP",       "2026-07-01",  34.3,   "average weekly hours"),
-    ("U6RATE",        "2026-07-01",   7.9,   "U-6"),
-    ("JTSJOL",        "2026-07-01", 7271.0,  "job openings (7.3m)"),
+    ("UNRATE",        "2026-07-01", ES,   4.1,   "unemployment rate"),
+    ("CIVPART",       "2026-07-01", ES,  61.4,   "participation rate"),
+    ("EMRATIO",       "2026-07-01", ES,  58.9,   "employment-population ratio"),
+    ("CES0500000003", "2026-07-01", ES,  37.62,  "avg hourly earnings, all employees"),
+    ("AHETPI",        "2026-07-01", ES,  32.40,  "avg hourly earnings, prod & nonsup"),
+    ("AWHAETP",       "2026-07-01", ES,  34.3,   "average weekly hours"),
+    ("U6RATE",        "2026-07-01", ES,   7.9,   "U-6"),
+    ("JTSJOL",        "2026-07-01", JT, 7271.0,  "job openings (7.3m)"),
     # BLS-sourced. 1-, 3- and 6-month spans are seasonally adjusted; the
     # 12-month span exists only unadjusted, which is why it is a CEU id.
-    ("CES0500000021", "2026-07-01",   51.8,   "diffusion, 1-month span"),
-    ("CES0500000022", "2026-07-01",   50.8,   "diffusion, 3-month span"),
-    ("CES0500000023", "2026-07-01",   55.0,   "diffusion, 6-month span"),
-    ("CEU0500000024", "2026-07-01",   51.8,   "diffusion, 12-month span, NSA"),
-    ("LNS16000000",   "2026-07-01", 156497.0, "CPS employment on the CES concept"),
-]
-
-# Month-on-month changes the release states explicitly.
-CHANGES = [
-    ("PAYEMS", "2026-06-01", "2026-07-01", -23.0, "July payroll change"),
-    ("PAYEMS", "2026-05-01", "2026-06-01",  20.0, "June, as revised"),
-    ("PAYEMS", "2026-04-01", "2026-05-01",  63.0, "May, as revised"),
+    ("CES0500000021", "2026-07-01", BL,   51.8,   "diffusion, 1-month span"),
+    ("CES0500000022", "2026-07-01", BL,   50.8,   "diffusion, 3-month span"),
+    ("CES0500000023", "2026-07-01", BL,   55.0,   "diffusion, 6-month span"),
+    ("CEU0500000024", "2026-07-01", BL,   51.8,   "diffusion, 12-month span, NSA"),
+    ("LNS16000000",   "2026-07-01", BL, 156497.0, "CPS employment on the CES concept"),
 ]
 
 # The shutdown gap is household-survey only: CPS series are genuinely empty for
@@ -70,18 +76,34 @@ CHANGE_AS_OF = [
 CHANGE_SQL = """
 SELECT (SELECT o.value FROM macro_observations o
          WHERE o.series_id=%(sid)s AND o.observation_dt=%(m)s
-           AND o.vintage_dt <= %(asof)s ORDER BY o.vintage_dt DESC LIMIT 1)
+           AND o.vintage_dt::date <= %(asof)s::date ORDER BY o.vintage_dt DESC LIMIT 1)
      - (SELECT o.value FROM macro_observations o
          WHERE o.series_id=%(sid)s
            AND o.observation_dt=(%(m)s::date - interval '1 month')::date
-           AND o.vintage_dt <= %(asof)s ORDER BY o.vintage_dt DESC LIMIT 1)
+           AND o.vintage_dt::date <= %(asof)s::date ORDER BY o.vintage_dt DESC LIMIT 1)
 """
 
 
 def val(cur, sid, obs):
+    """Latest vintage. For invariants that must hold for TODAY's data."""
     cur.execute(
         "SELECT value FROM macro_observations_current "
         "WHERE series_id=%s AND observation_dt=%s", (sid, obs))
+    row = cur.fetchone()
+    return (None, False) if row is None else (row[0], True)
+
+
+def val_asof(cur, sid, obs, asof):
+    """The value as it stood on a given date — what a release actually said.
+
+    Immune to every later revision, which is the point: an acceptance test that
+    changes meaning when the data is revised is not an acceptance test.
+    """
+    cur.execute(
+        "SELECT value FROM macro_observations WHERE series_id=%s AND observation_dt=%s "
+        "AND vintage_dt::date <= %s::date AND value IS NOT NULL "
+        "ORDER BY vintage_dt DESC LIMIT 1",
+        (sid, obs, asof))
     row = cur.fetchone()
     return (None, False) if row is None else (row[0], True)
 
@@ -91,25 +113,15 @@ def main() -> int:
     checks = 0
 
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
-        print("=== published levels ===")
-        for sid, obs, want, note in LEVELS:
-            got, present = val(cur, sid, obs)
+        print("=== published levels, as of the release that stated them ===")
+        for sid, obs, asof, want, note in LEVELS:
+            got, present = val_asof(cur, sid, obs, asof)
             checks += 1
             ok = present and got is not None and abs(float(got) - want) < 1e-9
-            print(f"  {'OK ' if ok else 'FAIL'}  {sid:<16} {obs}  got {got}  want {want}   {note}")
+            print(f"  {'OK ' if ok else 'FAIL'}  {sid:<16} {obs} @{asof}  got {got}  "
+                  f"want {want}   {note}")
             if not ok:
-                fails.append(f"{sid} {obs}: got {got}, want {want}")
-
-        print("\n=== stated month-on-month changes ===")
-        for sid, a, b, want, note in CHANGES:
-            va, _ = val(cur, sid, a)
-            vb, _ = val(cur, sid, b)
-            checks += 1
-            got = None if va is None or vb is None else float(vb) - float(va)
-            ok = got is not None and abs(got - want) < 1e-6
-            print(f"  {'OK ' if ok else 'FAIL'}  {sid:<16} {b}  got {got}  want {want}   {note}")
-            if not ok:
-                fails.append(f"{sid} change to {b}: got {got}, want {want}")
+                fails.append(f"{sid} {obs} as of {asof}: got {got}, want {want}")
 
         print("\n=== October 2025 shutdown gap ===")
         for sid, obs, want_null, note in NULLS:
@@ -159,6 +171,95 @@ def main() -> int:
               f"worst residual {worst}k  (expect <1k)")
         if not ok:
             fails.append(f"supersector decomposition: {months} months, worst residual {worst}")
+
+        print("\n=== order-of-magnitude sanity on the newest value ===")
+        # Calibrated to catch a UNITS change, not an economic shock. JOLTS
+        # levels arrive in thousands and weekly claims in persons (CLAUDE.md
+        # trap 7); a source switching silently is a factor of 1000. Initial
+        # claims went from 200k to 6.9m in a fortnight in 2020, so a bound tight
+        # enough to flag that would have frozen the dashboards in the most
+        # important week the series ever had.
+        cur.execute("""
+            WITH cur AS (
+              SELECT DISTINCT ON (series_id, observation_dt)
+                     series_id, observation_dt, value
+              FROM macro_observations WHERE value IS NOT NULL
+              ORDER BY series_id, observation_dt, vintage_dt DESC),
+            latest AS (
+              SELECT DISTINCT ON (series_id) series_id, observation_dt, value
+              FROM cur ORDER BY series_id, observation_dt DESC),
+            hist AS (
+              SELECT c.series_id,
+                     min(abs(c.value)) FILTER (WHERE c.value <> 0) AS lo,
+                     max(abs(c.value)) AS hi
+              FROM cur c JOIN latest l USING (series_id)
+              WHERE c.observation_dt < l.observation_dt
+              GROUP BY 1)
+            SELECT l.series_id, l.observation_dt, l.value, h.lo, h.hi
+            FROM latest l JOIN hist h USING (series_id)
+            WHERE abs(l.value) > h.hi * 10
+               OR (l.value <> 0 AND h.lo IS NOT NULL AND abs(l.value) < h.lo / 10)
+            ORDER BY 1""")
+        odd = cur.fetchall()
+        checks += 1
+        print(f"  {'OK ' if not odd else 'FAIL'}  every newest value within 10x of its "
+              f"own history ({len(odd)} outside)")
+        for sid, obs, v, lo, hi in odd:
+            print(f"        {sid} {obs} = {v}, history {lo} .. {hi}")
+            fails.append(f"{sid} {obs}={v} is outside 10x of its history ({lo}..{hi})")
+
+        print("\n=== no series lost observations against the shipped bundle ===")
+        # The exporter writes the bundles the site serves. If the database now
+        # holds fewer observations than the bundle already on disk, a fetch
+        # dropped history and the export must not overwrite good data with it.
+        cur.execute("""
+            SELECT series_id, count(*) FROM (
+              SELECT DISTINCT ON (series_id, observation_dt) series_id, value
+              FROM macro_observations ORDER BY series_id, observation_dt, vintage_dt DESC) t
+            WHERE value IS NOT NULL GROUP BY 1""")
+        db_counts = dict(cur.fetchall())
+        bundles = Path(__file__).resolve().parent.parent / "data" / "v1" / "dashboards"
+        lost, compared = [], 0
+        for path in sorted(bundles.glob("*.json")):
+            for sid, e in json.loads(path.read_text(encoding="utf-8"))["series"].items():
+                if e.get("derived") or sid not in db_counts:
+                    continue
+                shipped = sum(1 for v in e["values"] if v is not None)
+                compared += 1
+                if db_counts[sid] < shipped:
+                    lost.append((sid, db_counts[sid], shipped))
+        checks += 1
+        print(f"  {'OK ' if not lost else 'FAIL'}  {compared} series compared against the "
+              f"bundles on disk ({len(lost)} shrank)")
+        for sid, now, was in sorted(set(lost)):
+            print(f"        {sid}: database has {now}, bundle already has {was}")
+            fails.append(f"{sid} lost observations: {now} < {was} already shipped")
+
+        print("\n=== freshness, by release ===")
+        # Measured from the last vintage, not the last observation date: a
+        # quarterly series whose newest observation is April is not stale in
+        # September if it was published in July. This warns rather than fails
+        # unless the delay is absurd — a genuine publication delay is not a
+        # data-integrity problem, and failing would freeze the site over it.
+        CADENCE_DAYS = {"weekly": 14, "monthly": 45, "quarterly": 130}
+        cur.execute("""
+            SELECT r.release_id, r.cadence, max(o.vintage_dt)::date, max(o.observation_dt)
+            FROM macro_releases r
+            JOIN macro_series_meta m ON m.release_id = r.release_id
+            JOIN macro_observations o ON o.series_id = m.series_id
+            GROUP BY 1,2 ORDER BY 1""")
+        today = date.today()
+        for rid, cadence, last_vin, last_obs in cur.fetchall():
+            limit = CADENCE_DAYS.get(cadence, 45)
+            age = (today - last_vin).days
+            checks += 1
+            if age > limit * 3:
+                print(f"  FAIL  {rid:<28} last new data {age}d ago (limit {limit}d)")
+                fails.append(f"{rid} has had no new data for {age} days")
+            else:
+                flag = "OK " if age <= limit else "warn"
+                print(f"  {flag}  {rid:<28} last new data {age:>3}d ago, newest "
+                      f"observation {last_obs}  (expect within {limit}d)")
 
         print("\n=== structural ===")
         cur.execute("""

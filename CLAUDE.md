@@ -180,6 +180,26 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     tracker down to quarter ends, discarding two readings in three. Monthly
     first; coarser series then forward-fill onto it as the steps they are.
 
+18. **An acceptance test that reads the CURRENT vintage asserts figures the next
+    release is supposed to change.** `validate.py` pinned July 2026's payroll
+    change at −23,000 and average hourly earnings at $37.62, read from
+    `macro_observations_current`. The establishment survey revises the two prior
+    months, so the 4 September release would have failed those checks — and a
+    validation failure deliberately skips the export, so the dashboards would
+    have frozen and ntfy fired over data that was perfectly correct. May's
+    hourly earnings already read 37.53 → 37.51 → 37.49 across three vintages.
+    **Every published figure is now asserted AS OF the vintage that published
+    it** (`val_asof`, `vintage_dt::date <= asof`), which is permanently true and
+    needs no maintenance at a release. Note the cast: ALFRED vintages are stored
+    at midnight but a fetch-date vintage carries a time of day, so a bare
+    `<= '2026-09-03'` excludes the very day it landed.
+
+    That leaves nothing checking data published this morning, so three
+    invariants do instead: order-of-magnitude sanity on the newest value (tuned
+    to catch a units change, not an economic shock — see trap 7), no series
+    losing observations against the bundle already on disk, and freshness
+    measured from the last *vintage* rather than the last observation date.
+
 ## How it runs
 
 ```
