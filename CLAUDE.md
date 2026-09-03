@@ -32,6 +32,8 @@ no local build step.
 | `tools/refresh.sh` | Cron entry point; loads `.env`, rotates the log |
 | `tools/stamp_assets.py` | Content-hashes asset URLs. **Run after any asset change** |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
+| `FINDINGS_derived_measures.md` | Which derived measures were tested and what the numbers were. **Read before adding a derived panel** |
+| `tools/research/` | Read-only exploratory helpers behind those findings |
 
 Config that lives outside this repo: `~/bigricebowl/dashboards/` (Authelia config,
 nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
@@ -122,6 +124,23 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
 13. **DOM probes are not looking.** "5 charts, no errors" was reported while the
     Beveridge curve rendered nothing — the chart object existed and had drawn
     its axes; only the series was missing. Screenshot or open the page.
+
+14. **The January labour force figure is a level break, not a flow.** BLS applies
+    new population controls each January and does **not** revise prior months, so
+    January 2026 shows the civilian labour force falling 1,030k when the flow was
+    nothing of the kind. A twelve-month change spanning January mixes the break
+    into the flow and reads -110k/month where the post-control window shows
+    -228k/month. Anything computed from `CLF16OV` or `CNP16OV` — breakeven payroll
+    growth above all — must either exclude January or use the
+    population-control-smoothed research series at
+    <https://www.bls.gov/cps/smoothed_emp.xlsx>.
+
+15. **A series on the BLS API has no vintage history.** ALFRED is the only free
+    source of vintages. BLS-only series (diffusion indexes, `LNS16000000`, real
+    earnings, SA marginal attachment) can only accumulate vintages from the day
+    ingestion starts, so `vintage_mode` must record that and the page must never
+    offer a revision overlay on them. `ingest.py` selects `WHERE source='fred'`;
+    that has to become a dispatch before any non-FRED series is added.
 
 ## How it runs
 
