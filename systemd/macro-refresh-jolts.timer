@@ -1,0 +1,10 @@
+[Unit]
+Description=JOLTS poll, 10:00 ET embargo
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 10:05/10:00 America/New_York
+Persistent=true
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

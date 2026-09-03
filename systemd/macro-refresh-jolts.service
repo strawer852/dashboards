@@ -1,0 +1,7 @@
+[Unit]
+Description=Ingest the JOLTS release
+Documentation=file:/home/strawer/dashboards/CLAUDE.md
+
+[Service]
+Type=oneshot
+ExecStart=%h/dashboards/tools/refresh.sh --releases bls.jolts

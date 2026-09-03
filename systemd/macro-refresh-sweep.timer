@@ -1,0 +1,14 @@
+[Unit]
+Description=Daily catch-all sweep, and the quarterly releases
+
+[Timer]
+# Catches anything published off-calendar, plus the quarterly ECI and
+# productivity releases that have no polling window of their own.
+OnCalendar=*-*-* 01:40:00 America/New_York
+Persistent=true
+# Nothing is waiting on this one, and a fixed second every night is a needless
+# thundering herd against FRED.
+RandomizedDelaySec=5m
+
+[Install]
+WantedBy=timers.target

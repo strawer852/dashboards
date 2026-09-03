@@ -31,8 +31,10 @@ no local build step.
 | `dashboards/*.yml` | One spec per dashboard — the only per-dashboard data file |
 | `site/assets/brb-dash.js` | The shared rendering engine |
 | `site/us/employment/*/index.html` | Pages. Each is a panel list, nothing more |
-| `tools/refresh.sh` | Cron entry point; loads `.env`, rotates the log |
+| `tools/refresh.sh` | Timer entry point; loads `.env`, rotates the log |
 | `tools/stamp_assets.py` | Content-hashes asset URLs. **Run after any asset change** |
+| `systemd/` | The refresh timers. Wall-clock ET, `Persistent=true` |
+| `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
 | `FINDINGS_derived_measures.md` | Which derived measures were tested and what the numbers were. **Read before adding a derived panel** |
@@ -120,9 +122,22 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
 11. **`effectScatter` draws nothing** under the SVG renderer with animation
     disabled. Use plain `scatter`.
 
-12. **Cron is scheduled in `America/New_York`, not UTC.** The embargoes are
-    08:30 and 10:00 ET; a UTC schedule drifts an hour at each DST change and
-    misses the release entirely on the far side of one.
+12. **`CRON_TZ` does nothing on this box, and the schedule silently ran five
+    hours early for it.** The embargoes are 08:30 and 10:00 ET, so the crontab
+    carried `CRON_TZ=America/New_York`. Ubuntu's cron 3.0pl1 does not implement
+    it — the string is not in the binary, and `crontab(5)` states the daemon
+    runs with one configured timezone, does not support per-user timezones, and
+    that a `TZ` in the file "will affect only the commands executed in the
+    crontab, not the execution of the crontab tasks themselves". Every job
+    therefore ran in `Europe/London`: the 08:25–09:45 windows fired at
+    **03:25–04:45 ET**, five hours *before* the release, in summer and winter
+    alike. Nothing errored, nothing alerted, and no scheduled run had ever
+    happened after a release — the data only ever arrived via the next daily
+    sweep, half a day late. **Scheduling is now systemd user timers**
+    (`~/dashboards/systemd/`, installed by `tools/install-timers.sh`), which take
+    the timezone in `OnCalendar` and were verified with
+    `systemd-analyze calendar`. Verify a schedule against the wall clock it is
+    meant to track; do not assume a timezone directive is implemented.
 
 13. **DOM probes are not looking.** "5 charts, no errors" was reported while the
     Beveridge curve rendered nothing — the chart object existed and had drawn
@@ -180,8 +195,14 @@ previous bundles keep serving rather than publishing figures that disagree with
 the source. That failure is invisible on the page, so it also writes
 `status.json` (the index reads it) and pushes an ntfy alert.
 
-Cron windows: 08:25–09:45 ET for Employment Situation and Claims, 09:55–10:45 ET
-for JOLTS, plus a 01:40 ET full sweep.
+Windows, as **systemd user timers** in `America/New_York`: 08:35–09:55 ET for
+Employment Situation and Claims, 10:05–10:55 ET for JOLTS, and a 01:40 ET full
+sweep. All three carry `Persistent=true`, so a window missed while the machine
+or the user manager was down runs once on start-up — which cron could not do.
+
+User units, so they need lingering (`loginctl enable-linger`, already on);
+without it the user manager exits at logout and nothing fires. Inspect with
+`systemctl --user list-timers 'macro-refresh-*'`.
 
 ## Commands
 
@@ -221,7 +242,10 @@ validate *inside* the container and `caddy reload`, never restart.
   the engine generalises beyond employment.
 - Alerting is ntfy.sh (public relay). **William prefers to self-host** — swap
   `NTFY_URL` for an own instance behind Caddy when convenient.
-- Cron cannot catch up a missed run. The retired stack used **systemd timers**
+- ~~Cron cannot catch up a missed run.~~ **Done 3 Sept 2026** — timers with
+  `Persistent=true`, after the cron was found to be firing five hours early.
+  Catalog-driven scheduling (`pub_lag_days`, `staleness_mode`) is still open.
+  The retired stack used **systemd timers**
   (`Persistent=true`, `RandomizedDelaySec`) for exactly this reason; move to
   timers with catalog-driven scheduling (`pub_lag_days`, `staleness_mode` are
   already in `macro_series_meta`) when the second country arrives.

@@ -1,0 +1,7 @@
+[Unit]
+Description=Full macro refresh sweep, every catalogued release
+Documentation=file:/home/strawer/dashboards/CLAUDE.md
+
+[Service]
+Type=oneshot
+ExecStart=%h/dashboards/tools/refresh.sh
