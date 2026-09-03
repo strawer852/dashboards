@@ -24,6 +24,7 @@ no local build step.
 | `macro/backfill.py` | Full ALFRED vintage history |
 | `macro/add_series.py` | Add series, metadata read from FRED rather than typed |
 | `macro/validate.py` | Asserts the data reproduces the published releases |
+| `macro/archive.py` | Tier 2: every source response, gzipped and deduplicated |
 | `macro/bls.py` | BLS API v2 client. Second source; **no vintage history** |
 | `macro/derived.py` | Derived measures, shipped as ordinary series |
 | `macro/export.py` | Bundles → `data/v1/dashboards/*.json` |
@@ -37,6 +38,7 @@ no local build step.
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
+| `archive/` | The raw archive. Gitignored, and **the only copy of the BLS vintages** |
 | `FINDINGS_derived_measures.md` | Which derived measures were tested and what the numbers were. **Read before adding a derived panel** |
 | `tools/research/` | Read-only exploratory helpers behind those findings |
 
@@ -247,6 +249,29 @@ docker compose -f docker-compose.core.yml -f docker-compose.essays.yml \
                -f docker-compose.dashboards.yml ps
 ```
 
+## The raw archive
+
+`macro/archive.py`, written at the client layer so every caller gets it without
+knowing. FRED and ALFRED will re-serve anything, but **the BLS API has no
+point-in-time history at all** — 2,735 vintage rows across seven series existed
+only as rows in Postgres, and nothing upstream could return them. The claim that
+the database is rebuildable and therefore disposable was false from the day the
+BLS adapter landed until this was built.
+
+- **Content-addressed and deduplicated.** The daily sweep re-fetches every series
+  whether it changed or not. A blob is named by a hash of its data and written
+  once; the append-only `manifest.ndjson` records every fetch either way. The
+  whole catalogue is 856 KB across 81 blobs.
+- **BLS stamps every reply with `responseTime` in milliseconds**, so raw-byte
+  addressing deduplicated nothing — 15 fetches, 14 blobs. Blobs from BLS are
+  addressed by the response minus that field; the manifest still records the
+  exact byte hash of every fetch.
+- **`archive.py --verify` reassembles a series from the blobs and compares it
+  with the database.** An archive nobody has read back is a hope, not a backup.
+  It handles the BLS batch responses too, which is where it matters most.
+- A write failure **raises**. Losing the archive silently puts the system back
+  to the database being the only copy, without anyone knowing.
+
 ## Guardrails
 
 Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
@@ -256,6 +281,16 @@ single-file bind mount, so **append in place** (`>>`) to preserve the inode, the
 validate *inside* the container and `caddy reload`, never restart.
 
 ## State as of 3 September 2026
+
+> **NOTHING ON THIS MACHINE IS BEING BACKED UP.** `/usr/local/bin/bigricebowl-backup`
+> last wrote its log on **18 June 2026**; no systemd timer, `/etc/cron.d` entry or
+> `/etc/cron*` file references it any more. If it were re-enabled today it would
+> fail on its first step, `pg_dump ... investment` — that database was dropped in
+> the July teardown and no longer exists, and `fail()` exits before restic runs.
+> Its restic paths never included `~/dashboards`, and this repo has **no git
+> remote**, so the code, the archive and the `macro` database all live on one
+> disk. Fixing it needs root and is outside this repo; it is the most important
+> open item here regardless.
 
 - 53 series, 6 releases, ~231,000 vintage rows, 24/24 validations passing.
 - Three dashboards live; CPI is the next to build and the real test of whether

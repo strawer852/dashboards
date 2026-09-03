@@ -18,12 +18,14 @@ Three pull modes:
 from __future__ import annotations
 
 import csv
+import json
 import io
 import logging
 import os
 from datetime import date, datetime, timezone
 
 import httpx
+import archive
 from tenacity import (
     Retrying,
     retry_if_exception_type,
@@ -95,6 +97,10 @@ def get_observations_csv(series_id: str) -> list[tuple[date, float | None]]:
                     )
                 text = r.text
 
+    # Tier 2: the bytes as they arrived, before anything parses them. Content
+    # addressed, so the daily re-fetch of an unchanged series costs nothing.
+    archive.store("fred_csv", series_id, text, "csv")
+
     rows: list[tuple[date, float | None]] = []
     reader = csv.reader(io.StringIO(text))
     header = next(reader, None)
@@ -158,6 +164,9 @@ def get_vintages(series_id: str, start: date | None = None) -> list[dict]:
                     series_id, page, len(out),
                 )
                 break
+    # Archive the assembled vintage history rather than each page: the pages are
+    # an artefact of the API's row limit, not of the data.
+    archive.store("alfred", series_id, json.dumps(out, separators=(",", ":")), "json")
     return out
 
 

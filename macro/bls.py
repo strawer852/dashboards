@@ -26,6 +26,7 @@ import os
 from datetime import date
 
 import httpx
+import archive
 from tenacity import (
     Retrying,
     retry_if_exception_type,
@@ -67,7 +68,7 @@ def _retry():
     )
 
 
-def _post(payload: dict) -> dict:
+def _post(payload: dict, label: str) -> dict:
     body = json.dumps({**payload, "registrationkey": api_key()})
     for attempt in _retry():
         with attempt:
@@ -87,6 +88,14 @@ def _post(payload: dict) -> dict:
             if status != "REQUEST_SUCCEEDED":
                 raise BlsError(
                     f"BLS status {status}: {'; '.join(data.get('message', []))[:300]}")
+    # This one matters more than the FRED path: BLS has no point-in-time history,
+    # so the response IS the only record that these values were current today.
+    # Archive the body as returned; the key is never in it.
+    # Address by the response minus its latency stamp, or nothing ever
+    # deduplicates: `responseTime` differs on every call and nothing else does.
+    canon = json.dumps({k: v for k, v in data.items() if k != "responseTime"},
+                       sort_keys=True, separators=(",", ":"))
+    archive.store("bls", label, r.text, "json", dedupe_on=canon)
     return data
 
 
@@ -137,7 +146,9 @@ def get_observations(series_ids: list[str], start_year: int = EARLIEST,
         y0 = start_year
         while y0 <= end_year:
             y1 = min(y0 + MAX_SPAN - 1, end_year)
-            data = _post({"seriesid": chunk, "startyear": str(y0), "endyear": str(y1)})
+            label = f"{chunk[0]}+{len(chunk) - 1}_{y0}-{y1}"
+            data = _post({"seriesid": chunk, "startyear": str(y0),
+                          "endyear": str(y1)}, label)
             for s in data["Results"]["series"]:
                 sid = s["seriesID"]
                 for row in s.get("data", []):
@@ -165,7 +176,7 @@ def get_catalog(series_ids: list[str]) -> dict[str, dict]:
         chunk = series_ids[i:i + MAX_SERIES]
         y = date.today().year
         data = _post({"seriesid": chunk, "startyear": str(y), "endyear": str(y),
-                      "catalog": True})
+                      "catalog": True}, f"catalog_{chunk[0]}+{len(chunk) - 1}")
         for s in data["Results"]["series"]:
             cat = s.get("catalog")
             if cat:
