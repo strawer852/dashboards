@@ -77,11 +77,16 @@ def _post(payload: dict) -> dict:
             if r.status_code != 200:
                 raise BlsError(f"BLS returned {r.status_code}: {r.text[:200]}")
             data = r.json()
-    status = data.get("status")
-    if status != "REQUEST_SUCCEEDED":
-        # The daily cap and a malformed series id both land here; the message
-        # is the only way to tell them apart, so surface it rather than a code.
-        raise BlsError(f"BLS status {status}: {'; '.join(data.get('message', []))[:300]}")
+            # Checked INSIDE the retry: BLS answers 200 with REQUEST_FAILED
+            # intermittently, and the identical call succeeds moments later.
+            # Outside the loop it would never be retried and a scheduled
+            # refresh would fail for a reason that clears itself.
+            # The daily cap and a malformed series id land here too; the
+            # message is the only way to tell them apart, so surface it.
+            status = data.get("status")
+            if status != "REQUEST_SUCCEEDED":
+                raise BlsError(
+                    f"BLS status {status}: {'; '.join(data.get('message', []))[:300]}")
     return data
 
 

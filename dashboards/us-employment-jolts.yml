@@ -12,3 +12,16 @@ include_series:
   - UNRATE
   # the vacancy-to-unemployment ratio needs the LEVEL, not the rate
   - UNEMPLOY
+  # the flow identity checks JOLTS against the establishment survey's own count
+  - PAYEMS
+
+# Hires less total separations: what JOLTS says the month's net change was.
+# Monthly it is far too noisy to read (sd of the gap against CES is 936k), so
+# the panel smooths both sides to twelve months.
+derived:
+  - id: JOLTS.netflow
+    kind: residual
+    of: [JTSHIL, JTSTSL]
+    title: Net employment change implied by JOLTS, hires less total separations
+    unit: Thousands of Persons
+    importance: 5

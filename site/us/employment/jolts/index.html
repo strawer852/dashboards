@@ -32,6 +32,8 @@
         <a href="#t3"><span>3</span>Vacancies per jobseeker</a>
         <a href="#t4"><span>4</span>Beveridge curve</a>
         <a href="#t5"><span>5</span>Hires and separations</a>
+        <a href="#t6"><span>6</span>Separations</a>
+        <a href="#t7"><span>7</span>Cross-check</a>
       </div>
     </nav>
   </aside>
@@ -90,6 +92,24 @@
       </div>
     </div>
 
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">Separations, in full</span><span class="u">Millions, s.a.</span></div>
+        <p class="note">Quits and layoffs are the two everyone watches, but they do not add up to separations on their own. <b>Other separations</b> &mdash; retirements, transfers between locations, deaths &mdash; runs at a few hundred thousand a month and is what closes the total. Reading quits and layoffs alone against hires therefore leaves a gap that looks like a data problem and is not.</p>
+        <p class="key"><i class="k4">Total separations</i><i class="k1">Quits</i><i class="k2">Layoffs and discharges</i><i class="k5">Other separations</i></p>
+        <div class="chart" id="cSep" style="height:240px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">Does JOLTS agree with the payroll survey?</span><span class="u">Thousands per month, 12-month average</span></div>
+        <p class="note">Hires less total separations is what JOLTS says the month&rsquo;s net employment change was; the establishment survey counts it directly. Two independent measures of one quantity, and they agree on average &mdash; the mean gap over 308 months is about <b>4,000 a month</b> on series that move by hundreds of thousands. <b>Month to month they do not agree at all</b>: the standard deviation of the gap is roughly 936,000, so both sides are shown as twelve-month averages. This is a consistency check over a year, never a read on a single month. <b>Analyst-derived.</b></p>
+        <p class="key"><i class="k4">JOLTS, hires less separations</i><i class="k1">Establishment survey</i></p>
+        <div class="chart" id="cIdent" style="height:240px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: BLS Job Openings and Labor Turnover Survey, via FRED / ALFRED</span>
@@ -121,6 +141,20 @@ BRB.render({
       format: "ratio", source: "JOLTS/CPS", note1: "openings ÷ unemployed" },
   ],
   panels: [
+    { el: "cSep", type: "line", format: "millions", tick: 11, window: 120, left: 46,
+      series: [{ id: "JTSTSL", label: "Total separations", color: "ink", width: 1.9 },
+               { id: "JTSQUL", label: "Quits", color: "pos" },
+               { id: "JTSLDL", label: "Layoffs and discharges", color: "alt" },
+               { id: "JTSOSL", label: "Other separations", color: "muted" }] },
+    // Both sides smoothed to twelve months. The monthly gap has a standard
+    // deviation near 936k, so an unsmoothed version of this panel would show
+    // two independent estimates disagreeing violently about a quantity they
+    // actually agree on.
+    { el: "cIdent", type: "line", format: "k", tick: 11, window: 120, left: 44,
+      series: [{ id: "JOLTS.netflow", label: "JOLTS net flow", transform: "ma",
+                 window: 12, color: "ink", width: 1.9 },
+               { id: "PAYEMS", label: "Establishment survey", transform: "diff_ma",
+                 window: 12, color: "pos" }] },
     { el: "cFlows", type: "line", format: "millions", tick: 11, window: 120, left: 52,
       series: [{ id: "JTSJOL", label: "Openings" },
                { id: "JTSHIL", label: "Hires", color: "alt" },

@@ -151,9 +151,12 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     years" while plotting change since 1948, and the two-survey panel said
     "5 years ago = 100" while indexing to 1939 and plotting 531. Two series far
     from 100 look enough like an index that nobody queries it; a third gave it
-    away. On any panel with a window use the series option **`rebase`** — `true`
-    subtracts the window's first value, `"index"` divides by it — which runs
-    after the window, where the caption's "5 years ago" actually exists.
+    away, and a third turned up on the weekly claims page, captioned the same
+    way and indexing to 1967. On any panel with a window use the series option
+    **`rebase`** — `true` subtracts the window's first value, `"index"` divides
+    by it — which runs after the window, where the caption's "5 years ago"
+    actually exists. `tools/coverage.py` will not catch this one; only looking
+    at the chart will.
 
 17. **A mixed-frequency panel must lead with its finest series.** The line panel
     builds its axis, and applies `window`, from the FIRST series listed. Led by
