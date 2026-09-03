@@ -33,6 +33,7 @@ no local build step.
 | `site/us/employment/*/index.html` | Pages. Each is a panel list, nothing more |
 | `tools/refresh.sh` | Cron entry point; loads `.env`, rotates the log |
 | `tools/stamp_assets.py` | Content-hashes asset URLs. **Run after any asset change** |
+| `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
 | `FINDINGS_derived_measures.md` | Which derived measures were tested and what the numbers were. **Read before adding a derived panel** |
 | `tools/research/` | Read-only exploratory helpers behind those findings |
@@ -153,6 +154,13 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     away. On any panel with a window use the series option **`rebase`** — `true`
     subtracts the window's first value, `"index"` divides by it — which runs
     after the window, where the caption's "5 years ago" actually exists.
+
+17. **A mixed-frequency panel must lead with its finest series.** The line panel
+    builds its axis, and applies `window`, from the FIRST series listed. Led by
+    a quarterly ECI, `window: 60` meant sixty *quarters* — fifteen years against
+    five everywhere else — and `alignAsOf` sampled the monthly Atlanta Fed
+    tracker down to quarter ends, discarding two readings in three. Monthly
+    first; coarser series then forward-fill onto it as the steps they are.
 
 ## How it runs
 

@@ -173,6 +173,24 @@ def breakeven(srcs, window: int = 6, drop_month: int = 1,
             for t, x in zip(trend, u)]
 
 
+def residual(srcs, **_):
+    """First input minus every other, on the first input's date axis.
+
+    Components are seasonally adjusted independently, so a residual of adjusted
+    series is an approximation rather than an identity. Label it derived and do
+    not present it as a published aggregate.
+    """
+    dates = axis(srcs[0])
+    base = on_axis(srcs[0], dates)
+    subs = [on_axis(e, dates) for e in srcs[1:]]
+    out = []
+    for i in range(len(dates)):
+        vals = [base[i]] + [sub[i] for sub in subs]
+        out.append(None if any(v is None for v in vals)
+                   else round(vals[0] - sum(vals[1:]), 3))
+    return out
+
+
 def epop_participation_effect(srcs, periods: int = 12, **_):
     """The part of the employment-population move that participation explains.
 
@@ -221,6 +239,9 @@ KINDS = {
     "breakeven":         (breakeven, 2,
                           "trailing {window}-month mean change in the labour force, "
                           "January excluded as a population-control break, times (1 - u)"),
+    "residual":          (residual, 2,
+                          "first series minus the second, both seasonally adjusted "
+                          "independently so the difference is approximate"),
     "epop_participation_effect": (epop_participation_effect, 2,
                           "change in participation over {periods} months times (1 - u) at the start"),
     "epop_unemployment_effect":  (epop_unemployment_effect, 2,
@@ -233,6 +254,7 @@ _PASS = {
     "abs_revision_mean": ("window",),
     "signif_share": ("threshold", "window"),
     "breakeven": ("window", "drop_month", "min_obs"),
+    "residual": (),
     "epop_participation_effect": ("periods",),
     "epop_unemployment_effect": ("periods",),
 }

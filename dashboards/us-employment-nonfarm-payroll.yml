@@ -91,3 +91,12 @@ derived:
     title: Employment growth that would hold the unemployment rate flat, 12-month
     unit: Thousands of Persons
     importance: 4
+  # Private employment excluding health care and social assistance. NOT USEHS,
+  # which is private education AND health services -- subtracting that would
+  # also remove private education.
+  - id: PRIV.exhealth
+    kind: residual
+    of: [USPRIV, CES6562000001]
+    title: Private employment excluding health care and social assistance
+    unit: Thousands of Persons
+    importance: 5
