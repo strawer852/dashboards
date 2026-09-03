@@ -332,8 +332,10 @@
         { type: "line", data: pts, symbol: "circle", symbolSize: 3.5, showSymbol: true,
           lineStyle: { color: P.pos, width: 1, opacity: 0.55 },
           itemStyle: { color: P.pos, opacity: 0.55 } },
-        { type: "effectScatter", data: [last], symbolSize: 7, silent: true,
-          rippleEffect: { scale: 1 }, itemStyle: { color: P.ink },
+        // A plain scatter, not effectScatter: the ripple needs animation, which
+        // this kit disables, and it draws nothing at all under the SVG renderer.
+        { type: "scatter", data: [last], symbolSize: 8, silent: true,
+          itemStyle: { color: P.ink },
           label: { show: true, position: "right", formatter: () => label(last[2], "M"),
                    color: P.ink, fontFamily: P.mono, fontSize: 9.5 } },
       ],
