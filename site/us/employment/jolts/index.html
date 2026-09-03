@@ -5,36 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JOLTS — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=971d5ac1c2">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=714d124b8d">
 </head>
 <body>
 <div class="app">
 
   <aside class="rail">
-    <div class="brand">BigRiceBowl<span>Data</span></div>
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
     <nav aria-label="Dashboards">
-      <div class="region">United States</div>
-      <button class="topic" type="button" aria-expanded="true" aria-controls="g-emp"><span class="mk"></span>Employment</button>
-      <div class="grp" id="g-emp">
-        <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
-        <a href="/us/employment/jolts/" aria-current="page">JOLTS</a>
-        <a href="/us/employment/weekly-claims/">Weekly Claims</a>
-      </div>
-      <button class="topic" type="button" aria-expanded="false" aria-controls="g-inf"><span class="mk"></span>Inflation</button>
-      <div class="grp" id="g-inf" hidden>
-        <a href="#" class="soon">CPI</a>
-        <a href="#" class="soon">PPI</a>
-      </div>
-      <div class="inpage">
-        <div class="h">In this report</div>
-        <a href="#t1"><span>1</span>Turnover flows</a>
-        <a href="#t2"><span>2</span>Quits rate</a>
-        <a href="#t3"><span>3</span>Vacancies per jobseeker</a>
-        <a href="#t4"><span>4</span>Beveridge curve</a>
-        <a href="#t5"><span>5</span>Hires and separations</a>
-        <a href="#t6"><span>6</span>Separations</a>
-        <a href="#t7"><span>7</span>Cross-check</a>
-      </div>
+  <!-- nav:start -->
+  <button class="region" type="button" aria-expanded="true" aria-controls="r-united-states"><span class="mk"></span>United States</button>
+  <div class="grp" id="r-united-states">
+    <button class="topic" type="button" aria-expanded="true" aria-controls="g-united-states-employment"><span class="mk"></span>Employment</button>
+    <div class="grp" id="g-united-states-employment">
+      <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+      <a href="/us/employment/jolts/" aria-current="page">JOLTS</a>
+      <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+    </div>
+    <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
+    <div class="grp" id="g-united-states-inflation" hidden>
+      <a href="#" class="soon">CPI</a>
+      <a href="#" class="soon">PPI</a>
+    </div>
+  </div>
+  <!-- nav:end -->
+
     </nav>
   </aside>
 
@@ -121,7 +116,7 @@
 <script src="/assets/echarts-5.6.0.min.js"></script>
 <script src="/assets/brb-dash.js?v=89fbae932f"></script>
 <script>
-document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
   b.setAttribute("aria-expanded", String(!open));
   document.getElementById(b.getAttribute("aria-controls")).hidden = open;

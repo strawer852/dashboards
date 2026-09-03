@@ -37,6 +37,8 @@ no local build step.
 | `systemd/` | The refresh timers. Wall-clock ET, `Persistent=true` |
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
+| `tools/build_nav.py` | Generates the rail from the specs into every page. **Run after adding a dashboard** |
+| `planned.yml` | Dashboards in the rail but not yet built. At the root, NOT in `dashboards/` |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
 | `archive/` | The raw archive. Gitignored, and **the only copy of the BLS vintages** |
 | `FINDINGS_derived_measures.md` | Which derived measures were tested and what the numbers were. **Read before adding a derived panel** |

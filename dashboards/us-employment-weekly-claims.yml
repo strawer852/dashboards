@@ -2,6 +2,7 @@ id: us.employment.weekly-claims
 path: us/employment/weekly-claims
 region: United States
 topic: Employment
+nav_order: 3
 title: Weekly Claims
 release: eta.claims
 include_releases:

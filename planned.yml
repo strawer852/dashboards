@@ -1,0 +1,9 @@
+# Dashboards that are planned but not built. They have no series and nothing to
+# export, so they are not specs -- but they belong in the rail, because a
+# navigation that hides what is coming makes the site look smaller than the plan.
+- region: United States
+  topic: Inflation
+  title: CPI
+- region: United States
+  topic: Inflation
+  title: PPI

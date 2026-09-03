@@ -2,6 +2,7 @@ id: us.employment.jolts
 path: us/employment/jolts
 region: United States
 topic: Employment
+nav_order: 2
 title: JOLTS
 release: bls.jolts
 include_releases:

@@ -83,7 +83,28 @@ def changed_since(ts: datetime) -> list[str]:
         return [r[0] for r in cur.fetchall()]
 
 
+def catalogue_size() -> dict:
+    """Series and vintage-row counts, for the landing page to state.
+
+    Counted here rather than typed there. The page said "53 series, 231,000
+    vintage rows" for weeks after it was 78 and 259,000, because a sentence and
+    a database have no way of disagreeing out loud.
+    """
+    try:
+        with psycopg.connect(DSN) as conn, conn.cursor() as cur:
+            cur.execute("SELECT count(*) FROM macro_series_meta")
+            series = cur.fetchone()[0]
+            cur.execute("SELECT count(*) FROM macro_observations")
+            rows = cur.fetchone()[0]
+        return {"series": series, "vintage_rows": rows}
+    except Exception:                                          # noqa: BLE001
+        # Never let a count break a refresh: the page falls back to saying
+        # nothing rather than saying something wrong.
+        return {}
+
+
 def write_status(payload: dict) -> None:
+    payload = {**payload, **catalogue_size()}
     STATUS.parent.mkdir(parents=True, exist_ok=True)
     tmp = STATUS.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")

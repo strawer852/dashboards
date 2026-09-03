@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=971d5ac1c2">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=714d124b8d">
 <style>
   .idx { border-top: 2px solid var(--ink); margin-top: 26px; }
   .idx a.row {
@@ -42,20 +42,25 @@
 <div class="app">
 
   <aside class="rail">
-    <div class="brand">BigRiceBowl<span>Data</span></div>
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
     <nav aria-label="Dashboards">
-      <div class="region">United States</div>
-      <button class="topic" type="button" aria-expanded="true" aria-controls="g-emp"><span class="mk"></span>Employment</button>
-      <div class="grp" id="g-emp">
-        <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
-        <a href="/us/employment/jolts/">JOLTS</a>
-        <a href="/us/employment/weekly-claims/">Weekly Claims</a>
-      </div>
-      <button class="topic" type="button" aria-expanded="false" aria-controls="g-inf"><span class="mk"></span>Inflation</button>
-      <div class="grp" id="g-inf" hidden>
-        <a href="#" class="soon">CPI</a>
-        <a href="#" class="soon">PPI</a>
-      </div>
+  <!-- nav:start -->
+  <button class="region" type="button" aria-expanded="true" aria-controls="r-united-states"><span class="mk"></span>United States</button>
+  <div class="grp" id="r-united-states">
+    <button class="topic" type="button" aria-expanded="true" aria-controls="g-united-states-employment"><span class="mk"></span>Employment</button>
+    <div class="grp" id="g-united-states-employment">
+      <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+      <a href="/us/employment/jolts/">JOLTS</a>
+      <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+    </div>
+    <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
+    <div class="grp" id="g-united-states-inflation" hidden>
+      <a href="#" class="soon">CPI</a>
+      <a href="#" class="soon">PPI</a>
+    </div>
+  </div>
+  <!-- nav:end -->
+
     </nav>
   </aside>
 
@@ -63,7 +68,7 @@
     <div class="mast">
       <h1>BigRiceBowl Data</h1>
       <div class="stamp">
-        <span><b>53 series</b> &middot; 231,000 vintage rows</span>
+        <span id="size">&hellip;</span>
         <span>Every figure carries its revision history</span>
       </div>
     </div>
@@ -111,7 +116,7 @@
 </div>
 
 <script>
-document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
   b.setAttribute("aria-expanded", String(!open));
   document.getElementById(b.getAttribute("aria-controls")).hidden = open;
@@ -139,8 +144,19 @@ const fmtDate = iso => { const d = new Date(iso.length === 10 ? iso + "T00:00:00
     el.innerHTML = st.ok
       ? `Last checked ${ago}`
       : `<span class="stale">Refresh failing: ${st.error}</span>`;
+
+    // Counted by the pipeline, not typed here. This line read "53 series,
+    // 231,000 vintage rows" long after it was 78 and 259,000.
+    const size = document.getElementById("size");
+    if (st.series && st.vintage_rows) {
+      size.innerHTML = `<b>${st.series} series</b> &middot; ` +
+        `${Math.round(st.vintage_rows / 1000)},000 vintage rows`;
+    } else {
+      size.textContent = "";
+    }
   } catch (e) {
     el.innerHTML = `<span class="stale">Pipeline status unavailable</span>`;
+    document.getElementById("size").textContent = "";
   }
 })();
 

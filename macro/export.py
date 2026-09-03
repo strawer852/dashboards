@@ -97,8 +97,17 @@ def main() -> int:
     out_root = Path(args.out) / "dashboards"
     out_root.mkdir(parents=True, exist_ok=True)
 
-    specs = [yaml.safe_load(p.read_text(encoding="utf-8"))
-             for p in sorted(SPEC_DIR.glob("*.yml"))]
+    # A spec is a mapping with an id. Anything else in this directory is not one,
+    # and must be skipped loudly rather than crashing the export: a stray YAML
+    # file took the whole pipeline down once already.
+    specs = []
+    for path in sorted(SPEC_DIR.glob("*.yml")):
+        doc = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if not isinstance(doc, dict) or "id" not in doc:
+            print(f"!! {path.name} is not a dashboard spec (no id); skipping",
+                  file=sys.stderr)
+            continue
+        specs.append(doc)
     if not specs:
         print(f"no specs in {SPEC_DIR}", file=sys.stderr)
         return 1

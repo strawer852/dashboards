@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""Generate the navigation rail from the dashboard specs, into every page.
+
+The rail was hand-written into each of the four pages. With one country that is
+merely repetitive; with four it is where mistakes live, because adding a country
+means editing every page and the one you miss looks fine. The specs already
+carry region, topic, title and path — they are the catalog, so they are the
+source.
+
+Structure follows the URL taxonomy, region → topic → dashboard, one disclosure
+level per tier. Only the region holding the current page is open, and within it
+only the topic holding the current page, so the rail stays about the same height
+whether there is one country or six.
+
+Planned dashboards live in `planned.yml` at the repo root — deliberately
+not in `dashboards/`, which is for specs the exporter reads. They are not specs — they
+have no series and nothing to export — but they belong in the rail, because a
+navigation that hides what is coming makes the site look smaller than the plan.
+
+Usage:  python3 tools/build_nav.py [--check]
+"""
+from __future__ import annotations
+
+import argparse
+import html
+import sys
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+SPECS = ROOT / "dashboards"
+SITE = ROOT / "site"
+START, END = "<!-- nav:start -->", "<!-- nav:end -->"
+
+
+def slug(text: str) -> str:
+    return "".join(c.lower() if c.isalnum() else "-" for c in text).strip("-")
+
+
+def catalog() -> list[dict]:
+    """Every dashboard, live or planned, in the order the specs are found."""
+    out = []
+    # Filename order is not editorial order: the flagship dashboard should lead
+    # its topic, so each spec carries an explicit nav_order.
+    for p in sorted(SPECS.glob("*.yml")):
+        d = yaml.safe_load(p.read_text(encoding="utf-8"))
+        out.append({"region": d["region"], "topic": d["topic"],
+                    "title": d["title"], "path": "/" + d["path"].strip("/") + "/",
+                    "order": d.get("nav_order", 99), "planned": False})
+    planned = ROOT / "planned.yml"
+    if planned.exists():
+        for d in yaml.safe_load(planned.read_text(encoding="utf-8")) or []:
+            out.append({"region": d["region"], "topic": d["topic"],
+                        "title": d["title"], "path": None,
+                        "order": d.get("nav_order", 99), "planned": True})
+    return sorted(out, key=lambda d: (d["order"], d["title"]))
+
+
+def grouped(items: list[dict]) -> dict:
+    """region -> topic -> [dashboards], deterministically ordered.
+
+    A region or topic holding something built comes before one that is only
+    planned, and within each group they sort by name. Derived from the data, so
+    adding a country never moves the others and no list needs maintaining.
+    """
+    tree: dict = {}
+    for it in items:
+        tree.setdefault(it["region"], {}).setdefault(it["topic"], []).append(it)
+
+    def rank(group: dict) -> tuple:
+        # 0 if anything under here is live, 1 if it is all still planned.
+        live = any(not i["planned"] for sub in group.values() for i in sub) \
+            if isinstance(next(iter(group.values()), None), list) else False
+        return (0 if live else 1,)
+
+    def topic_rank(entries: list) -> tuple:
+        return (0 if any(not i["planned"] for i in entries) else 1,)
+
+    out: dict = {}
+    for region in sorted(tree, key=lambda r: rank(tree[r]) + (r,)):
+        topics = tree[region]
+        out[region] = {t: topics[t]
+                       for t in sorted(topics, key=lambda t: topic_rank(topics[t]) + (t,))}
+    return out
+
+
+def render(tree: dict, current: str | None) -> str:
+    """The rail for one page. `current` is that page's URL path, or None."""
+    # Which branches to open. Nothing is open by guess: it is the branch holding
+    # this page, or on the landing page the first of each, so the rail always
+    # shows something rather than a column of closed labels.
+    open_region = open_topic = None
+    for region, topics in tree.items():
+        for topic, items in topics.items():
+            if current and any(i["path"] == current for i in items):
+                open_region, open_topic = region, topic
+    if open_region is None:
+        open_region = next(iter(tree))
+        open_topic = next(iter(tree[open_region]))
+
+    lines = [START]
+    for region, topics in tree.items():
+        r_open = region == open_region
+        rid = f"r-{slug(region)}"
+        lines.append(
+            f'  <button class="region" type="button" aria-expanded="{str(r_open).lower()}"'
+            f' aria-controls="{rid}"><span class="mk"></span>{html.escape(region)}</button>')
+        lines.append(f'  <div class="grp" id="{rid}"{"" if r_open else " hidden"}>')
+        for topic, items in topics.items():
+            t_open = r_open and topic == open_topic
+            tid = f"g-{slug(region)}-{slug(topic)}"
+            lines.append(
+                f'    <button class="topic" type="button" aria-expanded="{str(t_open).lower()}"'
+                f' aria-controls="{tid}"><span class="mk"></span>{html.escape(topic)}</button>')
+            lines.append(f'    <div class="grp" id="{tid}"{"" if t_open else " hidden"}>')
+            for it in items:
+                name = html.escape(it["title"])
+                if it["planned"]:
+                    lines.append(f'      <a href="#" class="soon">{name}</a>')
+                else:
+                    cur = ' aria-current="page"' if it["path"] == current else ""
+                    lines.append(f'      <a href="{it["path"]}"{cur}>{name}</a>')
+            lines.append("    </div>")
+        lines.append("  </div>")
+    lines.append("  " + END)
+    return "\n".join(lines)
+
+
+def page_path(f: Path) -> str | None:
+    """The URL a page is served at; None for the landing page."""
+    rel = f.parent.relative_to(SITE).as_posix()
+    return None if rel == "." else "/" + rel + "/"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--check", action="store_true",
+                    help="report what would change, write nothing")
+    args = ap.parse_args()
+
+    tree = grouped(catalog())
+    n_regions = len(tree)
+    n_live = sum(1 for r in tree.values() for t in r.values() for i in t if not i["planned"])
+    print(f"{n_regions} region(s), {n_live} live dashboard(s)")
+
+    changed = missing = 0
+    for f in sorted(SITE.rglob("index.html")):
+        text = f.read_text(encoding="utf-8")
+        if START not in text or END not in text:
+            print(f"  !! no nav markers in {f.relative_to(ROOT)}", file=sys.stderr)
+            missing += 1
+            continue
+        head, rest = text.split(START, 1)
+        _, tail = rest.split(END, 1)
+        new = head + render(tree, page_path(f)) + tail
+        if new != text:
+            changed += 1
+            print(f"  updated  {f.relative_to(ROOT)}")
+            if not args.check:
+                f.write_text(new, encoding="utf-8")
+        else:
+            print(f"  same     {f.relative_to(ROOT)}")
+
+    if missing:
+        print(f"\n{missing} page(s) have no nav markers — add "
+              f"{START} / {END} inside the rail", file=sys.stderr)
+        return 1
+    print(f"\n{changed} page(s) {'would change' if args.check else 'rewritten'}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
