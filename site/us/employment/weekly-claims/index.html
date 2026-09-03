@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Claims — BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <div class="brand">BigRiceBowl<span>Data</span></div>
+    <nav aria-label="Dashboards">
+      <div class="region">United States</div>
+      <button class="topic" type="button" aria-expanded="true" aria-controls="g-emp"><span class="mk"></span>Employment</button>
+      <div class="grp" id="g-emp">
+        <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+        <a href="/us/employment/jolts/">JOLTS</a>
+        <a href="/us/employment/weekly-claims/" aria-current="page">Weekly Claims</a>
+      </div>
+      <button class="topic" type="button" aria-expanded="false" aria-controls="g-inf"><span class="mk"></span>Inflation</button>
+      <div class="grp" id="g-inf" hidden>
+        <a href="#" class="soon">CPI</a>
+        <a href="#" class="soon">PPI</a>
+      </div>
+      <div class="inpage">
+        <div class="h">In this report</div>
+        <a href="#t1"><span>1</span>Initial claims</a>
+        <a href="#t2"><span>2</span>Continuing claims</a>
+        <a href="#t3"><span>3</span>Insured rate</a>
+        <a href="#t4"><span>4</span>Seasonal swing</a>
+        <a href="#t5"><span>5</span>Claims and payrolls</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Weekly Claims</div>
+    <div class="mast">
+      <h1>Weekly Claims</h1>
+      <div class="stamp" id="stamp"></div>
+    </div>
+
+    <div id="status" hidden></div>
+
+    <p class="lede">The highest-frequency read on the labour market. Published every
+    Thursday, five weeks ahead of the payroll report that covers the same period.</p>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="row one">
+      <div class="t" id="t1">
+        <div class="th"><span class="n">Table 1</span><span class="ti">Initial claims</span><span class="u">Persons, s.a.</span></div>
+        <p class="note">New applications for unemployment insurance. Weekly data is noisy, so the four-week average is the series to read.</p>
+        <p class="key"><i class="k1">Weekly</i><i class="k2">4-week average</i></p>
+        <div class="chart" id="cIC" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t2">
+        <div class="th"><span class="n">Table 2</span><span class="ti">Continuing claims</span><span class="u">Persons, s.a.</span></div>
+        <p class="note">People still claiming after the first week. Rising continuing claims against flat initial claims means the newly unemployed are taking longer to find work.</p>
+        <div class="chart" id="cCC" style="height:215px"></div>
+      </div>
+      <div class="t" id="t3">
+        <div class="th"><span class="n">Table 3</span><span class="ti">Insured unemployment rate</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation.</p>
+        <div class="chart" id="cIUR" style="height:215px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t4">
+        <div class="th"><span class="n">Table 4</span><span class="ti">What seasonal adjustment removes</span><span class="u">Persons, 3 years</span></div>
+        <p class="note">The same series adjusted and unadjusted. January spikes above 300,000 every year without meaning anything; this is what the adjustment is for, and why the raw number is never the story.</p>
+        <p class="key"><i class="k1">Seasonally adjusted</i><i class="k2">Not adjusted</i></p>
+        <div class="chart" id="cSA" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">Claims against payroll growth</span><span class="u">Indexed, 5 years ago = 100</span></div>
+        <p class="note">Claims lead payrolls. Both indexed so the turning points line up rather than the levels. Payrolls are monthly on a weekly axis, so its line is drawn through the intervening weeks.</p>
+        <p class="key"><i class="k1">Initial claims, 4-week avg</i><i class="k2">Nonfarm payrolls</i></p>
+        <div class="chart" id="cLead" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: US Employment and Training Administration, via FRED / ALFRED</span>
+      <span>Seasonally adjusted unless stated</span>
+    </div>
+  </main>
+</div>
+
+<script src="/assets/echarts-5.6.0.min.js"></script>
+<script src="/assets/brb-dash.js"></script>
+<script>
+document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+BRB.render({
+  bundle: "/data/v1/dashboards/us-employment-weekly-claims.json",
+  summary: [
+    { label: "Initial claims", series: "ICSA", format: "k_units", source: "ETA",
+      note1: "weekly, s.a." },
+    { label: "4-week average", series: "IC4WSA", format: "k_units", source: "ETA" },
+    { label: "Continuing claims", series: "CCSA", format: "m_units", source: "ETA",
+      note1: "one week behind" },
+    { label: "Insured rate", series: "IURSA", format: "pct", source: "ETA" },
+    { label: "Initial, unadjusted", series: "ICNSA", format: "k_units", source: "ETA",
+      note1: "raw" },
+    { label: "Nonfarm payrolls", series: "PAYEMS", transform: "diff", format: "signed",
+      signed: true, source: "CES", note1: "monthly, for contrast" },
+  ],
+  panels: [
+    { el: "cIC", type: "line", format: "k_units", tick: 25, window: 260, left: 46,
+      series: [{ id: "ICSA", label: "Weekly", color: "muted", width: 1 },
+               { id: "IC4WSA", label: "4-week average", width: 1.8 }] },
+    { el: "cCC", type: "line", format: "m_units", tick: 25, window: 260, left: 46,
+      series: [{ id: "CCSA", label: "Continuing claims" }] },
+    { el: "cIUR", type: "line", format: "pct", tick: 25, window: 260, left: 40,
+      series: [{ id: "IURSA", label: "Insured unemployment rate" }] },
+    { el: "cSA", type: "line", format: "k_units", tick: 13, window: 157, left: 46,
+      series: [{ id: "ICSA", label: "Seasonally adjusted" },
+               { id: "ICNSA", label: "Not adjusted", color: "alt" }] },
+    { el: "cLead", type: "line", format: "num", tick: 25, window: 260, left: 42,
+      series: [{ id: "IC4WSA", label: "Initial claims", transform: "index100" },
+               { id: "PAYEMS", label: "Payrolls", transform: "index100", color: "alt" }] },
+  ],
+});
+</script>
+</body>
+</html>

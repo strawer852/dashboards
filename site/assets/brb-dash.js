@@ -87,6 +87,25 @@
      1939-2026 payrolls make the recent years a flat line at the axis. */
   const tail = (arr, w) => (w && arr.length > w ? arr.slice(-w) : arr);
 
+  /* Resolve one series reference to {series, cats, values}, honouring an
+     optional `over` denominator. Aligned BY DATE rather than by index: two
+     series in the same bundle can start in different years, and zipping them
+     positionally would silently pair 2000 with 1948. */
+  function resolve(ctx, sp) {
+    const s = ctx.series(sp.id);
+    const cats = axis(s);
+    let values = derive(s, sp);
+    if (sp.over) {
+      const o = ctx.series(sp.over);
+      const den = new Map(axis(o).map((d, i) => [d, o.values[i]]));
+      values = cats.map((d, i) => {
+        const n = values[i], q = den.get(d);
+        return (n == null || q == null || !q) ? null : +(n / q).toFixed(4);
+      });
+    }
+    return { s, cats, values };
+  }
+
   /* ---------- palette, read from CSS so the stylesheet stays authoritative -- */
   function palette() {
     const cs = getComputedStyle(document.documentElement);
@@ -146,12 +165,18 @@
         ? [yAxis(P, fmt), Object.assign(yAxis(P, fmtFor({ format: p.format2 })), { splitLine: { show: false } })]
         : yAxis(P, fmt),
       series: p.series.map((sp, i) => {
-        const s = ctx.series(sp.id);
+        const r = resolve(ctx, sp);
+        // Align every series onto the FIRST series' date axis by date, never by
+        // index. Zipping positionally is correct only by luck — when the series
+        // share a frequency and end on the same date. It breaks outright when a
+        // panel mixes weekly claims with monthly payrolls, and would quietly
+        // plot monthly values against weekly dates.
+        const data = tail(alignAsOf(cats, r.cats, r.values), p.window);
         return {
-          name: sp.label || s.title, type: "line", data: tail(derive(s, sp), p.window),
-          connectNulls: false, symbol: "none", yAxisIndex: sp.axis || 0,
+          name: sp.label || r.s.title, type: "line", data,
+          connectNulls: !!sp.connect, symbol: "none", yAxisIndex: sp.axis || 0,
           lineStyle: { color: P[sp.color || ["pos", "alt", "neg"][i] || "muted"], width: sp.width || 1.6 },
-          markPoint: i === 0 ? endMarker(P, cats, tail(derive(s, sp), p.window)) : undefined,
+          markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
         };
       }),
     });
@@ -276,6 +301,64 @@
     }));
   };
 
+  /* Two series against each other as a traced path — the Beveridge curve is
+     the canonical case. Points are joined in time order and the most recent is
+     marked in ink, so the shape shows regime change rather than level. */
+  PANELS.scatter = (el, ctx, p) => {
+    const P = ctx.P;
+    const rx = resolve(ctx, p.x), ry = resolve(ctx, p.y);
+    const byDate = new Map(ry.cats.map((d, i) => [d, ry.values[i]]));
+    let pts = rx.cats.map((d, i) => [rx.values[i], byDate.get(d), d])
+                     .filter(t => t[0] != null && t[1] != null);
+    if (p.window) pts = pts.slice(-p.window);
+    if (!pts.length) throw new Error("scatter: no overlapping observations");
+    const last = pts[pts.length - 1];
+    const fx = fmtFor({ format: p.formatX }), fy = fmtFor({ format: p.formatY });
+    mount(el, Object.assign(base(P), {
+      grid: { left: p.left || 48, right: 20, top: 14, bottom: 32 },
+      tooltip: Object.assign(base(P).tooltip, {
+        trigger: "item",
+        formatter: o => `<b>${label(o.data[2], "M")}</b><br>` +
+                        `${p.labelX} ${fx(o.data[0])}<br>${p.labelY} ${fy(o.data[1])}` }),
+      xAxis: { type: "value", scale: true, name: p.labelX, nameLocation: "middle",
+        nameGap: 20, nameTextStyle: { color: P.muted, fontSize: 9.5, fontFamily: P.mono },
+        axisLabel: { color: P.muted, fontSize: 9.5, formatter: fx },
+        splitLine: { lineStyle: { color: P.grid } } },
+      yAxis: { type: "value", scale: true, name: p.labelY, nameLocation: "middle",
+        nameGap: 34, nameTextStyle: { color: P.muted, fontSize: 9.5, fontFamily: P.mono },
+        axisLabel: { color: P.muted, fontSize: 9.5, formatter: fy },
+        splitLine: { lineStyle: { color: P.grid } } },
+      series: [
+        { type: "line", data: pts, symbol: "circle", symbolSize: 3.5, showSymbol: true,
+          lineStyle: { color: P.pos, width: 1, opacity: 0.55 },
+          itemStyle: { color: P.pos, opacity: 0.55 } },
+        { type: "effectScatter", data: [last], symbolSize: 7, silent: true,
+          rippleEffect: { scale: 1 }, itemStyle: { color: P.ink },
+          label: { show: true, position: "right", formatter: () => label(last[2], "M"),
+                   color: P.ink, fontFamily: P.mono, fontSize: 9.5 } },
+      ],
+    }));
+  };
+
+  /* Align a series onto another axis by "most recent value at or before this
+     date". For two series of the same frequency this is exact matching. For a
+     coarser series on a finer axis (monthly payrolls against weekly claims) it
+     forward-fills, which is what a reader expects — exact matching found only
+     8 of 260 weekly dates and drew a near-empty line.
+
+     A published null survives: the lookup lands on the observation itself, so
+     October 2025 in the household survey stays a gap rather than being filled
+     with September's value. */
+  function alignAsOf(axisDates, srcDates, srcValues) {
+    const out = new Array(axisDates.length).fill(null);
+    let j = -1;
+    for (let i = 0; i < axisDates.length; i++) {
+      while (j + 1 < srcDates.length && srcDates[j + 1] <= axisDates[i]) j++;
+      out[i] = j >= 0 ? srcValues[j] : null;
+    }
+    return out;
+  }
+
   /* ---------- helpers ----------------------------------------------------- */
   const yAxis = (P, fmt) => ({
     type: "value", scale: true,
@@ -298,6 +381,13 @@
     if (f === "k") return v => v.toFixed(0) + "k";
     if (f === "hours") return v => v.toFixed(1);
     if (f === "weeks") return v => v.toFixed(0) + "w";
+    if (f === "ratio") return v => v.toFixed(2);
+    // Units differ by source and it matters: JOLTS levels arrive in thousands
+    // (7271 = 7.27m) while weekly claims arrive in persons (203000 = 203k).
+    if (f === "millions") return v => (v / 1000).toFixed(2) + "m";   // input: thousands
+    if (f === "k_units") return v => (v / 1000).toFixed(0) + "k";    // input: persons
+    if (f === "m_units") return v => (v / 1e6).toFixed(2) + "m";     // input: persons
+    if (f === "count") return v => Math.round(v).toLocaleString("en-GB");
     return v => String(Math.round(v * 100) / 100);
   }
   const shortName = t => t.replace(/^All Employees,\s*/, "")
@@ -341,8 +431,9 @@
   /* ---------- summary figures --------------------------------------------- */
   function summary(host, ctx, figs) {
     host.innerHTML = figs.map((f, i) => {
-      const s = ctx.series(f.series);
-      const v = derive(s, f);
+      const r = resolve(ctx, { id: f.series, over: f.over, transform: f.transform,
+                               window: f.maWindow, periods: f.periods });
+      const s = r.s, v = r.values;
       const last = lastNonNull(v);
       const fmt = fmtFor(f);
       const cls = f.signed && last != null && last < 0 ? " dn" : "";
@@ -353,8 +444,9 @@
              `<div class="dl"><span>${f.note1 || ""}</span><span>${f.note2 || ""}</span></div></div>`;
     }).join("");
     figs.forEach((f, i) => {
-      const s = ctx.series(f.series);
-      spark(document.getElementById("sp" + i), derive(s, f).slice(-(f.spark || 24)), ctx.P);
+      const r = resolve(ctx, { id: f.series, over: f.over, transform: f.transform,
+                               window: f.maWindow, periods: f.periods });
+      spark(document.getElementById("sp" + i), r.values.slice(-(f.spark || 24)), ctx.P);
     });
   }
   const lastNonNull = v => { for (let i = v.length - 1; i >= 0; i--) if (v[i] != null) return v[i]; return null; };
@@ -423,5 +515,5 @@
     return `${d.getUTCDate()} ${MN[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
   };
 
-  global.BRB = { render, axis, label, derive, T, PANELS, palette, spark };
+  global.BRB = { render, axis, label, derive, resolve, T, PANELS, palette, spark };
 })(window);

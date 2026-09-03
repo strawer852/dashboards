@@ -10,3 +10,5 @@ include_releases:
 # household unemployment rate, which belongs to a different release.
 include_series:
   - UNRATE
+  # the vacancy-to-unemployment ratio needs the LEVEL, not the rate
+  - UNEMPLOY
