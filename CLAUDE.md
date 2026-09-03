@@ -282,17 +282,26 @@ validate *inside* the container and `caddy reload`, never restart.
 
 ## State as of 3 September 2026
 
-> **NOTHING ON THIS MACHINE IS BEING BACKED UP.** `/usr/local/bin/bigricebowl-backup`
-> last wrote its log on **18 June 2026**; no systemd timer, `/etc/cron.d` entry or
-> `/etc/cron*` file references it any more. If it were re-enabled today it would
-> fail on its first step, `pg_dump ... investment` — that database was dropped in
-> the July teardown and no longer exists, and `fail()` exits before restic runs.
-> Its restic paths never included `~/dashboards`, and this repo has **no git
-> remote**, so the code, the archive and the `macro` database all live on one
-> disk. **A corrected script, a watchdog that alarms on snapshot age, systemd
-> units and step-by-step notes are staged in `ops/`.** Nothing is applied:
-> every step needs root, and `/etc/restic/env` is `root:root`, so repository
-> reachability could not be verified from here. Read `ops/INSTALL.md` first.
+> **Backups, fixed 3 September 2026.** They had not run since 18 June: nothing
+> scheduled `/usr/local/bin/bigricebowl-backup` any more — no root crontab, no
+> timer, nothing in `/etc/cron*` — and had it run it would have died on
+> `pg_dump ... investment`, a database dropped in the July teardown, with
+> `fail()` exiting before restic. Its paths never included `~/dashboards`, and
+> this repo still has **no git remote**.
+>
+> Now: a systemd timer at 03:00 with `Persistent=true`, dumping every live
+> database (enumerated, never named), backing up `~/bigricebowl` and
+> `~/dashboards` as **directories** — the original named individual files and
+> six of ten had been reorganised away, which restic skips with a warning while
+> exiting 0, so a run reported success having stored 7.4 MiB against June's 232.
+> Every source is now checked before restic is called. `bigricebowl-backup-check`
+> runs at 11:00 and alarms over Telegram if the newest snapshot exceeds 48
+> hours, because a script reports its own failure but nothing reports its
+> absence. Sources live in `ops/`; the alarm path has been fired and confirmed
+> delivered.
+>
+> **The repository has a 77-day hole, 18 June to 3 September 2026.** Everything
+> before it survived — `forget --prune` had not been running either.
 
 - 53 series, 6 releases, ~231,000 vintage rows, 24/24 validations passing.
 - Three dashboards live; CPI is the next to build and the real test of whether
