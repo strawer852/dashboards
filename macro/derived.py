@@ -98,6 +98,23 @@ def revision(srcs, **_):
             for a, b in zip(cur, frd)]
 
 
+def level_revision(srcs, **_):
+    """Current published level minus the level as first reported.
+
+    The sibling `revision` works on month-on-month CHANGES and needs
+    `first_reported_diff`, because differencing two first prints reads two
+    different vintages. A level has no such problem: `first_print` is what was
+    published for that observation, full stop.
+    """
+    e = srcs[0]
+    fp = e.get("first_print")
+    if not fp:
+        raise ValueError("level_revision needs first_print; the exporter drops it "
+                         "when no observation was ever revised")
+    return [None if (a is None or b is None) else round(a - b, 3)
+            for a, b in zip(e["values"], fp)]
+
+
 def revision_mean(srcs, window: int = 12, **_):
     """Rolling mean revision: the bias, rather than any month's surprise."""
     rev = revision(srcs)
@@ -230,6 +247,8 @@ def epop_unemployment_effect(srcs, periods: int = 12, **_):
 KINDS = {
     "revision":          (revision, 1,
                           "latest monthly change minus the change as first reported"),
+    "level_revision":    (level_revision, 1,
+                          "current published level minus the level as first reported"),
     "revision_mean":     (revision_mean, 1,
                           "rolling {window}-month mean revision, first reported to latest"),
     "abs_revision_mean": (abs_revision_mean, 1,
@@ -250,6 +269,7 @@ KINDS = {
 
 _PASS = {
     "revision": (),
+    "level_revision": (),
     "revision_mean": ("window",),
     "abs_revision_mean": ("window",),
     "signif_share": ("threshold", "window"),

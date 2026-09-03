@@ -10,3 +10,14 @@ include_releases:
 include_series:
   - PAYEMS
   - UNRATE
+
+# Two revisions live in one line here: a near-constant weekly correction from
+# late state reports, and an annual re-estimation of the seasonal factors that
+# restates the whole history at once. See FINDINGS_derived_measures.md.
+derived:
+  - id: ICSA.revision
+    kind: level_revision
+    of: ICSA
+    title: Revision to initial claims, as first published to current
+    unit: Persons
+    importance: 4

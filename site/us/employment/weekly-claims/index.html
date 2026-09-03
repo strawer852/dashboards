@@ -32,6 +32,7 @@
         <a href="#t3"><span>3</span>Insured rate</a>
         <a href="#t4"><span>4</span>Seasonal swing</a>
         <a href="#t5"><span>5</span>Claims and payrolls</a>
+        <a href="#t6"><span>6</span>Revisions</a>
       </div>
     </nav>
   </aside>
@@ -91,6 +92,14 @@
       </div>
     </div>
 
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">What the figure was when it was first published</span><span class="u">Persons, current less first print</span></div>
+        <p class="note">Two revisions sit in this one line, and they are different orders of magnitude. The <b>quiet recent stretch</b> is the weekly correction from state agencies reporting late: the median has been exactly <b>+1,000 in each of the last four years</b>, about half a percent of the level, and since 2023 it has changed the direction of the week-on-week move in only 6% of weeks. On its own it says nothing. The <b>excursions further back</b> are the other one &mdash; once a year, in late March or early April every year since at least 2010, the seasonal factors are re-estimated and between 140 and 260 past weeks are restated at once. Each year&rsquo;s re-estimation lands on top of the last, so the older a figure is the less it resembles what was published at the time: weeks three to five years old now sit a median <b>16,000</b> from their first print, <b>7.5%</b> of the level, against 0.5% for the past year. Fifty of the fifty-two weeks of 2019 carry a different value than the one first published. <b>A figure noted down today is not the figure that will be here next year.</b> The line stops in 2009, where the vintage archive begins, and breaks again in the autumn of 2025, when four weeks were not published until 20 November &mdash; where nothing was published on time there is no first print to compare against, and unknown is not zero. <b>Analyst-derived</b> from the vintage history.</p>
+        <div class="chart" id="cRev" style="height:230px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: US Employment and Training Administration, via FRED / ALFRED</span>
@@ -100,7 +109,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=eb77760812"></script>
+<script src="/assets/brb-dash.js?v=89fbae932f"></script>
 <script>
 document.querySelectorAll(".rail .topic").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -136,6 +145,9 @@ BRB.render({
     { el: "cSA", type: "line", format: "k_units", tick: 13, window: 157, left: 46,
       series: [{ id: "ICSA", label: "Seasonally adjusted" },
                { id: "ICNSA", label: "Not adjusted", color: "alt" }] },
+    { el: "cRev", type: "line", format: "signed_count", tick: 25, left: 52,
+      window: 260, hline: 0,
+      series: [{ id: "ICSA.revision", label: "Revision", color: "ink", width: 1.6 }] },
     { el: "cLead", type: "line", format: "num", tick: 25, window: 260, left: 42,
       // rebase, not index100: index100 baselines on the first value of the
       // whole series -- 1967 here, 1939 for payrolls -- and this panel is

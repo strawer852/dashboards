@@ -33,6 +33,12 @@ DSN = os.environ["MACRO_DSN"]
 SPEC_DIR = Path(__file__).resolve().parent.parent / "dashboards"
 SCHEMA_VERSION = 1
 
+# How late the earliest vintage may be and still count as a first print. One
+# publication interval plus slack: a weekly figure first seen three months on
+# has already been through the annual seasonal re-estimation, so calling it a
+# first print would turn the edge of the archive into a finding.
+FIRST_PRINT_GRACE = {"D": 14, "W": 28, "M": 100, "Q": 200, "A": 500}
+
 # Release dates stated in the source documents. Only what a release actually
 # says — nothing inferred, so the page never shows a made-up "next" date.
 NEXT_RELEASE = {
@@ -132,17 +138,27 @@ def main() -> int:
                 dates = [r[0] for r in rows]
                 values = [None if r[1] is None else float(r[1]) for r in rows]
 
+                (_, title, freq, sa, companion, importance, rel, url, unit,
+                 vintage_mode) = meta[sid]
+
                 cur.execute(
-                    "SELECT observation_dt, value FROM macro_observations_first "
+                    "SELECT observation_dt, value, vintage_dt FROM macro_observations_first "
                     "WHERE series_id=%s ORDER BY observation_dt", (sid,))
-                firsts = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}
+                # A first print counts only when the earliest vintage we hold is
+                # close enough to the observation to BE a first print. Older than
+                # that and we are looking at the edge of the archive, not at an
+                # unrevised figure.
+                grace = FIRST_PRINT_GRACE.get(freq, 100)
+                firsts = {}
+                for d, v, vin in cur.fetchall():
+                    if (vin.date() - d).days <= grace:
+                        firsts[d] = None if v is None else float(v)
                 first_print = [firsts.get(d) for d in dates]
                 # Only worth shipping when it differs from the current vintage.
                 if all(a == b for a, b in zip(first_print, values)):
                     first_print = None
 
-                (_, title, freq, sa, companion, importance, rel, url, unit,
-                 vintage_mode) = meta[sid]
+
                 entry = {
                     "title": title,
                     "frequency": freq,

@@ -446,6 +446,10 @@
     if (f === "k_units") return v => (v / 1000).toFixed(0) + "k";    // input: persons
     if (f === "m_units") return v => (v / 1e6).toFixed(2) + "m";     // input: persons
     if (f === "count") return v => Math.round(v).toLocaleString("en-GB");
+    // Signed, and in the units given. "signed" above multiplies by 1000 because
+    // it takes thousands; claims arrive in persons and must not be rescaled.
+    if (f === "signed_count") return v => (v > 0 ? "+" : v < 0 ? "\u2212" : "") +
+      Math.abs(Math.round(v)).toLocaleString("en-GB");
     return v => String(Math.round(v * 100) / 100);
   }
   const shortName = t => t.replace(/^All Employees,\s*/, "")
