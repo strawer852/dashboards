@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Push the dashboards repo to its remote, then CHECK IT ARRIVED.
+#
+# The verification is the point. Three times in one evening a thing reported
+# success while not having done its job: restic exited 0 having skipped six of
+# ten sources, the backup watchdog "worked" while reading the oldest snapshot
+# instead of the newest, and a repository that had been pushed to was deleted
+# and recreated, leaving a remote that answers cheerfully and holds nothing.
+# `git push` exiting zero is not evidence the remote has your commits. Comparing
+# the hashes is.
+#
+# Deliberately NOT part of the backup script: a GitHub outage should not muddy
+# the status of a database dump, and vice versa.
+set -uo pipefail
+
+REPO="/home/strawer/dashboards"
+LOG="$REPO/logs/push.log"
+TS=$(date -u +"%Y-%m-%d %H:%M:%SZ")
+
+# Telegram, the one alert path that has actually been observed to deliver.
+source /home/strawer/bigricebowl/.env
+
+log() { echo "[$TS] $*" >> "$LOG"; }
+
+alert() {
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" -d text="$1" > /dev/null
+}
+
+mkdir -p "$(dirname "$LOG")"
+cd "$REPO" || { log "ERROR: $REPO is not there"; exit 1; }
+
+if ! git remote get-url origin > /dev/null 2>&1; then
+    log "ERROR: no 'origin' remote configured"
+    alert "🚨 dashboards push: no origin remote configured on the VPS."
+    exit 1
+fi
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Uncommitted work is not a failure — restic covers the working tree nightly —
+# but it is worth recording, because it is the difference between what the
+# remote holds and what is on the disk.
+if [ -n "$(git status --porcelain)" ]; then
+    log "note: working tree is dirty; only committed work is pushed"
+fi
+
+git push origin "$BRANCH" >> "$LOG" 2>&1
+PUSH_RC=$?
+
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git ls-remote origin -h "refs/heads/$BRANCH" 2>/dev/null | awk '{print $1}')
+
+if [ -z "$REMOTE" ]; then
+    log "FAIL: remote has no $BRANCH at all (empty or deleted repository)"
+    alert "🚨 dashboards push: the remote has no '$BRANCH' branch. The repository may be empty or have been recreated."
+    exit 1
+fi
+
+if [ "$LOCAL" != "$REMOTE" ]; then
+    log "FAIL: local $LOCAL != remote $REMOTE (push rc=$PUSH_RC)"
+    alert "🚨 dashboards push: remote is out of step. local ${LOCAL:0:8}, remote ${REMOTE:0:8}."
+    exit 1
+fi
+
+log "OK: $BRANCH at ${LOCAL:0:8} confirmed present on origin"
+exit 0

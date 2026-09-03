@@ -1,0 +1,15 @@
+[Unit]
+Description=Keep the dashboards remote from falling silently behind
+
+[Timer]
+# Late enough to catch a day's work. Drift is capped at 24 hours, and restic
+# covers the working tree nightly in the meantime, so this is about having a
+# clonable copy rather than about not losing data.
+OnCalendar=*-*-* 23:30:00
+# A missed day runs at the next opportunity instead of being skipped in silence,
+# which is the whole failure this exists to prevent.
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target
