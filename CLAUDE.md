@@ -404,10 +404,30 @@ lingering, every timer active, no unit failed, the sweep triggered within 26
 hours, and `status.json` fresh — and alarms over Telegram, which is the ops
 channel rather than the pipeline's ntfy.
 
-It **cannot** catch the user manager being gone entirely, because it is itself a
-user timer and would not run either. That needs a root timer, which nobody here
-has passwordless sudo for, or an external dead-man's switch. The limitation is
-written at the top of the script rather than pretended away.
+On its own it cannot catch the user manager being gone, a dead box, a dead
+network or a full disk — all of which produce **silence**, and silence is
+indistinguishable from a healthy quiet day when every alert originates on the
+machine being watched.
+
+That is what **`HEALTHCHECK_URL`** closes. Set it in `.env` to a ping URL from
+any external service and the daily check pings it on success and hits
+`URL/fail` on failure; that service alarms when the pings stop. The absence of a
+signal becomes the alarm and the watching happens off-box. **Dormant until set**
+— unset, nothing is sent and nothing breaks — and it must never point at
+anything running on this VPS, since a dead-man's switch hosted on the machine it
+watches is not one.
+
+The ping can never change the check's outcome: every failure in it is logged and
+swallowed, because a monitoring call that can fail the job it monitors is worse
+than no monitoring. Verified across all six paths on 4 September — dormant,
+reachable, unreachable, genuine success, the failure path, and the `/fail`
+suffix.
+
+**On self-hosting ntfy** (long an open wish): it would move the pipeline's alert
+path onto the machine the alerts are about, so it would go down exactly when it
+is needed. Both current paths — ntfy.sh and Telegram — are deliberately
+external. If ntfy is self-hosted for other reasons, keep the ops alerts
+(backup check, timer check) off-box.
 
 ## Commands
 
@@ -574,9 +594,9 @@ left is small, and none of it is blocking.
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
 
-5. **The one gap `dashboards-timer-check` leaves.** It is a user timer, so it
-   cannot report the user manager being gone — the failure that would silence
-   every job at once. Closing it needs a root timer (no passwordless sudo here;
-   `ops/INSTALL.md` documents the same obstacle for the backup) or an external
-   dead-man's switch that expects a daily ping and complains when none arrives.
-   The second needs no root and is the cheaper of the two.
+5. **Activate the dead-man's switch.** The code is in and tested; it is waiting
+   on one line. Create a check at healthchecks.io (free tier is enough), set a
+   daily period with a few hours' grace, and paste the ping URL into
+   `HEALTHCHECK_URL` in `.env`. Nothing else changes. Until then, a dead box is
+   still silent — which is the last remaining way this system can fail without
+   telling anyone.

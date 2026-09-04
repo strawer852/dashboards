@@ -12,14 +12,24 @@
 # lesson bigricebowl-backup-check was written for: a script reports its own
 # failure, but nothing reports its absence.
 #
-# WHAT IT CANNOT CATCH. It runs as a user timer, so it cannot detect the user
-# manager being gone entirely -- in that case this does not run either. It
-# catches the realistic faults (a timer disabled, a unit failed, lingering
-# turned off, the sweep silently stopping) but not the manager itself dying.
-# Closing that hole
-# needs either a root timer, which nobody here has passwordless sudo for, or an
-# external dead-man's switch that expects a ping and complains when none comes.
-# Both are noted in CLAUDE.md rather than pretended away.
+# WHAT IT CANNOT CATCH ON ITS OWN. It runs as a user timer, so it cannot detect
+# the user manager being gone entirely -- in that case this does not run either.
+# Nor can it report a dead box, a dead network or a full disk, because all of
+# those produce silence, and silence is indistinguishable from a healthy quiet
+# day when every alert originates on the machine being watched.
+#
+# That is what HEALTHCHECK_URL is for, and it is the third turn of the same
+# screw this repo has already been bitten by twice. A script reports its own
+# failure but not its absence, so bigricebowl-backup-check watches the artefact
+# instead of the script -- but only if the box is alive to run it. A dead-man's
+# switch inverts the logic one level further: this pings an EXTERNAL service on
+# success, and that service alarms when the pings stop. The absence of a signal
+# becomes the alarm, and the watching happens somewhere else.
+#
+# It is dormant until HEALTHCHECK_URL is set in ~/dashboards/.env -- any service
+# taking a ping URL will do (healthchecks.io, Cronitor, Better Uptime). Unset,
+# nothing is sent and nothing breaks. Do NOT point it at anything running on
+# this VPS: a dead-man's switch hosted on the machine it watches is not one.
 set -uo pipefail
 
 ROOT="$HOME/dashboards"
@@ -34,6 +44,21 @@ mkdir -p "$ROOT/logs"
 # because a broken user manager cannot run the thing that would push it.
 # shellcheck disable=SC1091
 [ -f "$HOME/bigricebowl/.env" ] && source "$HOME/bigricebowl/.env"
+# HEALTHCHECK_URL lives with the pipeline's own secrets.
+# shellcheck disable=SC1091
+[ -f "$ROOT/.env" ] && source "$ROOT/.env"
+
+# The ping must never be able to change this check's outcome: a monitoring
+# call that can fail the job it monitors is worse than no monitoring. Every
+# failure here is logged and swallowed.
+ping_deadman() {
+    local suffix="$1" body="$2"
+    [ -n "${HEALTHCHECK_URL:-}" ] || return 0
+    curl -fsS -m 10 --retry 2 -o /dev/null \
+         --data-raw "$body" "${HEALTHCHECK_URL}${suffix}" 2>/dev/null \
+      || echo "[$TS] CHECK: dead-man ping failed (${suffix:-success})" >> "$LOG"
+    return 0
+}
 
 PROBLEMS=()
 
@@ -105,6 +130,9 @@ fi
 
 if [ ${#PROBLEMS[@]} -eq 0 ]; then
     echo "[$TS] OK: timers armed, sweep recent, status fresh" >> "$LOG"
+    # Only on success. A ping sent regardless would tell the external service
+    # everything is fine while this script was reporting that it is not.
+    ping_deadman "" "ok: timers armed, sweep recent, status fresh"
     exit 0
 fi
 
@@ -122,4 +150,8 @@ if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
 else
     echo "[$TS] CHECK: no telegram credentials; alarm not sent" >> "$LOG"
 fi
+
+# Tell the external service too, rather than waiting for the grace period to
+# expire. If Telegram is what is broken, this is the path that still works.
+ping_deadman "/fail" "$BODY"
 exit 1
