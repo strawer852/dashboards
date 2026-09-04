@@ -409,7 +409,14 @@
                      formatter: v => label(v, first.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
-      yAxis: yAxis(P, p.axisFormat ? fmtFor({ format: p.axisFormat }) : fmt),
+      // scale: true lets the axis start wherever the data does, which is
+      // right for a line and wrong for a stack -- a truncated baseline makes
+      // every segment's height a lie about its share. Forcing it off keeps
+      // zero on the axis; ECharts still spans both ways when parts go
+      // negative, as CPI contributions do.
+      yAxis: Object.assign(
+        yAxis(P, p.axisFormat ? fmtFor({ format: p.axisFormat }) : fmt),
+        { scale: false }),
       series: bars.concat(extra),
     }));
   };
