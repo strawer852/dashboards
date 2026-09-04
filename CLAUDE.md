@@ -555,11 +555,30 @@ Root-owned system timers: `bigricebowl-backup` 03:00, `bigricebowl-backup-check`
 > **The repository has a 77-day hole, 18 June to 3 September 2026.** Everything
 > before it survived — `forget --prune` had not been running either.
 
-The repo **does** now have a remote: `git@github.com:strawer852/dashboards.git`,
-pushed nightly and verified by comparing hashes rather than trusting an exit
-code. A second clone sits at `C:\Bigricebowl\dashboards` on the laptop. The
-GitHub key is an **account** key, not a repo deploy key, so it can write to every
-repository on the account — narrow it if that ever matters.
+The repo has a remote, pushed nightly and verified by comparing hashes rather
+than trusting an exit code. A second clone sits at `C:\Bigricebowl\dashboards`
+on the laptop.
+
+**Access is by per-repository deploy key**, narrowed from an account key on
+4 September 2026. Two things make this work and both are easy to get wrong:
+
+- A public key can be registered **once across the whole of GitHub** — as an
+  account key *or* as a deploy key on *one* repo, never both. Trying to reuse
+  the existing key as a deploy key fails with "Key is already in use". Two new
+  keys were generated, one per repo (`~/.ssh/id_deploy_dashboards` and
+  `id_deploy_bigricebowl`), and each needs **Allow write access** ticked or the
+  nightly push fails read-only.
+- Both repos are on `github.com`, so one `Host github.com` block could name only
+  one key. `~/.ssh/config` defines the aliases **`github-dashboards`** and
+  **`github-bigricebowl`**, and the remotes use them:
+  `git@github-dashboards:strawer852/dashboards.git`. **`IdentitiesOnly yes`** is
+  the line that matters — without it ssh offers every key it has, the account
+  key is accepted first, and GitHub authenticates at account level while
+  everything appears to work.
+
+The check that tells a real narrowing from one that only looks right:
+`ssh -T git@github-dashboards` must answer **"Hi strawer852/dashboards!"**. If
+it says "Hi strawer852!" the account key is still doing the work.
 
 - Alerting is ntfy.sh for the pipeline and Telegram for ops. **William prefers to
   self-host ntfy** — swap `NTFY_URL` when convenient. The Telegram path has been
@@ -584,17 +603,14 @@ moment rather than about the system, and it should look stale when it is.
 **`planned.yml` is empty and every release has its vintage history.** What is
 left is small, and none of it is blocking.
 
-2. **Self-hosting ntfy** is low-risk now that the path has fired for real.
+1. **Self-hosting ntfy** is low-risk now that the path has fired for real.
 
-3. **The GitHub key is an account key, not a repo deploy key** — it can write
-   to every repository on the account. Narrow it if that ever matters.
-
-4. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
+2. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
    **redundant rather than load-bearing**: restic backs up
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
 
-5. **Activate the dead-man's switch.** The code is in and tested; it is waiting
+3. **Activate the dead-man's switch.** The code is in and tested; it is waiting
    on one line. Create a check at healthchecks.io (free tier is enough), set a
    daily period with a few hours' grace, and paste the ping URL into
    `HEALTHCHECK_URL` in `.env`. Nothing else changes. Until then, a dead box is
