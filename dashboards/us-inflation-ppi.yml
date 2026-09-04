@@ -9,6 +9,15 @@ release: bls.ppi
 include_releases:
   - bls.ppi
 
+# WPS3012 (Truck Transportation of Freight) is in the catalogue because the
+# release sweep above pulls everything tagged bls.ppi, but FRED stopped
+# publishing it in December 2011. It exported cleanly and reported full
+# coverage for weeks while drawing an empty chart, which is exactly the
+# failure neither validation nor coverage can see. WPS301, Transportation of
+# Freight and Mail, is the live seasonally adjusted parent and replaces it.
+exclude_series:
+  - WPS3012
+
 # Contributions ARE possible here, and the derived block at the bottom builds
 # them. An earlier version of this comment said the opposite -- that the PPI
 # news release carried no relative-importance column the way CPI Table 1 does.

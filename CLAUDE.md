@@ -84,6 +84,14 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
   white: worst adjacent colourblind ΔE 11.5, normal-vision 18.2, all ≥3:1
   contrast. Re-run the check before changing any of them — ordering is the
   colourblind-safety mechanism, not decoration.
+- **Charts in a row share a baseline.** `.row` is a two-column grid and the two
+  cells rarely carry the same amount of prose, so the charts used to start at
+  different heights -- which defeats the only reason to put them side by side.
+  A cell is a flex column, `.chart` takes `margin-top: auto`, and the legend
+  takes it instead when there is one so the key travels with its chart. Where a
+  pair still disagrees the two charts have different declared heights, which is
+  a page bug, not a layout one -- five rows on the payroll page do.
+
 - **A panel must answer a question that stays worth asking.** The releases name
   their movers each month — portfolio management led July, fresh vegetables and
   thermoplastic resins fell — and building panels around those produces a page
@@ -364,6 +372,32 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     arrived, and it under-reacts to a PPI revision that genuinely reflects new
     reports. Each dashboard's revision panel says which kind it is.
 
+28. **A discontinued series passes every check and draws nothing.** `WPS3012`,
+    truck transportation of freight, stopped in December 2011; FRED still serves
+    it. It had observations, so the exporter was content. It had a panel, so
+    `coverage.py` reported it drawn at 100%. Its acceptance tests pin old
+    vintages, so validation passed 36/36. Every number in every report was
+    correct and the chart was empty, because a panel shows the recent past and
+    the series had left it fifteen years earlier. **Before trusting a new
+    panel, check the last non-null observation against today.** `coverage.py`
+    now does this for every series; the replacement is `WPS301`, the live SA
+    parent. A dead series is recorded in the spec's `exclude_series` with the
+    reason, not deleted in silence.
+
+29. **Weeks are not short months.** The first version of that staleness check
+    treated every step as a whole number of months, so a weekly series computed
+    a last observation two years in the FUTURE, returned a negative gap, and
+    could never be flagged -- a silent exemption for the dashboard that updates
+    most often. Weekly is date arithmetic. And the grace period scales with the
+    period: a fixed six months condemns every healthy annual series, since 2025
+    is the latest an annual series can carry for most of 2026.
+
+30. **A guard that has never fired is not known to work.** Both defects above
+    were found by feeding the new check seven synthetic series -- dead monthly,
+    live monthly, quarterly, weekly current, weekly dead, annual healthy,
+    annual dead -- rather than by running it once on data that happened to be
+    clean. It passed the real bundles before either bug was found.
+
 ## How it runs
 
 ```
@@ -503,7 +537,7 @@ validate *inside* the container and `caddy reload`, never restart.
 **172 series across 8 releases, ~379,000 vintage rows over ~129,000
 observations, 36/36 validations, and every exported series drawn by its page on
 all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
-PPI 20, JOLTS 7, Weekly Claims 6.
+PPI 24, JOLTS 7, Weekly Claims 6.
 
 Every release now carries real ALFRED vintages: CPI and PPI were both backfilled
 on 4 September, 66,152 and 16,194 vintage rows, and both stamps picked up their

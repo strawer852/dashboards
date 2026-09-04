@@ -144,7 +144,14 @@ def main() -> int:
             for rel in spec.get("include_releases", []):
                 wanted += by_release.get(rel, [])
             wanted += spec.get("include_series", [])
-            wanted = sorted(set(wanted), key=lambda s: (-meta[s][5], s))
+            # A release sweep pulls in whatever the catalogue holds for that
+            # release, discontinued series included -- and a dead series exports
+            # cleanly, validates, and reports full coverage. It simply draws
+            # nothing. Naming it here states the reason in the one file a reader
+            # of the dashboard would think to open.
+            drop = set(spec.get("exclude_series", []))
+            wanted = sorted(set(wanted) - drop, key=lambda s: (-meta[s][5], s))
+            consumed.update(drop)
             consumed.update(wanted)
 
             series_out: dict = {}

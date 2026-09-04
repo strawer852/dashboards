@@ -183,7 +183,17 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 /* ---------- numbered tables ---------- */
 .row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 44px; }
 .row.one { grid-template-columns: 1fr; }
-.t { padding-top: 30px; min-width: 0; }
+/* A cell is a flex column so the chart can be pushed to its foot. Two charts
+   in a row have unequal amounts of prose above them, and side-by-side panels
+   whose baselines disagree cannot be compared by eye -- which is the only
+   reason to put them side by side. Grid stretches both cells to the taller
+   one, so bottom-aligning the chart of a pair also aligns their tops. */
+.t { padding-top: 30px; min-width: 0; display: flex; flex-direction: column; }
+.t > .chart { margin-top: auto; }
+/* A legend describes the chart under it, so it travels with it rather than
+   staying stuck to the foot of a short caption with the gap in between. */
+.t > .key { margin-top: auto; }
+.t > .key ~ .chart { margin-top: 0; }
 .th {
   display: flex; align-items: baseline; gap: 11px; flex-wrap: wrap;
   border-bottom: 1px solid var(--rule-hi); padding-bottom: 7px; margin-bottom: 3px;

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PPI — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=7d85747002">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
 </head>
 <body>
 <div class="app">
@@ -183,31 +183,61 @@
 
     <div class="row">
       <div class="t" id="t15">
-        <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b> &mdash; the July release attributes more than half of the entire fall in final demand goods to it, and that is a normal month rather than a remarkable one. Diesel is separated from it deliberately: it is the <em>freight</em> cost, and it moves with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
+        <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b> &mdash; the July release attributes more than half of the entire fall in final demand goods to it, and that is a normal month rather than a remarkable one. Diesel is separated from it deliberately: it is the <em>freight</em> cost, moving with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
         <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
-        <div class="chart" id="cFuel" style="height:235px"></div>
+        <div class="chart" id="cFuel" style="height:250px"></div>
       </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Fuel and materials, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">The same three monthly, and this is the scale the headline actually reacts to &mdash; a single month of gasoline routinely moves several percent, which is why final demand goods is the noisiest line on this page. Diesel and gasoline mostly move together; the months they do not are refinery or distillate events rather than crude ones.</p>
+        <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
+        <div class="chart" id="cFuelM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="t" id="t16">
-        <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Two services that turn with the cycle rather than with costs. <b>Truck transportation of freight</b> is the cleanest cyclical signal the release carries &mdash; it fell 1.8% in July and took final demand transportation and warehousing down with it &mdash; because haulage is priced on spot capacity and reacts before almost anything else. Airline passenger services is the most volatile services line in the index, and unlike most of PPI it is also something households buy directly.</p>
-        <p class="key"><i class="k4">Truck transportation of freight</i><i class="ks1">Airline passenger services</i></p>
-        <div class="chart" id="cFreight" style="height:235px"></div>
+        <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Two services that turn with the cycle rather than with costs. <b>Transportation of freight and mail is the cleanest cyclical signal the release carries</b> &mdash; haulage and delivery are priced on spot capacity, so they react before almost anything else &mdash; and at <b>+8.5%</b> over the year to July 2026 it is running well ahead of final demand as a whole. Airline passenger services is the most volatile services line in the index, up <b>11.9%</b> on the year, and unlike most of PPI it is also something households buy directly. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
+        <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
+        <div class="chart" id="cFreight" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Freight and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">Monthly, freight is the one to watch: it sits close to a spot price, so it turns months before the annual rate admits anything has changed &mdash; the <b>+3.9%</b> jump in April 2026 was visible here long before the twelve-month line beside it responded. Both series turned down in July, freight by 0.7% and airline fares by 3.4%. Fares swing harder in any given month but carry less about the cycle: they follow jet fuel and capacity decisions rather than demand for haulage.</p>
+        <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
+        <div class="chart" id="cFreightM" style="height:250px"></div>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t17">
-        <div class="th"><span class="n">Table 17</span><span class="ti">What the PCE deflator takes from here</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">The reason to read PPI detail at all. <b>These feed the PCE price index directly</b> &mdash; the measure the Federal Reserve actually targets &mdash; because the national accounts source much of health care from producer prices rather than from the CPI. That is why a PPI print can move the PCE forecast on the day even when the CPI has already landed: the CPI measures what households pay at the counter, the PCE picks up what insurers pay, and this is where the second number comes from. Both are seasonally adjusted, so they can be read against each other and against everything else on this page.</p>
+        <div class="th"><span class="n">Table 17</span><span class="ti">What the PCE deflator takes from here, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The reason to read PPI detail at all. <b>These feed the PCE price index directly</b> &mdash; the measure the Federal Reserve actually targets &mdash; because the national accounts source much of health care from producer prices rather than from the CPI. That is why a PPI print can move the PCE forecast on the day even when the CPI has already landed: the CPI measures what households pay at the counter, the PCE picks up what insurers pay, and this is where the second number comes from. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
         <p class="key"><i class="k4">Physician care</i><i class="ks1">Hospital inpatient care</i></p>
-        <div class="chart" id="cPCE" style="height:235px"></div>
+        <div class="chart" id="cPCE" style="height:250px"></div>
       </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">What the PCE deflator takes from here, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">Both are quiet enough that the scale had to be redrawn to show them. <b>Physician care has not moved a full percent in a single month once in five years</b> &mdash; its median monthly step is 0.10% &mdash; and hospital inpatient care, livelier at 0.27%, has crossed 1% three times in sixty months. Health care is surveyed on a slower cycle than most of the index and much of it reprices on annual contracts, so a near-flat month is the normal state rather than an absence of news, and the occasional step is a contract resetting rather than a market moving. That is why the <em>annual</em> rates beside them are what forecasters carry into a PCE estimate.</p>
+        <p class="key"><i class="k4">Physician care</i><i class="ks1">Hospital inpatient care</i></p>
+        <div class="chart" id="cPCEM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="t" id="t18">
-        <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management</span><span class="u">Percent, year over year, <b>not</b> adjusted</span></div>
-        <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series beside it &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;20% and +25%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it led the whole of final demand services in July at <b>+6.5%</b>, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
+        <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management, year</span><span class="u">Percent, year over year, <b>not</b> adjusted</span></div>
+        <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series above &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;20% and +25%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it led the whole of final demand services in July at <b>+6.5%</b>, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
         <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
-        <div class="chart" id="cPortfolio" style="height:235px"></div>
+        <div class="chart" id="cPortfolio" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Portfolio management, month</span><span class="u">Percent, month on month, <b>not</b> adjusted</span></div>
+        <p class="note"><b>Read this one with care.</b> The series is unadjusted, so a monthly change carries the season as well as the signal &mdash; management fees are struck on asset values at period ends, and much of the shape here is that billing calendar rather than anything about prices. The scale is the giveaway: the median monthly step is <b>1.79%</b> against 0.10% for physician care beside it, and it has run between &minus;7.1% and +8.1%, crossing one percent in 46 of the last 60 months. It is shown because the contrast is instructive &mdash; this is what every other monthly chart on the site would look like <em>before</em> seasonal adjustment. For a judgement about direction, use the twelve-month line beside it, where the season cancels.</p>
+        <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
+        <div class="chart" id="cPortfolioM" style="height:250px"></div>
       </div>
     </div>
 
@@ -240,7 +270,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=c207429023"></script>
+<script src="/assets/brb-dash.js?v=99fe6da402"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -391,7 +421,7 @@ BRB.render({
                    { id: "WPS081", label: "Lumber", ...C3 }]) },
 
     { el: "cFreight", type: "line", format: "pct", tick: 11, left: 44, window: 60,
-      series: yoy([{ id: "WPS3012", label: "Truck transportation of freight", ...C1 },
+      series: yoy([{ id: "WPS301", label: "Transportation of freight and mail", ...C1 },
                    { id: "WPS3022", label: "Airline passenger services", ...C2 }]) },
 
     // Portfolio management is published NSA only -- there is no seasonally
@@ -408,6 +438,27 @@ BRB.render({
     // roughly -20% to +25% while they move within five points.
     { el: "cPortfolio", type: "line", format: "pct", tick: 11, left: 44, window: 60,
       series: yoy([{ id: "WPU4021", label: "Portfolio management (NSA)",
+                     ...C4, dash: true }]) },
+
+    { el: "cFuelM", type: "line", format: "pct2", axisFormat: "pct", tick: 11, left: 44, window: 60,
+      series: mom([{ id: "WPS0571", label: "Gasoline", ...C1 },
+                   { id: "WPS057303", label: "No. 2 diesel", ...C2 },
+                   { id: "WPS081", label: "Lumber", ...C3 }]) },
+
+    { el: "cFreightM", type: "line", format: "pct2", axisFormat: "pct", tick: 11, left: 44, window: 60,
+      series: mom([{ id: "WPS301", label: "Transportation of freight and mail", ...C1 },
+                   { id: "WPS3022", label: "Airline passenger services", ...C2 }]) },
+
+    { el: "cPCEM", type: "line", format: "pct2", axisFormat: "pct", tick: 11, left: 44, window: 60,
+      series: mom([{ id: "WPS511101", label: "Physician care", ...C1 },
+                   { id: "WPS512101", label: "Hospital inpatient care", ...C2 }]) },
+
+    // A monthly change on an UNADJUSTED series carries the season with it. Shown
+    // deliberately and captioned as such -- the repeating shape is the billing
+    // calendar, not a price signal -- because there is no adjusted version to
+    // show instead.
+    { el: "cPortfolioM", type: "line", format: "pct2", axisFormat: "pct", tick: 11, left: 44, window: 60,
+      series: mom([{ id: "WPU4021", label: "Portfolio management (NSA)",
                      ...C4, dash: true }]) },
 
   ],

@@ -151,7 +151,11 @@
   const PANELS = {};
 
   PANELS.line = (el, ctx, p) => {
+    // PANELS.line supports axisFormat, as bars, contribution and stacked already
+    // did. A monthly rate wants two decimals in the tooltip and none of that
+    // noise repeated down the axis; without this the two were forced to agree.
     const P = ctx.P, fmt = fmtFor(p);
+    const axisFmt = p.axisFormat ? fmtFor({ format: p.axisFormat }) : fmt;
     const first = ctx.series(p.series[0].id);
     const cats = tail(axis(first), p.window);
     const opt = Object.assign(base(P), {
@@ -172,8 +176,8 @@
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
       yAxis: p.axis2
-        ? [yAxis(P, fmt), Object.assign(yAxis(P, fmtFor({ format: p.format2 })), { splitLine: { show: false } })]
-        : yAxis(P, fmt),
+        ? [yAxis(P, axisFmt), Object.assign(yAxis(P, fmtFor({ format: p.format2 })), { splitLine: { show: false } })]
+        : yAxis(P, axisFmt),
       series: p.series.map((sp, i) => {
         const r = resolve(ctx, sp);
         // Align every series onto the FIRST series' date axis by date, never by
