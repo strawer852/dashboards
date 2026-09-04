@@ -313,10 +313,21 @@ previous bundles keep serving rather than publishing figures that disagree with
 the source. That failure is invisible on the page, so it also writes
 `status.json` (the index reads it) and pushes an ntfy alert.
 
-Windows, as **systemd user timers** in `America/New_York`: 08:35–09:55 ET for
-Employment Situation and Claims, 10:05–10:55 ET for JOLTS, and a 01:40 ET full
+Windows, as **systemd user timers** in `America/New_York`: 08:35–12:55 ET for
+Employment Situation and Claims, 10:05–13:55 ET for JOLTS, and a 01:40 ET full
 sweep. All three carry `Persistent=true`, so a window missed while the machine
 or the user manager was down runs once on start-up — which cron could not do.
+
+The windows are **wide because a run outside a release is nearly free**.
+`refresh.py` asks `macro_release_dates` two questions before its first FRED
+call — is anything due today, and has it already landed — and stops at a query
+if either answer says so. It **fails open**: with no usable calendar rows it
+declines to judge and runs anyway, because a gate that can silence the pipeline
+when its own inputs are missing is worse than no gate. `--force` skips it.
+
+They were 09:55 and 10:55 until 4 September, when FRED published an hour after
+the embargo and the 09:35 firing caught the release with twenty minutes to
+spare. On a slower morning it would have waited for the 01:40 sweep.
 
 User units, so they need lingering (`loginctl enable-linger`, already on);
 without it the user manager exits at logout and nothing fires. Inspect with
@@ -416,8 +427,8 @@ Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all wit
 
 | Timer | Fires | Runs |
 |---|---|---|
-| `macro-refresh-employment` | 08:35–09:55 ET, weekdays | Employment Situation + Weekly Claims |
-| `macro-refresh-jolts` | 10:05–10:55 ET, weekdays | JOLTS |
+| `macro-refresh-employment` | 08:35–12:55 ET, weekdays | Employment Situation + Weekly Claims |
+| `macro-refresh-jolts` | 10:05–13:55 ET, weekdays | JOLTS |
 | `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
 | `dashboards-push` | 23:30 local daily | push to GitHub, then verify by hash |
 
@@ -470,41 +481,28 @@ repository on the account — narrow it if that ever matters.
 
 Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
-Everything the 3 September block listed is done — the August release ran, CPI
-shipped, and the commits are in (`a2f96b8`, `b9a9d11`, ahead of the remote until
-the 23:35 push).
 
-1. **`tools/refresh.sh` has no lock.** A manual run and a timer's can ingest
-   concurrently; nothing prevents it. On 4 September this was hand-timed around
-   twice, into the gaps between firings, which works only while somebody is
-   watching. `flock` on a pidfile is the whole fix.
+Everything the earlier lists carried is now done. The 4 September release ran
+end to end; CPI shipped and has its revision history; `refresh.sh` has a lock;
+the windows are calendar-gated and wider; motor vehicle insurance is in through
+the BLS adapter; `tools/crontab.installed` is gone and `deploy-nginx.conf` was
+checked byte-for-byte against what the container mounts and is identical.
 
-2. **Catalogue-driven scheduling is now within reach**, and 4 September made the
-   case for it. `macro_release_dates` is populated from FRED (trap 20), so the
-   timers could fire from the actual calendar rather than fixed daily windows.
-   That morning the fixed window spent six blind retries waiting on FRED and
-   would have missed the release entirely had FRED slipped past 09:55.
-   `pub_lag_days` and `staleness_mode` are already columns in
-   `macro_series_meta`; this is what the retired stack converged on.
+1. **PPI is the last planned dashboard** and the only entry left in
+   `planned.yml`. Much of the work is already done: `contribution` and
+   `relative_importance` generalise to any weighted index, `PANELS.stacked`
+   handles its partitions, and the paired year/month layout is established.
+   PPI's own shape — final demand, then intermediate demand by stage — is the
+   part that needs thought rather than machinery.
 
-3. **CPI can now carry revision panels.** Its ALFRED backfill ran on 4 September
-   — 66,152 vintage rows, 950 distinct vintages, 17 seconds — so
-   `first_reported_change` and a revision overlay are available to it for the
-   first time, and the stamp picked up its true release date (12 August) with no
-   code change. Two CPI series have **no** ALFRED history and are now correctly
-   `vintage_mode='fetch_date'`: `CUSR0000SEFV` (food away from home) and
-   `CUSR0000SETD` (motor vehicle maintenance). They must never be offered a
-   revision overlay — trap 15. `backfill.py` prints exactly this warning at the
-   end of a run; read it.
+2. **Self-hosting ntfy** is now low-risk: the path fired for real on
+   4 September, so swapping `NTFY_URL` is a change to a proven route rather
+   than an untested one.
 
-4. **PPI is the last planned dashboard** and the only entry left in
-   `planned.yml`.
+3. **The GitHub key is an account key, not a repo deploy key** — it can write
+   to every repository on the account. Narrow it if that ever matters.
 
-5. **Motor vehicle insurance is missing from CPI** — 2.6% of the basket and one
-   of the larger movers, but not on FRED as a seasonally adjusted series. It
-   needs the BLS adapter, and would arrive with no vintage history (trap 15).
-
-6. Smaller: `tools/crontab.installed` is a stale copy of the retired cron and
-   could go; `deploy-nginx.conf` should be checked against what the container
-   actually mounts; and self-hosting ntfy is now low-risk, since the path has
-   been proven end to end.
+4. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
+   **redundant rather than load-bearing**: restic backs up `/home/strawer/bigricebowl`
+   whole, `everos-data` included. Harmless at 290 KB a day, and worth knowing
+   before anybody prunes it thinking it is the only copy.

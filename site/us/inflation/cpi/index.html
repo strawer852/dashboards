@@ -294,14 +294,14 @@
     <div class="row">
       <div class="t" id="t25">
         <div class="th"><span class="n">Table 25</span><span class="ti">Vehicles and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Lines, not a stack. These four are a <b>selection, not a decomposition</b> &mdash; they belong to no common parent and sum to nothing, so stacking them would draw a total that does not exist. New and used vehicles are 3.8% and 2.7% of the basket; airline fares are 1.1% but swing further than anything outside energy. <b>These are the three series that survived October 2025</b>, priced from administrative data when collection stopped.</p>
-        <p class="key"><i class="k4">Maintenance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i></p>
+        <p class="note">Lines, not a stack. These five are a <b>selection, not a decomposition</b> &mdash; stacking them would draw a total that does not exist, and two of them sit inside transportation services rather than beside it, which is exactly why they are absent from the single-item contribution charts above. <b>Motor vehicle insurance is the striking one</b>: 2.6% of the basket and falling outright at -4.5% over the year, having risen at double digits for most of the preceding three. It is published by BLS but not carried by FRED as a seasonally adjusted series, so it arrives through the BLS adapter with no revision history (trap 15). Two of the three series that survived October 2025 are here &mdash; new and used vehicles; the third was gasoline.</p>
+        <p class="key"><i class="k4">Motor vehicle insurance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i><i class="ks4">Maintenance</i></p>
         <div class="chart" id="cVehY" style="height:250px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="n">&nbsp;</span><span class="ti">Vehicles and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
-        <p class="note">The same four monthly. Used cars and airline fares are the two most volatile large items in the whole index; at this scale the maintenance line is nearly flat by comparison, which is the point of showing them together.</p>
-        <p class="key"><i class="k4">Maintenance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i></p>
+        <p class="note">The same five monthly. Used cars and airline fares are the two most volatile large items in the whole index; at this scale maintenance is nearly flat by comparison, which is the point of showing them together. Insurance moves in steps rather than continuously &mdash; it is repriced at renewal, not daily, so a flat month is the normal state and a large one is a repricing round.</p>
+        <p class="key"><i class="k4">Motor vehicle insurance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i><i class="ks4">Maintenance</i></p>
         <div class="chart" id="cVehM" style="height:250px"></div>
       </div>
     </div>
@@ -399,6 +399,7 @@ const C1 = { color: "ink", width: 2.0 };
 const C2 = { color: "s2",  width: 1.8 };
 const C3 = { color: "s1",  width: 1.8 };
 const C4 = { color: "s3",  width: 1.6, dash: true };
+const C5 = { color: "s4",  width: 1.5 };
 
 // The twelve single items. Ids are written out in full rather than built by
 // concatenation: tools/coverage.py finds a drawn series by matching its quoted
@@ -651,17 +652,21 @@ BRB.render({
 
     { el: "cVehY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
       series: [
-               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", ...C1 },
+               // Insurance leads on ink: it is the largest mover of the five and
+               // the only one that has been falling outright.
+               { id: "CUSR0000SETE", label: "Motor vehicle insurance", transform: "yoy", ...C1 },
                { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", ...C2 },
                { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", ...C3 },
-               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", ...C4 }] },
+               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", ...C4 },
+               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", ...C5 }] },
 
     { el: "cVehM", type: "line", format: "pct", tick: 11, left: 42, window: 60,
       series: [
-               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", periods: 1, ...C1 },
+               { id: "CUSR0000SETE", label: "Motor vehicle insurance", transform: "yoy", periods: 1, ...C1 },
                { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", periods: 1, ...C2 },
                { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", periods: 1, ...C3 },
-               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", periods: 1, ...C4 }] },
+               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", periods: 1, ...C4 },
+               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", periods: 1, ...C5 }] },
 
     { el: "cOthY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
       series: [
