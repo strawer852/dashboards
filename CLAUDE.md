@@ -298,6 +298,35 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     figure that never changed. Any revision measure on an index needs a trailing
     window, or it reports the change of base as the largest revision in history.
 
+26. **PPI transmission is attenuation, not delay — and the chain everyone
+    reaches for is discontinued.** Two things to know before drawing a
+    producer-price pass-through chart.
+
+    First, the familiar crude → intermediate → finished chain (`PPICRM`,
+    `PPIITM`, `PPIFGS`) is **DISCONTINUED** on FRED. The live framework is
+    Final Demand–Intermediate Demand, launched 2014, whose production-flow
+    system runs stage 1 → 2 → 3 → 4 → final demand. That is why the data starts
+    in November 2009 and not the 1940s.
+
+    Second, and more important: **there is no measurable lag.** Correlating each
+    stage's monthly change against final demand's at leads of nought to six
+    months, every stage peaks at **nought** — stage 1 +0.78, stage 2 +0.59,
+    stage 3 +0.81, stage 4 +0.83. On twelve-month changes the peak is at one
+    month for all four, which is smoothing rather than transmission. A cost
+    shock upstream reaches the finished end in the *same month*.
+
+    What changes down the chain is amplitude. Standard deviation of the
+    twelve-month change, 2010–2026: **stage 1 6.80, stage 2 8.59, stage 3 6.48,
+    stage 4 3.33, final demand 2.69**, with the range compressing from −9.3% ..
+    +22.4% to −1.5% .. +11.6%. Note stage 2 is the most volatile, not stage 1 —
+    the chain is not monotone at the top, because stage 2 carries the most
+    energy and metals. And the asymmetry is real: the raw end went through
+    outright deflation in 2023 that final demand never saw.
+
+    So a chart implying a diagonal — a wave moving down the stages over months
+    — asserts something this data does not support. Draw the amplitude, not the
+    delay.
+
 ## How it runs
 
 ```
@@ -399,10 +428,16 @@ validate *inside* the container and `caddy reload`, never restart.
 
 ## State as of 4 September 2026, end of day
 
-**154 series across 7 releases, ~362,000 vintage rows over ~123,500
-observations, 35/35 validations, and every exported series drawn by its page on
-all four dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 30,
-JOLTS 7, Weekly Claims 6.
+**172 series across 8 releases, ~367,000 vintage rows over ~129,000
+observations, 36/36 validations, and every exported series drawn by its page on
+all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
+PPI 12, JOLTS 7, Weekly Claims 6.
+
+PPI carries no contributions, deliberately. Contributions need published
+weights and the PPI news release has no relative-importance column — CPI Table 1
+does, which is what made the CPI ones possible. `contribution` and
+`relative_importance` generalise to any weighted index and would need no change
+if the PPI weights are ever sourced properly from the detailed report.
 
 The 4 September Employment Situation was the first release to run through the
 rebuilt pipeline, and it held. The timer fired at **08:35 ET** — the first
@@ -482,27 +517,27 @@ repository on the account — narrow it if that ever matters.
 Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
 
-Everything the earlier lists carried is now done. The 4 September release ran
-end to end; CPI shipped and has its revision history; `refresh.sh` has a lock;
-the windows are calendar-gated and wider; motor vehicle insurance is in through
-the BLS adapter; `tools/crontab.installed` is gone and `deploy-nginx.conf` was
-checked byte-for-byte against what the container mounts and is identical.
+**`planned.yml` is empty.** Every dashboard that was planned is built: PPI
+landed on 4 September and was the last of them. What follows is smaller.
 
-1. **PPI is the last planned dashboard** and the only entry left in
-   `planned.yml`. Much of the work is already done: `contribution` and
-   `relative_importance` generalise to any weighted index, `PANELS.stacked`
-   handles its partitions, and the paired year/month layout is established.
-   PPI's own shape — final demand, then intermediate demand by stage — is the
-   part that needs thought rather than machinery.
+1. **PPI has no vintage history yet.** Its 17 series entered the catalog on
+   4 September with current-vintage data only, so its stamp shows no release
+   date and it offers no revision panels — the same position CPI was in that
+   morning. The CPI backfill took 17 seconds for 39 series; this one is
+   smaller. Run `backfill.py --series` over the `bls.ppi` release and both
+   fix themselves, the stamp with no code change.
 
-2. **Self-hosting ntfy** is now low-risk: the path fired for real on
-   4 September, so swapping `NTFY_URL` is a change to a proven route rather
-   than an untested one.
+2. **PPI weights, if they are wanted.** The detailed report publishes relative
+   importances for the FD-ID structure; the news release does not. With them,
+   the contribution and weight panels that carry the CPI page would work here
+   unchanged.
 
-3. **The GitHub key is an account key, not a repo deploy key** — it can write
+3. **Self-hosting ntfy** is low-risk now that the path has fired for real.
+
+4. **The GitHub key is an account key, not a repo deploy key** — it can write
    to every repository on the account. Narrow it if that ever matters.
 
-4. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
-   **redundant rather than load-bearing**: restic backs up `/home/strawer/bigricebowl`
-   whole, `everos-data` included. Harmless at 290 KB a day, and worth knowing
+5. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
+   **redundant rather than load-bearing**: restic backs up
+   `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.

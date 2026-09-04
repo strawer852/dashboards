@@ -1,0 +1,29 @@
+id: us.inflation.ppi
+path: us/inflation/ppi
+region: United States
+topic: Inflation
+nav_order: 2
+title: PPI
+# The stamp under the title comes from this release, and only this one.
+release: bls.ppi
+include_releases:
+  - bls.ppi
+
+# No derived contributions here, unlike CPI. Contributions need published
+# weights, and the PPI news release does not carry a relative-importance column
+# the way CPI Table 1 does -- PPI weights live in a separate detailed report.
+# Rather than invent them, this dashboard is rates and levels only. If the
+# weights are ever sourced properly, `contribution` and `relative_importance`
+# in macro/derived.py generalise to any weighted index and would need no change.
+#
+# No revision panels either, for now: the FD-ID series entered the catalog on
+# 4 September 2026 with current-vintage history only. The ALFRED backfill has
+# not run for them -- see CLAUDE.md trap 15 and the CPI precedent.
+#
+# On the naming: the older stage-of-processing chain (crude materials ->
+# intermediate materials -> finished goods, PPICRM/PPIITM/PPIFGS) is the one
+# people reach for first, and every one of those series is DISCONTINUED on
+# FRED. The live framework is Final Demand-Intermediate Demand, launched 2014,
+# whose production-flow system runs Stage 1 -> 2 -> 3 -> 4 -> final demand and
+# is built for exactly the question this dashboard asks. That is why the data
+# starts in November 2009 rather than the 1940s.

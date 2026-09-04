@@ -42,6 +42,7 @@ ET = ZoneInfo("America/New_York")
 RELEASE_TIME = {
     "bls.employment_situation": time(8, 30),
     "bls.cpi":                  time(8, 30),
+    "bls.ppi":                  time(8, 30),
     "bls.eci":                  time(8, 30),
     "bls.productivity":         time(8, 30),
     "eta.claims":               time(8, 30),
