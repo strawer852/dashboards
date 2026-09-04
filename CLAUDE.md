@@ -84,6 +84,14 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
   white: worst adjacent colourblind ΔE 11.5, normal-vision 18.2, all ≥3:1
   contrast. Re-run the check before changing any of them — ordering is the
   colourblind-safety mechanism, not decoration.
+- **A panel must answer a question that stays worth asking.** The releases name
+  their movers each month — portfolio management led July, fresh vegetables and
+  thermoplastic resins fell — and building panels around those produces a page
+  that is stale the day the next release lands. Items earn a permanent place on
+  three grounds only: large by weight, persistently volatile, or a direct input
+  to something else that matters. The PPI detail panels were chosen that way,
+  which is why they do not match the release's own emphasis.
+
 - **A stack is only honest for a partition.** `PANELS.stacked` draws the
   aggregate as a line over the bars so any residual shows as daylight instead of
   being absorbed. Food, energy, medical care and both unemployment cuts qualify;
@@ -495,12 +503,20 @@ validate *inside* the container and `caddy reload`, never restart.
 **172 series across 8 releases, ~379,000 vintage rows over ~129,000
 observations, 36/36 validations, and every exported series drawn by its page on
 all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
-PPI 16, JOLTS 7, Weekly Claims 6.
+PPI 20, JOLTS 7, Weekly Claims 6.
 
 Every release now carries real ALFRED vintages: CPI and PPI were both backfilled
 on 4 September, 66,152 and 16,194 vintage rows, and both stamps picked up their
 true publication dates — 12 and 13 August — with no code change, which is what
 deriving a date instead of typing one buys.
+
+PPI also carries the detail that feeds **PCE** — physician care, hospital
+inpatient care and portfolio management — because the national accounts source
+those from producer prices rather than from the CPI, which is the durable reason
+to read PPI detail at all. Portfolio management is published **unadjusted only**
+(no SA version exists on FRED, unlike the two health series) so it has its own
+panel, dashed and captioned: it is on a different basis *and* swings −20% to
++25%, which on a shared axis flattened the others into a line.
 
 Both inflation dashboards carry contributions. PPI news release **Table 1** has
 a relative-importance column, dated Dec. 2025, exactly as CPI Table 1 does — the

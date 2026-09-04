@@ -46,8 +46,12 @@
         <a href="#t12"><span>12</span>Trade services</a>
         <a href="#t13"><span>13</span>By commodity type</a>
         <a href="#t14"><span>14</span>The long run</a>
-        <a href="#t15"><span>15</span>Levels</a>
-        <a href="#t16"><span>16</span>Revisions</a>
+        <a href="#t15"><span>15</span>Fuel and materials</a>
+        <a href="#t16"><span>16</span>Freight and travel</a>
+        <a href="#t17"><span>17</span>What PCE takes</a>
+        <a href="#t18"><span>18</span>Portfolio management</a>
+        <a href="#t19"><span>19</span>Levels</a>
+        <a href="#t20"><span>20</span>Revisions</a>
       </div>
 
     </nav>
@@ -177,9 +181,39 @@
       </div>
     </div>
 
-    <div class="row one">
+    <div class="row">
       <div class="t" id="t15">
-        <div class="th"><span class="n">Table 15</span><span class="ti">Where the level went</span><span class="u">Index, 5 years ago = 100</span></div>
+        <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b> &mdash; the July release attributes more than half of the entire fall in final demand goods to it, and that is a normal month rather than a remarkable one. Diesel is separated from it deliberately: it is the <em>freight</em> cost, and it moves with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
+        <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
+        <div class="chart" id="cFuel" style="height:235px"></div>
+      </div>
+      <div class="t" id="t16">
+        <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Two services that turn with the cycle rather than with costs. <b>Truck transportation of freight</b> is the cleanest cyclical signal the release carries &mdash; it fell 1.8% in July and took final demand transportation and warehousing down with it &mdash; because haulage is priced on spot capacity and reacts before almost anything else. Airline passenger services is the most volatile services line in the index, and unlike most of PPI it is also something households buy directly.</p>
+        <p class="key"><i class="k4">Truck transportation of freight</i><i class="ks1">Airline passenger services</i></p>
+        <div class="chart" id="cFreight" style="height:235px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t17">
+        <div class="th"><span class="n">Table 17</span><span class="ti">What the PCE deflator takes from here</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The reason to read PPI detail at all. <b>These feed the PCE price index directly</b> &mdash; the measure the Federal Reserve actually targets &mdash; because the national accounts source much of health care from producer prices rather than from the CPI. That is why a PPI print can move the PCE forecast on the day even when the CPI has already landed: the CPI measures what households pay at the counter, the PCE picks up what insurers pay, and this is where the second number comes from. Both are seasonally adjusted, so they can be read against each other and against everything else on this page.</p>
+        <p class="key"><i class="k4">Physician care</i><i class="ks1">Hospital inpatient care</i></p>
+        <div class="chart" id="cPCE" style="height:235px"></div>
+      </div>
+      <div class="t" id="t18">
+        <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management</span><span class="u">Percent, year over year, <b>not</b> adjusted</span></div>
+        <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series beside it &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;20% and +25%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it led the whole of final demand services in July at <b>+6.5%</b>, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
+        <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
+        <div class="chart" id="cPortfolio" style="height:235px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t19">
+        <div class="th"><span class="n">Table 19</span><span class="ti">Where the level went</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="note">Rates answer how fast, this answers how far. Rebased inside the window, because the published indexes sit on several different base years and are not comparable as levels. Goods and services diverge permanently here in a way they do not in the rate charts: a period of fast goods inflation leaves a step in the level that later disinflation does not undo.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Goods</i><i class="ks2">Services</i><i class="ks3">Construction (dashed)</i></p>
         <div class="chart" id="cLevels" style="height:250px"></div>
@@ -187,8 +221,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t16">
-        <div class="th"><span class="n">Table 16</span><span class="ti">How much the numbers move afterwards</span><span class="u">Index points, first published to latest</span></div>
+      <div class="t" id="t20">
+        <div class="th"><span class="n">Table 20</span><span class="ti">How much the numbers move afterwards</span><span class="u">Index points, first published to latest</span></div>
         <p class="note">A third kind of revision, different again from the other two dashboards. Payroll figures move because more survey responses arrive; the CPI index never moves at all and only its seasonal adjustment does. <b>PPI moves because late reports arrive, and it moves a lot</b>: <b>120 of the 139 months since 2015</b> were revised, by a median of 0.13 index points and by as much as 0.78. The timing is bimodal &mdash; of the months that moved, 50 first changed one month after first print and 52 at four months, the latter being the single scheduled revision BLS documents &mdash; but the two groups are alike in size, so what differs is when rather than how much. The ink line is <b>stage 1</b>, which revises slightly harder than final demand does, in keeping with everything else on this page.</p>
         <p class="key"><i class="k1">Final demand</i><i class="k4">Stage 1</i></p>
         <div class="chart" id="cRev" style="height:230px"></div>
@@ -350,6 +384,31 @@ BRB.render({
                { id: "PPI.w_foods",        label: "Foods" },
                { id: "PPI.w_energy",       label: "Energy" },
                { id: "PPI.w_construction", label: "Construction" }] },
+
+    { el: "cFuel", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: yoy([{ id: "WPS0571", label: "Gasoline", ...C1 },
+                   { id: "WPS057303", label: "No. 2 diesel", ...C2 },
+                   { id: "WPS081", label: "Lumber", ...C3 }]) },
+
+    { el: "cFreight", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: yoy([{ id: "WPS3012", label: "Truck transportation of freight", ...C1 },
+                   { id: "WPS3022", label: "Airline passenger services", ...C2 }]) },
+
+    // Portfolio management is published NSA only -- there is no seasonally
+    // adjusted version on FRED at all, unlike the two health care series beside
+    // it, which do have one. Drawn dashed and captioned as a different basis
+    // rather than quietly mixed in, the same treatment the payroll page gives
+    // its 12-month diffusion index.
+    { el: "cPCE", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: yoy([{ id: "WPS511101", label: "Physician care", ...C1 },
+                   { id: "WPS512101", label: "Hospital inpatient care", ...C2 }]) },
+
+    // Its own axis, and not only for the basis. Sharing one with the health
+    // series flattened both of those into a flat line, because this swings
+    // roughly -20% to +25% while they move within five points.
+    { el: "cPortfolio", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: yoy([{ id: "WPU4021", label: "Portfolio management (NSA)",
+                     ...C4, dash: true }]) },
 
   ],
 });
