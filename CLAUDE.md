@@ -29,6 +29,7 @@ no local build step.
 | `macro/derived.py` | Derived measures, shipped as ordinary series |
 | `macro/export.py` | Bundles → `data/v1/dashboards/*.json` |
 | `macro/refresh.py` | The orchestrator cron runs |
+| `macro/release_dates.py` | Forward release calendar, FRED -> `macro_release_dates` |
 | `dashboards/*.yml` | One spec per dashboard — the only per-dashboard data file |
 | `site/assets/brb-dash.js` | The shared rendering engine |
 | `site/us/employment/*/index.html` | Pages. Each is a panel list, nothing more |
@@ -60,11 +61,27 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
 - **A dashboard is a spec plus a panel list.** If a new dashboard needs a change
   in `brb-dash.js`, that is an engine defect, not a special case. Adding a
   *generic* panel type or transform is fine; a per-dashboard branch is not.
-- **Style: Statistical Abstract.** Cool paper `#f7f7f4`, ink `#14161a`, slate
-  `#35566b` gains, oxblood `#8c2f27` losses, `#8a7b4f` second series. Source
+- **Style: Statistical Abstract.** Cool paper `#f7f7f4`, ink `#14161a`. Source
   Serif 4 for figures, Archivo for labels, JetBrains Mono for axes.
   **The cursor is ink and never encodes a value** — it marks the current period,
   so it can never be mistaken for data.
+- **Colour does two different jobs and they use different scales.** *Sign* — a
+  bar coloured by whether it is a gain or a loss — is the diverging pair
+  `--pos #1f6091` and `--neg #8c2f27`. *Identity* — which series a line is — is
+  the six categorical slots `--s1..--s6`, taken in order and **never cycled**;
+  past six, fold the tail into an "other" bucket or use small multiples. The two
+  were conflated until 4 September 2026, when the line panel's default ladder ran
+  slate → gold → **oxblood**, i.e. the loss colour identifying "series 3".
+  Every slot is validated against this site's own paper rather than a generic
+  white: worst adjacent colourblind ΔE 11.5, normal-vision 18.2, all ≥3:1
+  contrast. Re-run the check before changing any of them — ordering is the
+  colourblind-safety mechanism, not decoration.
+- **A stack is only honest for a partition.** `PANELS.stacked` draws the
+  aggregate as a line over the bars so any residual shows as daylight instead of
+  being absorbed. Food, energy, medical care and both unemployment cuts qualify;
+  shelter is 95.1% of itself and the caption says so; a list of overlapping items
+  does not qualify at all. Twelve stacked categories is not a chart — the
+  categorical palette stops at six for the reason in trap 21.
 
 ## Traps already hit — do not rediscover these
 
@@ -204,6 +221,67 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     losing observations against the bundle already on disk, and freshness
     measured from the last *vintage* rather than the last observation date.
 
+19. **The stamp reported a re-fetch as a release.** `released_at` came from
+    `max(vintage_dt)` over every series in a release. A BLS-API series carries a
+    *fetch-time* vintage rather than a publication date, so a daily sweep
+    outranked the real one: the July payroll page read "released 3 Sep" for
+    figures published on 7 August, and the new CPI page read "released 4 Sep"
+    for July data published on 12 August. It now reads **only midnight
+    vintages** — an ALFRED vintage *is* the publication date, a fetch-date
+    vintage carries a time of day — and a release with none shows **no date at
+    all** rather than when we last looked. It corrected itself the moment the
+    CPI backfill landed, to 2026-08-12, with no code change.
+
+20. **"Next release" was a literal, and went stale at 08:30 on the day it
+    named.** `NEXT_RELEASE = {"bls.employment_situation": "2026-09-04T12:30:00Z"}`
+    was right until the embargo lifted; from 08:31 the page advertised the
+    release printed on it as still to come. It now reads from
+    `macro_release_dates`, filled from FRED's forward calendar by
+    `macro/release_dates.py` — the FRED release id is *discovered* from a series
+    we already hold, not typed — and filtered `release_at > now()`, which is what
+    makes it self-correcting. Six of seven releases have a FRED calendar; the
+    Atlanta Fed tracker has none and correctly shows nothing. FRED gives dates
+    only, so the times are the ones the releases themselves state: 08:30 ET, and
+    10:00 ET for JOLTS.
+
+    Traps 18, 19 and 20 are one trap wearing three hats: **a fact hard-coded
+    once is correct once.** Anything that must be retyped at a release will be
+    wrong at most releases. Derive it, or show nothing.
+
+21. **A colour can pass a separation test and still read as one line.** Ink
+    against slate measured ΔE 24, comfortably clear of the floor — yet the
+    month-and-year panels looked like a single series with two identical legend
+    swatches. The reason is the *chroma* floor, not the distance: slate `#35566b`
+    measures 0.052 against a 0.1 minimum. It is not a colour, it is a dark
+    neutral, and the eye files it with ink. Fixing the line beside it does not
+    help; when one mark reads grey, everything mid-toned collides with it (green
+    and plum both failed at 13.9 and 14.8). The bar had to gain real chroma.
+
+22. **October 2025 in the CPI is a PARTIAL hole, and the opposite shape from
+    trap 4.** 34 of 37 series are null; only **new vehicles, used cars and
+    gasoline** were priced, from administrative sources. So a blanket "October
+    2025 is missing" rule blanks three series that have data, and a blanket "the
+    CPI is fine" rule keeps 34 that do not. One missing month costs exactly one
+    month of the twelve-month change — and a second in **October 2026**, when
+    the hole becomes the base rather than the current value. On a contribution
+    heatmap a near-white cell is a *small* contribution, not a missing one; the
+    hole is the column blank in every other row.
+
+23. **`tools/coverage.py` matches a drawn series by its QUOTED ID in the page
+    file.** An id assembled at runtime — `"CPI.i_" + key` inside a loop — is
+    invisible to it, and every such series is reported shipped-but-undrawn.
+    Write ids out in full even where a loop would be shorter; the DRY version
+    silently defeats the only check that looks at the page end.
+
+24. **Two ECharts defects with the same signature — the option was accepted and
+    ignored.** `label.position` takes a string, not a callback: the callback was
+    dropped and every bar label fell back to `inside`, printing muted grey on a
+    dark bar (this is why the payroll contribution labels looked clipped for
+    weeks). And the shared `yAxis` helper sets `scale: true`, which lets the axis
+    begin wherever the data does — right for a line, wrong for a stack, where a
+    truncated baseline makes every segment's height a lie about its share.
+    `PANELS.stacked` forces zero onto the axis; nothing else should.
+
 ## How it runs
 
 ```
@@ -227,6 +305,16 @@ or the user manager was down runs once on start-up — which cron could not do.
 User units, so they need lingering (`loginctl enable-linger`, already on);
 without it the user manager exits at logout and nothing fires. Inspect with
 `systemctl --user list-timers 'macro-refresh-*'`.
+
+The **full sweep also refreshes the release calendar** (`release_dates.py`, trap
+20) — once a day, not every window, because it changes rarely and each run costs
+one FRED call per release. A failure there is logged and does not abort the
+refresh: the calendar is auxiliary, and a stale future date is caught anyway by
+export refusing to show one that has already passed.
+
+**`tools/refresh.sh` has no lock.** Nothing stops a manual run colliding with a
+timer's; on 4 September this was hand-timed around twice, into the gaps between
+firings. That works only while somebody is watching.
 
 ## Commands
 
@@ -282,11 +370,26 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
-## State as of 3 September 2026, end of day
+## State as of 4 September 2026, end of day
 
-**78 series across 7 releases, ~259,000 vintage rows, 34/34 validations, and
-every exported series drawn by its page on all three dashboards.** Nonfarm
-Payroll runs to 22 numbered tables, JOLTS 7, Weekly Claims 6.
+**154 series across 7 releases, ~362,000 vintage rows over ~123,500
+observations, 35/35 validations, and every exported series drawn by its page on
+all four dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 30,
+JOLTS 7, Weekly Claims 6.
+
+The 4 September Employment Situation was the first release to run through the
+rebuilt pipeline, and it held. The timer fired at **08:35 ET** — the first
+scheduled run in this repo's history to land *after* a release rather than five
+hours before it — found nothing for an hour because FRED had not yet published,
+and caught it on the 09:35 retry: ingest, backfill, `validate rc=0 35/35`,
+export and an ntfy push. **July's payroll change moved −23,000 → +21,000 in
+that same run and the vintage-pinned assertions held**, which is the whole
+purpose of trap 18. August printed +162,000 against a prior-12-month average of
++31,000.
+
+FRED's own clock is **US Central**, and it published roughly an hour after the
+08:30 ET embargo on both the July and August releases. The 08:35–09:55 window
+covers that, but only just — see the calendar note under Open right now.
 
 Two sources. FRED/ALFRED for anything it carries; the BLS API **only** for what
 it does not — the diffusion indexes, `LNS16000000`, real earnings and seasonally
@@ -334,7 +437,8 @@ repository on the account — narrow it if that ever matters.
 
 - Alerting is ntfy.sh for the pipeline and Telegram for ops. **William prefers to
   self-host ntfy** — swap `NTFY_URL` when convenient. The Telegram path has been
-  fired and confirmed delivered; ntfy has not been tested end to end.
+  fired and confirmed delivered, and **ntfy fired for real on 4 September**
+  when the August payroll release landed — both paths are now proven.
 - Catalog-driven scheduling (`pub_lag_days`, `staleness_mode`, already columns in
   `macro_series_meta`) is still open, and is what the retired stack converged on.
 - The retired `investment` stack's code survives at `~/bigricebowl/workers/` and
@@ -350,19 +454,41 @@ repository on the account — narrow it if that ever matters.
 
 Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
+Everything the 3 September block listed is done — the August release ran, CPI
+shipped, and the commits are in (`a2f96b8`, `b9a9d11`, ahead of the remote until
+the 23:35 push).
 
-1. **Friday 4 September, 08:35 ET — the August Employment Situation.** The first
-   live release through the corrected schedule, the vintage-pinned acceptance
-   tests and the three new invariants. Read `logs/refresh.log` after it: expect
-   an ingest that inserts rows, `validate rc=0 34/34`, an export, and an ntfy
-   push. **July's payroll change will be revised**, which is exactly what the
-   pinning was for — if validation fails on a July figure, the pinning is wrong,
-   not the data.
-2. **Two commits are ahead of the remote** at the time of writing (`226274f`,
-   `9f4f7c0`); the 23:30 timer will carry them.
-3. **CPI is dashboard #4** and the real test that the engine generalises beyond
-   employment. A spec file, catalog rows, and no new JavaScript — if it needs
-   any, that is an engine defect.
-4. Smaller: `tools/crontab.installed` is a stale copy of the retired cron and
+1. **`tools/refresh.sh` has no lock.** A manual run and a timer's can ingest
+   concurrently; nothing prevents it. On 4 September this was hand-timed around
+   twice, into the gaps between firings, which works only while somebody is
+   watching. `flock` on a pidfile is the whole fix.
+
+2. **Catalogue-driven scheduling is now within reach**, and 4 September made the
+   case for it. `macro_release_dates` is populated from FRED (trap 20), so the
+   timers could fire from the actual calendar rather than fixed daily windows.
+   That morning the fixed window spent six blind retries waiting on FRED and
+   would have missed the release entirely had FRED slipped past 09:55.
+   `pub_lag_days` and `staleness_mode` are already columns in
+   `macro_series_meta`; this is what the retired stack converged on.
+
+3. **CPI can now carry revision panels.** Its ALFRED backfill ran on 4 September
+   — 66,152 vintage rows, 950 distinct vintages, 17 seconds — so
+   `first_reported_change` and a revision overlay are available to it for the
+   first time, and the stamp picked up its true release date (12 August) with no
+   code change. Two CPI series have **no** ALFRED history and are now correctly
+   `vintage_mode='fetch_date'`: `CUSR0000SEFV` (food away from home) and
+   `CUSR0000SETD` (motor vehicle maintenance). They must never be offered a
+   revision overlay — trap 15. `backfill.py` prints exactly this warning at the
+   end of a run; read it.
+
+4. **PPI is the last planned dashboard** and the only entry left in
+   `planned.yml`.
+
+5. **Motor vehicle insurance is missing from CPI** — 2.6% of the basket and one
+   of the larger movers, but not on FRED as a seasonally adjusted series. It
+   needs the BLS adapter, and would arrive with no vintage history (trap 15).
+
+6. Smaller: `tools/crontab.installed` is a stale copy of the retired cron and
    could go; `deploy-nginx.conf` should be checked against what the container
-   actually mounts.
+   actually mounts; and self-hosting ntfy is now low-risk, since the path has
+   been proven end to end.
