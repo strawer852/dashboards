@@ -1,0 +1,25 @@
+[Unit]
+Description=Release-day poll, driven by the calendar rather than by a typed list
+
+[Timer]
+# One timer for every release there is, and every release there will be. It
+# replaces macro-refresh-employment, -inflation and -jolts, which between them
+# named five release ids across three unit files: adding a dashboard meant
+# remembering to add a timer, and twice nobody did -- CPI and PPI ran with no
+# release-morning refresh at all until 4 September 2026.
+#
+# The window is wide because the run is cheap: refresh.py --due asks the
+# calendar first and stops at a single database query when nothing is past its
+# embargo. It starts at 08:35 ET for the 08:30 releases -- FRED published about
+# an hour after the embargo on both the July and August Employment Situation --
+# and runs to 14:55 ET so JOLTS, embargoed at 10:00 ET, has the same margin.
+OnCalendar=Mon..Fri *-*-* 08:35/10:00 America/New_York
+OnCalendar=Mon..Fri *-*-* 09..14:05/10:00 America/New_York
+
+# Catch up on one missed window rather than waiting for tomorrow. Cron cannot,
+# which is what let the 3 September 2026 claims release sit unread.
+Persistent=true
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

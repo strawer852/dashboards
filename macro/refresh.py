@@ -95,11 +95,49 @@ WHERE release_id = ANY(%s)
   AND (release_at AT TIME ZONE 'America/New_York')::date
     = (now() AT TIME ZONE 'America/New_York')::date
 """
+# Which releases are outstanding RIGHT NOW: dated today, past their embargo,
+# and with nothing yet stored under today's vintage. Resolved per release, and
+# that is the point. The windowed timers each carried a typed list and judged it
+# as a group, so on a day when two releases in one list both fell due, the
+# moment the first landed `_ALREADY_LANDED` answered yes for the pair and the
+# second was not polled again until the small hours. No day in the current
+# calendar triggers it -- 10 September 2026 carries two releases but they sit in
+# different lists -- which is exactly the kind of bug that waits.
+_DUE_NOW = """
+SELECT DISTINCT d.release_id
+FROM macro_release_dates d
+WHERE (d.release_at AT TIME ZONE 'America/New_York')::date
+    = (now() AT TIME ZONE 'America/New_York')::date
+  AND d.release_at <= now()
+  AND NOT EXISTS (
+    SELECT 1 FROM macro_observations o
+    JOIN macro_series_meta m USING (series_id)
+    WHERE m.release_id = d.release_id
+      AND (o.vintage_dt AT TIME ZONE 'UTC')::date
+        = (now() AT TIME ZONE 'America/New_York')::date)
+ORDER BY 1
+"""
+
+# A forward calendar with nothing in it is not a quiet day, it is a broken
+# calendar -- and --due would then poll nothing, for ever, in silence. The
+# sweep refreshes this daily, so emptiness here means that has been failing.
+_CAL_FORWARD = """
+SELECT count(*) FROM macro_release_dates WHERE release_at >= now() - interval '1 day'
+"""
+
+# The vintage side is UTC and the calendar side is Eastern, which looks wrong
+# and is not. An ALFRED vintage is stored at MIDNIGHT of its realtime date, so
+# `2026-09-04 00:00+00` is the 4 September vintage -- but read in
+# America/New_York that timestamp is the 3rd, and the guard never matched.
+# It never fired once: on 4 September the release landed at 13:35Z and the
+# windows at 13:45Z and 13:55Z each fetched all 64,220 observations again.
+# Read on the UTC calendar the date is the one ALFRED meant. export.py already
+# identifies these rows the same way, by their 00:00:00 UTC time.
 _ALREADY_LANDED = """
 SELECT count(*) FROM macro_observations o
 JOIN macro_series_meta m USING (series_id)
 WHERE m.release_id = ANY(%s)
-  AND (o.vintage_dt AT TIME ZONE 'America/New_York')::date
+  AND (o.vintage_dt AT TIME ZONE 'UTC')::date
     = (now() AT TIME ZONE 'America/New_York')::date
 """
 
@@ -122,6 +160,16 @@ def nothing_to_poll_for(releases: list[str]) -> str | None:
         if cur.fetchone()[0]:
             return "today's release has already landed; not polling again"
     return None
+
+
+def releases_due_now() -> list[str] | None:
+    """Releases the calendar says are outstanding, or None if it cannot say."""
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute(_CAL_FORWARD)
+        if cur.fetchone()[0] == 0:
+            return None
+        cur.execute(_DUE_NOW)
+        return [r[0] for r in cur.fetchall()]
 
 
 def catalogue_size() -> dict:
@@ -155,10 +203,32 @@ def write_status(payload: dict) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--releases", nargs="*")
+    ap.add_argument("--due", action="store_true",
+                    help="fetch whatever the release calendar says is "
+                         "outstanding, instead of a list typed into a unit file")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
 
     started = datetime.now(timezone.utc)
+
+    # --due turns the schedule into a question asked of the catalogue. A new
+    # release needs a calendar row and nothing else -- no unit file, and nobody
+    # remembering. CPI and PPI shipped with no timer at all for exactly that
+    # reason, and were a day stale after every release until somebody noticed.
+    if args.due:
+        due = releases_due_now()
+        if due is None:
+            log("refresh start (--due): forward calendar is EMPTY; not polling")
+            notify("Release calendar is empty",
+                   "macro_release_dates holds no future rows, so --due has "
+                   "nothing to act on. The daily sweep refreshes it; that is "
+                   "what to look at.", "high", "warning")
+            return 1
+        if not due:
+            log("refresh start (--due): nothing outstanding; not polling")
+            return 0
+        args.releases = due
+
     label = ",".join(args.releases) if args.releases else "all"
     log(f"refresh start ({label})")
 

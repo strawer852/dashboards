@@ -405,11 +405,8 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     embargo, so each release would have been picked up the *following* night.
     Nothing was broken and no check complained — the employment timer had been
     fixed months earlier and simply never extended to the dashboards added
-    since. **A new release needs a timer, and the timer needs a window that
-    starts after the embargo.** `macro-refresh-inflation` covers 08:40–12:50 ET
-    on weekdays, offset five minutes from employment because `refresh.sh` takes
-    a non-blocking lock and two timers in the same minute means one exits
-    without polling.
+    since. The fix was first another typed unit file; that is now
+    `macro-refresh-due`, which asks the calendar instead. See trap 33.
 
 32. **The watchdog had a typed list of what to watch.** `dashboards-timer-check`
     named its four timers inline, so the day `macro-refresh-inflation` was added
@@ -420,6 +417,33 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     tautology that passes whatever the machine happens to be doing. The repo
     says what should exist; the machine is asked whether it does, and the check
     tests `is-enabled` as well as `is-active`.
+
+
+33. **The schedule is a question, not a list.** Three windowed timers named five
+    release ids between them, so a new dashboard needed somebody to remember a
+    unit file — and twice nobody did. `refresh.py --due` asks
+    `macro_release_dates` which releases are dated today, are past their
+    embargo, and have nothing stored under today's vintage, then fetches
+    exactly those. One timer, `macro-refresh-due`, 08:35–14:55 ET on weekdays;
+    a new release needs a calendar row and nothing else. Two properties are
+    load-bearing: it resolves **per release**, where the old grouped gate asked
+    `_ALREADY_LANDED` for a whole list and would have gone quiet on the second
+    of two releases sharing a day (10 September 2026 carries PPI *and* claims);
+    and it respects each release's own embargo, so JOLTS at 10:00 ET is not
+    polled at 08:35. An empty forward calendar is treated as a fault and
+    notified, because `--due` with no calendar would poll nothing, for ever,
+    in silence.
+
+34. **The already-landed guard had never once fired.** It compared an ALFRED
+    vintage in `America/New_York`, and ALFRED stores a vintage at **midnight of
+    its realtime date** — so `2026-09-04 00:00+00`, the 4 September vintage,
+    reads as 3 September in Eastern and never matched today. The log says it
+    plainly: the release landed at 13:35Z and the windows at 13:45Z and 13:55Z
+    each refetched all 64,220 observations. The vintage side is now read on the
+    **UTC** calendar and the release-date side stays Eastern, which looks
+    inconsistent and is not: `export.py` already identifies these rows the same
+    way, by their `00:00:00` UTC time. Scoped to the 103 rows the release itself
+    wrote, the old predicate returns 0 and the fixed one 103.
 
 ## How it runs
 
@@ -606,9 +630,7 @@ Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all wit
 
 | Timer | Fires | Runs |
 |---|---|---|
-| `macro-refresh-employment` | 08:35–12:55 ET, weekdays | Employment Situation + Weekly Claims |
-| `macro-refresh-inflation` | 08:40–12:50 ET, weekdays | CPI + PPI |
-| `macro-refresh-jolts` | 10:05–13:55 ET, weekdays | JOLTS |
+| `macro-refresh-due` | 08:35–14:55 ET, weekdays | whatever the calendar says is outstanding |
 | `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
 | `dashboards-push` | 23:30 local daily | push to GitHub, then verify by hash |
 
@@ -695,11 +717,9 @@ left is small, and none of it is blocking.
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
 
-3. **Catalogue-driven scheduling** is the one structural job left, and the
-   CPI/PPI gap above is the argument for it. `pub_lag_days` and
-   `staleness_mode` are columns in `macro_series_meta` with **no consumer** —
-   182 rows, all NULL, and nothing in the codebase reads `staleness_mode` at
-   all. Every timer is still a hand-written unit file, so a new release needs
-   somebody to remember. Deriving the schedule from the catalogue and
-   `macro_release_dates` is what makes forgetting impossible rather than fixed
-   once. This is also what the retired stack converged on.
+3. **`pub_lag_days` and `staleness_mode` are now dead columns.** Both were
+   the retired stack's way of guessing when data should have arrived. This
+   repo answers that with a real forward calendar instead — `--due` reads
+   `macro_release_dates`, and `coverage.py` catches a series that has stopped
+   publishing. All 182 rows are NULL and nothing reads either column. Drop them
+   or leave them, but do not build on them thinking they are wired up.
