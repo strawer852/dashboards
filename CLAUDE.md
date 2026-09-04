@@ -68,7 +68,14 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
   so it can never be mistaken for data.
 - **Colour does two different jobs and they use different scales.** *Sign* — a
   bar coloured by whether it is a gain or a loss — is the diverging pair
-  `--pos #1f6091` and `--neg #8c2f27`. *Identity* — which series a line is — is
+  `--pos #3aa0c9` and `--neg #8c2f27`.
+  The positive was lifted twice: off slate, which had no chroma at all, and
+  then off a dark blue that still read as one mark under a near-black
+  overlay line and sat only dE 3.8 from `--s2`, the series blue. It is now
+  dE 47.6 from ink and 18.9 from `--s2`. The pair is deliberately **not**
+  balanced in weight: every brighter red collides with `--s1` or `--s6`,
+  since the categorical palette already holds two, so a negative bar reads
+  heavier than a positive one. A known trade rather than an oversight. *Identity* — which series a line is — is
   the six categorical slots `--s1..--s6`, taken in order and **never cycled**;
   past six, fold the tail into an "other" bucket or use small multiples. The two
   were conflated until 4 September 2026, when the line panel's default ladder ran

@@ -10,10 +10,21 @@
      measured 0.052 -- below the 0.1 floor, i.e. it read as grey. Against an
      ink overlay line (chroma 0.009) the two were both just dark neutrals and
      the eye grouped them, which is why the month-and-year panels looked like
-     one series with a legend of two identical swatches. Deepened to a blue
-     with real chroma: the pair now clears every gate on paper -- CVD dE 16.9,
-     normal-vision 22.1, both >= 3:1 contrast. */
-  --pos:#1f6091; --neg:#8c2f27; --alt:#8a7b4f; --cursor:#14161a;
+     one series with a legend of two identical swatches.
+
+     Deepening it to #1f6091 fixed the chroma but not the eye: a dark blue bar
+     under a near-black line still reads as one thing. It also measured only
+     dE 3.8 from --s2, the series blue, so sign and identity were very nearly
+     the same colour across a page. Lifted again to a cyan-blue: dE 47.6 from
+     the ink line it sits under, against 28.9 before, and dE 18.9 from --s2.
+
+     --neg stays oxblood deliberately. Every brighter red tested collided with
+     a series colour -- #c0392b is dE 3.4 from --s1 terracotta -- because the
+     categorical palette already holds two reds. So the pair is NOT balanced in
+     weight: a negative bar reads heavier than a positive one. Negatives are
+     the rarer and more notable case, so it is tolerable, but it is a trade
+     rather than a win, and worth revisiting if the reds are ever re-chosen. */
+  --pos:#3aa0c9; --neg:#8c2f27; --alt:#8a7b4f; --cursor:#14161a;
   --hm-3:#8c2f27; --hm-1:#e0bdb8; --hm-0:#f2f1ec; --hm1:#b4c3ce; --hm3:#2c4b60;
   --band:#ebeae2;
   /* Categorical series slots. Assign in order, never cycle; a ninth
