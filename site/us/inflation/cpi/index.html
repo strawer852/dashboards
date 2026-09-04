@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPI — BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=d6be44cfec">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
+    <nav aria-label="Dashboards">
+  <!-- nav:start -->
+  <button class="region" type="button" aria-expanded="true" aria-controls="r-united-states"><span class="mk"></span>United States</button>
+  <div class="grp" id="r-united-states">
+    <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-employment"><span class="mk"></span>Employment</button>
+    <div class="grp" id="g-united-states-employment" hidden>
+      <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+      <a href="/us/employment/jolts/">JOLTS</a>
+      <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+    </div>
+    <button class="topic" type="button" aria-expanded="true" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
+    <div class="grp" id="g-united-states-inflation">
+      <a href="/us/inflation/cpi/" aria-current="page">CPI</a>
+      <a href="#" class="soon">PPI</a>
+    </div>
+  </div>
+  <!-- nav:end -->
+
+      <div class="inpage">
+        <div class="h">In this report</div>
+        <a href="#t1"><span>1</span>Headline and core</a>
+        <a href="#t2"><span>2</span>Stacked, year</a>
+        <a href="#t3"><span>3</span>Stacked, month</a>
+        <a href="#t4"><span>4</span>CPI, month and year</a>
+        <a href="#t5"><span>5</span>Core, month and year</a>
+        <a href="#t6"><span>6</span>Commodities</a>
+        <a href="#t7"><span>7</span>Services</a>
+        <a href="#t8"><span>8</span>Core goods</a>
+        <a href="#t9"><span>9</span>Core services</a>
+        <a href="#t10"><span>10</span>What makes the CPI</a>
+        <a href="#t11"><span>11</span>What it is worth</a>
+        <a href="#t12"><span>12</span>The split over time</a>
+        <a href="#t13"><span>13</span>Contribution to core</a>
+        <a href="#t14"><span>14</span>Weight in core</a>
+        <a href="#t15"><span>15</span>Core goods and services</a>
+        <a href="#t16"><span>16</span>Goods against services</a>
+        <a href="#t17"><span>17</span>Single items</a>
+        <a href="#t18"><span>18</span>Item weight in CPI</a>
+        <a href="#t19"><span>19</span>Item weight in core</a>
+        <a href="#t20"><span>20</span>Items over 4 years</a>
+        <a href="#t21"><span>21</span>Food</a>
+        <a href="#t22"><span>22</span>Energy</a>
+        <a href="#t23"><span>23</span>Shelter</a>
+        <a href="#t24"><span>24</span>Medical care</a>
+        <a href="#t25"><span>25</span>Vehicles and travel</a>
+        <a href="#t26"><span>26</span>Other core items</a>
+        <a href="#t27"><span>27</span>Energy, two kinds</a>
+        <a href="#t28"><span>28</span>Major groups</a>
+        <a href="#t29"><span>29</span>Levels</a>
+        <a href="#t30"><span>30</span>Seasonal adjustment</a>
+      </div>
+
+    </nav>
+  </aside>
+
+  <main>
+    <div class="crumb">United States <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> CPI</div>
+    <div class="mast">
+      <h1>CPI</h1>
+      <div class="stamp" id="stamp"></div>
+    </div>
+
+    <div id="status" hidden></div>
+
+    <p class="lede">The Consumer Price Index for All Urban Consumers, broken into the
+    parts that move it &mdash; each item on its own, what each is worth in the basket,
+    and what each actually contributed.</p>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="row one">
+      <div class="t" id="t1">
+        <div class="th"><span class="n">Table 1</span><span class="ti">Headline and core CPI</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Core removes food and energy &mdash; not because they do not count, but because they are volatile enough to swamp the signal in any single month. Both lines break at <b>October 2025</b>, which was never published: the shutdown stopped collection, and BLS priced only three items that month from administrative sources. One missing month costs exactly one month of the twelve-month change here &mdash; and will cost another in <b>October 2026</b>, when the hole becomes the base rather than the current value.</p>
+        <p class="key"><i class="k4">All items</i><i class="ks2">Less food and energy</i></p>
+        <div class="chart" id="cHead" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t2">
+        <div class="th"><span class="n">Table 2</span><span class="ti">What the year&rsquo;s inflation is made of</span><span class="u">Percentage points, 12-month change</span></div>
+        <p class="note">The four parts stacked, with the headline rate drawn over them in ink. Because the four are a <b>complete partition</b> of the basket, the stack&rsquo;s height <em>is</em> the headline &mdash; any daylight between the line and the top of the bars is residual, shown rather than claimed away. Read it against Table 3 beside it: the same month in both, one annual and one monthly.</p>
+        <p class="key"><i class="k4">All items (line)</i><i class="ks1">Core services</i><i class="ks2">Core goods</i><i class="ks3">Food</i><i class="ks4">Energy</i></p>
+        <div class="chart" id="cStackY" style="height:270px"></div>
+      </div>
+      <div class="t" id="t3">
+        <div class="th"><span class="n">Table 3</span><span class="ti">And what the month&rsquo;s is</span><span class="u">Percentage points, 1-month change</span></div>
+        <p class="note">The identical decomposition on the <b>monthly</b> change, same colours, same order. This is the pair to read when the two directions disagree: a month can add to the monthly rate while the annual rate <em>falls</em>, because the month dropping out of the twelve-month window twelve months back was hotter still. Find the same column in both charts &mdash; if this one is above zero and the ink line next door is falling, that is exactly what has happened, and the stack shows which part did it.</p>
+        <p class="key"><i class="k4">All items (line)</i><i class="ks1">Core services</i><i class="ks2">Core goods</i><i class="ks3">Food</i><i class="ks4">Energy</i></p>
+        <div class="chart" id="cStackM" style="height:270px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t4">
+        <div class="th"><span class="n">Table 4</span><span class="ti">CPI, month and year together</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">Bars are the <b>monthly</b> change, the ink line the <b>twelve-month</b> change on the same axis. The year figure is nothing more than twelve of the bars compounded, so the line turns only when a run of bars sits above or below the ones dropping out of the window a year back. A single hot month barely moves it; three in a row do.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cCpiMY" style="height:235px"></div>
+      </div>
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">Core CPI, month and year together</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">The same construction on core. The monthly bars are visibly steadier than the headline&rsquo;s next door &mdash; which is the entire case for watching core: not that food and energy do not matter, but that their monthly noise tells you nothing about where the index is heading.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cCoreMY" style="height:235px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">Commodities, month and year</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">All goods, food and energy included. Roughly a third of the basket, and the half of the index that actually fell outright in 2023&ndash;24: the monthly bars sit below zero for long runs, which is what dragged the headline down while services never stopped rising.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cComMY" style="height:235px"></div>
+      </div>
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">Services, month and year</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">The other two-thirds. Almost no negative bars at all: services prices are mostly wages and rents, which are sticky downwards, so the line falls by decelerating rather than by reversing. Compare the vertical scale with commodities beside it.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cSrvMY" style="height:235px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">Core goods, month and year</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">Goods with food and energy stripped out &mdash; 18.8% of the basket. This is where the 2021&ndash;22 supply shock showed up first and where it unwound first, and it has been running close to zero since.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cCgMY" style="height:235px"></div>
+      </div>
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Core services, month and year</span><span class="u">Percent, s.a.</span></div>
+        <p class="note">60.2% of the basket in one line, and the reason core inflation moves slowly. Shelter alone is more than half of it, and shelter is measured from a rolling rent sample, so the monthly bars here are the most autocorrelated on the page: this month&rsquo;s reading is the best available guess at next month&rsquo;s.</p>
+        <p class="key"><i class="k1">Month on month</i><i class="k4">Year over year</i></p>
+        <div class="chart" id="cCsMY" style="height:235px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">What makes up the CPI, latest month</span><span class="u">Percentage points of the 12-month change</span></div>
+        <p class="note">Not inflation rates &mdash; <b>contributions</b>: each item&rsquo;s own twelve-month change multiplied by its share of the basket, so the four add up to the headline rather than merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>. On the current vintage the four close on headline CPI to <b>0.017pp</b> at July 2026, and 0.042pp at worst over fifteen months. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cSplit" style="height:180px"></div>
+      </div>
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">And what each is worth</span><span class="u">Percent of the basket</span></div>
+        <p class="note">The weights behind the bars to the left, on the same four parts. Read the two together: energy contributed nearly as much as food and core goods combined this month while carrying <b>7.4%</b> of the basket, because its own rate was ten times theirs. Weights drift with relative prices every month by BLS&rsquo;s own rule, so these are current, not a fixed table.</p>
+        <div class="chart" id="cWSplit" style="height:180px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">The same four parts, over time</span><span class="u">Percentage points of the 12-month change</span></div>
+        <p class="note">The bars above are one month of this chart. The four sum to the headline rate at every point, so &ldquo;what is inflation made of&rdquo; has a different answer in 2022 &mdash; when energy and core goods carried it &mdash; from 2026, where <b>core services carry almost all of it</b> and core goods contribute close to nothing. A line here can be negative while the headline stays positive; that is an item pulling the index down. <b>Analyst-derived.</b></p>
+        <p class="key"><i class="k4">Core services</i><i class="ks2">Core goods</i><i class="ks1">Energy</i><i class="ks3">Food (dashed)</i></p>
+        <div class="chart" id="cSplitT" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">Contribution to core CPI</span><span class="u">Percentage points of the 12-month change</span></div>
+        <p class="note">The two halves of core, weighted as shares of <em>core</em> rather than of the whole basket, so these close on core CPI and not on the headline. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cCoreC" style="height:120px"></div>
+      </div>
+      <div class="t" id="t14">
+        <div class="th"><span class="n">Table 14</span><span class="ti">And what each is worth in core</span><span class="u">Percent of core</span></div>
+        <p class="note">A different denominator from Table 11, and the numbers are not interchangeable: core goods are <b>18.8% of the CPI but 23.8% of core</b>, because core excludes the food and energy that dilute it. Core services are three-quarters of core by weight, which is why a modest services rate outweighs a large goods move.</p>
+        <div class="chart" id="cWCore" style="height:120px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t15">
+        <div class="th"><span class="n">Table 15</span><span class="ti">Core goods and core services</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The two halves of core as rates rather than contributions. Goods and services inflate for different reasons and on different clocks: goods track supply chains and the dollar, services track wages and rents. They separated sharply after 2021 and have not converged since.</p>
+        <p class="key"><i class="k4">Core CPI</i><i class="ks2">Core goods</i><i class="ks1">Core services</i></p>
+        <div class="chart" id="cCore" style="height:230px"></div>
+      </div>
+      <div class="t" id="t16">
+        <div class="th"><span class="n">Table 16</span><span class="ti">Goods against services, in full</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The whole basket split in two, food and energy included this time. Commodities are roughly a third of the index and services the rest, which is why the services line and the headline are rarely far apart.</p>
+        <p class="key"><i class="k4">Commodities</i><i class="ks2">Services</i></p>
+        <div class="chart" id="cGS" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t17">
+        <div class="th"><span class="n">Table 17</span><span class="ti">Single items, contribution to the CPI</span><span class="u">Percentage points of the 12-month change</span></div>
+        <p class="note">Twelve items, each weighted by its share of the basket. They are <b>mutually exclusive</b> &mdash; no item here contains another, so nothing is counted twice &mdash; but they are <b>not a partition</b>: together they carry 79.45% of the basket, and the remainder is spread across items too small to plot. Read it as a ranking of what moved the index, not as a decomposition of it. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cItems" style="height:330px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t18">
+        <div class="th"><span class="n">Table 18</span><span class="ti">What each item is worth in the CPI</span><span class="u">Percent of the basket</span></div>
+        <p class="note">The weights behind Table 17, and the reason its ranking looks the way it does. <b>Shelter is 35.3% of the index on its own</b> &mdash; thirteen times gasoline &mdash; so an unremarkable rate on shelter outranks a dramatic one on apparel. These twelve carry 79.45% between them.</p>
+        <div class="chart" id="cWItems" style="height:330px"></div>
+      </div>
+      <div class="t" id="t19">
+        <div class="th"><span class="n">Table 19</span><span class="ti">And what they are worth in core</span><span class="u">Percent of core</span></div>
+        <p class="note">The same items measured against core instead, which is a smaller basket: each weight is its CPI share divided by core&rsquo;s own 79.047%. <b>Shelter is 35.3% of the CPI and 44.7% of core.</b> Food, energy, gasoline, electricity and utility gas are <em>not in core at all</em> and so have no bar here &mdash; the list is seven items, not twelve, and they carry 74.35% of core.</p>
+        <div class="chart" id="cWCoreItems" style="height:330px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t20">
+        <div class="th"><span class="n">Table 20</span><span class="ti">The same items, over four years</span><span class="u">Percentage points, 48 months</span></div>
+        <p class="note">The ranking in Table 17 is one column of this. Contributions rather than rates, so cells are directly comparable across items: a dark cell is a large push on the index, not merely a large price move on something small. Four years reaches back into the 2022 peak, where gasoline and used cars ran dark and shelter had not yet taken over. <b>October 2025 is the blank column.</b> Only new vehicles, used cars and gasoline were priced that month, so only those three carry a contribution through it. A near-white cell anywhere else is a <em>small</em> contribution, not a missing one: the hole is the column blank in every other row.</p>
+        <div class="chart" id="cItemsH" style="height:400px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t21">
+        <div class="th"><span class="n">Table 21</span><span class="ti">Food, year</span><span class="u">Percentage points, 12-month</span></div>
+        <p class="note">Groceries and restaurants behave differently: food at home is a commodity price and turns quickly, food away from home is mostly labour and turns slowly. Weighted against <em>food</em> rather than the basket &mdash; at home is 8.2% of the CPI but <b>60.9% of food</b> &mdash; so the two bars close on the food line. Residual at July 2026: <b>0.018pp</b>.</p>
+        <p class="key"><i class="k4">Food (line)</i><i class="ks1">At home</i><i class="ks2">Away from home</i></p>
+        <div class="chart" id="cFoodY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food, month</span><span class="u">Percentage points, 1-month</span></div>
+        <p class="note">The same split on the monthly change. At this scale the grocery series does almost all the moving; restaurant prices step up in small, near-identical increments month after month.</p>
+        <p class="key"><i class="k4">Food (line)</i><i class="ks1">At home</i><i class="ks2">Away from home</i></p>
+        <div class="chart" id="cFoodM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t22">
+        <div class="th"><span class="n">Table 22</span><span class="ti">Energy, year</span><span class="u">Percentage points, 12-month</span></div>
+        <p class="note">The four fuels that make up energy, weighted against <em>energy</em>. They close on it exactly: motor fuel 53.4%, electricity 34.3%, utility gas 10.1%, fuel oil and other 2.2%. Motor fuel dominates the swings; the two utility series move in regulated steps and rarely fall. Residual: <b>0.076pp</b>.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Motor fuel</i><i class="ks2">Fuel oil & other</i><i class="ks3">Electricity</i><i class="ks4">Utility gas</i></p>
+        <div class="chart" id="cEnY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, month</span><span class="u">Percentage points, 1-month</span></div>
+        <p class="note">Monthly, the same four. This is where the headline&rsquo;s worst months come from &mdash; a single motor-fuel bar here is routinely larger than the whole of core services in the chart above.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Motor fuel</i><i class="ks2">Fuel oil & other</i><i class="ks3">Electricity</i><i class="ks4">Utility gas</i></p>
+        <div class="chart" id="cEnM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t23">
+        <div class="th"><span class="n">Table 23</span><span class="ti">Shelter, year</span><span class="u">Percentage points, 12-month</span></div>
+        <p class="note">Rent and owners&rsquo; equivalent rent, weighted against <em>shelter</em>: 21.9% and 73.2%. <b>They are 95.1% of shelter, not all of it</b> &mdash; the rest is lodging away from home and tenants&rsquo; insurance, and the latter is not published on FRED, so no weight is invented for it. That missing 4.9% is the visible daylight between the ink line and the top of the bars, which is the honest way to draw it.</p>
+        <p class="key"><i class="k4">Shelter (line)</i><i class="ks1">Rent of primary residence</i><i class="ks2">Owners' equivalent rent</i></p>
+        <div class="chart" id="cShY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Shelter, month</span><span class="u">Percentage points, 1-month</span></div>
+        <p class="note">Monthly. OER is measured from a rolling rent sample, so its bars are the smoothest on the page &mdash; this month is the best available guess at next month, which is exactly why shelter turns so slowly.</p>
+        <p class="key"><i class="k4">Shelter (line)</i><i class="ks1">Rent of primary residence</i><i class="ks2">Owners' equivalent rent</i></p>
+        <div class="chart" id="cShM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t24">
+        <div class="th"><span class="n">Table 24</span><span class="ti">Medical care, year</span><span class="u">Percentage points, 12-month</span></div>
+        <p class="note">Commodities are drugs and equipment, services are physicians, hospitals and insurance. Weighted against <em>medical care</em>: 17.1% and 82.9%, closing on it to <b>0.002pp</b>. The two diverge persistently, and services carry five-sixths of the weight.</p>
+        <p class="key"><i class="k4">Medical care (line)</i><i class="ks1">Commodities</i><i class="ks2">Services</i></p>
+        <div class="chart" id="cMdY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Medical care, month</span><span class="u">Percentage points, 1-month</span></div>
+        <p class="note">Monthly. Medical services are surveyed on a slower cycle than most of the basket, so a flat month here is often collection timing rather than price stability.</p>
+        <p class="key"><i class="k4">Medical care (line)</i><i class="ks1">Commodities</i><i class="ks2">Services</i></p>
+        <div class="chart" id="cMdM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t25">
+        <div class="th"><span class="n">Table 25</span><span class="ti">Vehicles and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Lines, not a stack. These four are a <b>selection, not a decomposition</b> &mdash; they belong to no common parent and sum to nothing, so stacking them would draw a total that does not exist. New and used vehicles are 3.8% and 2.7% of the basket; airline fares are 1.1% but swing further than anything outside energy. <b>These are the three series that survived October 2025</b>, priced from administrative data when collection stopped.</p>
+        <p class="key"><i class="k4">Maintenance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i></p>
+        <div class="chart" id="cVehY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Vehicles and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">The same four monthly. Used cars and airline fares are the two most volatile large items in the whole index; at this scale the maintenance line is nearly flat by comparison, which is the point of showing them together.</p>
+        <p class="key"><i class="k4">Maintenance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i></p>
+        <div class="chart" id="cVehM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t26">
+        <div class="th"><span class="n">Table 26</span><span class="ti">Other core items, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Lines again, and for the same reason &mdash; three unrelated items with no common parent. <b>Video and audio runs persistently negative</b>: quality adjustment on electronics means the index falls while the shelf price does not, and that is a large part of why core goods inflation sits near zero. Tuition is the opposite &mdash; slow, one-way, almost never negative.</p>
+        <p class="key"><i class="k4">Household furnishings</i><i class="ks2">Tuition and school fees</i><i class="ks1">Video and audio</i></p>
+        <div class="chart" id="cOthY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Other core items, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">Monthly. Tuition is the clearest seasonal artefact on the page even after adjustment &mdash; fees move once a year and the adjustment spreads that step across months it did not happen in.</p>
+        <p class="key"><i class="k4">Household furnishings</i><i class="ks2">Tuition and school fees</i><i class="ks1">Video and audio</i></p>
+        <div class="chart" id="cOthM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t27">
+        <div class="th"><span class="n">Table 27</span><span class="ti">Energy, goods against services, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The same energy, cut the other way &mdash; the goods/services split that runs through the whole page. <b>Energy commodities</b> (petrol and fuel oil, 4.1% of the basket) are a world price and move violently. <b>Energy services</b> (electricity and piped gas, 3.3%) are regulated tariffs and move in steps, months behind. Table 22 stacks the four fuels; this shows why two of them behave nothing like the other two.</p>
+        <p class="key"><i class="k4">Energy commodities</i><i class="ks2">Energy services</i></p>
+        <div class="chart" id="cEnSplitY" style="height:250px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, goods against services, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <p class="note">Monthly the contrast is starker still: the commodities line is the noisiest series anywhere on this page, while the services line barely leaves a narrow band. Averaging the two into &ldquo;energy&rdquo; hides that they are not the same kind of number.</p>
+        <p class="key"><i class="k4">Energy commodities</i><i class="ks2">Energy services</i></p>
+        <div class="chart" id="cEnSplitM" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t28">
+        <div class="th"><span class="n">Table 28</span><span class="ti">The eight major groups</span><span class="u">Percent, year over year, 48 months</span></div>
+        <p class="note">The CPI&rsquo;s own top-level taxonomy, a different cut from the goods/services split above, covering the basket exactly once. Rates here, not contributions, so a dark cell means a fast-moving group rather than an influential one &mdash; housing at 3% moves the index far more than recreation at 6%. The scale saturates beyond &plusmn;6%: transportation runs outside it whenever fuel does.</p>
+        <div class="chart" id="cGroups" style="height:290px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t29">
+        <div class="th"><span class="n">Table 29</span><span class="ti">Where the level actually went</span><span class="u">Index, 5 years ago = 100</span></div>
+        <p class="note">Rates answer &ldquo;how fast&rdquo;; this answers &ldquo;how far&rdquo;, which is the question people are actually asking when they say prices are high. Rebased inside the window, so every line starts at 100 five years ago rather than at its own base year &mdash; the published indexes sit on four different bases and are not comparable as levels. Inflation falling does not bring these lines down; it only flattens them.</p>
+        <p class="key"><i class="k4">All items</i><i class="ks2">Core</i><i class="ks1">Core goods</i><i class="ks3">Core services (dashed)</i></p>
+        <div class="chart" id="cLevels" style="height:250px"></div>
+      </div>
+      <div class="t" id="t30">
+        <div class="th"><span class="n">Table 30</span><span class="ti">What seasonal adjustment removes</span><span class="u">Percent, month on month</span></div>
+        <p class="note">The same index twice, as <em>monthly</em> changes: the published unadjusted series and its seasonally adjusted form. Over twelve months the two are nearly identical &mdash; seasonality cancels &mdash; so every other chart here can use either. Month to month they are not remotely the same, and the unadjusted line is the one that would have you reading January as a shock every year. The only panel on the page carrying an <b>unadjusted</b> series.</p>
+        <p class="key"><i class="k4">Seasonally adjusted</i><i class="ks2">Unadjusted</i></p>
+        <div class="chart" id="cSA" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: BLS Consumer Price Index, via FRED</span>
+      <span>Seasonally adjusted</span>
+      <span>Contributions and weights analyst-derived from published relative importances</span>
+    </div>
+
+  </main>
+</div>
+
+<script src="/assets/echarts-5.6.0.min.js"></script>
+<script src="/assets/brb-dash.js?v=1e4ea61daf"></script>
+<script>
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+// House style, and the order matters: ink first, then #8a7b4f as the SECOND
+// series, then slate, then muted dashed. Ink against slate was the original
+// pairing here and the two read as the same line at a glance -- near-black
+// against a dark blue, at similar weight, crossing each other repeatedly.
+// Ink carries the aggregate; the categorical slots carry the parts, taken in
+// the validated order and never cycled. Ink against slate -- the pairing this
+// replaces -- is a near-black beside a dark blue and reads as one series where
+// the lines cross. Orange against blue separates at normal-vision dE 33.6.
+const C1 = { color: "ink", width: 2.0 };
+const C2 = { color: "s2",  width: 1.8 };
+const C3 = { color: "s1",  width: 1.8 };
+const C4 = { color: "s3",  width: 1.6, dash: true };
+
+// The twelve single items. Ids are written out in full rather than built by
+// concatenation: tools/coverage.py finds a drawn series by matching its quoted
+// id in this file, so an id assembled at runtime is invisible to it and the
+// series is reported as shipped-but-undrawn. Keep the three lists in step.
+const ITEMS = [
+  { id: "CPI.i_shelter",     label: "Shelter" },
+  { id: "CPI.i_gasoline",    label: "Gasoline" },
+  { id: "CPI.i_foodhome",    label: "Food at home" },
+  { id: "CPI.i_transserv",   label: "Transport services" },
+  { id: "CPI.i_medserv",     label: "Medical services" },
+  { id: "CPI.i_foodaway",    label: "Food away" },
+  { id: "CPI.i_electricity", label: "Electricity" },
+  { id: "CPI.i_apparel",     label: "Apparel" },
+  { id: "CPI.i_utilgas",     label: "Utility gas" },
+  { id: "CPI.i_newveh",      label: "New vehicles" },
+  { id: "CPI.i_medcomm",     label: "Medical goods" },
+  { id: "CPI.i_usedveh",     label: "Used cars" },
+];
+const WEIGHTS = [
+  { id: "CPI.w_shelter",     label: "Shelter" },
+  { id: "CPI.w_gasoline",    label: "Gasoline" },
+  { id: "CPI.w_foodhome",    label: "Food at home" },
+  { id: "CPI.w_transserv",   label: "Transport services" },
+  { id: "CPI.w_medserv",     label: "Medical services" },
+  { id: "CPI.w_foodaway",    label: "Food away" },
+  { id: "CPI.w_electricity", label: "Electricity" },
+  { id: "CPI.w_apparel",     label: "Apparel" },
+  { id: "CPI.w_utilgas",     label: "Utility gas" },
+  { id: "CPI.w_newveh",      label: "New vehicles" },
+  { id: "CPI.w_medcomm",     label: "Medical goods" },
+  { id: "CPI.w_usedveh",     label: "Used cars" },
+];
+// Core excludes food and energy outright, so five of the twelve have no share
+// of core at all. Listing them with a zero bar would be a different claim.
+const CORE_ITEMS = [
+  { id: "CPI.wc_shelter",   label: "Shelter" },
+  { id: "CPI.wc_medserv",   label: "Medical services" },
+  { id: "CPI.wc_transserv", label: "Transport services" },
+  { id: "CPI.wc_newveh",    label: "New vehicles" },
+  { id: "CPI.wc_usedveh",   label: "Used cars" },
+  { id: "CPI.wc_apparel",   label: "Apparel" },
+  { id: "CPI.wc_medcomm",   label: "Medical goods" },
+];
+
+// Month-on-month bars with the twelve-month line over them. periods: 1 on a
+// yoy transform is a one-PERIOD percent change; the overlay leaves it at the
+// default twelve.
+const monthAndYear = (el, id) => ({
+  el, type: "bars", format: "pct2", axisFormat: "pct", window: 60, tick: 11,
+  left: 44, width: 5, label: "Month on month",
+  series: { id, transform: "yoy", periods: 1 },
+  overlay: [{ id, label: "Year over year", transform: "yoy",
+              color: "ink", width: 1.7 }],
+});
+
+const yoy = specs => specs.map(s => Object.assign({ transform: "yoy" }, s));
+
+BRB.render({
+  bundle: "/data/v1/dashboards/us-inflation-cpi.json",
+  summary: [
+    { label: "CPI", series: "CPIAUCSL", transform: "yoy", format: "pct",
+      source: "CPI-U", note1: "year over year" },
+    { label: "Core CPI", series: "CPILFESL", transform: "yoy", format: "pct",
+      source: "CPI-U", note1: "less food and energy" },
+    { label: "Core goods", series: "CUSR0000SACL1E", transform: "yoy",
+      format: "pct", source: "CPI-U" },
+    { label: "Core services", series: "CUSR0000SASLE", transform: "yoy",
+      format: "pct", source: "CPI-U" },
+    { label: "Energy", series: "CPIENGSL", transform: "yoy", format: "pct",
+      source: "CPI-U" },
+    { label: "Shelter", series: "CUSR0000SAH1", transform: "yoy", format: "pct",
+      source: "CPI-U" },
+  ],
+  panels: [
+    // Five years everywhere: the CPI runs from 1947 and the 1970s would put
+    // the axis at 15%, flattening the post-2021 episode into the floor.
+    { el: "cHead", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: yoy([{ id: "CPIAUCSL", label: "All items", ...C1 },
+                   { id: "CPILFESL", label: "Less food and energy", ...C2 }]) },
+
+    // Stacking is only honest for a partition, which these four are. The total
+    // is drawn as a line rather than stacked, so the reader can see the parts
+    // account for it instead of being told they do.
+    { el: "cStackY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIAUCSL", label: "All items", transform: "yoy" },
+      series: [{ id: "CPI.c_coreservices", label: "Core services" },
+               { id: "CPI.c_coregoods",    label: "Core goods" },
+               { id: "CPI.c_food",         label: "Food" },
+               { id: "CPI.c_energy",       label: "Energy" }] },
+
+    { el: "cStackM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIAUCSL", label: "All items", transform: "yoy", periods: 1 },
+      series: [{ id: "CPI.m_coreservices", label: "Core services" },
+               { id: "CPI.m_coregoods",    label: "Core goods" },
+               { id: "CPI.m_food",         label: "Food" },
+               { id: "CPI.m_energy",       label: "Energy" }] },
+
+    monthAndYear("cCpiMY",  "CPIAUCSL"),
+    monthAndYear("cCoreMY", "CPILFESL"),
+    monthAndYear("cComMY",  "CUSR0000SAC"),
+    monthAndYear("cSrvMY",  "CUSR0000SAS"),
+    monthAndYear("cCgMY",   "CUSR0000SACL1E"),
+    monthAndYear("cCsMY",   "CUSR0000SASLE"),
+
+    // Contributions arrive from the exporter already in percentage points and
+    // must NOT be differenced again -- transform: "none".
+    { el: "cSplit", type: "contribution", transform: "none", format: "pp",
+      axisFormat: "pt", left: 108,
+      series: [{ id: "CPI.c_coreservices", label: "Core services" },
+               { id: "CPI.c_coregoods",    label: "Core goods" },
+               { id: "CPI.c_energy",       label: "Energy" },
+               { id: "CPI.c_food",         label: "Food" }] },
+
+    // Weights are likewise ready-made, and are a share rather than a change:
+    // never signed, so they take no sign colouring beyond the panel's own.
+    { el: "cWSplit", type: "contribution", transform: "none", format: "pct2",
+      axisFormat: "pct", left: 108,
+      series: [{ id: "CPI.w_coreservices", label: "Core services" },
+               { id: "CPI.w_coregoods",    label: "Core goods" },
+               { id: "CPI.w_energy",       label: "Energy" },
+               { id: "CPI.w_food",         label: "Food" }] },
+
+    { el: "cSplitT", type: "line", format: "pt", tick: 11, left: 38, window: 60,
+      series: [{ id: "CPI.c_coreservices", label: "Core services", ...C1 },
+               { id: "CPI.c_coregoods",    label: "Core goods",    ...C2 },
+               { id: "CPI.c_energy",       label: "Energy",        ...C3 },
+               { id: "CPI.c_food",         label: "Food",          ...C4 }] },
+
+    { el: "cCoreC", type: "contribution", transform: "none", format: "pp",
+      axisFormat: "pt", left: 108,
+      series: [{ id: "CPI.cc_services", label: "Core services" },
+               { id: "CPI.cc_goods",    label: "Core goods" }] },
+
+    { el: "cWCore", type: "contribution", transform: "none", format: "pct2",
+      axisFormat: "pct", left: 108,
+      series: [{ id: "CPI.wc_services", label: "Core services" },
+               { id: "CPI.wc_goods",    label: "Core goods" }] },
+
+    { el: "cCore", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: yoy([{ id: "CPILFESL",       label: "Core CPI",      ...C1 },
+                   { id: "CUSR0000SACL1E", label: "Core goods",    ...C2 },
+                   { id: "CUSR0000SASLE",  label: "Core services", ...C3 }]) },
+
+    { el: "cGS", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: yoy([{ id: "CUSR0000SAC", label: "Commodities", ...C1 },
+                   { id: "CUSR0000SAS", label: "Services",    ...C2 }]) },
+
+    { el: "cItems", type: "contribution", transform: "none", format: "pp",
+      axisFormat: "pt", left: 138, series: ITEMS },
+
+    { el: "cWItems", type: "contribution", transform: "none", format: "pct2",
+      axisFormat: "pct", left: 138, series: WEIGHTS },
+
+    { el: "cWCoreItems", type: "contribution", transform: "none",
+      format: "pct2", axisFormat: "pct", left: 138, series: CORE_ITEMS },
+
+    { el: "cItemsH", type: "heatmap", transform: "none", format: "pp",
+      months: 48, cap: 1.2, left: 138,
+      capText: ["≥ +1.2 pp", "≤ −1.2 pp"], series: ITEMS },
+
+    { el: "cGroups", type: "heatmap", transform: "yoy", format: "pct",
+      months: 48, cap: 6, left: 138,
+      capText: ["≥ +6%", "≤ −6%"],
+      series: [{ id: "CPIFABSL", label: "Food & beverages" },
+               { id: "CPIHOSSL", label: "Housing" },
+               { id: "CPIAPPSL", label: "Apparel" },
+               { id: "CPITRNSL", label: "Transportation" },
+               { id: "CPIMEDSL", label: "Medical care" },
+               { id: "CPIRECSL", label: "Recreation" },
+               { id: "CPIEDUSL", label: "Education & comms" },
+               { id: "CPIOGSSL", label: "Other goods/services" }] },
+
+    // rebase, never index100: index100 baselines on the first value of the
+    // WHOLE series and runs before the window, so the caption's "5 years ago"
+    // would be 1947 and the lines would plot in the hundreds. Trap 16.
+    { el: "cLevels", type: "line", format: "num", tick: 11, left: 40, window: 60,
+      series: [{ id: "CPIAUCSL",       label: "All items",     ...C1 },
+               { id: "CPILFESL",       label: "Core",          ...C2 },
+               { id: "CUSR0000SACL1E", label: "Core goods",    ...C3 },
+               { id: "CUSR0000SASLE",  label: "Core services", ...C4 }]
+        .map(s => Object.assign(s, { rebase: "index" })) },
+
+    { el: "cSA", type: "line", format: "pct2", tick: 11, left: 44, window: 60,
+      series: [{ id: "CPIAUCSL", label: "Seasonally adjusted", transform: "yoy",
+                 periods: 1, ...C1 },
+               { id: "CPIAUCNS", label: "Unadjusted", transform: "yoy",
+                 periods: 1, ...C2 }] },
+    { el: "cFoodY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIUFDSL", label: "Total", transform: "yoy" },
+      series: [
+               { id: "CPI.f_home_y", label: "At home" },
+               { id: "CPI.f_away_y", label: "Away from home" }] },
+
+    { el: "cFoodM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIUFDSL", label: "Total", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.f_home_m", label: "At home" },
+               { id: "CPI.f_away_m", label: "Away from home" }] },
+
+    { el: "cEnY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIENGSL", label: "Total", transform: "yoy" },
+      series: [
+               { id: "CPI.e_motor_y", label: "Motor fuel" },
+               { id: "CPI.e_fuel_y", label: "Fuel oil & other" },
+               { id: "CPI.e_elec_y", label: "Electricity" },
+               { id: "CPI.e_gas_y", label: "Utility gas" }] },
+
+    { el: "cEnM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIENGSL", label: "Total", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.e_motor_m", label: "Motor fuel" },
+               { id: "CPI.e_fuel_m", label: "Fuel oil & other" },
+               { id: "CPI.e_elec_m", label: "Electricity" },
+               { id: "CPI.e_gas_m", label: "Utility gas" }] },
+
+    { el: "cShY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CUSR0000SAH1", label: "Total", transform: "yoy" },
+      series: [
+               { id: "CPI.sh_rent_y", label: "Rent" },
+               { id: "CPI.sh_oer_y", label: "Owners' equivalent rent" }] },
+
+    { el: "cShM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CUSR0000SAH1", label: "Total", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.sh_rent_m", label: "Rent" },
+               { id: "CPI.sh_oer_m", label: "Owners' equivalent rent" }] },
+
+    { el: "cMdY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIMEDSL", label: "Total", transform: "yoy" },
+      series: [
+               { id: "CPI.md_comm_y", label: "Commodities" },
+               { id: "CPI.md_serv_y", label: "Services" }] },
+
+    { el: "cMdM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "CPIMEDSL", label: "Total", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.md_comm_m", label: "Commodities" },
+               { id: "CPI.md_serv_m", label: "Services" }] },
+
+    { el: "cVehY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: [
+               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", ...C1 },
+               { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", ...C2 },
+               { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", ...C3 },
+               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", ...C4 }] },
+
+    { el: "cVehM", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: [
+               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", periods: 1, ...C1 },
+               { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", periods: 1, ...C2 },
+               { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", periods: 1, ...C3 },
+               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", periods: 1, ...C4 }] },
+
+    { el: "cOthY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: [
+               { id: "CUSR0000SAH3", label: "Household furnishings", transform: "yoy", ...C1 },
+               { id: "CUSR0000SEEB", label: "Tuition and school fees", transform: "yoy", ...C2 },
+               { id: "CUSR0000SERA", label: "Video and audio", transform: "yoy", ...C3 }] },
+
+    { el: "cOthM", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+      series: [
+               { id: "CUSR0000SAH3", label: "Household furnishings", transform: "yoy", periods: 1, ...C1 },
+               { id: "CUSR0000SEEB", label: "Tuition and school fees", transform: "yoy", periods: 1, ...C2 },
+               { id: "CUSR0000SERA", label: "Video and audio", transform: "yoy", periods: 1, ...C3 }] },
+
+    { el: "cEnSplitY", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: [{ id: "CUSR0000SACE", label: "Energy commodities", transform: "yoy", ...C1 },
+               { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", ...C2 }] },
+
+    { el: "cEnSplitM", type: "line", format: "pct", tick: 11, left: 44, window: 60,
+      series: [{ id: "CUSR0000SACE", label: "Energy commodities", transform: "yoy", periods: 1, ...C1 },
+               { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", periods: 1, ...C2 }] },
+
+  ],
+});
+</script>
+</body>
+</html>

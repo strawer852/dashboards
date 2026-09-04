@@ -122,6 +122,8 @@
       rule: g("--rule"), ruleHi: g("--rule-hi"), grid: g("--grid"),
       pos: g("--pos"), neg: g("--neg"), alt: g("--alt"), cursor: g("--cursor"),
       band: g("--band"),
+      s1: g("--s1"), s2: g("--s2"), s3: g("--s3"), s4: g("--s4"),
+      s5: g("--s5"), s6: g("--s6"),
       mono: g("--mono").replace(/["']/g, "") + ", ui-monospace, monospace",
       hm: [g("--hm-3"), g("--hm-1"), g("--hm-0"), g("--hm1"), g("--hm3")],
     };
@@ -195,7 +197,10 @@
         return {
           name: sp.label || r.s.title, type: "line", data,
           connectNulls: !!sp.connect, symbol: "none", yAxisIndex: sp.axis || 0,
-          lineStyle: { color: P[sp.color || ["pos", "alt", "neg"][i] || "muted"],
+          // Categorical slots, in the validated order. The previous ladder
+          // ran slate -> gold -> oxblood: slate is a near-black against ink
+          // at the same weight, and oxblood means "loss", not "series 3".
+          lineStyle: { color: P[sp.color || ["s1", "s2", "s3"][i] || "s4"],
                        width: sp.width || 1.6, type: sp.dash ? "dashed" : "solid" },
           markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
           // A reference level the series is read against -- 50 on a diffusion
@@ -249,7 +254,7 @@
         name: sp.label || r.s.title, type: "line", symbol: "none",
         data: tail(alignAsOf(cats, r.cats, r.values), p.window),
         connectNulls: !!sp.connect,
-        lineStyle: { color: P[sp.color || ["ink", "alt", "muted"][i] || "muted"],
+        lineStyle: { color: P[sp.color || ["ink", "s2", "s3"][i] || "muted"],
                      width: sp.width || 1.4, type: sp.dash ? "dashed" : "solid" },
         z: 5,
       });
@@ -299,17 +304,33 @@
 
   PANELS.contribution = (el, ctx, p) => {
     const P = ctx.P;
+    // The measure and its unit were both hard-wired: every input was
+    // differenced one period and every label suffixed "k". That is a payroll
+    // answer, not a general one -- a series that already IS a contribution
+    // (a CPI weight times the item's own 12-month change, in percentage
+    // points) came out differenced a second time and labelled as thousands of
+    // jobs. Both are panel options now. The defaults are the old behaviour, so
+    // the payroll page is unchanged; pass transform: "none" for values that
+    // arrive ready-made from the exporter.
+    const tf = p.transform === undefined ? "diff" : p.transform;
+    const fmt = p.format ? fmtFor(p) : (v => sgn(v, 1) + "k");
+    const axisFmt = p.axisFormat ? fmtFor({ format: p.axisFormat })
+                                 : (v => sgn(v));
     const rows = p.series.map(sp => {
       const s = ctx.series(sp.id);
-      const v = derive(s, { transform: "diff" });
+      // The LAST value, never the last non-null one: an item with no reading
+      // for the latest month has no bar, rather than a bar quietly carrying
+      // some earlier month's number alongside its neighbours' current ones.
+      const v = tf === "none" ? s.values
+                              : derive(s, { transform: tf, periods: p.periods });
       return [sp.label || shortName(s.title), v[v.length - 1]];
     }).filter(r => r[1] != null).sort((a, b) => a[1] - b[1]);
     mount(el, Object.assign(base(P), {
       grid: { left: p.left || 132, right: 46, top: 8, bottom: 24 },
       tooltip: Object.assign(base(P).tooltip, {
-        trigger: "item", formatter: x => `<b>${x.name}</b><br>${sgn(x.value, 1)}k` }),
+        trigger: "item", formatter: x => `<b>${x.name}</b><br>${fmt(x.value)}` }),
       xAxis: { type: "value", splitNumber: 5,
-        axisLabel: { color: P.muted, fontSize: 9.5, formatter: v => sgn(v) },
+        axisLabel: { color: P.muted, fontSize: 9.5, formatter: axisFmt },
         splitLine: { lineStyle: { color: P.grid } } },
       yAxis: { type: "category", data: rows.map(r => r[0]),
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
@@ -317,21 +338,99 @@
       series: [{
         type: "bar", data: rows.map(r => r[1]), barMaxWidth: 13,
         itemStyle: { color: x => (x.value < 0 ? P.neg : P.pos) },
-        label: { show: true, position: x => (x.value < 0 ? "left" : "right"),
-                 formatter: x => sgn(x.value, 1), color: P.muted,
+        // ECharts takes a string here, not a callback: the callback was
+        // ignored and every label fell back to "inside", printing muted
+        // grey on a dark slate bar. "right" sits it just past the bar end,
+        // on paper, for positive and negative alike.
+        label: { show: true, position: "right",
+                 formatter: x => fmt(x.value), color: P.muted,
                  fontFamily: P.mono, fontSize: 9.5 },
       }],
     }));
   };
 
+  /* Contributions to an aggregate, stacked, with the aggregate itself drawn over
+     them as a line. Stacking is only honest when the parts are a PARTITION of
+     the whole -- which is why the four-way CPI split earns it and a list of
+     twelve overlapping items does not. The line is the sum, so a reader can see
+     at once whether the parts account for it: any daylight between the line and
+     the top of the stack is the residual, visible rather than asserted.
+
+     Segments are separated by a hairline of surface, per the mark spec, so
+     adjacent categories never bleed into one another. */
+  PANELS.stacked = (el, ctx, p) => {
+    const P = ctx.P, fmt = fmtFor(p);
+    const first = ctx.series(p.series[0].id);
+    const cats = tail(axis(first), p.window);
+    const SLOT = ["s1", "s2", "s3", "s4", "s5", "s6"];
+    if (p.series.length > SLOT.length)
+      console.warn("stacked: " + p.series.length + " series exceeds the "
+                   + SLOT.length + "-slot categorical palette; fold the tail "
+                   + "into an 'other' bucket rather than cycling hues");
+
+    const bars = p.series.map((sp, i) => {
+      const r = resolve(ctx, sp);
+      return {
+        name: sp.label || r.s.title, type: "bar", stack: "c",
+        data: tail(alignAsOf(cats, r.cats, r.values), p.window),
+        barMaxWidth: p.width || 13,
+        itemStyle: { color: P[sp.color || SLOT[i] || "muted"],
+                     borderColor: P.panel, borderWidth: 0.5 },
+      };
+    });
+
+    // The aggregate, over the stack. Ink, because it is the total rather than
+    // another category -- the categorical slots are reserved for the parts.
+    const extra = [];
+    if (p.total) {
+      const r = resolve(ctx, p.total);
+      extra.push({
+        name: p.total.label || "Total", type: "line", symbol: "none",
+        data: tail(alignAsOf(cats, r.cats, r.values), p.window),
+        connectNulls: false, z: 6,
+        lineStyle: { color: P.ink, width: p.total.width || 1.8 },
+      });
+    }
+
+    mount(el, Object.assign(base(P), {
+      grid: { left: p.left || 46, right: p.right || 14, top: 12, bottom: 26 },
+      tooltip: Object.assign(base(P).tooltip, {
+        trigger: "axis", axisPointer: { type: "shadow" },
+        formatter: ps => {
+          let out = "<b>" + label(ps[0].axisValue, first.frequency) + "</b>";
+          ps.forEach(x => { if (x.data != null)
+            out += "<br>" + x.seriesName + " " + fmt(x.data); });
+          return out;
+        },
+      }),
+      xAxis: {
+        type: "category", data: cats,
+        axisLabel: { color: P.muted, fontSize: 9.5, interval: p.tick || "auto",
+                     formatter: v => label(v, first.frequency) },
+        axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
+      },
+      yAxis: yAxis(P, p.axisFormat ? fmtFor({ format: p.axisFormat }) : fmt),
+      series: bars.concat(extra),
+    }));
+  };
+
   PANELS.heatmap = (el, ctx, p) => {
     const P = ctx.P;
+    // As with PANELS.contribution: the transform and the unit were both
+    // hard-wired to a one-month change in thousands, so the panel could draw a
+    // payroll decomposition and nothing else. Values that already carry their
+    // own meaning -- a CPI contribution in percentage points -- pass
+    // transform: "none". Defaults are the previous behaviour.
+    const tf = p.transform === undefined ? "diff" : p.transform;
+    const fmt = p.format ? fmtFor(p) : (v => sgn(v, 1) + "k");
     const months = p.months || 24;
     const names = [], data = [];
     let cats = null;
     p.series.forEach((sp, yi) => {
       const s = ctx.series(sp.id);
-      const v = derive(s, { transform: "diff" }).slice(-months);
+      const v = (tf === "none" ? s.values
+                               : derive(s, { transform: tf, periods: p.periods }))
+                .slice(-months);
       if (!cats) cats = axis(s).slice(-months);
       names.push(sp.label || shortName(s.title));
       v.forEach((val, xi) => { if (val != null) data.push([xi, yi, val]); });
@@ -340,7 +439,7 @@
     mount(el, Object.assign(base(P), {
       grid: { left: p.left || 132, right: 20, top: 8, bottom: 48 },
       tooltip: Object.assign(base(P).tooltip, {
-        formatter: x => `<b>${names[x.data[1]]}</b><br>${label(cats[x.data[0]], "M")}  ${sgn(x.data[2], 1)}k` }),
+        formatter: x => `<b>${names[x.data[1]]}</b><br>${label(cats[x.data[0]], "M")}  ${fmt(x.data[2])}` }),
       xAxis: { type: "category", data: cats, splitArea: { show: false },
         axisLabel: { color: P.muted, fontSize: 9, interval: 2, formatter: v => label(v, "M") },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
@@ -350,7 +449,7 @@
       visualMap: { min: -cap, max: cap, calculable: false, orient: "horizontal",
         left: p.left || 132, bottom: 2, itemWidth: 11, itemHeight: 96,
         textStyle: { color: P.muted, fontFamily: P.mono, fontSize: 9 },
-        text: [`≥ +${cap}k`, `≤ −${cap}k`], inRange: { color: P.hm } },
+        text: p.capText || [`≥ +${cap}k`, `≤ −${cap}k`], inRange: { color: P.hm } },
       series: [{ type: "heatmap", data,
         itemStyle: { borderColor: P.panel, borderWidth: 1 },
         emphasis: { itemStyle: { borderColor: P.ink, borderWidth: 1.5 } } }],
@@ -434,6 +533,9 @@
     if (f === "pct") return v => v.toFixed(1) + "%";
     if (f === "pct2") return v => v.toFixed(2) + "%";
     if (f === "pt") return v => sgn(v, 1);
+    // Percentage points of an aggregate, for a contribution: two
+    // decimals because the whole point is that the parts add up.
+    if (f === "pp") return v => sgn(v, 2) + " pp";
     if (f === "signed") return v => (v > 0 ? "+" : v < 0 ? "−" : "") +
       Math.abs(Math.round(v) * 1000).toLocaleString("en-GB");
     if (f === "k") return v => v.toFixed(0) + "k";
@@ -550,8 +652,11 @@
       const period = rel.cadence === "weekly"
         ? `week to ${fmtDate(rel.ref_period)}`
         : `${MFULL[+rp[1] - 1]} ${rp[0]}`;
-      const bits = [`<span><b>${rel.name}</b> &middot; ${period}</span>`,
-                    `<span>Released ${fmtDate(rel.released_at)}</span>`];
+      const bits = [`<span><b>${rel.name}</b> &middot; ${period}</span>`];
+      // A release the bundle cannot date prints no date. It reached here as
+      // "Invalid Date" only because the field was assumed always present.
+      if (rel.released_at)
+        bits.push(`<span>Released ${fmtDate(rel.released_at)}</span>`);
       if (rel.next_at) bits.push(`<span>Next ${fmtDate(rel.next_at)}</span>`);
       stamp.innerHTML = bits.join("");
     }

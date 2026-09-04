@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weekly Claims — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=714d124b8d">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=d6be44cfec">
 </head>
 <body>
 <div class="app">
@@ -24,7 +24,7 @@
     </div>
     <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
     <div class="grp" id="g-united-states-inflation" hidden>
-      <a href="#" class="soon">CPI</a>
+      <a href="/us/inflation/cpi/">CPI</a>
       <a href="#" class="soon">PPI</a>
     </div>
   </div>
@@ -61,7 +61,7 @@
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Initial claims</span><span class="u">Persons, s.a.</span></div>
         <p class="note">New applications for unemployment insurance. Weekly data is noisy, so the four-week average is the series to read.</p>
-        <p class="key"><i class="k1">Weekly</i><i class="k2">4-week average</i></p>
+        <p class="key"><i class="k5">Weekly</i><i class="ks2">4-week average</i></p>
         <div class="chart" id="cIC" style="height:250px"></div>
       </div>
     </div>
@@ -75,7 +75,7 @@
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Insured unemployment rate</span><span class="u">Percent, s.a.</span></div>
         <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation. Against the household survey&rsquo;s own rate, the gap is the share of unemployed people <b>drawing no benefit</b>: not covered, exhausted, or never having claimed. That gap is why claims can sit at historic lows while payroll growth stalls.</p>
-        <p class="key"><i class="k1">Insured unemployment rate</i><i class="k4">Unemployment rate, U-3</i></p>
+        <p class="key"><i class="ks1">Insured unemployment rate</i><i class="k4">Unemployment rate, U-3</i></p>
         <div class="chart" id="cIUR" style="height:215px"></div>
       </div>
     </div>
@@ -84,7 +84,7 @@
       <div class="t" id="t4">
         <div class="th"><span class="n">Table 4</span><span class="ti">What seasonal adjustment removes</span><span class="u">Persons, 3 years</span></div>
         <p class="note">The same series adjusted and unadjusted. January spikes above 300,000 every year without meaning anything; this is what the adjustment is for, and why the raw number is never the story.</p>
-        <p class="key"><i class="k1">Seasonally adjusted</i><i class="k2">Not adjusted</i></p>
+        <p class="key"><i class="ks1">Seasonally adjusted</i><i class="ks2">Not adjusted</i></p>
         <div class="chart" id="cSA" style="height:250px"></div>
       </div>
     </div>
@@ -93,7 +93,7 @@
       <div class="t" id="t5">
         <div class="th"><span class="n">Table 5</span><span class="ti">Claims against payroll growth</span><span class="u">Indexed, 5 years ago = 100</span></div>
         <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. Claims led payrolls for decades, but <b>that relationship has broken down</b>: the correlation between the insured claims rate and payroll growth ran &minus;0.83 through the 2000s and is near zero in the 2020s. Layoffs stayed historically low while hiring stalled, and claims only ever see the first of those.</p>
-        <p class="key"><i class="k1">Initial claims, 4-week avg</i><i class="k2">Nonfarm payrolls</i></p>
+        <p class="key"><i class="ks1">Initial claims, 4-week avg</i><i class="ks2">Nonfarm payrolls</i></p>
         <div class="chart" id="cLead" style="height:230px"></div>
       </div>
     </div>
@@ -115,7 +115,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=89fbae932f"></script>
+<script src="/assets/brb-dash.js?v=1e4ea61daf"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -146,11 +146,11 @@ BRB.render({
     // U-3 is monthly on a weekly axis; alignAsOf carries each month's value
     // forward across the weeks that follow it.
     { el: "cIUR", type: "line", format: "pct", tick: 25, window: 260, left: 40,
-      series: [{ id: "IURSA", label: "Insured unemployment rate", color: "pos" },
+      series: [{ id: "IURSA", label: "Insured unemployment rate", color: "s1" },
                { id: "UNRATE", label: "Unemployment rate", color: "ink", width: 1.8 }] },
     { el: "cSA", type: "line", format: "k_units", tick: 13, window: 157, left: 46,
       series: [{ id: "ICSA", label: "Seasonally adjusted" },
-               { id: "ICNSA", label: "Not adjusted", color: "alt" }] },
+               { id: "ICNSA", label: "Not adjusted", color: "s2" }] },
     { el: "cRev", type: "line", format: "signed_count", tick: 25, left: 52,
       window: 260, hline: 0,
       series: [{ id: "ICSA.revision", label: "Revision", color: "ink", width: 1.6 }] },
@@ -159,7 +159,7 @@ BRB.render({
       // whole series -- 1967 here, 1939 for payrolls -- and this panel is
       // captioned "5 years ago = 100". CLAUDE.md trap 16.
       series: [{ id: "IC4WSA", label: "Initial claims", rebase: "index" },
-               { id: "PAYEMS", label: "Payrolls", rebase: "index", color: "alt" }] },
+               { id: "PAYEMS", label: "Payrolls", rebase: "index", color: "s2" }] },
   ],
 });
 </script>

@@ -39,11 +39,23 @@ SCHEMA_VERSION = 1
 # first print would turn the edge of the archive into a finding.
 FIRST_PRINT_GRACE = {"D": 14, "W": 28, "M": 100, "Q": 200, "A": 500}
 
-# Release dates stated in the source documents. Only what a release actually
-# says — nothing inferred, so the page never shows a made-up "next" date.
-NEXT_RELEASE = {
-    "bls.employment_situation": "2026-09-04T12:30:00Z",   # 8:30 a.m. ET, per USDL-26-1291
-}
+# The next scheduled release, read from the calendar rather than typed here.
+# This was a literal — "2026-09-04T12:30:00Z" — which was right until 08:30 that
+# morning and wrong immediately after, when the page began advertising the next
+# Employment Situation as the one already printed on it. A date that must be
+# retyped every month is a date that will be wrong most months.
+#
+# macro_release_dates is filled from FRED's forward calendar by
+# macro/release_dates.py. The `> now()` is what makes it self-correcting: the
+# moment a release happens it stops being the next one, and a release with no
+# calendar (the Atlanta Fed tracker) yields nothing and shows no "Next" at all,
+# which is the same discipline released_at follows.
+NEXT_RELEASE_SQL = """
+SELECT release_id, min(release_at)
+FROM macro_release_dates
+WHERE release_id = ANY(%s) AND release_at > now()
+GROUP BY 1
+"""
 
 STEP_DAYS = {"D": 1, "W": 7}
 
@@ -214,9 +226,16 @@ def main() -> int:
                 consumed.add(did)
 
             rel_ids = sorted({v["release"] for v in series_out.values()})
+            # An ALFRED vintage is the date the figure was published and is
+            # stored at midnight. A fetch-date vintage is just when we asked,
+            # and carries a time of day -- so it can date nothing. Taking the
+            # max over both reported a daily re-fetch as a release.
             cur.execute(
                 "SELECT r.release_id, r.name, r.agency, r.cadence, "
-                "       max(o.vintage_dt), max(o.observation_dt) "
+                "       max(o.vintage_dt) FILTER (WHERE "
+                "         (o.vintage_dt AT TIME ZONE 'UTC')::time "
+                "         = '00:00:00'), "
+                "       max(o.observation_dt) "
                 "FROM macro_releases r "
                 "JOIN macro_series_meta m ON m.release_id = r.release_id "
                 "JOIN macro_observations o ON o.series_id = m.series_id "
@@ -225,11 +244,21 @@ def main() -> int:
             for rid, name, agency, cadence, last_vin, last_obs in cur.fetchall():
                 releases[rid] = {
                     "name": name, "agency": agency, "cadence": cadence,
-                    "released_at": last_vin.isoformat().replace("+00:00", "Z"),
                     "ref_period": last_obs.isoformat(),
                 }
-                if rid in NEXT_RELEASE:
-                    releases[rid]["next_at"] = NEXT_RELEASE[rid]
+                # A release with no published vintage yet -- a source that has
+                # none, or one whose backfill has not run -- carries no date.
+                # A date that cannot be sourced is worse than no date, so the
+                # stamp omits it rather than showing when we last fetched.
+                if last_vin is not None:
+                    releases[rid]["released_at"] = \
+                        last_vin.isoformat().replace("+00:00", "Z")
+
+            cur.execute(NEXT_RELEASE_SQL, (rel_ids,))
+            for rid, nxt in cur.fetchall():
+                if rid in releases:
+                    releases[rid]["next_at"] = \
+                        nxt.isoformat().replace("+00:00", "Z")
 
             bundle = {
                 "schema": SCHEMA_VERSION,

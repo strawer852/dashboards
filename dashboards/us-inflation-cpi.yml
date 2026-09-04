@@ -1,0 +1,652 @@
+id: us.inflation.cpi
+path: us/inflation/cpi
+region: United States
+topic: Inflation
+nav_order: 1
+title: CPI
+# The stamp under the title comes from this release, and only this one.
+release: bls.cpi
+include_releases:
+  - bls.cpi
+
+# No first_reported_change and no revision overlay anywhere on this dashboard.
+# The CPI series entered the catalog on 4 September 2026 with current-vintage
+# history only; the ALFRED backfill has not run yet, so the vintage matrix that
+# a first-print line reads does not exist. CPIAUCSL alone carries 668 vintages
+# back to 1972 and they are worth having -- but a revision panel drawn before
+# they land would be empty or, worse, wrong. CLAUDE.md trap 15 in spirit: a
+# series that structurally cannot show revisions must not be offered them.
+
+# ---------------------------------------------------------------- weights ---
+# Every `contribution` entry below is anchored on a published relative
+# importance from BLS CPI news release Table 1, reference month July 2026,
+# last modified 12 August 2026, whose Relative-importance column is dated
+# **Jun. 2026** -- hence weight_date: 2026-06 throughout. The anchor is not a
+# frozen constant: derived.contribution re-drifts it every month with relative
+# prices, which is BLS's own updating rule, so the weight follows the data
+# rather than needing to be retyped. What it cannot follow is the annual
+# reweight each January; the decomposition residual is what catches that, and
+# validate.py asserts it.
+#
+# Measured on the current vintage, the four-way analytic split closes on
+# headline CPI to 0.017pp at July 2026 and 0.042pp worst over the trailing
+# fifteen months.
+derived:
+  # ---- the complete four-way split of headline CPI. Weights sum to 100.000 --
+  - id: CPI.c_food
+    kind: contribution
+    of: [CPIUFDSL, CPIAUCSL]
+    weight: 13.522
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of food to the CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+  - id: CPI.c_energy
+    kind: contribution
+    of: [CPIENGSL, CPIAUCSL]
+    weight: 7.432
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of energy to the CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+  - id: CPI.c_coregoods
+    kind: contribution
+    of: [CUSR0000SACL1E, CPIAUCSL]
+    weight: 18.829
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of core goods to the CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+  - id: CPI.c_coreservices
+    kind: contribution
+    of: [CUSR0000SASLE, CPIAUCSL]
+    weight: 60.217
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of core services to the CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+
+  # ---- the split of CORE CPI. The same two components, but weighted as
+  # shares of core rather than of the whole basket: 18.829/79.047 and
+  # 60.217/79.047. They sum to 100.000, so these close on core, not headline.
+  - id: CPI.cc_goods
+    kind: contribution
+    of: [CUSR0000SACL1E, CPILFESL]
+    weight: 23.821
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of core goods to core CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+  - id: CPI.cc_services
+    kind: contribution
+    of: [CUSR0000SASLE, CPILFESL]
+    weight: 76.179
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of core services to core CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+
+  # ---- single items, contributions to headline CPI.
+  # These twelve are mutually exclusive -- no item contains another, so the
+  # bars never double-count -- but they are NOT a partition: together they
+  # carry 79.45% of the basket and the rest is spread across items too small
+  # to plot. The panel says so; it must never be read as a decomposition.
+  - id: CPI.i_foodhome
+    kind: contribution
+    of: [CUSR0000SAF11, CPIAUCSL]
+    weight: 8.231
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of food at home to the CPI, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: CPI.i_foodaway
+    kind: contribution
+    of: [CUSR0000SEFV, CPIAUCSL]
+    weight: 5.290
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of food away from home to the CPI, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: CPI.i_gasoline
+    kind: contribution
+    of: [CUSR0000SETB01, CPIAUCSL]
+    weight: 3.852
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of gasoline to the CPI, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: CPI.i_electricity
+    kind: contribution
+    of: [CUSR0000SEHF01, CPIAUCSL]
+    weight: 2.552
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of electricity to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.i_utilgas
+    kind: contribution
+    of: [CUSR0000SEHF02, CPIAUCSL]
+    weight: 0.748
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of utility gas service to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.i_shelter
+    kind: contribution
+    of: [CUSR0000SAH1, CPIAUCSL]
+    weight: 35.304
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of shelter to the CPI, over 12 months
+    unit: Percentage points
+    importance: 5
+  - id: CPI.i_medserv
+    kind: contribution
+    of: [CUSR0000SAM2, CPIAUCSL]
+    weight: 6.840
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of medical care services to the CPI, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: CPI.i_transserv
+    kind: contribution
+    of: [CUSR0000SAS4, CPIAUCSL]
+    weight: 6.352
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of transportation services to the CPI, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: CPI.i_newveh
+    kind: contribution
+    of: [CUSR0000SETA01, CPIAUCSL]
+    weight: 3.751
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of new vehicles to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.i_usedveh
+    kind: contribution
+    of: [CUSR0000SETA02, CPIAUCSL]
+    weight: 2.679
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of used cars and trucks to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.i_apparel
+    kind: contribution
+    of: [CPIAPPSL, CPIAUCSL]
+    weight: 2.437
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of apparel to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.i_medcomm
+    kind: contribution
+    of: [CUSR0000SAM1, CPIAUCSL]
+    weight: 1.412
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of medical care commodities to the CPI, over 12 months
+    unit: Percentage points
+    importance: 3
+
+  # ---- what each part is WORTH, as opposed to what it contributed.
+  # Same drift rule as the contributions above and the same published
+  # anchor, exposed on its own: shelter contributing more than gasoline
+  # is not informative until you can see it is thirteen times the weight.
+  # The four below sum to 100.000% of the CPI.
+  - id: CPI.w_coreservices
+    kind: relative_importance
+    of: [CUSR0000SASLE, CPIAUCSL]
+    weight: 60.217
+    weight_date: "2026-06"
+    title: Share of the CPI taken by core services
+    unit: Percent of the basket
+    importance: 5
+  - id: CPI.w_coregoods
+    kind: relative_importance
+    of: [CUSR0000SACL1E, CPIAUCSL]
+    weight: 18.829
+    weight_date: "2026-06"
+    title: Share of the CPI taken by core goods
+    unit: Percent of the basket
+    importance: 5
+  - id: CPI.w_food
+    kind: relative_importance
+    of: [CPIUFDSL, CPIAUCSL]
+    weight: 13.522
+    weight_date: "2026-06"
+    title: Share of the CPI taken by food
+    unit: Percent of the basket
+    importance: 5
+  - id: CPI.w_energy
+    kind: relative_importance
+    of: [CPIENGSL, CPIAUCSL]
+    weight: 7.432
+    weight_date: "2026-06"
+    title: Share of the CPI taken by energy
+    unit: Percent of the basket
+    importance: 5
+
+  # The same two components as shares of CORE, not of the whole basket --
+  # 18.829/79.047 and 60.217/79.047. They sum to 100.000% of core.
+  - id: CPI.wc_services
+    kind: relative_importance
+    of: [CUSR0000SASLE, CPILFESL]
+    weight: 76.179
+    weight_date: "2026-06"
+    title: Share of core CPI taken by core services
+    unit: Percent of the basket
+    importance: 5
+  - id: CPI.wc_goods
+    kind: relative_importance
+    of: [CUSR0000SACL1E, CPILFESL]
+    weight: 23.821
+    weight_date: "2026-06"
+    title: Share of core CPI taken by core goods
+    unit: Percent of the basket
+    importance: 5
+
+  # The twelve single items as shares of the CPI. Mutually exclusive,
+  # summing to 79.45%: not a partition, and the panel says so.
+  - id: CPI.w_shelter
+    kind: relative_importance
+    of: [CUSR0000SAH1, CPIAUCSL]
+    weight: 35.304
+    weight_date: "2026-06"
+    title: Share of the CPI taken by shelter
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_foodhome
+    kind: relative_importance
+    of: [CUSR0000SAF11, CPIAUCSL]
+    weight: 8.231
+    weight_date: "2026-06"
+    title: Share of the CPI taken by food at home
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_medserv
+    kind: relative_importance
+    of: [CUSR0000SAM2, CPIAUCSL]
+    weight: 6.84
+    weight_date: "2026-06"
+    title: Share of the CPI taken by medical care services
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_transserv
+    kind: relative_importance
+    of: [CUSR0000SAS4, CPIAUCSL]
+    weight: 6.352
+    weight_date: "2026-06"
+    title: Share of the CPI taken by transportation services
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_foodaway
+    kind: relative_importance
+    of: [CUSR0000SEFV, CPIAUCSL]
+    weight: 5.29
+    weight_date: "2026-06"
+    title: Share of the CPI taken by food away from home
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_gasoline
+    kind: relative_importance
+    of: [CUSR0000SETB01, CPIAUCSL]
+    weight: 3.852
+    weight_date: "2026-06"
+    title: Share of the CPI taken by gasoline
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_newveh
+    kind: relative_importance
+    of: [CUSR0000SETA01, CPIAUCSL]
+    weight: 3.751
+    weight_date: "2026-06"
+    title: Share of the CPI taken by new vehicles
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_usedveh
+    kind: relative_importance
+    of: [CUSR0000SETA02, CPIAUCSL]
+    weight: 2.679
+    weight_date: "2026-06"
+    title: Share of the CPI taken by used cars and trucks
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_electricity
+    kind: relative_importance
+    of: [CUSR0000SEHF01, CPIAUCSL]
+    weight: 2.552
+    weight_date: "2026-06"
+    title: Share of the CPI taken by electricity
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_apparel
+    kind: relative_importance
+    of: [CPIAPPSL, CPIAUCSL]
+    weight: 2.437
+    weight_date: "2026-06"
+    title: Share of the CPI taken by apparel
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_medcomm
+    kind: relative_importance
+    of: [CUSR0000SAM1, CPIAUCSL]
+    weight: 1.412
+    weight_date: "2026-06"
+    title: Share of the CPI taken by medical care commodities
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.w_utilgas
+    kind: relative_importance
+    of: [CUSR0000SEHF02, CPIAUCSL]
+    weight: 0.748
+    weight_date: "2026-06"
+    title: Share of the CPI taken by utility gas service
+    unit: Percent of the basket
+    importance: 4
+
+  # The core-eligible items as shares of CORE. Each is its CPI weight over
+  # core's own 79.047%, which is a DIFFERENT number on a DIFFERENT base --
+  # shelter is 35.304% of the CPI and 44.662% of core. Food, energy and
+  # their items are not in core at all and have no entry here. These seven
+  # carry 74.354% of core.
+  - id: CPI.wc_shelter
+    kind: relative_importance
+    of: [CUSR0000SAH1, CPILFESL]
+    weight: 44.662
+    weight_date: "2026-06"
+    title: Share of core CPI taken by shelter
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_medserv
+    kind: relative_importance
+    of: [CUSR0000SAM2, CPILFESL]
+    weight: 8.653
+    weight_date: "2026-06"
+    title: Share of core CPI taken by medical care services
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_transserv
+    kind: relative_importance
+    of: [CUSR0000SAS4, CPILFESL]
+    weight: 8.036
+    weight_date: "2026-06"
+    title: Share of core CPI taken by transportation services
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_newveh
+    kind: relative_importance
+    of: [CUSR0000SETA01, CPILFESL]
+    weight: 4.745
+    weight_date: "2026-06"
+    title: Share of core CPI taken by new vehicles
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_usedveh
+    kind: relative_importance
+    of: [CUSR0000SETA02, CPILFESL]
+    weight: 3.389
+    weight_date: "2026-06"
+    title: Share of core CPI taken by used cars and trucks
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_apparel
+    kind: relative_importance
+    of: [CPIAPPSL, CPILFESL]
+    weight: 3.083
+    weight_date: "2026-06"
+    title: Share of core CPI taken by apparel
+    unit: Percent of the basket
+    importance: 4
+  - id: CPI.wc_medcomm
+    kind: relative_importance
+    of: [CUSR0000SAM1, CPILFESL]
+    weight: 1.786
+    weight_date: "2026-06"
+    title: Share of core CPI taken by medical care commodities
+    unit: Percent of the basket
+    importance: 4
+
+  # ---- the same four-way split on the MONTHLY change. periods: 1 rather
+  # than 12, so these sum to the month-on-month rate instead of the annual
+  # one. Both stacks exist because a month can pull the two in opposite
+  # directions -- a hot month lifting the monthly rate while a hotter month
+  # drops out of the twelve-month window and lowers the annual one.
+  - id: CPI.m_coreservices
+    kind: contribution
+    of: [CUSR0000SASLE, CPIAUCSL]
+    weight: 60.217
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of core services to the CPI, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: CPI.m_coregoods
+    kind: contribution
+    of: [CUSR0000SACL1E, CPIAUCSL]
+    weight: 18.829
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of core goods to the CPI, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: CPI.m_food
+    kind: contribution
+    of: [CPIUFDSL, CPIAUCSL]
+    weight: 13.522
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of food to the CPI, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: CPI.m_energy
+    kind: contribution
+    of: [CPIENGSL, CPIAUCSL]
+    weight: 7.432
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of energy to the CPI, over 1 month
+    unit: Percentage points
+    importance: 4
+
+  # ---- sub-items weighted against their own parent, so each group's
+  # stack closes on that group rather than on a slice of the headline.
+  # Two of each: 12 months and 1 month, the pair the page reads side by
+  # side. See the module docstring in derived.py for the drift rule.
+  - id: CPI.f_home_y
+    kind: contribution
+    of: [CUSR0000SAF11, CPIUFDSL]
+    weight: 60.87
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of food at home to food, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.f_home_m
+    kind: contribution
+    of: [CUSR0000SAF11, CPIUFDSL]
+    weight: 60.87
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of food at home to food, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.f_away_y
+    kind: contribution
+    of: [CUSR0000SEFV, CPIUFDSL]
+    weight: 39.121
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of food away from home to food, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.f_away_m
+    kind: contribution
+    of: [CUSR0000SEFV, CPIUFDSL]
+    weight: 39.121
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of food away from home to food, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_motor_y
+    kind: contribution
+    of: [CUSR0000SETB, CPIENGSL]
+    weight: 53.431
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of motor fuel to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_motor_m
+    kind: contribution
+    of: [CUSR0000SETB, CPIENGSL]
+    weight: 53.431
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of motor fuel to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_fuel_y
+    kind: contribution
+    of: [CUSR0000SEHE, CPIENGSL]
+    weight: 2.166
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of fuel oil and other fuels to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_fuel_m
+    kind: contribution
+    of: [CUSR0000SEHE, CPIENGSL]
+    weight: 2.166
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of fuel oil and other fuels to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_elec_y
+    kind: contribution
+    of: [CUSR0000SEHF01, CPIENGSL]
+    weight: 34.338
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of electricity to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_elec_m
+    kind: contribution
+    of: [CUSR0000SEHF01, CPIENGSL]
+    weight: 34.338
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of electricity to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_gas_y
+    kind: contribution
+    of: [CUSR0000SEHF02, CPIENGSL]
+    weight: 10.065
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of utility gas service to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.e_gas_m
+    kind: contribution
+    of: [CUSR0000SEHF02, CPIENGSL]
+    weight: 10.065
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of utility gas service to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.md_comm_y
+    kind: contribution
+    of: [CUSR0000SAM1, CPIMEDSL]
+    weight: 17.111
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of medical care commodities to medical care, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.md_comm_m
+    kind: contribution
+    of: [CUSR0000SAM1, CPIMEDSL]
+    weight: 17.111
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of medical care commodities to medical care, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.md_serv_y
+    kind: contribution
+    of: [CUSR0000SAM2, CPIMEDSL]
+    weight: 82.889
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of medical care services to medical care, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.md_serv_m
+    kind: contribution
+    of: [CUSR0000SAM2, CPIMEDSL]
+    weight: 82.889
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of medical care services to medical care, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.sh_rent_y
+    kind: contribution
+    of: [CUSR0000SEHA, CUSR0000SAH1]
+    weight: 21.856
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of rent of primary residence to shelter, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.sh_rent_m
+    kind: contribution
+    of: [CUSR0000SEHA, CUSR0000SAH1]
+    weight: 21.856
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of rent of primary residence to shelter, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.sh_oer_y
+    kind: contribution
+    of: [CUSR0000SEHC, CUSR0000SAH1]
+    weight: 73.219
+    weight_date: "2026-06"
+    periods: 12
+    title: Contribution of owners' equivalent rent to shelter, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.sh_oer_m
+    kind: contribution
+    of: [CUSR0000SEHC, CUSR0000SAH1]
+    weight: 73.219
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of owners' equivalent rent to shelter, over 1 month
+    unit: Percentage points
+    importance: 3

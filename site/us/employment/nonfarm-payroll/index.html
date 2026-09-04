@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nonfarm Payroll — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=714d124b8d">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=d6be44cfec">
 </head>
 <body>
 <div class="app">
@@ -24,7 +24,7 @@
     </div>
     <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
     <div class="grp" id="g-united-states-inflation" hidden>
-      <a href="#" class="soon">CPI</a>
+      <a href="/us/inflation/cpi/">CPI</a>
       <a href="#" class="soon">PPI</a>
     </div>
   </div>
@@ -47,13 +47,16 @@
         <a href="#t13"><span>13</span>Duration</a>
         <a href="#t14"><span>14</span>Participation</a>
         <a href="#t15"><span>15</span>Why the ratio moved</a>
-        <a href="#t16"><span>16</span>Earnings</a>
-        <a href="#t17"><span>17</span>Job-mix-fixed pay</a>
-        <a href="#t18"><span>18</span>Pay vs productivity</a>
-        <a href="#t19"><span>19</span>Labour input</a>
-        <a href="#t20"><span>20</span>Hours</a>
-        <a href="#t21"><span>21</span>Manufacturing</a>
-        <a href="#t22"><span>22</span>Two surveys</a>
+        <a href="#t16"><span>16</span>Jobs by age</a>
+        <a href="#t17"><span>17</span>Participation by age</a>
+        <a href="#t18"><span>18</span>Full and part time</a>
+        <a href="#t19"><span>19</span>Earnings</a>
+        <a href="#t20"><span>20</span>Job-mix-fixed pay</a>
+        <a href="#t21"><span>21</span>Pay vs productivity</a>
+        <a href="#t22"><span>22</span>Labour input</a>
+        <a href="#t23"><span>23</span>Hours</a>
+        <a href="#t24"><span>24</span>Manufacturing</a>
+        <a href="#t25"><span>25</span>Two surveys</a>
       </div>
 
     </nav>
@@ -86,7 +89,7 @@
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Breakeven employment growth</span><span class="u">Thousands per month, s.a.</span></div>
         <p class="note">Unemployment holds steady when employment grows with the labour force, so the gain required is the labour force&rsquo;s own growth net of the share that stays unemployed &mdash; an accounting identity, not a forecast. The labour force is shrinking, so breakeven has fallen through zero and a negative payroll print can still sit above it. Two windows are drawn because the estimate is <b>sensitive to how far back it looks</b>, the monthly change carrying sampling error of several hundred thousand; it is negative on both. <b>January is excluded</b> as a population-control level break rather than a flow, and the line breaks where the October 2025 household survey was not collected. Breakeven is on the household concept while payrolls count jobs, so the comparison is indicative. <b>Analyst-derived.</b></p>
-        <p class="key"><i class="k4">Breakeven, 6-month</i><i class="k4">Breakeven, 12-month (dashed)</i><i class="k1">Payrolls, 3-month average</i></p>
+        <p class="key"><i class="k4">Breakeven, 6-month</i><i class="k4">Breakeven, 12-month (dashed)</i><i class="ks1">Payrolls, 3-month average</i></p>
         <div class="chart" id="cBrk" style="height:250px"></div>
       </div>
     </div>
@@ -95,7 +98,7 @@
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Population and the labour force</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="note">The mechanism behind the breakeven line above. The population keeps growing while the labour force does not, which is participation falling rather than employment failing. The small steps each January are <b>new population controls</b>, which BLS applies to the current month without revising earlier ones &mdash; they are level breaks in this chart, not flows, and the reason breakeven is computed with January dropped. The household survey was not collected in October 2025.</p>
-        <p class="key"><i class="k1">Civilian population, 16+</i><i class="k4">Civilian labour force</i></p>
+        <p class="key"><i class="ks1">Civilian population, 16+</i><i class="k4">Civilian labour force</i></p>
         <div class="chart" id="cPop" style="height:230px"></div>
       </div>
     </div>
@@ -116,8 +119,8 @@
 
     <div class="row one">
       <div class="t" id="t6">
-        <div class="th"><span class="n">Table 6</span><span class="ti">Payroll change by supersector</span><span class="u">Thousands, 24 months</span></div>
-        <p class="note">The fourteen supersectors sum to total nonfarm across 655 months with a worst residual of 0.5k &mdash; rounding, which is how you know none is missing.</p>
+        <div class="th"><span class="n">Table 6</span><span class="ti">Payroll change by supersector</span><span class="u">Thousands, 48 months</span></div>
+        <p class="note">The fourteen supersectors sum to total nonfarm across 655 months with a worst residual of 0.5k &mdash; rounding, which is how you know none is missing. Four years, which reaches back into the 2022 reopening: the scale saturates beyond &plusmn;60k, and leisure and hospitality spends much of 2022 outside it.</p>
         <div class="chart" id="cHeat" style="height:360px"></div>
       </div>
     </div>
@@ -133,13 +136,13 @@
       <div class="t" id="t8">
         <div class="th"><span class="n">Table 8</span><span class="ti">Private hiring outside health care</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">Health care and social assistance hires through the cycle rather than with it, so it can carry a private payroll number that has otherwise stalled. Bars are private employment with it removed; the line is private employment in total. <b>When the two separate, the private gain is concentrated in one acyclical sector.</b> Note this is <em>not</em> the private education and health services supersector, which would also strip out private education. Components are seasonally adjusted independently, so the difference is approximate. <b>Analyst-derived.</b></p>
-        <p class="key"><i class="k1">Private, total</i></p>
+        <p class="key"><i class="ks1">Private, total</i></p>
         <div class="chart" id="cCyc" style="height:230px"></div>
       </div>
       <div class="t" id="t9">
         <div class="th"><span class="n">Table 9</span><span class="ti">Breadth of the payroll change</span><span class="u">Diffusion index, 50 = balance</span></div>
         <p class="note">The heatmap above splits fourteen supersectors; these indexes count roughly <b>250 private industries</b>, scoring each span as the share expanding plus half the share unchanged. Above 50 more industries are adding than shedding. It answers a question the headline cannot: whether a move is broad or the work of a few sectors. July&rsquo;s reading sat <b>above 50 while total payrolls fell</b>. The <b>twelve-month span is not seasonally adjusted</b> &mdash; no adjusted version is published &mdash; so it is drawn dashed and sits on a different basis from the other three. Source: BLS, which has no revision history for these, so they carry no first-print line.</p>
-        <p class="key"><i class="k1">1-month</i><i class="k2">3-month</i><i class="k4">6-month</i><i class="k4">12-month (dashed, NSA)</i></p>
+        <p class="key"><i class="ks1">1-month</i><i class="ks2">3-month</i><i class="k4">6-month</i><i class="k4">12-month (dashed, NSA)</i></p>
         <div class="chart" id="cDiff" style="height:250px"></div>
       </div>
     </div>
@@ -148,13 +151,13 @@
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">Unemployment</span><span class="u">Percent, s.a.</span></div>
         <p class="note">U-3 is the headline rate. U-6 adds the underemployed and those marginally attached. Both break at October 2025, when the household survey was not collected.</p>
-        <p class="key"><i class="k1">U-3</i><i class="k2">U-6</i></p>
+        <p class="key"><i class="ks1">U-3</i><i class="ks2">U-6</i></p>
         <div class="chart" id="cUn" style="height:215px"></div>
       </div>
       <div class="t" id="t11">
         <div class="th"><span class="n">Table 11</span><span class="ti">Who is unemployed</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">The headline rate says how many; this says what kind. <b>Permanent job losers</b> rising is structural displacement. <b>Temporary layoffs</b> are transient and reverse. <b>Job leavers</b> quit voluntarily, so a falling count is workers judging that they cannot find better &mdash; the household survey&rsquo;s read on confidence. These are independently seasonally adjusted and do not sum to total unemployment.</p>
-        <p class="key"><i class="k4">Permanent job losers</i><i class="k1">On temporary layoff</i><i class="k2">Job leavers</i></p>
+        <p class="key"><i class="k4">Permanent job losers</i><i class="ks1">On temporary layoff</i><i class="ks2">Job leavers</i></p>
         <div class="chart" id="cWho" style="height:230px"></div>
       </div>
     </div>
@@ -163,13 +166,13 @@
       <div class="t" id="t12">
         <div class="th"><span class="n">Table 12</span><span class="ti">Slack beyond the headline</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">U-6 counts three groups where U-3 counts one, and these are them. <b>Involuntary part-time</b> workers hold a job but want full-time hours, so they never appear in the unemployment rate at all. The <b>marginally attached</b> want work and have looked in the past year but not the past four weeks, which puts them outside the labour force by definition. Both move earlier than unemployment in a downturn: hours are cut and search is abandoned before anyone is counted as unemployed.</p>
-        <p class="key"><i class="k4">Unemployed</i><i class="k1">Involuntary part-time</i><i class="k2">Marginally attached</i></p>
+        <p class="key"><i class="k4">Unemployed</i><i class="ks1">Involuntary part-time</i><i class="ks2">Marginally attached</i></p>
         <div class="chart" id="cSlack" style="height:230px"></div>
       </div>
       <div class="t" id="t13">
         <div class="th"><span class="n">Table 13</span><span class="ti">How long people stay unemployed</span><span class="u">Weeks, and percent of the unemployed</span></div>
         <p class="note">Duration separates a labour market where people move quickly between jobs from one where they cannot get back in. Median weeks is the typical spell; the share unemployed <b>27 weeks or more</b> is the tail that does not clear, and long spells erode re-employment prospects on their own. Two units, so two axes &mdash; weeks on the left, percent on the right. The share is the published figure, not one divided out of two rounded levels.</p>
-        <p class="key"><i class="k4">Median duration, weeks</i><i class="k2">Unemployed 27 weeks or more, %</i></p>
+        <p class="key"><i class="k4">Median duration, weeks</i><i class="ks2">Unemployed 27 weeks or more, %</i></p>
         <div class="chart" id="cDur" style="height:230px"></div>
       </div>
     </div>
@@ -178,67 +181,91 @@
       <div class="t" id="t14">
         <div class="th"><span class="n">Table 14</span><span class="ti">Participation and employment</span><span class="u">Points, change over 5 years</span></div>
         <p class="note">Shown as change rather than level: at roughly 61, 59 and 80 percent these sit too far apart to share an axis, and their <b>movement</b> is the point. Prime-age strips out the ageing of the population &mdash; it was 80.4% in July 2025 and 80.4% again in July 2026, while the headline ratio fell. Table 15 separates that fall into its two causes.</p>
-        <p class="key"><i class="k1">Participation</i><i class="k2">Emp-pop ratio</i><i class="k4">Prime-age emp-pop, 25&ndash;54</i><i class="k5">Prime-age participation</i></p>
+        <p class="key"><i class="ks1">Participation</i><i class="ks2">Emp-pop ratio</i><i class="k4">Prime-age emp-pop, 25&ndash;54</i><i class="k5">Prime-age participation</i></p>
         <div class="chart" id="cPart" style="height:215px"></div>
       </div>
       <div class="t" id="t15">
         <div class="th"><span class="n">Table 15</span><span class="ti">Why the employment ratio moved</span><span class="u">Points, change over 12 months</span></div>
         <p class="note">The employment-population ratio is participation multiplied by the share of the labour force in work, so its twelve-month change separates exactly into the two. Through the 2021&ndash;22 recovery the move came mostly from unemployment falling; the decline since is almost entirely participation, which makes it demographic and behavioural rather than a sign of rising joblessness. The gap between the ink line and the two components is the interaction between them. <b>Analyst-derived.</b></p>
-        <p class="key"><i class="k4">Emp-pop ratio</i><i class="k1">From participation</i><i class="k2">From unemployment</i></p>
+        <p class="key"><i class="k4">Emp-pop ratio</i><i class="ks1">From participation</i><i class="ks2">From unemployment</i></p>
         <div class="chart" id="cEpop" style="height:250px"></div>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t16">
-        <div class="th"><span class="n">Table 16</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
-        <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first.</p>
-        <p class="key"><i class="k1">All employees</i><i class="k2">Production &amp; nonsupervisory</i></p>
-        <div class="chart" id="cWage" style="height:215px"></div>
+        <div class="th"><span class="n">Table 16</span><span class="ti">Jobs by age</span><span class="u">Index, 5 years ago = 100</span></div>
+        <p class="note">Employment levels by age, rebased inside the window because the four are orders of magnitude apart &mdash; prime-age is around 103 million against five million teenagers &mdash; and the divergence in growth is the point. <b>The steps each January are population-control breaks, not hiring</b>: BLS applies new controls to the current month without revising earlier ones, so a January move here is an accounting change (CLAUDE.md trap 14). The household survey was not collected in October 2025.</p>
+        <p class="key"><i class="k4">25&ndash;54</i><i class="ks1">55 and over</i><i class="ks2">20&ndash;24</i><i class="ks3">16&ndash;19 (dashed)</i></p>
+        <div class="chart" id="cAge" style="height:230px"></div>
       </div>
       <div class="t" id="t17">
-        <div class="th"><span class="n">Table 17</span><span class="ti">Wage growth on measures that hold the job mix fixed</span><span class="u">Percent, year over year</span></div>
+        <div class="th"><span class="n">Table 17</span><span class="ti">Participation by age</span><span class="u">Points, change over 5 years</span></div>
+        <p class="note">The same four as rates rather than levels, and shown as change because they sit far apart &mdash; roughly 83% at prime age against 38% for the over-55s. Rates are ratios, so they carry the January control break far more lightly than the levels above. This is where the fall in headline participation is actually located: it is an ageing composition effect plus the over-55 rate, not prime-age withdrawal.</p>
+        <p class="key"><i class="k4">25&ndash;54</i><i class="ks1">55 and over</i><i class="ks2">20&ndash;24</i><i class="ks3">16&ndash;19 (dashed)</i></p>
+        <div class="chart" id="cAgePart" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t18">
+        <div class="th"><span class="n">Table 18</span><span class="ti">Full-time and part-time work</span><span class="u">Index, 5 years ago = 100</span></div>
+        <p class="note">Whether the jobs being added are whole ones. Full and part time are counted on <em>usual</em> hours in the household survey, so this is a different concept from the payroll count in Table 1 &mdash; it counts people, not jobs, and someone holding two part-time jobs appears once. When the part-time line pulls above full time, headcount growth is overstating the labour actually being bought; Table 19 measures that directly in hours. Both carry the January control break and the October 2025 gap.</p>
+        <p class="key"><i class="k4">All employed</i><i class="ks1">Full time</i><i class="ks2">Part time</i></p>
+        <div class="chart" id="cFTPT" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t19">
+        <div class="th"><span class="n">Table 19</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
+        <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first.</p>
+        <p class="key"><i class="ks1">All employees</i><i class="ks2">Production &amp; nonsupervisory</i></p>
+        <div class="chart" id="cWage" style="height:215px"></div>
+      </div>
+      <div class="t" id="t20">
+        <div class="th"><span class="n">Table 20</span><span class="ti">Wage growth on measures that hold the job mix fixed</span><span class="u">Percent, year over year</span></div>
         <p class="note">Average hourly earnings move when the <em>composition</em> of employment moves: shed low-paid jobs and the average rises without anyone getting a raise. The <b>employment cost index</b> holds the occupational mix fixed, and the <b>Atlanta Fed tracker</b> follows the same individuals over time, so both answer the question average earnings only appears to. <b>Different releases:</b> the ECI is quarterly from BLS and the tracker is monthly from the Atlanta Fed &mdash; neither is dated by the stamp at the top of this page, and the ECI holds its level for three months at a time because that is how often it is published.</p>
-        <p class="key"><i class="k4">Atlanta Fed wage tracker</i><i class="k1">ECI, total compensation</i><i class="k2">ECI, wages and salaries</i></p>
+        <p class="key"><i class="k4">Atlanta Fed wage tracker</i><i class="ks1">ECI, total compensation</i><i class="ks2">ECI, wages and salaries</i></p>
         <div class="chart" id="cWage2" style="height:230px"></div>
       </div>
     </div>
 
     <div class="row">
-      <div class="t" id="t18">
-        <div class="th"><span class="n">Table 18</span><span class="ti">Pay against productivity</span><span class="u">Percent, year over year</span></div>
+      <div class="t" id="t21">
+        <div class="th"><span class="n">Table 21</span><span class="ti">Pay against productivity</span><span class="u">Percent, year over year</span></div>
         <p class="note">Wage growth is only inflationary to the extent it outruns productivity, and the difference is what <b>unit labour costs</b> measure &mdash; the published series, not a subtraction done here, because average hourly earnings and nonfarm business compensation are different concepts over different sectors. <b>Real hourly earnings</b> are BLS&rsquo;s own CPI-deflated series. <b>Different releases again:</b> productivity and unit labour costs are quarterly, and real earnings are published with the CPI, so on payroll release morning the newest month is not yet there.</p>
-        <p class="key"><i class="k4">Real hourly earnings</i><i class="k2">Unit labour costs</i><i class="k1">Productivity</i></p>
+        <p class="key"><i class="k4">Real hourly earnings</i><i class="ks2">Unit labour costs</i><i class="ks1">Productivity</i></p>
         <div class="chart" id="cProd" style="height:230px"></div>
       </div>
-      <div class="t" id="t19">
-        <div class="th"><span class="n">Table 19</span><span class="ti">Labour input, not headcount</span><span class="u">Percent, year over year</span></div>
+      <div class="t" id="t22">
+        <div class="th"><span class="n">Table 22</span><span class="ti">Labour input, not headcount</span><span class="u">Percent, year over year</span></div>
         <p class="note">Headcount is the coarsest measure of how much work is being bought. <b>Aggregate weekly hours</b> combines employment with the length of the workweek, and <b>aggregate weekly payrolls</b> adds the hourly wage, which makes it the monthly read on nominal labour income &mdash; the money actually reaching households. <b>Temporary help</b> is the most disposable headcount a firm holds, so it is cut before permanent staff and hired before them in a recovery.</p>
-        <p class="key"><i class="k4">Aggregate weekly hours</i><i class="k1">Aggregate weekly payrolls</i><i class="k2">Temporary help</i></p>
+        <p class="key"><i class="k4">Aggregate weekly hours</i><i class="ks1">Aggregate weekly payrolls</i><i class="ks2">Temporary help</i></p>
         <div class="chart" id="cInput" style="height:230px"></div>
       </div>
     </div>
 
     <div class="row">
-      <div class="t" id="t20">
-        <div class="th"><span class="n">Table 20</span><span class="ti">Average weekly hours</span><span class="u">Hours, s.a.</span></div>
+      <div class="t" id="t23">
+        <div class="th"><span class="n">Table 23</span><span class="ti">Average weekly hours</span><span class="u">Hours, s.a.</span></div>
         <p class="note">Hours move before headcount. The whole range is half an hour and the series is published to one decimal, so the monthly line is a square wave and the three-month average carries the trend.</p>
-        <p class="key"><i class="k1">3-month average</i><i class="k2">Monthly</i></p>
+        <p class="key"><i class="ks1">3-month average</i><i class="k5">Monthly</i></p>
         <div class="chart" id="cHours" style="height:215px"></div>
       </div>
-      <div class="t" id="t21">
-        <div class="th"><span class="n">Table 21</span><span class="ti">Manufacturing hours and overtime</span><span class="u">Hours per week</span></div>
+      <div class="t" id="t24">
+        <div class="th"><span class="n">Table 24</span><span class="ti">Manufacturing hours and overtime</span><span class="u">Hours per week</span></div>
         <p class="note">A factory adjusts hours before it adjusts people: overtime is withdrawn first, then the workweek shortens, then employment falls. That ordering is why manufacturing hours feed the Conference Board&rsquo;s leading index. The workweek sits near forty hours and moves within a narrow band, so the axis is scaled to that band rather than to zero; overtime is roughly three hours and takes the right axis.</p>
-        <p class="key"><i class="k4">Weekly hours</i><i class="k2">Overtime hours</i></p>
+        <p class="key"><i class="k4">Weekly hours</i><i class="ks2">Overtime hours</i></p>
         <div class="chart" id="cMfg" style="height:230px"></div>
       </div>
     </div>
 
     <div class="row one">
-      <div class="t" id="t22">
-        <div class="th"><span class="n">Table 22</span><span class="ti">The two surveys</span><span class="u">Index, 5 years ago = 100</span></div>
+      <div class="t" id="t25">
+        <div class="th"><span class="n">Table 25</span><span class="ti">The two surveys</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="note">The establishment survey counts jobs; the household survey counts people, and a second job counts once. BLS publishes a <b>research series</b> that restates household employment on the payroll survey&rsquo;s own concept &mdash; removing agriculture, the unincorporated self-employed and unpaid family workers, and netting out multiple jobholding &mdash; which is the like-for-like line to read against payrolls. All three break at October 2025, when the household survey was not collected.</p>
-        <p class="key"><i class="k1">Establishment (CES)</i><i class="k2">Household (CPS)</i><i class="k4">Household on the CES concept</i></p>
+        <p class="key"><i class="ks1">Establishment (CES)</i><i class="ks2">Household (CPS)</i><i class="k4">Household on the CES concept</i></p>
         <div class="chart" id="cTwo" style="height:230px"></div>
       </div>
     </div>
@@ -252,7 +279,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=89fbae932f"></script>
+<script src="/assets/brb-dash.js?v=1e4ea61daf"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -295,12 +322,12 @@ BRB.render({
       series: [{ id: "LF.breakeven", label: "Breakeven, 6-month", color: "ink", width: 1.8 },
                { id: "LF.breakeven12", label: "Breakeven, 12-month", color: "ink",
                  width: 1.2, dash: true },
-               { id: "PAYEMS", label: "Payrolls, 3-month average", color: "pos",
+               { id: "PAYEMS", label: "Payrolls, 3-month average", color: "s1",
                  transform: "diff_ma", window: 3 }] },
     // Levels rebased inside the window: population and the labour force are
     // millions apart in level and the point is the divergence in growth.
     { el: "cPop", type: "line", format: "num", tick: 11, left: 40, window: 60,
-      series: [{ id: "CNP16OV", label: "Population 16+", rebase: "index", color: "pos" },
+      series: [{ id: "CNP16OV", label: "Population 16+", rebase: "index", color: "s1" },
                { id: "CLF16OV", label: "Labour force", rebase: "index", color: "ink",
                  width: 1.9 }] },
     // Revisions and signal. Both series are derived in macro/derived.py rather
@@ -316,37 +343,42 @@ BRB.render({
     { el: "cSig", type: "line", format: "pct", tick: 23, left: 40, window: 240,
       series: [{ id: "PAYEMS.signif_share", label: "Distinguishable from zero",
                   color: "ink" }] },
-    { el: "cHeat", type: "heatmap", series: SECTORS, months: 24, cap: 45 },
+    // Four years rather than two. Over 48 months supersector changes run
+    // -153k to +121k with a 95th percentile of 84k, so the old +/-45k scale
+    // would saturate most of the 2022 reopening into flat colour; 60 keeps
+    // the recent, smaller moves readable while admitting the tail clips.
+    { el: "cHeat", type: "heatmap", series: SECTORS, months: 48, cap: 60,
+      capText: ["\u2265 +60k", "\u2264 \u221260k"] },
     { el: "cSec",  type: "contribution", series: SECTORS },
     { el: "cCyc", type: "bars", series: { id: "PRIV.exhealth", transform: "diff" },
       window: 36, format: "signed", axisFormat: "k", tick: 5, label: "Private ex health care",
       overlay: [{ id: "USPRIV", label: "Private, total", transform: "diff",
-                  color: "pos", width: 1.4 }] },
+                  color: "s1", width: 1.4 }] },
     { el: "cDiff", type: "line", format: "num", tick: 11, left: 34, window: 60,
       hline: 50, hlineLabel: "50",
-      series: [{ id: "CES0500000021", label: "1-month", color: "pos", width: 1.2 },
-               { id: "CES0500000022", label: "3-month", color: "alt", width: 1.2 },
+      series: [{ id: "CES0500000021", label: "1-month", color: "s1", width: 1.2 },
+               { id: "CES0500000022", label: "3-month", color: "s2", width: 1.2 },
                { id: "CES0500000023", label: "6-month", color: "ink", width: 1.9 },
                { id: "CEU0500000024", label: "12-month (NSA)", color: "ink",
                  width: 1.1, dash: true }] },
     { el: "cUn", type: "line", format: "pct", tick: 11, window: 60,
-      series: [{ id: "UNRATE", label: "U-3" }, { id: "U6RATE", label: "U-6", color: "alt" }] },
+      series: [{ id: "UNRATE", label: "U-3" }, { id: "U6RATE", label: "U-6", color: "s2" }] },
     { el: "cWho", type: "line", format: "k", tick: 11, left: 44, window: 60,
       series: [{ id: "LNS13026638", label: "Permanent job losers", color: "ink", width: 1.9 },
-               { id: "LNS13023653", label: "On temporary layoff", color: "pos" },
-               { id: "LNS13023705", label: "Job leavers", color: "alt" }] },
+               { id: "LNS13023653", label: "On temporary layoff", color: "s1" },
+               { id: "LNS13023705", label: "Job leavers", color: "s2" }] },
     { el: "cSlack", type: "line", format: "k", tick: 11, left: 46, window: 60,
       series: [{ id: "UNEMPLOY", label: "Unemployed", color: "ink", width: 1.9 },
-               { id: "LNS12032194", label: "Involuntary part-time", color: "pos" },
-               { id: "LNS15026642", label: "Marginally attached", color: "alt" }] },
+               { id: "LNS12032194", label: "Involuntary part-time", color: "s1" },
+               { id: "LNS15026642", label: "Marginally attached", color: "s2" }] },
     // Two units, two axes: weeks cannot share a scale with a percentage.
     { el: "cDur", type: "line", format: "weeks", format2: "pct", axis2: true,
       tick: 11, left: 34, right: 40, window: 60,
       series: [{ id: "UEMPMED", label: "Median duration", color: "ink", width: 1.9 },
-               { id: "LNS13025703", label: "27 weeks or more", color: "alt", axis: 1 }] },
+               { id: "LNS13025703", label: "27 weeks or more", color: "s2", axis: 1 }] },
     { el: "cPart", type: "line", format: "pt", tick: 11, window: 60,
       series: [{ id: "CIVPART", label: "Participation", rebase: true },
-               { id: "EMRATIO", label: "Emp-pop", rebase: true, color: "alt" },
+               { id: "EMRATIO", label: "Emp-pop", rebase: true, color: "s2" },
                { id: "LNS12300060", label: "Prime-age emp-pop", rebase: true,
                  color: "ink", width: 1.9 },
                { id: "LNS11300060", label: "Prime-age participation", rebase: true,
@@ -357,12 +389,12 @@ BRB.render({
       series: [{ id: "EMRATIO", label: "Emp-pop ratio", transform: "diff",
                  periods: 12, color: "ink", width: 1.9 },
                { id: "EMRATIO.participation_effect", label: "From participation",
-                 color: "pos", width: 1.3 },
+                 color: "s1", width: 1.3 },
                { id: "EMRATIO.unemployment_effect", label: "From unemployment",
-                 color: "alt", width: 1.3 }] },
+                 color: "s2", width: 1.3 }] },
     { el: "cWage", type: "line", format: "pct2", tick: 11, window: 60,
       series: [{ id: "CES0500000003", label: "All employees", transform: "yoy" },
-               { id: "AHETPI", label: "Prod & nonsup", transform: "yoy", color: "alt" }] },
+               { id: "AHETPI", label: "Prod & nonsup", transform: "yoy", color: "s2" }] },
     // The ECI is quarterly, the tracker monthly. alignAsOf carries the coarser
     // series onto the finer axis by date; index alignment would pair a quarter
     // with whatever month happened to sit at the same position.
@@ -372,23 +404,23 @@ BRB.render({
       series: [{ id: "FRBATLWGT3MMAUMHWGO", label: "Atlanta Fed tracker", color: "ink",
                  width: 1.9 },
                { id: "ECIALLCIV", label: "ECI, total compensation", transform: "yoy",
-                 color: "pos" },
+                 color: "s1" },
                { id: "ECIWAG", label: "ECI, wages and salaries", transform: "yoy",
-                 color: "alt" }] },
+                 color: "s2" }] },
     { el: "cProd", type: "line", format: "pct2", tick: 11, left: 40, window: 60,
       // Monthly first, for the same reason.
       series: [{ id: "CES0500000013", label: "Real hourly earnings", transform: "yoy",
                  color: "ink" },
-               { id: "ULCNFB", label: "Unit labour costs", transform: "yoy", color: "alt",
+               { id: "ULCNFB", label: "Unit labour costs", transform: "yoy", color: "s2",
                  width: 1.9 },
-               { id: "OPHNFB", label: "Productivity", transform: "yoy", color: "pos" }] },
+               { id: "OPHNFB", label: "Productivity", transform: "yoy", color: "s1" }] },
     { el: "cInput", type: "line", format: "pct2", tick: 11, left: 40, window: 60,
       series: [{ id: "AWHAE", label: "Aggregate weekly hours", transform: "yoy",
                  color: "ink", width: 1.9 },
                { id: "CES0500000017", label: "Aggregate weekly payrolls",
-                 transform: "yoy", color: "pos" },
+                 transform: "yoy", color: "s1" },
                { id: "TEMPHELPS", label: "Temporary help", transform: "yoy",
-                 color: "alt" }] },
+                 color: "s2" }] },
     { el: "cHours", type: "line", format: "hours", tick: 11, left: 40, window: 60,
       series: [{ id: "AWHAETP", label: "3-month average", transform: "ma", window: 3, width: 1.8 },
                { id: "AWHAETP", label: "Monthly", color: "muted", width: 1 }] },
@@ -396,12 +428,32 @@ BRB.render({
     { el: "cMfg", type: "line", format: "hours", format2: "hours", axis2: true,
       tick: 11, left: 36, right: 34, window: 60,
       series: [{ id: "AWHAEMAN", label: "Weekly hours", color: "ink", width: 1.9 },
-               { id: "CES3000000004", label: "Overtime", color: "alt", axis: 1 }] },
+               { id: "CES3000000004", label: "Overtime", color: "s2", axis: 1 }] },
     { el: "cTwo", type: "line", format: "num", tick: 11, left: 42, window: 60,
-      series: [{ id: "PAYEMS", label: "Establishment", rebase: "index", color: "pos" },
-               { id: "CE16OV", label: "Household", rebase: "index", color: "alt" },
+      series: [{ id: "PAYEMS", label: "Establishment", rebase: "index", color: "s1" },
+               { id: "CE16OV", label: "Household", rebase: "index", color: "s2" },
                { id: "LNS16000000", label: "Household, CES concept",
                  rebase: "index", color: "ink" }] },
+    // Levels rebased inside the window: rebase, never index100, which baselines
+    // on the first value of the WHOLE series (1948 here) and runs before the
+    // window, so the caption's "5 years ago" would not be where the 100 is.
+    { el: "cAge", type: "line", format: "num", tick: 11, left: 40, window: 60,
+      series: [{ id: "LNS12000060", label: "25-54", rebase: "index", color: "ink", width: 1.9 },
+               { id: "LNS12024230", label: "55 and over", rebase: "index", color: "s1" },
+               { id: "LNS12000036", label: "20-24", rebase: "index", color: "s2" },
+               { id: "LNS12000012", label: "16-19", rebase: "index", color: "s3", dash: true }] },
+    // rebase: true subtracts the window's first value -- points of change --
+    // where rebase: "index" divides by it. The caption says "change", so it is
+    // the subtraction that belongs here.
+    { el: "cAgePart", type: "line", format: "pt", tick: 11, left: 38, window: 60,
+      series: [{ id: "LNS11300060", label: "25-54", rebase: true, color: "ink", width: 1.9 },
+               { id: "LNS11324230", label: "55 and over", rebase: true, color: "s1" },
+               { id: "LNS11300036", label: "20-24", rebase: true, color: "s2" },
+               { id: "LNS11300012", label: "16-19", rebase: true, color: "s3", dash: true }] },
+    { el: "cFTPT", type: "line", format: "num", tick: 11, left: 40, window: 60,
+      series: [{ id: "CE16OV", label: "All employed", rebase: "index", color: "ink", width: 1.9 },
+               { id: "LNS12500000", label: "Full time", rebase: "index", color: "s1" },
+               { id: "LNS12600000", label: "Part time", rebase: "index", color: "s2" }] },
   ],
 });
 </script>

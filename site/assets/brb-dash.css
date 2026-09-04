@@ -6,9 +6,21 @@
   --paper:#f7f7f4; --panel:#fdfdfb; --rail:#f1f1ec;
   --ink:#14161a; --ink-2:#3a3d3f; --muted:#6e6f68; --faint:#9a9a92;
   --rule:#dddcd5; --rule-hi:#c5c4ba; --grid:#e8e7e0;
-  --pos:#35566b; --neg:#8c2f27; --alt:#8a7b4f; --cursor:#14161a;
+  /* The diverging pair for SIGNED bars. --pos was #35566b, whose chroma
+     measured 0.052 -- below the 0.1 floor, i.e. it read as grey. Against an
+     ink overlay line (chroma 0.009) the two were both just dark neutrals and
+     the eye grouped them, which is why the month-and-year panels looked like
+     one series with a legend of two identical swatches. Deepened to a blue
+     with real chroma: the pair now clears every gate on paper -- CVD dE 16.9,
+     normal-vision 22.1, both >= 3:1 contrast. */
+  --pos:#1f6091; --neg:#8c2f27; --alt:#8a7b4f; --cursor:#14161a;
   --hm-3:#8c2f27; --hm-1:#e0bdb8; --hm-0:#f2f1ec; --hm1:#b4c3ce; --hm3:#2c4b60;
   --band:#ebeae2;
+  /* Categorical series slots. Assign in order, never cycle; a ninth
+     series folds into an 'other' bucket or becomes small multiples.
+     Validated against --paper #f7f7f4, not against a generic white. */
+  --s1:#b5461c; --s2:#1d5fa8; --s3:#1f7a4d;
+  --s4:#7a3f96; --s5:#9c7412; --s6:#a32f45;
   --serif:"Source Serif 4"; --sans:"Archivo"; --mono:"JetBrains Mono";
 }
 
@@ -183,6 +195,12 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .key .k1 { color: var(--pos); } .key .k2 { color: var(--alt); } .key .k3 { color: var(--neg); }
 .key .k4 { color: var(--ink); }
 .key .k5 { color: var(--muted); }
+/* Series-slot swatches. k1-k5 name the SEMANTIC colours (gain, loss,
+   second series, ink, muted); these name the categorical slots, which
+   identify a series rather than say anything about its sign. */
+.key .ks1 { color: var(--s1); } .key .ks2 { color: var(--s2); }
+.key .ks3 { color: var(--s3); } .key .ks4 { color: var(--s4); }
+.key .ks5 { color: var(--s5); } .key .ks6 { color: var(--s6); }
 .chart { width: 100%; }
 .panel-error {
   font-family: var(--mono), monospace; font-size: 11px; color: var(--neg);

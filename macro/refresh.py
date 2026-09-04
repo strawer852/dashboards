@@ -144,6 +144,17 @@ def main() -> int:
         print(out[-3000:], file=sys.stderr)
         return 1
 
+    # The forward release calendar, on the full sweep only: it changes rarely
+    # and doing it every window would be seven needless API calls an hour.
+    # The stamp's "Next" date reads from it, so it must not be left to age --
+    # it was a hard-coded literal until 4 September 2026, when the release it
+    # named happened and the page began advertising it as still to come.
+    # Auxiliary, so a failure is logged and does not abort the refresh.
+    if args.releases is None:
+        rc, out = run("release_dates.py")
+        last = out.strip().splitlines()[-1] if out.strip() else ""
+        log(f"release dates rc={rc} {last}")
+
     sids = series_for(args.releases)
     if not sids:
         return fail(f"no series for releases {args.releases}",

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JOLTS — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=714d124b8d">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=d6be44cfec">
 </head>
 <body>
 <div class="app">
@@ -24,7 +24,7 @@
     </div>
     <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
     <div class="grp" id="g-united-states-inflation" hidden>
-      <a href="#" class="soon">CPI</a>
+      <a href="/us/inflation/cpi/">CPI</a>
       <a href="#" class="soon">PPI</a>
     </div>
   </div>
@@ -62,7 +62,7 @@
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Openings, hires, quits and layoffs</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">Openings are a stock measured on the last business day; hires, quits and layoffs are flows across the whole month.</p>
-        <p class="key"><i class="k1">Job openings</i><i class="k2">Hires</i><i class="k3">Quits</i></p>
+        <p class="key"><i class="ks1">Job openings</i><i class="ks2">Hires</i><i class="ks3">Quits</i></p>
         <div class="chart" id="cFlows" style="height:250px"></div>
       </div>
     </div>
@@ -71,7 +71,7 @@
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Quits rate</span><span class="u">Percent of employment, s.a.</span></div>
         <p class="note">The cleanest read on whether workers believe they can leave. It falls before layoffs rise.</p>
-        <p class="key"><i class="k1">Quits</i><i class="k2">Layoffs &amp; discharges</i></p>
+        <p class="key"><i class="ks1">Quits</i><i class="ks2">Layoffs &amp; discharges</i></p>
         <div class="chart" id="cQuits" style="height:215px"></div>
       </div>
       <div class="t" id="t3">
@@ -93,7 +93,7 @@
       <div class="t" id="t5">
         <div class="th"><span class="n">Table 5</span><span class="ti">Hires against total separations</span><span class="u">Percent of employment, s.a.</span></div>
         <p class="note">Employment grows only while hires exceed separations. The gap between these two lines is the payroll change.</p>
-        <p class="key"><i class="k1">Hires rate</i><i class="k2">Quits rate</i><i class="k3">Layoffs rate</i></p>
+        <p class="key"><i class="ks1">Hires rate</i><i class="ks2">Quits rate</i><i class="ks3">Layoffs rate</i></p>
         <div class="chart" id="cRates" style="height:230px"></div>
       </div>
     </div>
@@ -102,7 +102,7 @@
       <div class="t" id="t6">
         <div class="th"><span class="n">Table 6</span><span class="ti">Separations, in full</span><span class="u">Millions, s.a.</span></div>
         <p class="note">Quits and layoffs are the two everyone watches, but they do not add up to separations on their own. <b>Other separations</b> &mdash; retirements, transfers between locations, deaths &mdash; runs at a few hundred thousand a month and is what closes the total. Reading quits and layoffs alone against hires therefore leaves a gap that looks like a data problem and is not.</p>
-        <p class="key"><i class="k4">Total separations</i><i class="k1">Quits</i><i class="k2">Layoffs and discharges</i><i class="k5">Other separations</i></p>
+        <p class="key"><i class="k4">Total separations</i><i class="ks1">Quits</i><i class="ks2">Layoffs and discharges</i><i class="k5">Other separations</i></p>
         <div class="chart" id="cSep" style="height:240px"></div>
       </div>
     </div>
@@ -111,7 +111,7 @@
       <div class="t" id="t7">
         <div class="th"><span class="n">Table 7</span><span class="ti">Does JOLTS agree with the payroll survey?</span><span class="u">Thousands per month, 12-month average</span></div>
         <p class="note">Hires less total separations is what JOLTS says the month&rsquo;s net employment change was; the establishment survey counts it directly. Two independent measures of one quantity, and they agree on average &mdash; the mean gap over 308 months is about <b>4,000 a month</b> on series that move by hundreds of thousands. <b>Month to month they do not agree at all</b>: the standard deviation of the gap is roughly 936,000, so both sides are shown as twelve-month averages. This is a consistency check over a year, never a read on a single month. <b>Analyst-derived.</b></p>
-        <p class="key"><i class="k4">JOLTS, hires less separations</i><i class="k1">Establishment survey</i></p>
+        <p class="key"><i class="k4">JOLTS, hires less separations</i><i class="ks1">Establishment survey</i></p>
         <div class="chart" id="cIdent" style="height:240px"></div>
       </div>
     </div>
@@ -125,7 +125,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=89fbae932f"></script>
+<script src="/assets/brb-dash.js?v=1e4ea61daf"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -149,8 +149,8 @@ BRB.render({
   panels: [
     { el: "cSep", type: "line", format: "millions", tick: 11, window: 120, left: 46,
       series: [{ id: "JTSTSL", label: "Total separations", color: "ink", width: 1.9 },
-               { id: "JTSQUL", label: "Quits", color: "pos" },
-               { id: "JTSLDL", label: "Layoffs and discharges", color: "alt" },
+               { id: "JTSQUL", label: "Quits", color: "s1" },
+               { id: "JTSLDL", label: "Layoffs and discharges", color: "s2" },
                { id: "JTSOSL", label: "Other separations", color: "muted" }] },
     // Both sides smoothed to twelve months. The monthly gap has a standard
     // deviation near 936k, so an unsmoothed version of this panel would show
@@ -160,14 +160,14 @@ BRB.render({
       series: [{ id: "JOLTS.netflow", label: "JOLTS net flow", transform: "ma",
                  window: 12, color: "ink", width: 1.9 },
                { id: "PAYEMS", label: "Establishment survey", transform: "diff_ma",
-                 window: 12, color: "pos" }] },
+                 window: 12, color: "s1" }] },
     { el: "cFlows", type: "line", format: "millions", tick: 11, window: 120, left: 52,
       series: [{ id: "JTSJOL", label: "Openings" },
-               { id: "JTSHIL", label: "Hires", color: "alt" },
-               { id: "JTSQUL", label: "Quits", color: "neg" }] },
+               { id: "JTSHIL", label: "Hires", color: "s2" },
+               { id: "JTSQUL", label: "Quits", color: "s3" }] },
     { el: "cQuits", type: "line", format: "pct", tick: 11, window: 120,
       series: [{ id: "JTSQUR", label: "Quits rate" },
-               { id: "JTSLDR", label: "Layoffs rate", color: "alt" }] },
+               { id: "JTSLDR", label: "Layoffs rate", color: "s2" }] },
     { el: "cVU", type: "line", format: "ratio", tick: 11, window: 120, left: 40,
       series: [{ id: "JTSJOL", over: "UNEMPLOY", label: "Vacancies per jobseeker" }] },
     { el: "cBev", type: "scatter", window: 120,
@@ -176,8 +176,8 @@ BRB.render({
       formatX: "pct", formatY: "pct" },
     { el: "cRates", type: "line", format: "pct", tick: 11, window: 120,
       series: [{ id: "JTSHIR", label: "Hires rate" },
-               { id: "JTSQUR", label: "Quits rate", color: "alt" },
-               { id: "JTSLDR", label: "Layoffs rate", color: "neg" }] },
+               { id: "JTSQUR", label: "Quits rate", color: "s2" },
+               { id: "JTSLDR", label: "Layoffs rate", color: "s3" }] },
   ],
 });
 </script>

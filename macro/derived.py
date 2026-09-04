@@ -244,6 +244,95 @@ def epop_unemployment_effect(srcs, periods: int = 12, **_):
     return out
 
 
+def contribution(srcs, weight: float = 0.0, weight_date: str = "",
+                 periods: int = 12, **_):
+    """A component's contribution to the aggregate's change, in percentage points.
+
+    of: [component index, aggregate index]
+
+    BLS publishes a *relative importance* -- the component's share of the
+    basket -- and re-drifts it every month for relative prices:
+
+        RI_i(t) = RI_i(t0) * [I_i(t)/I_i(t0)] / [I_agg(t)/I_agg(t0)]
+
+    so one published anchor carries itself forward from the indexes already in
+    the database rather than being retyped every month. Only the annual
+    reweight breaks it, and the decomposition residual is what catches that.
+
+    The contribution to the change over `periods` uses the share at the START
+    of the window, not the end:
+
+        c_i(t) = RI_i(t-n) * [I_i(t)/I_i(t-n) - 1]
+
+    That is what makes the parts sum to the whole. Measured on July 2026, the
+    four-way split (food, energy, core goods, core services) closes on headline
+    CPI to 0.007pp this way; carrying end-of-window weights instead leaves
+    0.093pp, thirteen times worse. Reported in percentage points.
+    """
+    if not weight_date:
+        raise SystemExit("contribution needs weight_date, the month the "
+                         "published relative importance refers to")
+    dates = axis(srcs[0])
+    comp = on_axis(srcs[0], dates)
+    agg = on_axis(srcs[1], dates)
+
+    # The anchor must exist on both series, or the measure is silently scaled
+    # by the wrong number and nothing about the chart would look wrong.
+    try:
+        a = dates.index(weight_date)
+    except ValueError:
+        raise SystemExit("contribution: weight_date %s is not on the axis of %s"
+                         % (weight_date, srcs[0].get("title", "?")))
+    if comp[a] is None or agg[a] is None:
+        raise SystemExit("contribution: no observation at %s" % weight_date)
+    ci, ai = comp[a], agg[a]
+
+    ri = [None if (c is None or g is None) else weight * (c / ci) / (g / ai)
+          for c, g in zip(comp, agg)]
+
+    out: list[float | None] = [None] * min(periods, len(comp))
+    for i in range(periods, len(comp)):
+        c1, c0, w0 = comp[i], comp[i - periods], ri[i - periods]
+        out.append(None if None in (c1, c0, w0)
+                   else round(w0 * (c1 / c0 - 1), 4))
+    return out
+
+
+def relative_importance(srcs, weight: float = 0.0, weight_date: str = "", **_):
+    """The component's share of the aggregate's basket, per cent.
+
+    of: [component index, aggregate index]
+
+    The same drift rule `contribution` uses, published by BLS for exactly this
+    purpose: a relative importance moves with relative prices between the
+    annual reweights, so one anchor keeps itself current from the indexes
+    already in the database.
+
+        RI_i(t) = RI_i(t0) * [I_i(t)/I_i(t0)] / [I_agg(t)/I_agg(t0)]
+
+    The aggregate decides what the share is OF: passing CPIAUCSL gives the
+    share of the whole basket, passing CPILFESL the share of core. The anchor
+    must be stated on the same basis -- shelter is 35.304% of the CPI and
+    44.662% of core, and they are not interchangeable.
+    """
+    if not weight_date:
+        raise SystemExit("relative_importance needs weight_date")
+    dates = axis(srcs[0])
+    comp = on_axis(srcs[0], dates)
+    agg = on_axis(srcs[1], dates)
+    try:
+        a = dates.index(weight_date)
+    except ValueError:
+        raise SystemExit("relative_importance: weight_date %s is not on the "
+                         "axis of %s" % (weight_date, srcs[0].get("title", "?")))
+    if comp[a] is None or agg[a] is None:
+        raise SystemExit("relative_importance: no observation at %s" % weight_date)
+    ci, ai = comp[a], agg[a]
+    return [None if (c is None or g is None)
+            else round(weight * (c / ci) / (g / ai), 4)
+            for c, g in zip(comp, agg)]
+
+
 KINDS = {
     "revision":          (revision, 1,
                           "latest monthly change minus the change as first reported"),
@@ -265,6 +354,10 @@ KINDS = {
                           "change in participation over {periods} months times (1 - u) at the start"),
     "epop_unemployment_effect":  (epop_unemployment_effect, 2,
                           "minus participation at the start times the change in u over {periods} months"),
+    "contribution":      (contribution, 2,
+                          "relative importance of {weight}% at {weight_date}, re-drifted with relative prices, times the component's own change over {periods} months"),
+    "relative_importance": (relative_importance, 2,
+                          "share of the basket, {weight}% at {weight_date}, re-drifted with relative prices"),
 }
 
 _PASS = {
@@ -277,6 +370,8 @@ _PASS = {
     "residual": (),
     "epop_participation_effect": ("periods",),
     "epop_unemployment_effect": ("periods",),
+    "contribution": ("weight", "weight_date", "periods"),
+    "relative_importance": ("weight", "weight_date"),
 }
 
 _DEFAULTS = {"window": 12, "threshold": 122, "periods": 12, "drop_month": 1}
