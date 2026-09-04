@@ -39,6 +39,7 @@ no local build step.
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
 | `tools/build_nav.py` | Generates the rail from the specs into every page. **Run after adding a dashboard** |
+| `ops/dashboards-timer-check` | Alarms when the refresh timers stop firing. Daily, 06:30 ET |
 | `planned.yml` | Dashboards in the rail but not yet built. At the root, NOT in `dashboards/` |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
 | `archive/` | The raw archive. Gitignored, and **the only copy of the BLS vintages** |
@@ -389,9 +390,24 @@ one FRED call per release. A failure there is logged and does not abort the
 refresh: the calendar is auxiliary, and a stale future date is caught anyway by
 export refusing to show one that has already passed.
 
-**`tools/refresh.sh` has no lock.** Nothing stops a manual run colliding with a
-timer's; on 4 September this was hand-timed around twice, into the gaps between
-firings. That works only while somebody is watching.
+`tools/refresh.sh` takes a **non-blocking lock** on fd 9, held through the exec
+into python, so a manual run and a timer's cannot ingest at once. A run that
+finds the lock held logs the skip rather than exiting silently — a collision
+that looks like "nothing to do" is worse than one that says so.
+
+**`dashboards-timer-check` watches that the timers are still firing**, daily at
+06:30 ET. It exists because the calendar gate removed an accidental heartbeat:
+before it, a windowed run fetched every series every time, so a quiet
+`refresh.log` meant something was wrong. Now a quiet log is normal, and a dead
+timer looks exactly like a quiet day. The check looks at the mechanism instead —
+lingering, every timer active, no unit failed, the sweep triggered within 26
+hours, and `status.json` fresh — and alarms over Telegram, which is the ops
+channel rather than the pipeline's ntfy.
+
+It **cannot** catch the user manager being gone entirely, because it is itself a
+user timer and would not run either. That needs a root timer, which nobody here
+has passwordless sudo for, or an external dead-man's switch. The limitation is
+written at the top of the script rather than pretended away.
 
 ## Commands
 
@@ -561,8 +577,9 @@ left is small, and none of it is blocking.
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
 
-5. Worth a look when convenient: the calendar gate now suppresses most windowed
-   runs, so `logs/refresh.log` has become much quieter. That is the intent, but
-   it also means a genuinely broken timer would look the same as a quiet day.
-   The 11:00 backup check has an equivalent for backups; nothing yet watches
-   that the refresh timers are still firing at all.
+5. **The one gap `dashboards-timer-check` leaves.** It is a user timer, so it
+   cannot report the user manager being gone — the failure that would silence
+   every job at once. Closing it needs a root timer (no passwordless sudo here;
+   `ops/INSTALL.md` documents the same obstacle for the backup) or an external
+   dead-man's switch that expects a daily ping and complains when none arrives.
+   The second needs no root and is the cheaper of the two.

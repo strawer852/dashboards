@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Alarm when the refresh timers have stopped firing.
+#
+# Why this exists. Until 4 September 2026 a dead timer announced itself: the
+# windows fetched every series on every firing, so refresh.log filled up daily
+# and a silent log meant something was wrong. The calendar gate then made a
+# quiet log the NORMAL state -- most windowed runs now stop at a database query
+# because nothing is due. That is the intended behaviour and it removed the
+# accidental heartbeat along with the noise.
+#
+# So this looks at the mechanism rather than at the log, which is the same
+# lesson bigricebowl-backup-check was written for: a script reports its own
+# failure, but nothing reports its absence.
+#
+# WHAT IT CANNOT CATCH. It runs as a user timer, so it cannot detect the user
+# manager being gone entirely -- in that case this does not run either. It
+# catches the realistic faults (a timer disabled, a unit failed, lingering
+# turned off, the sweep silently stopping) but not the manager itself dying.
+# Closing that hole
+# needs either a root timer, which nobody here has passwordless sudo for, or an
+# external dead-man's switch that expects a ping and complains when none comes.
+# Both are noted in CLAUDE.md rather than pretended away.
+set -uo pipefail
+
+ROOT="$HOME/dashboards"
+LOG="$ROOT/logs/timer-check.log"
+STATUS="$ROOT/data/v1/status.json"
+MAX_AGE_HOURS=${MAX_AGE_HOURS:-26}     # the sweep is daily; 26h allows for drift
+TS=$(date -u "+%Y-%m-%d %H:%M:%SZ")
+mkdir -p "$ROOT/logs"
+
+# Telegram, matching bigricebowl-backup-check: this is an ops alarm about the
+# machinery, not a pipeline event about data. ntfy would also be wrong here
+# because a broken user manager cannot run the thing that would push it.
+# shellcheck disable=SC1091
+[ -f "$HOME/bigricebowl/.env" ] && source "$HOME/bigricebowl/.env"
+
+PROBLEMS=()
+
+note() { PROBLEMS+=("$1"); }
+
+# 1. Lingering. Without it the user manager exits at logout and every user timer
+#    stops, which is the single fault that would silence everything at once.
+if ! loginctl show-user "$USER" -p Linger --value 2>/dev/null | grep -q '^yes$'; then
+    note "lingering is OFF for $USER -- user timers stop at logout"
+fi
+
+# 2/3. Every timer armed, and no unit sitting in failed.
+for t in macro-refresh-employment macro-refresh-jolts macro-refresh-sweep dashboards-push; do
+    if ! systemctl --user is-active --quiet "$t.timer"; then
+        note "$t.timer is not active"
+    fi
+    if systemctl --user is-failed --quiet "$t.service"; then
+        note "$t.service is in a failed state"
+    fi
+done
+
+# 4. The sweep is the real heartbeat: it runs daily with no --releases, so the
+#    calendar gate never applies to it and it is the one job that must fire
+#    every day whatever the release calendar says.
+LAST=$(systemctl --user show -p LastTriggerUSec --value macro-refresh-sweep.timer 2>/dev/null)
+if [ -z "$LAST" ] || [ "$LAST" = "n/a" ]; then
+    note "macro-refresh-sweep.timer has never fired"
+else
+    AGE_H=$(python3 - "$LAST" <<'PY'
+import subprocess, sys, datetime
+raw = sys.argv[1]
+try:
+    secs = int(subprocess.run(["date", "-d", raw, "+%s"], capture_output=True,
+                              text=True, check=True).stdout.strip())
+    now = int(datetime.datetime.now().timestamp())
+    print((now - secs) // 3600)
+except Exception:
+    print(-1)
+PY
+)
+    if [ "$AGE_H" -lt 0 ]; then
+        note "could not read when the sweep last fired (raw: $LAST)"
+    elif [ "$AGE_H" -gt "$MAX_AGE_HOURS" ]; then
+        note "the daily sweep last fired ${AGE_H}h ago (limit ${MAX_AGE_HOURS}h)"
+    fi
+fi
+
+# 5. And that a run actually did something, not merely that systemd started it.
+if [ ! -f "$STATUS" ]; then
+    note "status.json is missing -- no refresh has ever written one"
+else
+    SAGE=$(python3 - "$STATUS" <<'PY'
+import json, sys, datetime
+try:
+    d = json.load(open(sys.argv[1]))
+    t = datetime.datetime.fromisoformat(d["last_run"].replace("Z", "+00:00"))
+    now = datetime.datetime.now(datetime.timezone.utc)
+    print(int((now - t).total_seconds() // 3600))
+except Exception:
+    print(-1)
+PY
+)
+    if [ "$SAGE" -lt 0 ]; then
+        note "status.json is unreadable or has no last_run"
+    elif [ "$SAGE" -gt "$MAX_AGE_HOURS" ]; then
+        note "the last refresh of any kind was ${SAGE}h ago (limit ${MAX_AGE_HOURS}h)"
+    fi
+fi
+
+if [ ${#PROBLEMS[@]} -eq 0 ]; then
+    echo "[$TS] OK: timers armed, sweep recent, status fresh" >> "$LOG"
+    exit 0
+fi
+
+BODY="🚨 Dashboards timer check:"
+for p in "${PROBLEMS[@]}"; do
+    BODY="$BODY"$'\n'"  • $p"
+    echo "[$TS] CHECK: $p" >> "$LOG"
+done
+BODY="$BODY"$'\n\n'"Inspect with: systemctl --user list-timers 'macro-refresh-*'"
+
+if [ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ]; then
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" -d text="$BODY" > /dev/null \
+        || echo "[$TS] CHECK: telegram push failed" >> "$LOG"
+else
+    echo "[$TS] CHECK: no telegram credentials; alarm not sent" >> "$LOG"
+fi
+exit 1

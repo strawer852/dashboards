@@ -1,0 +1,13 @@
+[Unit]
+Description=Notice when the dashboards timers stop
+
+[Timer]
+# After the 01:40 sweep and before the release windows open, so a sweep that
+# failed overnight is reported the same morning rather than a day later.
+OnCalendar=*-*-* 06:30:00 America/New_York
+# A missed day runs at the next opportunity rather than being skipped in
+# silence, which is the entire failure this exists to prevent.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

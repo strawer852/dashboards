@@ -1,0 +1,9 @@
+[Unit]
+Description=Check the refresh timers are still firing
+Documentation=file:/home/strawer/dashboards/ops/dashboards-timer-check
+
+[Service]
+Type=oneshot
+ExecStart=%h/dashboards/ops/dashboards-timer-check
+# The check exiting 1 IS the alarm having been sent, not a fault in the check.
+SuccessExitStatus=0 1
