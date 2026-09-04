@@ -27,3 +27,25 @@ include_releases:
 # whose production-flow system runs Stage 1 -> 2 -> 3 -> 4 -> final demand and
 # is built for exactly the question this dashboard asks. That is why the data
 # starts in November 2009 rather than the 1940s.
+
+# ---- revisions, added 4 September 2026 once the ALFRED backfill landed.
+# PPI revises for a third distinct reason, different again from payrolls and
+# from the CPI. It is substantial and routine: 120 of the 139 months since 2015
+# moved, by a median of 0.13 index points and up to 0.78. The timing is bimodal
+# -- of the months that moved, 50 first changed one month after first print and
+# 52 at four months, which is the single scheduled revision BLS documents --
+# but the magnitudes of the two groups are alike (median 0.15 against 0.10), so
+# the split is in when, not how much.
+derived:
+  - id: PPI.rev_fd
+    kind: level_revision
+    of: PPIFIS
+    title: Revision to final demand, first published to latest
+    unit: Index points
+    importance: 4
+  - id: PPI.rev_s1
+    kind: level_revision
+    of: WPSID51
+    title: Revision to stage 1, first published to latest
+    unit: Index points
+    importance: 4

@@ -44,6 +44,7 @@
         <a href="#t10"><span>10</span>By commodity type</a>
         <a href="#t11"><span>11</span>The long run</a>
         <a href="#t12"><span>12</span>Levels</a>
+        <a href="#t13"><span>13</span>Revisions</a>
       </div>
 
     </nav>
@@ -156,6 +157,15 @@
         <p class="note">Rates answer how fast, this answers how far. Rebased inside the window, because the published indexes sit on several different base years and are not comparable as levels. Goods and services diverge permanently here in a way they do not in the rate charts: a period of fast goods inflation leaves a step in the level that later disinflation does not undo.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Goods</i><i class="ks2">Services</i><i class="ks3">Construction (dashed)</i></p>
         <div class="chart" id="cLevels" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">How much the numbers move afterwards</span><span class="u">Index points, first published to latest</span></div>
+        <p class="note">A third kind of revision, different again from the other two dashboards. Payroll figures move because more survey responses arrive; the CPI index never moves at all and only its seasonal adjustment does. <b>PPI moves because late reports arrive, and it moves a lot</b>: <b>120 of the 139 months since 2015</b> were revised, by a median of 0.13 index points and by as much as 0.78. The timing is bimodal &mdash; of the months that moved, 50 first changed one month after first print and 52 at four months, the latter being the single scheduled revision BLS documents &mdash; but the two groups are alike in size, so what differs is when rather than how much. The ink line is <b>stage 1</b>, which revises slightly harder than final demand does, in keeping with everything else on this page.</p>
+        <p class="key"><i class="k1">Final demand</i><i class="k4">Stage 1</i></p>
+        <div class="chart" id="cRev" style="height:230px"></div>
       </div>
     </div>
 
@@ -279,6 +289,12 @@ BRB.render({
                { id: "PPIDSS", label: "Services", ...C3 },
                { id: "PPIDCS", label: "Construction", ...C4, dash: true }]
         .map(s => Object.assign(s, { rebase: "index" })) },
+    // Index points at two decimals -- the quantity is tenths, and one decimal
+    // would round half of these bars away.
+    { el: "cRev", type: "bars", format: "pt2", axisFormat: "pt2",
+      window: 60, tick: 11, left: 44, width: 6, label: "Final demand",
+      series: { id: "PPI.rev_fd" },
+      overlay: [{ id: "PPI.rev_s1", label: "Stage 1", color: "ink", width: 1.5 }] },
   ],
 });
 </script>

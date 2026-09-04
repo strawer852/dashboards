@@ -327,6 +327,27 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     — asserts something this data does not support. Draw the amplitude, not the
     delay.
 
+27. **Each release revises for a different reason, and the intuitions do not
+    transfer.** Three dashboards, three mechanisms, measured rather than
+    assumed:
+
+    - **Employment Situation** — more survey responses arrive. Two scheduled
+      monthly revisions plus an annual benchmark. On 4 September 2026 July
+      moved −23,000 → +21,000, a swing of 44,000, which is ordinary.
+    - **CPI** — the index does not revise at all. The unadjusted series has not
+      moved on any of the 66 months since 2021. Only the *seasonal adjustment*
+      moves, each January across the prior five years (trap 25).
+    - **PPI** — late reports. Substantial and routine: 120 of the 139 months
+      since 2015 moved, median 0.13 index points, largest 0.78. The timing is
+      bimodal, 50 first moving at +1 month and 52 at +4 — the four-month one
+      being the single scheduled revision BLS documents — while the two groups
+      are alike in magnitude, so the split is in when rather than how much.
+
+    Reading one of these through another's expectations gets it wrong in both
+    directions: it treats a CPI seasonal-factor tweak as though new data had
+    arrived, and it under-reacts to a PPI revision that genuinely reflects new
+    reports. Each dashboard's revision panel says which kind it is.
+
 ## How it runs
 
 ```
@@ -428,10 +449,15 @@ validate *inside* the container and `caddy reload`, never restart.
 
 ## State as of 4 September 2026, end of day
 
-**172 series across 8 releases, ~367,000 vintage rows over ~129,000
+**172 series across 8 releases, ~379,000 vintage rows over ~129,000
 observations, 36/36 validations, and every exported series drawn by its page on
 all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
-PPI 12, JOLTS 7, Weekly Claims 6.
+PPI 13, JOLTS 7, Weekly Claims 6.
+
+Every release now carries real ALFRED vintages: CPI and PPI were both backfilled
+on 4 September, 66,152 and 16,194 vintage rows, and both stamps picked up their
+true publication dates — 12 and 13 August — with no code change, which is what
+deriving a date instead of typing one buys.
 
 PPI carries no contributions, deliberately. Contributions need published
 weights and the PPI news release has no relative-importance column — CPI Table 1
@@ -517,27 +543,26 @@ repository on the account — narrow it if that ever matters.
 Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
 
-**`planned.yml` is empty.** Every dashboard that was planned is built: PPI
-landed on 4 September and was the last of them. What follows is smaller.
+**`planned.yml` is empty and every release has its vintage history.** What is
+left is small, and none of it is blocking.
 
-1. **PPI has no vintage history yet.** Its 17 series entered the catalog on
-   4 September with current-vintage data only, so its stamp shows no release
-   date and it offers no revision panels — the same position CPI was in that
-   morning. The CPI backfill took 17 seconds for 39 series; this one is
-   smaller. Run `backfill.py --series` over the `bls.ppi` release and both
-   fix themselves, the stamp with no code change.
+1. **PPI weights, if they are wanted.** The detailed report publishes relative
+   importances for the FD-ID structure; the news release does not, which is why
+   PPI has no contribution panels where CPI does. With them, `contribution` and
+   `relative_importance` would carry over unchanged.
 
-2. **PPI weights, if they are wanted.** The detailed report publishes relative
-   importances for the FD-ID structure; the news release does not. With them,
-   the contribution and weight panels that carry the CPI page would work here
-   unchanged.
+2. **Self-hosting ntfy** is low-risk now that the path has fired for real.
 
-3. **Self-hosting ntfy** is low-risk now that the path has fired for real.
-
-4. **The GitHub key is an account key, not a repo deploy key** — it can write
+3. **The GitHub key is an account key, not a repo deploy key** — it can write
    to every repository on the account. Narrow it if that ever matters.
 
-5. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
+4. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
    **redundant rather than load-bearing**: restic backs up
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
+
+5. Worth a look when convenient: the calendar gate now suppresses most windowed
+   runs, so `logs/refresh.log` has become much quieter. That is the intent, but
+   it also means a genuinely broken timer would look the same as a quiet day.
+   The 11:00 backup check has an equivalent for backups; nothing yet watches
+   that the refresh timers are still firing at all.
