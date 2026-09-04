@@ -2,7 +2,9 @@
 Description=JOLTS poll, 10:00 ET embargo
 
 [Timer]
-OnCalendar=Mon..Fri *-*-* 10:05/10:00 America/New_York
+# Out to 13:55 ET, for the same reason as the employment timer. JOLTS
+# publishes at 10:00 ET.
+OnCalendar=Mon..Fri *-*-* 10..13:05/10:00 America/New_York
 Persistent=true
 AccuracySec=30s
 

@@ -83,6 +83,47 @@ def changed_since(ts: datetime) -> list[str]:
         return [r[0] for r in cur.fetchall()]
 
 
+# Everything below is asked in America/New_York, because that is the timezone the
+# releases are scheduled in and the one the timers already fire on.
+_CAL_USABLE = """
+SELECT count(*) FROM macro_release_dates
+WHERE release_id = ANY(%s) AND release_at >= now() - interval '1 day'
+"""
+_CAL_DUE_TODAY = """
+SELECT count(*) FROM macro_release_dates
+WHERE release_id = ANY(%s)
+  AND (release_at AT TIME ZONE 'America/New_York')::date
+    = (now() AT TIME ZONE 'America/New_York')::date
+"""
+_ALREADY_LANDED = """
+SELECT count(*) FROM macro_observations o
+JOIN macro_series_meta m USING (series_id)
+WHERE m.release_id = ANY(%s)
+  AND (o.vintage_dt AT TIME ZONE 'America/New_York')::date
+    = (now() AT TIME ZONE 'America/New_York')::date
+"""
+
+
+def nothing_to_poll_for(releases: list[str]) -> str | None:
+    """Why this windowed run can stop now, or None to carry on.
+
+    Fails open on purpose: with no usable calendar rows this returns None and
+    the run proceeds. A gate that can silence the pipeline when its own inputs
+    are missing is worse than no gate.
+    """
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute(_CAL_USABLE, (releases,))
+        if cur.fetchone()[0] == 0:
+            return None                      # no calendar to judge by
+        cur.execute(_CAL_DUE_TODAY, (releases,))
+        if cur.fetchone()[0] == 0:
+            return "nothing scheduled today; not polling"
+        cur.execute(_ALREADY_LANDED, (releases,))
+        if cur.fetchone()[0]:
+            return "today's release has already landed; not polling again"
+    return None
+
+
 def catalogue_size() -> dict:
     """Series and vintage-row counts, for the landing page to state.
 
@@ -154,6 +195,15 @@ def main() -> int:
         rc, out = run("release_dates.py")
         last = out.strip().splitlines()[-1] if out.strip() else ""
         log(f"release dates rc={rc} {last}")
+
+    # Before the first FRED call. --force skips it: a forced run is a person
+    # asking, and the calendar does not get to argue.
+    if args.releases and not args.force:
+        why = nothing_to_poll_for(args.releases)
+        if why:
+            log(why)
+            write_status(status)
+            return 0
 
     sids = series_for(args.releases)
     if not sids:

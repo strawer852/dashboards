@@ -282,6 +282,22 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     truncated baseline makes every segment's height a lie about its share.
     `PANELS.stacked` forces zero onto the axis; nothing else should.
 
+25. **A CPI "revision" is a seasonal factor or a rebasing, and never new data.**
+    The published index is final the day it prints: the unadjusted CPI has not
+    moved on a **single one of the 66 months since 2021**. The seasonally
+    adjusted index moved on **59** of those same months, because BLS
+    recalculates seasonal factors each January across the prior five years — so
+    an SA revision changes the adjustment, never the price data underneath, and
+    the current year reads exactly zero until next January reaches back and
+    touches it. Do not reason about CPI revisions using payroll intuitions;
+    they are different mechanisms wearing the same word.
+
+    Separately, **a level revision spanning 1988 measures the rebasing, not a
+    revision.** The CPI moved from 1967=100 to 1982-84=100, so December 1987
+    reads 345.900 as first published and 115.600 now — a −230.3 "revision" to a
+    figure that never changed. Any revision measure on an index needs a trailing
+    window, or it reports the change of base as the largest revision in history.
+
 ## How it runs
 
 ```

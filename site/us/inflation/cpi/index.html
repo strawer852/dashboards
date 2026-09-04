@@ -62,6 +62,7 @@
         <a href="#t28"><span>28</span>Major groups</a>
         <a href="#t29"><span>29</span>Levels</a>
         <a href="#t30"><span>30</span>Seasonal adjustment</a>
+        <a href="#t31"><span>31</span>What revises</a>
       </div>
 
     </nav>
@@ -358,6 +359,15 @@
       </div>
     </div>
 
+    <div class="row one">
+      <div class="t" id="t31">
+        <div class="th"><span class="n">Table 31</span><span class="ti">What revises, and what does not</span><span class="u">Index points, first published to latest</span></div>
+        <p class="note">Payroll figures are revised because more survey responses arrive. <b>The CPI is not revised at all in that sense</b> &mdash; the published index is final the day it prints. The unadjusted line here has not moved on a <b>single one of the 66 months since 2021</b>; it sits exactly on zero, which is the point of drawing it. What does move is the <em>seasonally adjusted</em> index, on 59 of those same 66 months, because BLS recalculates seasonal factors each January across the prior five years. So an SA revision is a change to the adjustment, never to the price data underneath &mdash; and this year&rsquo;s months read zero until next January reaches back and touches them.</p>
+        <p class="key"><i class="k1">Seasonally adjusted</i><i class="k4">Unadjusted</i></p>
+        <div class="chart" id="cRevSA" style="height:230px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: BLS Consumer Price Index, via FRED</span>
@@ -369,7 +379,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=b02605ff04"></script>
+<script src="/assets/brb-dash.js?v=c207429023"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -673,6 +683,14 @@ BRB.render({
       series: [{ id: "CUSR0000SACE", label: "Energy commodities", transform: "yoy", periods: 1, ...C1 },
                { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", periods: 1, ...C2 }] },
 
+    // Index points at two decimals: the quantity is hundredths, and "pt" would
+    // round every bar to +0.0. The unadjusted overlay is flat on zero by
+    // construction and is drawn precisely because it is flat.
+    { el: "cRevSA", type: "bars", format: "pt2", axisFormat: "pt2",
+      window: 60, tick: 11, left: 44, width: 6, label: "Seasonally adjusted",
+      series: { id: "CPI.rev_sa" },
+      overlay: [{ id: "CPI.rev_nsa", label: "Unadjusted", color: "ink",
+                  width: 1.6 }] },
   ],
 });
 </script>

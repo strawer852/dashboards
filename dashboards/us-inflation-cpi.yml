@@ -650,3 +650,28 @@ derived:
     title: Contribution of owners' equivalent rent to shelter, over 1 month
     unit: Percentage points
     importance: 3
+
+  # ---- what revises, and what does not.
+  # The published CPI is final when printed: the NSA index has not moved on a
+  # single one of the 66 months since 2021. The seasonally adjusted index moved
+  # on 59 of them -- because BLS recalculates seasonal factors every January
+  # over the prior five years, so an SA "revision" is a change to the
+  # adjustment, never to the price data underneath it. Drawn together, the flat
+  # line is the point.
+  #
+  # Both are restricted to a trailing window on the page for a reason beyond
+  # legibility: the CPI was rebased from 1967=100 to 1982-84=100, so a level
+  # revision spanning 1988 reads -230 index points on a figure that never
+  # changed. See CLAUDE.md trap 25.
+  - id: CPI.rev_sa
+    kind: level_revision
+    of: CPIAUCSL
+    title: Revision to the seasonally adjusted CPI, first published to latest
+    unit: Index points
+    importance: 4
+  - id: CPI.rev_nsa
+    kind: level_revision
+    of: CPIAUCNS
+    title: Revision to the unadjusted CPI, first published to latest
+    unit: Index points
+    importance: 4

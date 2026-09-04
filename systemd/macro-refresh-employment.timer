@@ -10,7 +10,12 @@ Description=Employment Situation and Weekly Claims poll, 08:30 ET embargo
 # Europe/London -- 03:25-04:45 ET, five hours BEFORE the embargo, in summer and
 # winter alike. No scheduled run had ever happened after a release.
 OnCalendar=Mon..Fri *-*-* 08:35/10:00 America/New_York
-OnCalendar=Mon..Fri *-*-* 09:05/10:00 America/New_York
+# Out to 12:55 ET. FRED published an hour after the 08:30 embargo on the
+# 4 September release; the old window ended at 09:55 and would have missed
+# it entirely on a slower morning. Cheap to widen because refresh.py now
+# stops at a database query when nothing is due or the day's release has
+# already landed.
+OnCalendar=Mon..Fri *-*-* 09..12:05/10:00 America/New_York
 
 # Run once on start-up if the whole window was missed while the machine or the
 # user manager was down. Cron cannot catch up, which is what let the

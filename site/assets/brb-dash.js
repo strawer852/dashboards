@@ -540,6 +540,9 @@
     if (f === "pct") return v => v.toFixed(1) + "%";
     if (f === "pct2") return v => v.toFixed(2) + "%";
     if (f === "pt") return v => sgn(v, 1);
+    // Index points, where the whole quantity is a hundredth or two: one
+    // decimal rounds every CPI revision to +0.0 and says nothing.
+    if (f === "pt2") return v => sgn(v, 2);
     // Percentage points of an aggregate, for a contribution: two
     // decimals because the whole point is that the parts add up.
     if (f === "pp") return v => sgn(v, 2) + " pp";
