@@ -724,33 +724,51 @@ left is small, and none of it is blocking.
    characters of stderr on failure. If that ever needs narrowing, an
    access-controlled topic is the cheap answer, not a container.
 
-2. **EverOS is 53 commits and four releases behind, and the running version
-   carries a high-severity advisory.** Checked 4 September 2026. The image is
-   built from `everos/Dockerfile`, pinned by `ARG EVEROS_REF` to
-   `d3a9f9e` (14 July); the container reports **1.1.2**. Upstream is at
-   `6ff07ef`, latest tag **v1.2.3** (7 August); the commits since are almost
-   all documentation.
+2. **EverOS runs v1.2.3 since 4 September 2026**, bumped from `d3a9f9e`
+   (14 July, reporting 1.1.2). 1.1.2 was inside the affected range of
+   `GHSA-grm3-hcqf-hm28` — CVSS 8.2, path traversal in knowledge document
+   upload, fixed in 1.2.1. It was **not reachable**: 8000 is `expose`d but
+   never published to the host, Caddy proxies `everos_mcp:8001` and not
+   `everos:8000`, and `mcp_server.py` calls only the four `/api/v1/memory`
+   endpoints. Fixed anyway, because the argument for leaving it was an
+   argument about the perimeter rather than about the flaw.
 
-   - **`GHSA-grm3-hcqf-hm28`, CVSS 8.2** — path traversal in knowledge
-     document upload. Affected `< 1.1.4`, so 1.1.2 is. **Fixed in 1.2.1.**
-     *Not reachable here*: 8000 is `expose`d and never published to the host,
-     Caddy proxies `everos_mcp:8001` and not `everos:8000`, and `mcp_server.py`
-     calls only `/api/v1/memory/{add,flush,search,get}` — never
-     `/knowledge/documents`. The one internet-facing route is bearer-gated.
-     Present in the code, unreachable by any exposed path.
-   - `GHSA-c795-2g9c-j48m` (CVE-2026-58499), `sender_id` traversal in
-     `memory/add`, affects `<= 1.0.0` — already patched in what runs.
-   - **v1.1.3** fixed a LanceDB FTS bug that grew the index until the disk
-     filled. 1.1.2 has it, but `everos-data` is 11 MB on a disk at 6%, so it is
-     latent rather than biting.
-   - Upgrading is a one-line `EVEROS_REF` bump and a rebuild. `/api/v1` is a
-     permanent alias from 1.2.0, so the MCP wrapper keeps working unchanged.
-     1.2.1 runs a one-way LanceDB schema-v2 migration on first start — snapshot
-     `everos-data` first; at 11 MB that is free.
-   - Separately: the everos tarball in the user crontab (03:15 daily, 14-day
-     retention) is **redundant rather than load-bearing** — restic backs up
-     `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
-     before anybody prunes it thinking it is the only copy.
+   The upgrade is a one-line `ARG EVEROS_REF` in `everos/Dockerfile` plus
+   `docker compose -f docker-compose.core.yml build everos` and `up -d`.
+   Three things worth keeping:
+
+   - **A host-user `tar` of `everos-data` silently produces a partial
+     archive.** The container writes as root, so `strawer` cannot read the
+     `_indices`, `_transactions` and `_versions` files; `tar` reports each one
+     and exits 2, which is easy to skim past when the tarball exists and looks
+     plausible. Snapshot from a root container instead —
+     `docker run --rm -v .../everos-data:/data:ro -v ~/backups:/out alpine:3
+     tar czf /out/<name>.tar.gz -C / data` — and **count the files both ways**
+     before allowing a one-way migration. 79 against 79 is what made it safe.
+   - **Dockerfile comments are only comments at the start of a line.** An
+     inline `# v1.2.3` after `ARG EVEROS_REF=<sha>` becomes part of the ref.
+     Caught before building; it would have failed at `git checkout`.
+   - `/api/v1` is a permanent alias from 1.2.0, so the MCP wrapper needed no
+     change. Verified after: version 1.2.3, `table_schema_migration_done
+     version=2`, 22 markdown files intact, capabilities all true with no
+     disabled features (so no `cascade backfill`), cascade healthy, and the
+     same search returning the same three episodes on `/api/v1`, on `/api/v2`,
+     and through Caddy and the MCP wrapper from outside.
+
+   Upstream `main` is ~12 commits past v1.2.3 and they are almost all
+   documentation. The pre-upgrade snapshot is
+   `~/backups/everos-data-pre-1.2.3-20260904.tar.gz`; delete it once 1.2.3 has
+   run a while.
+
+   The `everos/Dockerfile` change is committed in `~/bigricebowl` but **not
+   pushed**: that repo was already one commit ahead with unrelated
+   uncommitted deletions, and pushing would have carried someone else's
+   unreviewed work with it.
+
+   Separately: the everos tarball in the user crontab (03:15 daily, 14-day
+   retention) is **redundant rather than load-bearing** — restic backs up
+   `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
+   before anybody prunes it thinking it is the only copy.
 
 3. **`pub_lag_days` and `staleness_mode` are now dead columns.** Both were
    the retired stack's way of guessing when data should have arrived. This
