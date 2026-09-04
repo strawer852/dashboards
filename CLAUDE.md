@@ -710,12 +710,47 @@ moment rather than about the system, and it should look stale when it is.
 **`planned.yml` is empty and every release has its vintage history.** What is
 left is small, and none of it is blocking.
 
-1. **Self-hosting ntfy** is low-risk now that the path has fired for real.
+1. **Do not self-host ntfy.** Asked and answered, 4 September 2026. The
+   alerting exists to say the pipeline broke; running the notifier on the box
+   it watches means one machine failing silences both the pipeline and the
+   thing that would tell you. Off-box is the right shape for this role and
+   ntfy.sh already is, as healthchecks.io is for the dead-man's switch. It
+   would also need a Caddy route, which is guardrailed. The real concern —
+   an ntfy.sh topic is readable and writable by anyone who learns it — was
+   checked rather than assumed: no module builds `FRED_API_KEY` into a URL
+   string (it travels in `params`), and the only raised FRED error carries the
+   path plus 200 characters of body, so nothing secret transits the topic.
+   What does transit it is release ids, series lists and counts, and up to 600
+   characters of stderr on failure. If that ever needs narrowing, an
+   access-controlled topic is the cheap answer, not a container.
 
-2. The everos tarball in the user crontab (03:15 daily, 14-day retention) is
-   **redundant rather than load-bearing**: restic backs up
-   `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
-   before anybody prunes it thinking it is the only copy.
+2. **EverOS is 53 commits and four releases behind, and the running version
+   carries a high-severity advisory.** Checked 4 September 2026. The image is
+   built from `everos/Dockerfile`, pinned by `ARG EVEROS_REF` to
+   `d3a9f9e` (14 July); the container reports **1.1.2**. Upstream is at
+   `6ff07ef`, latest tag **v1.2.3** (7 August); the commits since are almost
+   all documentation.
+
+   - **`GHSA-grm3-hcqf-hm28`, CVSS 8.2** — path traversal in knowledge
+     document upload. Affected `< 1.1.4`, so 1.1.2 is. **Fixed in 1.2.1.**
+     *Not reachable here*: 8000 is `expose`d and never published to the host,
+     Caddy proxies `everos_mcp:8001` and not `everos:8000`, and `mcp_server.py`
+     calls only `/api/v1/memory/{add,flush,search,get}` — never
+     `/knowledge/documents`. The one internet-facing route is bearer-gated.
+     Present in the code, unreachable by any exposed path.
+   - `GHSA-c795-2g9c-j48m` (CVE-2026-58499), `sender_id` traversal in
+     `memory/add`, affects `<= 1.0.0` — already patched in what runs.
+   - **v1.1.3** fixed a LanceDB FTS bug that grew the index until the disk
+     filled. 1.1.2 has it, but `everos-data` is 11 MB on a disk at 6%, so it is
+     latent rather than biting.
+   - Upgrading is a one-line `EVEROS_REF` bump and a rebuild. `/api/v1` is a
+     permanent alias from 1.2.0, so the MCP wrapper keeps working unchanged.
+     1.2.1 runs a one-way LanceDB schema-v2 migration on first start — snapshot
+     `everos-data` first; at 11 MB that is free.
+   - Separately: the everos tarball in the user crontab (03:15 daily, 14-day
+     retention) is **redundant rather than load-bearing** — restic backs up
+     `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
+     before anybody prunes it thinking it is the only copy.
 
 3. **`pub_lag_days` and `staleness_mode` are now dead columns.** Both were
    the retired stack's way of guessing when data should have arrived. This
