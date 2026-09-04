@@ -71,7 +71,30 @@ if ! loginctl show-user "$USER" -p Linger --value 2>/dev/null | grep -q '^yes$';
 fi
 
 # 2/3. Every timer armed, and no unit sitting in failed.
-for t in macro-refresh-employment macro-refresh-jolts macro-refresh-sweep dashboards-push; do
+#
+# The watch list is read from the repo's own systemd/ directory rather than
+# typed here. It was typed here, and within a day it was wrong: a timer added
+# for the CPI and PPI releases was invisible to the check that exists to notice
+# a timer going quiet. A list of units maintained in two places is a list that
+# is correct once.
+#
+# Deliberately NOT `list-units --state=active`: asking the machine which timers
+# it is running and then checking those are running is a tautology. The repo
+# says what should exist; the machine is asked whether it does.
+EXPECTED=()
+for f in "$ROOT"/systemd/*.timer; do
+    [ -e "$f" ] || continue
+    EXPECTED+=("$(basename "$f" .timer)")
+done
+EXPECTED+=(dashboards-push)
+if [ "${#EXPECTED[@]}" -lt 2 ]; then
+    note "no timer units found in $ROOT/systemd -- the watch list is empty"
+fi
+
+for t in "${EXPECTED[@]}"; do
+    if ! systemctl --user is-enabled --quiet "$t.timer" 2>/dev/null; then
+        note "$t.timer is not enabled"
+    fi
     if ! systemctl --user is-active --quiet "$t.timer"; then
         note "$t.timer is not active"
     fi

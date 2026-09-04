@@ -398,6 +398,29 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     annual dead -- rather than by running it once on data that happened to be
     clean. It passed the real bundles before either bug was found.
 
+
+31. **A dashboard without a timer is a dashboard a day stale.** CPI and PPI were
+    built, validated and shipped with no release-morning refresh: the only job
+    that touched them was the 01:40 ET sweep, seven hours BEFORE the 08:30
+    embargo, so each release would have been picked up the *following* night.
+    Nothing was broken and no check complained — the employment timer had been
+    fixed months earlier and simply never extended to the dashboards added
+    since. **A new release needs a timer, and the timer needs a window that
+    starts after the embargo.** `macro-refresh-inflation` covers 08:40–12:50 ET
+    on weekdays, offset five minutes from employment because `refresh.sh` takes
+    a non-blocking lock and two timers in the same minute means one exits
+    without polling.
+
+32. **The watchdog had a typed list of what to watch.** `dashboards-timer-check`
+    named its four timers inline, so the day `macro-refresh-inflation` was added
+    it was invisible to the check whose entire purpose is noticing a timer going
+    quiet — within a day of being written. The list now comes from the repo's
+    own `systemd/*.timer` files. Note what it is deliberately *not*: asking
+    systemd which timers are running and then checking those are running is a
+    tautology that passes whatever the machine happens to be doing. The repo
+    says what should exist; the machine is asked whether it does, and the check
+    tests `is-enabled` as well as `is-active`.
+
 ## How it runs
 
 ```
@@ -584,6 +607,7 @@ Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all wit
 | Timer | Fires | Runs |
 |---|---|---|
 | `macro-refresh-employment` | 08:35–12:55 ET, weekdays | Employment Situation + Weekly Claims |
+| `macro-refresh-inflation` | 08:40–12:50 ET, weekdays | CPI + PPI |
 | `macro-refresh-jolts` | 10:05–13:55 ET, weekdays | JOLTS |
 | `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
 | `dashboards-push` | 23:30 local daily | push to GitHub, then verify by hash |
@@ -637,12 +661,16 @@ The check that tells a real narrowing from one that only looks right:
 `ssh -T git@github-dashboards` must answer **"Hi strawer852/dashboards!"**. If
 it says "Hi strawer852!" the account key is still doing the work.
 
+- **The dead-man's switch is live.** `HEALTHCHECK_URL` is set and the ok
+  ping returns 2xx; `dashboards-timer-check` runs daily at 06:30 ET and
+  pings on success, `URL/fail` on failure. The `/fail` path has fired
+  against a placeholder URL but not yet against the real one, so the alarm
+  half is inferred rather than proven — firing it sends a real down-alert
+  and then recovers on the next run.
 - Alerting is ntfy.sh for the pipeline and Telegram for ops. **William prefers to
   self-host ntfy** — swap `NTFY_URL` when convenient. The Telegram path has been
   fired and confirmed delivered, and **ntfy fired for real on 4 September**
   when the August payroll release landed — both paths are now proven.
-- Catalog-driven scheduling (`pub_lag_days`, `staleness_mode`, already columns in
-  `macro_series_meta`) is still open, and is what the retired stack converged on.
 - The retired `investment` stack's code survives at `~/bigricebowl/workers/` and
   `~/bigricebowl/postgres/migrations/` — 25,078 series across many countries. Its
   data is gone; `FINDINGS_revision_handling.md` and `MACRO_FINDINGS.md` are worth
@@ -667,9 +695,11 @@ left is small, and none of it is blocking.
    `/home/strawer/bigricebowl` whole, `everos-data` included. Worth knowing
    before anybody prunes it thinking it is the only copy.
 
-3. **Activate the dead-man's switch.** The code is in and tested; it is waiting
-   on one line. Create a check at healthchecks.io (free tier is enough), set a
-   daily period with a few hours' grace, and paste the ping URL into
-   `HEALTHCHECK_URL` in `.env`. Nothing else changes. Until then, a dead box is
-   still silent — which is the last remaining way this system can fail without
-   telling anyone.
+3. **Catalogue-driven scheduling** is the one structural job left, and the
+   CPI/PPI gap above is the argument for it. `pub_lag_days` and
+   `staleness_mode` are columns in `macro_series_meta` with **no consumer** —
+   182 rows, all NULL, and nothing in the codebase reads `staleness_mode` at
+   all. Every timer is still a hand-written unit file, so a new release needs
+   somebody to remember. Deriving the schedule from the catalogue and
+   `macro_release_dates` is what makes forgetting impossible rather than fixed
+   once. This is also what the retired stack converged on.

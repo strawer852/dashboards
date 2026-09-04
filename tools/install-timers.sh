@@ -15,7 +15,7 @@ loginctl enable-linger "$USER"
 install -m 644 "$SRC"/macro-refresh-*.service "$SRC"/macro-refresh-*.timer "$DEST/"
 systemctl --user daemon-reload
 
-for t in employment jolts sweep; do
+for t in employment inflation jolts sweep; do
   systemctl --user enable --now "macro-refresh-$t.timer"
 done
 
