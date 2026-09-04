@@ -35,16 +35,19 @@
         <a href="#t1"><span>1</span>Final demand</a>
         <a href="#t2"><span>2</span>Month and year</a>
         <a href="#t3"><span>3</span>Goods, services, building</a>
-        <a href="#t4"><span>4</span>The chain, year</a>
-        <a href="#t5"><span>5</span>The chain, month</a>
-        <a href="#t6"><span>6</span>How much arrives</a>
-        <a href="#t7"><span>7</span>The chain over 4 years</a>
-        <a href="#t8"><span>8</span>The volatile three</a>
-        <a href="#t9"><span>9</span>Trade services</a>
-        <a href="#t10"><span>10</span>By commodity type</a>
-        <a href="#t11"><span>11</span>The long run</a>
-        <a href="#t12"><span>12</span>Levels</a>
-        <a href="#t13"><span>13</span>Revisions</a>
+        <a href="#t4"><span>4</span>What makes it up, year</a>
+        <a href="#t5"><span>5</span>What makes it up, month</a>
+        <a href="#t6"><span>6</span>What each is worth</a>
+        <a href="#t7"><span>7</span>The chain, year</a>
+        <a href="#t8"><span>8</span>The chain, month</a>
+        <a href="#t9"><span>9</span>How much arrives</a>
+        <a href="#t10"><span>10</span>The chain over 4 years</a>
+        <a href="#t11"><span>11</span>The volatile three</a>
+        <a href="#t12"><span>12</span>Trade services</a>
+        <a href="#t13"><span>13</span>By commodity type</a>
+        <a href="#t14"><span>14</span>The long run</a>
+        <a href="#t15"><span>15</span>Levels</a>
+        <a href="#t16"><span>16</span>Revisions</a>
       </div>
 
     </nav>
@@ -91,13 +94,36 @@
 
     <div class="row">
       <div class="t" id="t4">
-        <div class="th"><span class="n">Table 4</span><span class="ti">The chain, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">The production-flow system, which exists to answer exactly this question. Output from <b>stage 1</b> is an input to stage 2, and so on to <b>stage 4</b>, whose output is an input to final demand. Read it as one wave passing through four filters. The stages move <em>together</em>, and the thing that changes as you go down is the size of the swing, not its timing &mdash; see Table 6.</p>
+        <div class="th"><span class="n">Table 4</span><span class="ti">What final demand is made of, year</span><span class="u">Percentage points, 12-month change</span></div>
+        <p class="note">Not rates &mdash; <b>contributions</b>: each part&rsquo;s own change multiplied by its share of final demand, so the five add up to the headline instead of merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>: services 68.338, goods less foods and energy 18.515, foods 5.452, energy 5.061, construction 2.634. The ink line is final demand itself, so the daylight above the stack is residual &mdash; about 0.03pp at July 2026. <b>Services carry roughly two-thirds of the weight</b>, which is why a large move in goods often barely shifts the headline.</p>
+        <p class="key"><i class="k4">Final demand (line)</i><i class="ks1">Services</i><i class="ks2">Goods less foods and energy</i><i class="ks3">Foods</i><i class="ks4">Energy</i><i class="ks5">Construction</i></p>
+        <div class="chart" id="cStackY" style="height:265px"></div>
+      </div>
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">And what the month is made of</span><span class="u">Percentage points, 1-month change</span></div>
+        <p class="note">The identical decomposition monthly, same colours and same order, so a column reads across from the chart beside it. This is the pair to check when the two directions disagree &mdash; a month can add to the monthly rate while the annual rate falls, because the month dropping out of the window twelve back was larger still. Energy is the part that most often does it.</p>
+        <p class="key"><i class="k4">Final demand (line)</i><i class="ks1">Services</i><i class="ks2">Goods less foods and energy</i><i class="ks3">Foods</i><i class="ks4">Energy</i><i class="ks5">Construction</i></p>
+        <div class="chart" id="cStackM" style="height:265px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">And what each is worth</span><span class="u">Percent of final demand</span></div>
+        <p class="note">The weights behind the two charts above, and the reason their shapes look as they do. Published as relative importance in PPI news release Table 1, dated December 2025, and re-drifted with relative prices each month by the same rule the CPI page uses, so these are current rather than a frozen table. <b>Trade services alone are 19.8% of final demand</b> &mdash; a distributor&rsquo;s margin, not a price of anything &mdash; which is why the PPI&rsquo;s own core strips them out as well as foods and energy, and why its core is a different construction from the CPI&rsquo;s.</p>
+        <div class="chart" id="cWeights" style="height:170px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">The chain, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The production-flow system, which exists to answer exactly this question. Output from <b>stage 1</b> is an input to stage 2, and so on to <b>stage 4</b>, whose output is an input to final demand. Read it as one wave passing through four filters. The stages move <em>together</em>, and the thing that changes as you go down is the size of the swing, not its timing &mdash; see Table 9.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Stage 1</i><i class="ks2">Stage 2</i><i class="ks3">Stage 3</i><i class="ks4">Stage 4</i></p>
         <div class="chart" id="cChainY" style="height:260px"></div>
       </div>
-      <div class="t" id="t5">
-        <div class="th"><span class="n">Table 5</span><span class="ti">The chain, month</span><span class="u">Percent, month on month, s.a.</span></div>
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">The chain, month</span><span class="u">Percent, month on month, s.a.</span></div>
         <p class="note">The same five monthly, and this is where a transmission <em>lag</em> would show if there were one. Measured on this data there is not: correlating each stage&rsquo;s monthly change against final demand&rsquo;s at leads of nought to six months, <b>every stage peaks at nought</b> &mdash; stage 1 at +0.78, stage 3 at +0.81, stage 4 at +0.83, all contemporaneous. A cost shock upstream does not take months to reach the finished end. It arrives the same month, smaller.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Stage 1</i><i class="ks2">Stage 2</i><i class="ks3">Stage 3</i><i class="ks4">Stage 4</i></p>
         <div class="chart" id="cChainM" style="height:260px"></div>
@@ -105,8 +131,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t6">
-        <div class="th"><span class="n">Table 6</span><span class="ti">How much of a shock actually arrives</span><span class="u">Index, 5 years ago = 100</span></div>
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">How much of a shock actually arrives</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="note">The transmission, drawn as distance travelled rather than rate. If costs passed through whole, these five lines would end together; the gap between the top and the bottom is the share of the upstream move that never reached the finished price. Measured over 2010&ndash;2026, the standard deviation of the twelve-month change falls from <b>6.80 at stage 1 to 2.69 at final demand</b>, and the extremes compress from a range of &minus;9.3% to +22.4% down to &minus;1.5% to +11.6%. <b>Downstream prices also almost never fall</b> &mdash; final demand has a floor around &minus;1.5% where stage 1 reaches &minus;9.3%. Note stage 2 is the most volatile of all, not stage 1: it carries the most energy and metals, so the chain is not monotone at the top.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Stage 1</i><i class="ks2">Stage 2</i><i class="ks3">Stage 3</i><i class="ks4">Stage 4</i></p>
         <div class="chart" id="cChainIdx" style="height:260px"></div>
@@ -114,37 +140,37 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t7">
-        <div class="th"><span class="n">Table 7</span><span class="ti">The chain over four years</span><span class="u">Percent, year over year, 48 months</span></div>
-        <p class="note">The chain as a grid, reading downward: <b>stage 1 at the top, final demand at the bottom</b>. A vertical band of colour is a shock hitting every stage in the same month, which is what the correlations say happens; a diagonal would be the lagged pass-through people expect and that this data does not show. Two things are worth staring at. Late 2022 is dark across every row at once. Then through 2023 <b>the top three rows turn red while the bottom two never do</b> &mdash; the raw end of the economy went through outright deflation that the finished end simply did not experience, which is the same asymmetry the ranges in Table 6 measure. The scale saturates beyond &plusmn;12%, which stages 1 to 3 spend much of 2021&ndash;22 outside.</p>
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">The chain over four years</span><span class="u">Percent, year over year, 48 months</span></div>
+        <p class="note">The chain as a grid, reading downward: <b>stage 1 at the top, final demand at the bottom</b>. A vertical band of colour is a shock hitting every stage in the same month, which is what the correlations say happens; a diagonal would be the lagged pass-through people expect and that this data does not show. Two things are worth staring at. Late 2022 is dark across every row at once. Then through 2023 <b>the top three rows turn red while the bottom two never do</b> &mdash; the raw end of the economy went through outright deflation that the finished end simply did not experience, which is the same asymmetry the ranges in Table 9 measure. The scale saturates beyond &plusmn;12%, which stages 1 to 3 spend much of 2021&ndash;22 outside.</p>
         <div class="chart" id="cChainHeat" style="height:230px"></div>
       </div>
     </div>
 
     <div class="row">
-      <div class="t" id="t8">
-        <div class="th"><span class="n">Table 8</span><span class="ti">The volatile three</span><span class="u">Percent, year over year, s.a.</span></div>
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">The volatile three</span><span class="u">Percent, year over year, s.a.</span></div>
         <p class="note">The components the PPI&rsquo;s core strips out, and the reason it strips them. Foods and energy behave as they do in the CPI, only more so, because there is no retail margin absorbing the move. Trade services are the odd one: a margin, not a price, so it rises when distributors widen their spread and falls when they compress it &mdash; which tends to happen at the turn of a cycle rather than with costs.</p>
         <p class="key"><i class="k4">Foods</i><i class="ks1">Energy</i><i class="ks2">Trade services</i></p>
         <div class="chart" id="cVol" style="height:235px"></div>
       </div>
-      <div class="t" id="t9">
-        <div class="th"><span class="n">Table 9</span><span class="ti">Services, with and without margins</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Final demand services against the same series with trade stripped out. When the two diverge, the move is margins rather than the price of services being sold &mdash; a distinction with no counterpart in the CPI, where a margin is invisible inside the shelf price. This is the single most useful panel for telling a genuine services-cost move from a distribution-margin one.</p>
-        <p class="key"><i class="k4">Services</i><i class="ks1">Services less trade</i><i class="ks2">Trade services</i></p>
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">Services, with and without margins</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">Final demand services taken apart: <b>trade 19.8% of final demand, transportation and warehousing 4.9%, and everything else 43.7%</b> &mdash; which is the whole 68.3%. When the headline services line diverges from the stripped one, the move is margins and freight rather than the price of services being sold, a distinction with no counterpart in the CPI, where a margin is invisible inside the shelf price. This is the most useful panel here for telling a genuine services-cost move from a distribution one.</p>
+        <p class="key"><i class="k4">Services</i><i class="ks1">Services less trade and transport</i><i class="ks2">Trade services</i><i class="ks3">Transport and warehousing</i></p>
         <div class="chart" id="cSrv" style="height:235px"></div>
       </div>
     </div>
 
     <div class="row">
-      <div class="t" id="t10">
-        <div class="th"><span class="n">Table 10</span><span class="ti">Intermediate demand, by commodity type</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">The other cut of intermediate demand: instead of asking <em>how far along</em> a good is, this asks <em>what kind</em> it is. Unprocessed goods are the rawest thing the index measures and swing hardest; processed goods are damped; services for intermediate demand barely move by comparison. Same underlying prices as Tables 4 and 5, sorted a different way.</p>
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">Intermediate demand, by commodity type</span><span class="u">Percent, year over year, s.a.</span></div>
+        <p class="note">The other cut of intermediate demand: instead of asking <em>how far along</em> a good is, this asks <em>what kind</em> it is. Unprocessed goods are the rawest thing the index measures and swing hardest; processed goods are damped; services for intermediate demand barely move by comparison. Same underlying prices as Tables 7 and 8, sorted a different way.</p>
         <p class="key"><i class="k4">Unprocessed goods</i><i class="ks1">Processed goods</i><i class="ks2">Services</i></p>
         <div class="chart" id="cIDType" style="height:235px"></div>
       </div>
-      <div class="t" id="t11">
-        <div class="th"><span class="n">Table 11</span><span class="ti">The long run</span><span class="u">Percent, year over year, s.a.</span></div>
+      <div class="t" id="t14">
+        <div class="th"><span class="n">Table 14</span><span class="ti">The long run</span><span class="u">Percent, year over year, s.a.</span></div>
         <p class="note">Processed and unprocessed goods are the only part of this framework with a long history &mdash; they run from 1947, where everything else here starts in November 2009, because the Final Demand&ndash;Intermediate Demand system only launched in 2014. Twenty years of window rather than five, to show that the amplitude gap between raw and processed is a permanent feature of the data and not an artefact of the post-2020 episode.</p>
         <p class="key"><i class="k4">Unprocessed goods</i><i class="ks1">Processed goods</i></p>
         <div class="chart" id="cLong" style="height:235px"></div>
@@ -152,8 +178,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t12">
-        <div class="th"><span class="n">Table 12</span><span class="ti">Where the level went</span><span class="u">Index, 5 years ago = 100</span></div>
+      <div class="t" id="t15">
+        <div class="th"><span class="n">Table 15</span><span class="ti">Where the level went</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="note">Rates answer how fast, this answers how far. Rebased inside the window, because the published indexes sit on several different base years and are not comparable as levels. Goods and services diverge permanently here in a way they do not in the rate charts: a period of fast goods inflation leaves a step in the level that later disinflation does not undo.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Goods</i><i class="ks2">Services</i><i class="ks3">Construction (dashed)</i></p>
         <div class="chart" id="cLevels" style="height:250px"></div>
@@ -161,8 +187,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t13">
-        <div class="th"><span class="n">Table 13</span><span class="ti">How much the numbers move afterwards</span><span class="u">Index points, first published to latest</span></div>
+      <div class="t" id="t16">
+        <div class="th"><span class="n">Table 16</span><span class="ti">How much the numbers move afterwards</span><span class="u">Index points, first published to latest</span></div>
         <p class="note">A third kind of revision, different again from the other two dashboards. Payroll figures move because more survey responses arrive; the CPI index never moves at all and only its seasonal adjustment does. <b>PPI moves because late reports arrive, and it moves a lot</b>: <b>120 of the 139 months since 2015</b> were revised, by a median of 0.13 index points and by as much as 0.78. The timing is bimodal &mdash; of the months that moved, 50 first changed one month after first print and 52 at four months, the latter being the single scheduled revision BLS documents &mdash; but the two groups are alike in size, so what differs is when rather than how much. The ink line is <b>stage 1</b>, which revises slightly harder than final demand does, in keeping with everything else on this page.</p>
         <p class="key"><i class="k1">Final demand</i><i class="k4">Stage 1</i></p>
         <div class="chart" id="cRev" style="height:230px"></div>
@@ -269,8 +295,9 @@ BRB.render({
 
     { el: "cSrv", type: "line", format: "pct", tick: 11, left: 42, window: 60,
       series: yoy([{ id: "PPIDSS", label: "Services", ...C1 },
-                   { id: "PPITWS", label: "Services less trade", ...C2 },
-                   { id: "PPITSS", label: "Trade services", ...C3 }]) },
+                   { id: "PPITWS", label: "Services less trade and transport", ...C2 },
+                   { id: "PPITSS", label: "Trade services", ...C3 },
+                   { id: "PPIAWS", label: "Transport and warehousing", ...C4 }]) },
 
     { el: "cIDType", type: "line", format: "pct", tick: 11, left: 44, window: 60,
       series: yoy([{ id: "WPSID62", label: "Unprocessed goods", ...C1 },
@@ -295,6 +322,35 @@ BRB.render({
       window: 60, tick: 11, left: 44, width: 6, label: "Final demand",
       series: { id: "PPI.rev_fd" },
       overlay: [{ id: "PPI.rev_s1", label: "Stage 1", color: "ink", width: 1.5 }] },
+    // A genuine partition of final demand, so stacking is honest. The total is
+    // a line over the bars rather than a sixth segment, so the residual left by
+    // adjusting each part independently shows instead of being absorbed.
+    { el: "cStackY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "PPIFIS", label: "Final demand", transform: "yoy" },
+      series: [{ id: "PPI.c_services",     label: "Services" },
+               { id: "PPI.c_coregoods",    label: "Goods less foods and energy" },
+               { id: "PPI.c_foods",        label: "Foods" },
+               { id: "PPI.c_energy",       label: "Energy" },
+               { id: "PPI.c_construction", label: "Construction" }] },
+    { el: "cStackM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 60, tick: 11, left: 40, width: 6,
+      total: { id: "PPIFIS", label: "Final demand", transform: "yoy", periods: 1 },
+      series: [{ id: "PPI.m_services",     label: "Services" },
+               { id: "PPI.m_coregoods",    label: "Goods less foods and energy" },
+               { id: "PPI.m_foods",        label: "Foods" },
+               { id: "PPI.m_energy",       label: "Energy" },
+               { id: "PPI.m_construction", label: "Construction" }] },
+
+    // Weights arrive ready-made and are a share, not a change: transform none.
+    { el: "cWeights", type: "contribution", transform: "none", format: "pct2",
+      axisFormat: "pct", left: 178,
+      series: [{ id: "PPI.w_services",     label: "Services" },
+               { id: "PPI.w_coregoods",    label: "Goods less foods and energy" },
+               { id: "PPI.w_foods",        label: "Foods" },
+               { id: "PPI.w_energy",       label: "Energy" },
+               { id: "PPI.w_construction", label: "Construction" }] },
+
   ],
 });
 </script>

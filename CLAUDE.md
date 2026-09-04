@@ -468,18 +468,20 @@ validate *inside* the container and `caddy reload`, never restart.
 **172 series across 8 releases, ~379,000 vintage rows over ~129,000
 observations, 36/36 validations, and every exported series drawn by its page on
 all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
-PPI 13, JOLTS 7, Weekly Claims 6.
+PPI 16, JOLTS 7, Weekly Claims 6.
 
 Every release now carries real ALFRED vintages: CPI and PPI were both backfilled
 on 4 September, 66,152 and 16,194 vintage rows, and both stamps picked up their
 true publication dates — 12 and 13 August — with no code change, which is what
 deriving a date instead of typing one buys.
 
-PPI carries no contributions, deliberately. Contributions need published
-weights and the PPI news release has no relative-importance column — CPI Table 1
-does, which is what made the CPI ones possible. `contribution` and
-`relative_importance` generalise to any weighted index and would need no change
-if the PPI weights are ever sourced properly from the detailed report.
+Both inflation dashboards carry contributions. PPI news release **Table 1** has
+a relative-importance column, dated Dec. 2025, exactly as CPI Table 1 does — the
+weights reconcile (goods 29.028 + services 68.338 + construction 2.634 =
+100.000) which is how you know they are the published ones. What has no weights
+is **intermediate demand**: every stage and commodity-type index is published at
+100.000, each being its own aggregation base rather than a share of anything, so
+the chain cannot be stacked and is drawn as rates.
 
 The 4 September Employment Situation was the first release to run through the
 rebuilt pipeline, and it held. The timer fired at **08:35 ET** — the first
@@ -561,11 +563,6 @@ moment rather than about the system, and it should look stale when it is.
 
 **`planned.yml` is empty and every release has its vintage history.** What is
 left is small, and none of it is blocking.
-
-1. **PPI weights, if they are wanted.** The detailed report publishes relative
-   importances for the FD-ID structure; the news release does not, which is why
-   PPI has no contribution panels where CPI does. With them, `contribution` and
-   `relative_importance` would carry over unchanged.
 
 2. **Self-hosting ntfy** is low-risk now that the path has fired for real.
 

@@ -9,12 +9,16 @@ release: bls.ppi
 include_releases:
   - bls.ppi
 
-# No derived contributions here, unlike CPI. Contributions need published
-# weights, and the PPI news release does not carry a relative-importance column
-# the way CPI Table 1 does -- PPI weights live in a separate detailed report.
-# Rather than invent them, this dashboard is rates and levels only. If the
-# weights are ever sourced properly, `contribution` and `relative_importance`
-# in macro/derived.py generalise to any weighted index and would need no change.
+# Contributions ARE possible here, and the derived block at the bottom builds
+# them. An earlier version of this comment said the opposite -- that the PPI
+# news release carried no relative-importance column the way CPI Table 1 does.
+# That was wrong, and wrong carelessly: it was read off PPI Table 2, which is
+# percent changes, and generalised. Table 1 has the column, dated Dec. 2025.
+#
+# What genuinely has no weights is intermediate demand: every stage and
+# commodity-type index is published at a relative importance of 100.000,
+# because each is its own aggregation base rather than a share of anything.
+# The chain therefore cannot be stacked, and Tables 7 to 10 are rates.
 #
 # No revision panels either, for now: the FD-ID series entered the catalog on
 # 4 September 2026 with current-vintage history only. The ALFRED backfill has
@@ -49,3 +53,149 @@ derived:
     title: Revision to stage 1, first published to latest
     unit: Index points
     importance: 4
+
+  # ---- the five-way partition of final demand, added 4 September 2026.
+  # Weights are the published relative importance from PPI news release
+  # Table 1, dated Dec. 2025 -- hence weight_date: 2025-12 throughout, a
+  # different anchor month from the CPI dashboard's. They sum to 100.000
+  # exactly, and the published core figure (69.732, less foods, energy and
+  # trade services) is reproduced by 100 - 5.452 - 5.061 - 19.755, which is
+  # the check that says these are the real weights and not a transcription.
+  #
+  # Intermediate demand gets none of this: every stage and commodity-type
+  # index is published with a relative importance of 100.000, because each
+  # is its own aggregation base rather than a share of final demand. There
+  # is no honest way to stack the chain, which is why Tables 4 to 7 are
+  # rates.
+  - id: PPI.c_services
+    kind: contribution
+    of: [PPIDSS, PPIFIS]
+    weight: 68.338
+    weight_date: "2025-12"
+    periods: 12
+    title: Contribution of final demand services to final demand, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: PPI.m_services
+    kind: contribution
+    of: [PPIDSS, PPIFIS]
+    weight: 68.338
+    weight_date: "2025-12"
+    periods: 1
+    title: Contribution of final demand services to final demand, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: PPI.c_coregoods
+    kind: contribution
+    of: [WPSFD413, PPIFIS]
+    weight: 18.515
+    weight_date: "2025-12"
+    periods: 12
+    title: Contribution of final demand goods less foods and energy to final demand, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: PPI.m_coregoods
+    kind: contribution
+    of: [WPSFD413, PPIFIS]
+    weight: 18.515
+    weight_date: "2025-12"
+    periods: 1
+    title: Contribution of final demand goods less foods and energy to final demand, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: PPI.c_foods
+    kind: contribution
+    of: [PPIDFS, PPIFIS]
+    weight: 5.452
+    weight_date: "2025-12"
+    periods: 12
+    title: Contribution of final demand foods to final demand, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: PPI.m_foods
+    kind: contribution
+    of: [PPIDFS, PPIFIS]
+    weight: 5.452
+    weight_date: "2025-12"
+    periods: 1
+    title: Contribution of final demand foods to final demand, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: PPI.c_energy
+    kind: contribution
+    of: [PPIDES, PPIFIS]
+    weight: 5.061
+    weight_date: "2025-12"
+    periods: 12
+    title: Contribution of final demand energy to final demand, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: PPI.m_energy
+    kind: contribution
+    of: [PPIDES, PPIFIS]
+    weight: 5.061
+    weight_date: "2025-12"
+    periods: 1
+    title: Contribution of final demand energy to final demand, over 1 month
+    unit: Percentage points
+    importance: 4
+  - id: PPI.c_construction
+    kind: contribution
+    of: [PPIDCS, PPIFIS]
+    weight: 2.634
+    weight_date: "2025-12"
+    periods: 12
+    title: Contribution of final demand construction to final demand, over 12 months
+    unit: Percentage points
+    importance: 4
+  - id: PPI.m_construction
+    kind: contribution
+    of: [PPIDCS, PPIFIS]
+    weight: 2.634
+    weight_date: "2025-12"
+    periods: 1
+    title: Contribution of final demand construction to final demand, over 1 month
+    unit: Percentage points
+    importance: 4
+
+  # And what each is worth, on the same anchor and the same drift rule.
+  - id: PPI.w_services
+    kind: relative_importance
+    of: [PPIDSS, PPIFIS]
+    weight: 68.338
+    weight_date: "2025-12"
+    title: Share of final demand taken by final demand services
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_coregoods
+    kind: relative_importance
+    of: [WPSFD413, PPIFIS]
+    weight: 18.515
+    weight_date: "2025-12"
+    title: Share of final demand taken by final demand goods less foods and energy
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_foods
+    kind: relative_importance
+    of: [PPIDFS, PPIFIS]
+    weight: 5.452
+    weight_date: "2025-12"
+    title: Share of final demand taken by final demand foods
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_energy
+    kind: relative_importance
+    of: [PPIDES, PPIFIS]
+    weight: 5.061
+    weight_date: "2025-12"
+    title: Share of final demand taken by final demand energy
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_construction
+    kind: relative_importance
+    of: [PPIDCS, PPIFIS]
+    weight: 2.634
+    weight_date: "2025-12"
+    title: Share of final demand taken by final demand construction
+    unit: Percent of the basket
+    importance: 3
