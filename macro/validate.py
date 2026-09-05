@@ -224,7 +224,12 @@ def main() -> int:
             for sid, e in json.loads(path.read_text(encoding="utf-8"))["series"].items():
                 if e.get("derived") or sid not in db_counts:
                     continue
-                shipped = sum(1 for v in e["values"] if v is not None)
+                # full_n is what the series held before `truncate_history`
+                # cut it for the page. Comparing against the shipped array
+                # would ask a weaker question of exactly the series whose
+                # history is deliberately not shipped.
+                shipped = e.get("full_n") or sum(1 for v in e["values"]
+                                                 if v is not None)
                 compared += 1
                 if db_counts[sid] < shipped:
                     lost.append((sid, db_counts[sid], shipped))

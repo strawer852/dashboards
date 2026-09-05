@@ -682,10 +682,23 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     whatever it was built from -- and the guard did not. What gave it away was
     the axis losing half its tick labels between two screenshots.
 
-    So: follow `derived_from` before believing a requirement, and note that
-    the check "no series lost observations against the shipped bundle" is
-    weaker for a truncated series, since it can only see loss below the kept
-    window.
+    So: follow `derived_from` before believing a requirement.
+
+    Two further things the first version got wrong, both now fixed. The check
+    **"no series lost observations against the shipped bundle" went quiet on
+    exactly these series**, since a deliberately short bundle is a weak thing to
+    compare the database against -- it could only ever have seen loss below the
+    kept window. The exporter now records `full_n`, the untruncated non-null
+    count, and the check reads that: `AKICLAIMS` ships 624 observations and is
+    still checked against 2,115.
+
+    And the lookback was counted from explicit `periods:` alone, which misses
+    both a moving average (declared as a series-level `window`) and a bare
+    `diff` (one observation). All three are now counted, generously: the
+    panel's own window is the largest in the block, any other window in it is a
+    transform width, and the presence of a transform costs one more. A few
+    observations of payload against a chart that renders short rather than
+    empty -- which is the failure nothing else here would catch.
 
 ## How it runs
 

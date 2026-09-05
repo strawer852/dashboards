@@ -101,3 +101,63 @@ derived:
     title: Private employment excluding health care and social assistance
     unit: Thousands of Persons
     importance: 5
+
+# The sub-sector detail under Table 7 is drawn only in 48-month stacks and
+# latest-month contribution bars. The database keeps the full history --
+# several of these run from 1939 -- and re-exporting at a wider window is a
+# one-line change here, so a bundle need not carry ninety years to draw four.
+# export.py reads the requirement off the page, follows derived measures back
+# to their inputs, and refuses anything too small.
+truncate_history:
+  - keep: 120
+    series:
+      - CES1011330001
+      - CES1021000001
+      - CES2023600001
+      - CES2023700001
+      - CES2023800001
+      - CES4142300001
+      - CES4142400001
+      - CES4142500001
+      - CES4244100001
+      - CES4244400001
+      - CES4244500001
+      - CES4244600001
+      - CES4244700001
+      - CES4244800001
+      - CES4244900001
+      - CES4245100001
+      - CES4245200001
+      - CES4348100001
+      - CES4348200001
+      - CES4348300001
+      - CES4348400001
+      - CES4348500001
+      - CES4348600001
+      - CES4348700001
+      - CES4348800001
+      - CES4349200001
+      - CES4349300001
+      - CES5051100001
+      - CES5051200001
+      - CES5051500001
+      - CES5051700001
+      - CES5051800001
+      - CES5051900001
+      - CES5552000001
+      - CES5553000001
+      - CES6054000001
+      - CES6055000001
+      - CES6056000001
+      - CES6561000001
+      - CES6562000001
+      - CES7071000001
+      - CES7072000001
+      - CES8081100001
+      - CES8081200001
+      - CES8081300001
+      - CES9091000001
+      - CES9092000001
+      - CES9093000001
+      - DMANEMP
+      - NDMANEMP

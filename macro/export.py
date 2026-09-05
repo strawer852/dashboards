@@ -124,8 +124,15 @@ def page_requirements(html: str) -> dict:
     for i, a in enumerate(starts):
         chunk = html[a: starts[i + 1] if i + 1 < len(starts) else len(html)]
         nums = lambda k: [int(x) for x in re.findall(k + r":\s*(\d+)", chunk)]
-        shown = max(nums("window") + nums("months") or [0])
-        look = max(nums("periods") or [0])
+        windows = sorted(nums("window") + nums("months"), reverse=True)
+        shown = windows[0] if windows else 0
+        # Everything a transform reaches back for, and none of it is always a
+        # `periods`. A moving average is declared as a series-level `window`,
+        # which is simply another window in this block; a bare `diff` reaches
+        # back one. Counting generously costs a few observations of payload and
+        # prevents a chart that renders short without rendering empty.
+        look = max(nums("periods") or [0]) + sum(windows[1:]) \
+            + (1 if "transform" in chunk else 0)
         need = shown + look
         for sid in re.findall(r'id:\s*"([A-Za-z0-9_.]+)"', chunk):
             out[sid] = max(out.get(sid, 0), need)
@@ -248,7 +255,13 @@ def main() -> int:
                 # reported difference and regular_step all follow the same axis
                 # and start is recomputed rather than arithmetic'd.
                 k = truncate.get(sid)
+                full_n = None
                 if k and len(dates) > k:
+                    # Record what the series really has BEFORE cutting. Without
+                    # it validate.py's shrink check compares the database with a
+                    # deliberately short bundle and can only see loss below the
+                    # kept window -- quiet precisely where the archive matters.
+                    full_n = sum(1 for v in values if v is not None)
                     dates, values = dates[-k:], values[-k:]
 
                 (_, title, freq, sa, companion, importance, rel, url, unit,
@@ -281,6 +294,8 @@ def main() -> int:
                     "source_url": url,
                     "values": values,
                 }
+                if full_n is not None:
+                    entry["full_n"] = full_n
                 if unit:
                     entry["unit"] = unit
                 # 'fetch_date' means the source has no point-in-time history, so
