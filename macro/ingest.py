@@ -87,15 +87,38 @@ def main() -> int:
             catalog = [r for r in catalog if r[0] in wanted]
             missing = wanted - {r[0] for r in catalog}
             if missing:
-                print(f"!! not in catalog: {sorted(missing)}", file=sys.stderr)
+                # Refuse rather than warn. A named id that is not catalogued
+                # means the caller built its list wrongly, and silently
+                # ingesting the rest turns that into a hole nothing reports:
+                # the run exits 0 and the series simply have no observations
+                # until `validate.py` notices, which is a whole release later.
+                print(f"!! not in catalog, refusing: {sorted(missing)}",
+                      file=sys.stderr)
+                return 1
 
         # BLS batches: one call carries fifty series, so fetch them all up front
         # rather than paying a round trip each.
         bls_ids = [r[0] for r in catalog if r[2] == "bls"]
         bls_rows: dict[str, list] = {}
         if bls_ids:
+            # Only the years we lack. See module docstring in bls.py for the
+            # 50-series/20-year chunking this feeds. A series with nothing
+            # stored gets the full history; otherwise five years back from the
+            # oldest last-observation in the batch, which is wider than any
+            # seasonal-factor revision BLS applies and one call instead of five.
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT m.series_id, max(o.observation_dt) "
+                    "FROM macro_series_meta m "
+                    "LEFT JOIN macro_observations o USING (series_id) "
+                    "WHERE m.series_id = ANY(%s) GROUP BY 1", (bls_ids,))
+                last = dict(cur.fetchall())
+            start = (bls.EARLIEST if any(v is None for v in last.values())
+                     else min(v.year for v in last.values()) - 5)
+            print(f"BLS: {len(bls_ids)} series from {start}"
+                  f"{' (full history: new series present)' if start == bls.EARLIEST else ''}")
             try:
-                bls_rows = bls.get_observations(bls_ids)
+                bls_rows = bls.get_observations(bls_ids, start_year=start)
             except Exception as exc:                      # noqa: BLE001
                 for sid in bls_ids:
                     failures.append((sid, f"{type(exc).__name__}: {exc}"))
