@@ -151,8 +151,30 @@ PY
     fi
 fi
 
+# 6. And that no series has quietly stopped publishing while another source
+#    kept going. coverage.py only sees series that reach a bundle; most of the
+#    catalogue is held for analysis and reaches none, so nothing watched it.
+#    Non-zero here means a FAULT -- a stale source, a dead series on a page, or
+#    something catalogued with no observations. Series that are simply dead at
+#    source exit 0, because alarming daily on the unfixable trains people to
+#    ignore the alert.
+#
+#    Wrapped so it cannot fail the watch it is part of: this makes a BLS API
+#    call, and a monitoring call that can fail the job it monitors is worse
+#    than no monitoring.
+if [ -x "$ROOT/venv/bin/python" ] && [ -f "$ROOT/tools/staleness.py" ]; then
+    STALE_OUT=$(cd "$ROOT" && set -a && . ./.env && set +a \
+                && timeout 300 ./venv/bin/python tools/staleness.py 2>&1)
+    STALE_RC=$?
+    if [ "$STALE_RC" -eq 1 ]; then
+        note "staleness: $(printf '%s' "$STALE_OUT" | grep -E '^[0-9]+ overdue|NO observations|ON A PAGE' | head -3 | tr '\n' ';')"
+    elif [ "$STALE_RC" -ne 0 ]; then
+        echo "[$TS] staleness check itself failed (rc=$STALE_RC); ignored" >> "$LOG"
+    fi
+fi
+
 if [ ${#PROBLEMS[@]} -eq 0 ]; then
-    echo "[$TS] OK: timers armed, sweep recent, status fresh" >> "$LOG"
+    echo "[$TS] OK: timers armed, sweep recent, status fresh, no stale series" >> "$LOG"
     # Only on success. A ping sent regardless would tell the external service
     # everything is fine while this script was reporting that it is not.
     ping_deadman "" "ok: timers armed, sweep recent, status fresh"

@@ -38,6 +38,7 @@ no local build step.
 | `systemd/` | The refresh timers. Wall-clock ET, `Persistent=true` |
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
+| `tools/staleness.py` | Every catalogued series against its own frequency — and against BLS before calling one dead. Covers the ~2,350 that reach no bundle, which `coverage.py` cannot see |
 | `tools/build_nav.py` | Generates the rail from the specs into every page. **Run after adding a dashboard** |
 | `ops/dashboards-timer-check` | Alarms when the refresh timers stop firing. Daily, 06:30 ET |
 | `planned.yml` | Dashboards in the rail but not yet built. At the root, NOT in `dashboards/` |
@@ -638,8 +639,22 @@ before it, a windowed run fetched every series every time, so a quiet
 `refresh.log` meant something was wrong. Now a quiet log is normal, and a dead
 timer looks exactly like a quiet day. The check looks at the mechanism instead —
 lingering, every timer active, no unit failed, the sweep triggered within 26
-hours, and `status.json` fresh — and alarms over Telegram, which is the ops
-channel rather than the pipeline's ntfy.
+hours, `status.json` fresh, and since 5 September **no series quietly stopped
+publishing** — and alarms over Telegram, which is the ops channel rather than
+the pipeline's ntfy.
+
+That last one is `tools/staleness.py`, and two of its properties are the
+point. It **only reports a fault**: 74 series are dead at source and nothing
+can be done about them, so those exit 0, because alarming daily on the
+unfixable trains everyone to ignore the alert. Non-zero means our source is
+stale while another has newer data, a dead series has reached a page (trap 28
+with an alarm attached), or something is catalogued with no observations at
+all. And its own failure is **logged and swallowed** — it makes a BLS API
+call, and a monitoring call that can fail the job it monitors is worse than no
+monitoring. All three fault paths were fired with synthetic rows and a
+substitute bundle directory before it was trusted; the grace policy is
+imported from `coverage.py` rather than restated, so traps 29 and 30 have one
+definition.
 
 On its own it cannot catch the user manager being gone, a dead box, a dead
 network or a full disk — all of which produce **silence**, and silence is
