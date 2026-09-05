@@ -64,14 +64,25 @@ def run(script: str, *args: str) -> tuple[int, str]:
 
 
 def series_for(releases: list[str] | None) -> list[str]:
+    """Every catalogued series for these releases, whatever its source.
+
+    This used to say `WHERE source='fred'` in both branches, and so no
+    scheduled run had ever refreshed a BLS-sourced series -- 37 of them,
+    updated only when somebody ran ingest.py by hand. `ingest.py` dispatches on
+    `macro_series_meta.source` and batches the BLS ids itself, so the filter
+    belonged in neither branch. CLAUDE.md trap 35.
+
+    Do not reintroduce a source filter here. If a source ever needs excluding
+    from a scheduled run, that is a property of the series -- give it a column
+    and read it -- not a literal in the orchestrator.
+    """
     with psycopg.connect(DSN) as c, c.cursor() as cur:
         if releases:
             cur.execute("SELECT series_id FROM macro_series_meta "
-                        "WHERE source='fred' AND release_id = ANY(%s) ORDER BY 1",
+                        "WHERE release_id = ANY(%s) ORDER BY 1",
                         (releases,))
         else:
-            cur.execute("SELECT series_id FROM macro_series_meta "
-                        "WHERE source='fred' ORDER BY 1")
+            cur.execute("SELECT series_id FROM macro_series_meta ORDER BY 1")
         return [r[0] for r in cur.fetchall()]
 
 
