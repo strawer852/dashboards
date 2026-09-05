@@ -333,6 +333,62 @@ def relative_importance(srcs, weight: float = 0.0, weight_date: str = "", **_):
             for c, g in zip(comp, agg)]
 
 
+def above_trailing_min(srcs, window: int = 52, **_):
+    """How far above its own trailing minimum a series sits, in per cent.
+
+    The classic claims recession rule is stated as a rise off the cycle low
+    rather than a level, because the level that matters has drifted down for
+    forty years as covered employment changed shape. Expressed against the
+    trailing window's own minimum, the measure is comparable across eras.
+
+    A null anywhere in the window yields a null: a minimum computed over a
+    window with holes is not the minimum.
+    """
+    v = srcs[0]["values"]
+    out: list[float | None] = []
+    for i in range(len(v)):
+        if i < window - 1 or v[i] is None:
+            out.append(None)
+            continue
+        win = v[i - window + 1: i + 1]
+        if any(x is None for x in win):
+            out.append(None)
+            continue
+        lo = min(win)
+        out.append(None if not lo else round(100.0 * (v[i] / lo - 1.0), 3))
+    return out
+
+
+def share_above_year_ago(srcs, periods: int = 52, **_):
+    """Share of the input series standing above their own value a year ago.
+
+    Breadth, not level. One state doubling moves the national total and leaves
+    this unchanged; forty states drifting up moves this and may barely show
+    nationally. Comparing each series with ITSELF a year earlier is also what
+    makes it usable on unadjusted data, which is all the states publish -- the
+    same week last year carries the same seasonal position.
+
+    Series are counted only where both ends exist, and the denominator is the
+    count actually compared, so a state whose history starts late dilutes
+    nothing.
+    """
+    n = max(len(s["values"]) for s in srcs)
+    out: list[float | None] = []
+    for i in range(n):
+        up = tot = 0
+        for s in srcs:
+            v = s["values"]
+            if i >= len(v) or i < periods:
+                continue
+            a, b = v[i], v[i - periods]
+            if a is None or b is None:
+                continue
+            tot += 1
+            up += 1 if a > b else 0
+        out.append(round(100.0 * up / tot, 3) if tot >= 20 else None)
+    return out
+
+
 KINDS = {
     "revision":          (revision, 1,
                           "latest monthly change minus the change as first reported"),
@@ -356,6 +412,11 @@ KINDS = {
                           "minus participation at the start times the change in u over {periods} months"),
     "contribution":      (contribution, 2,
                           "relative importance of {weight}% at {weight_date}, re-drifted with relative prices, times the component's own change over {periods} months"),
+    "above_trailing_min": (above_trailing_min, 1,
+                          "per cent above the lowest value of the trailing {window} periods"),
+    "share_above_year_ago": (share_above_year_ago, None,
+                          "share of the listed series standing above their own "
+                          "value {periods} periods earlier"),
     "relative_importance": (relative_importance, 2,
                           "share of the basket, {weight}% at {weight_date}, re-drifted with relative prices"),
 }
@@ -372,6 +433,8 @@ _PASS = {
     "epop_unemployment_effect": ("periods",),
     "contribution": ("weight", "weight_date", "periods"),
     "relative_importance": ("weight", "weight_date"),
+    "above_trailing_min": ("window",),
+    "share_above_year_ago": ("periods",),
 }
 
 _DEFAULTS = {"window": 12, "threshold": 122, "periods": 12, "drop_month": 1}
@@ -388,9 +451,14 @@ def build(spec: dict, series_out: dict) -> list[str]:
 
         of = d["of"]
         src_ids = [of] if isinstance(of, str) else list(of)
-        if len(src_ids) != arity:
+        # arity None means "however many the spec lists" -- a breadth measure
+        # is defined over a set, not over a fixed number of inputs.
+        if arity is not None and len(src_ids) != arity:
             raise SystemExit(f"{spec['id']}: {d['id']} ({kind}) takes {arity} "
                              f"input(s), got {len(src_ids)}")
+        if arity is None and len(src_ids) < 2:
+            raise SystemExit(f"{spec['id']}: {d['id']} ({kind}) is a measure "
+                             f"over a set and needs at least 2 inputs")
         srcs = []
         for sid in src_ids:
             if sid not in series_out:

@@ -619,6 +619,45 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     compare the last observation against BLS as well as FRED, because "FRED
     agrees with us" answers a different question from "this series is current".
 
+41. **A ratio across two sources is wrong by their unit gap, and looks
+    perfectly healthy.** Trap 7 says units differ by source -- claims arrive in
+    persons, JOLTS levels and the household survey in thousands. Side by side
+    that is survivable. Divided, it is fatal: continuing claims over the
+    unemployment level computed 1,900,000 / 7,000 = 271 where the answer is
+    0.27. The panel drew, `coverage.py` counted it, `validate.py` passed 36/36,
+    and the number was out by three orders of magnitude. Only the picture
+    showed it. Series specs now take **`scale`**, applied last, after any
+    transform and any `over`, as the one place to reconcile units.
+
+    In the same panel, **`over:` matched dates exactly**, so a weekly numerator
+    over a monthly denominator missed on every date and produced an empty
+    chart -- silently, since the one prior use divided two monthly series both
+    dated on the first. It now uses `alignAsOf`, which is trap 6 applied where
+    nobody had looked: a coarser denominator means the most recent value at or
+    before this date.
+
+42. **Measured, nothing in this repo's data leads payrolls.** JOLTS peaks at a
+    lead of nought on every measure (openings, quits, hires, layoffs, and
+    hires-less-separations at +0.97, which is the accounting identity rather
+    than a forecast) and publishes a month *later* besides. Initial and
+    continued claims also peak at nought, in every era: the insured
+    unemployment rate against twelve-month payroll growth runs -0.66 in the
+    1970s and 80s, -0.78 in the 1990s, -0.96 in the 2000s, all at a lead of
+    nought, weakening to -0.67 in the 2010s and turning **positive** at +0.60
+    since 2021 -- almost certainly both series falling together after the
+    reopening rather than a relationship, on 62 observations.
+
+    What claims have is **timeliness, not lead**: weekly, and three to four
+    weeks before the payroll print covering the same month. Say that instead.
+    And the "claims off the cycle low" rule is a confirming measure at best --
+    at the 1990, 2007 and 2020 peaks it read +9%, +9% and +10% against a median
+    week of +6%.
+
+    Correlations here are always computed twice, with and without
+    Feb 2020 - Jun 2021. A shock that moves everything at once manufactures
+    correlation at every lag; including it collapses every JOLTS figure to
+    about 0.1 and would have hidden all of the above.
+
 ## How it runs
 
 ```

@@ -103,13 +103,26 @@
     const cats = axis(s);
     let values = derive(s, sp);
     if (sp.over) {
+      // alignAsOf, not an exact date match. The denominator is frequently
+      // coarser than the numerator -- insured unemployment is weekly and the
+      // unemployment level it is divided by is monthly -- and an exact lookup
+      // misses on every date, yielding a chart that draws nothing and reports
+      // nothing wrong. Trap 6: align by date, and a coarser series means the
+      // most recent value at or before this one. Where the dates do match this
+      // is identical to what it replaced.
       const o = ctx.series(sp.over);
-      const den = new Map(axis(o).map((d, i) => [d, o.values[i]]));
+      const den = alignAsOf(cats, axis(o), o.values);
       values = cats.map((d, i) => {
-        const n = values[i], q = den.get(d);
+        const n = values[i], q = den[i];
         return (n == null || q == null || !q) ? null : +(n / q).toFixed(4);
       });
     }
+    // Last, after any transform and any `over`. Units differ by source --
+    // claims arrive in persons, the unemployment level in thousands -- and a
+    // ratio across that gap is wrong by a thousand while looking perfectly
+    // healthy to every check. Trap 7.
+    if (sp.scale != null)
+      values = values.map(v => (v == null ? null : +(v * sp.scale).toFixed(6)));
     return { s, cats, values };
   }
 

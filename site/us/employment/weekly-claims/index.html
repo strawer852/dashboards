@@ -38,6 +38,10 @@
         <a href="#t4"><span>4</span>Seasonal swing</a>
         <a href="#t5"><span>5</span>Claims and payrolls</a>
         <a href="#t6"><span>6</span>Revisions</a>
+        <a href="#t7"><span>7</span>Recipiency</a>
+        <a href="#t8"><span>8</span>Breadth</a>
+        <a href="#t9"><span>9</span>By state</a>
+        <a href="#t10"><span>10</span>Off the low</a>
       </div>
 
     </nav>
@@ -92,9 +96,40 @@
     <div class="row one">
       <div class="t" id="t5">
         <div class="th"><span class="n">Table 5</span><span class="ti">Claims against payroll growth</span><span class="u">Indexed, 5 years ago = 100</span></div>
-        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. Claims led payrolls for decades, but <b>that relationship has broken down</b>: the correlation between the insured claims rate and payroll growth ran &minus;0.83 through the 2000s and is near zero in the 2020s. Layoffs stayed historically low while hiring stalled, and claims only ever see the first of those.</p>
+        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. <b>Claims do not lead payrolls, and measurement says they never did.</b> Correlating the insured unemployment rate against twelve-month payroll growth at leads of nought to six months, the peak sits at <b>nought in every era</b> &mdash; &minus;0.66 in the 1970s and 80s, &minus;0.78 in the 1990s, &minus;0.96 in the 2000s. What claims give you is not a lead but <b>timeliness</b>: weekly, and three to four weeks before the payroll print covering the same month. The relationship has also weakened badly &mdash; &minus;0.67 in the 2010s &mdash; and since 2021 it has <b>changed sign</b>, running +0.60 rather than near zero, almost certainly because the insured rate and payroll growth both fell together as the reopening faded rather than because one now predicts the other. Sixty-two months is not enough to call that a relationship. Layoffs stayed historically low while hiring stalled, and claims only ever see the first of those.</p>
         <p class="key"><i class="ks1">Initial claims, 4-week avg</i><i class="ks2">Nonfarm payrolls</i></p>
         <div class="chart" id="cLead" style="height:230px"></div>
+      </div>
+    </div>
+    <div class="row one">
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">How many of the unemployed actually draw benefits</span><span class="u">Continuing claims as a share of total unemployment</span></div>
+        <p class="note">Continuing claims divided by the unemployment level &mdash; the recipiency rate. It is the number that decides how much of the labour market this dashboard can see at all: when it falls, claims describe a shrinking share of the unemployed and every reading here becomes a narrower measure. Five years rather than ten: in 2020 and 2021 the emergency programmes pushed insured unemployment <em>above</em> the measured unemployment level, and on a longer axis that peak flattens everything else into the floor. The numerator is weekly and the denominator monthly, so the monthly value is carried forward across the weeks that follow it rather than matched exactly. The break in late 2025 is real: the household survey published no unemployment level for <b>October 2025</b>, and a missing denominator is left as a gap rather than bridged. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cRecip" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">How broad is the rise in claims?</span><span class="u">Share of 53 states and territories, %</span></div>
+        <p class="note">Every state compared with <b>itself a year earlier</b>, and the chart is the share standing higher. This answers what the national total cannot: whether a rise is general or the work of two large states. One state doubling moves the national figure and leaves this untouched; forty states drifting up moves this and may barely show nationally. Above 50 more states are rising than falling. States publish claims <b>unadjusted only</b>, which is exactly why the comparison is with the same week a year before &mdash; that carries the same seasonal position, so no adjustment is needed.</p>
+        <div class="chart" id="cBreadth" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Initial claims by state</span><span class="u">Change on a year earlier, %, last 52 weeks</span></div>
+        <p class="note">The breadth measure above, shown as where. Each row is a state against its own level a year before, so the seasonality that dominates unadjusted claims is differenced out. Read it for <b>columns rather than cells</b>: a single dark row is one state&rsquo;s plant closure or storm, while a column darkening across many rows is the thing the national figure is about to show.</p>
+        <div class="chart" id="cStates" style="height:820px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">How far claims sit above their own floor</span><span class="u">Per cent above the trailing 52-week low</span></div>
+        <p class="note">The level of claims that counts as high has drifted down for forty years as covered employment changed shape, so the usual reading is a rise off the cycle low rather than a level. <b>Measured, it is a poor warning.</b> At the 1990, 2007 and 2020 business-cycle peaks this stood at <b>+9%, +9% and +10%</b> against a median week of <b>+6%</b> &mdash; it did not distinguish those months from an ordinary one. Only 2001 was different, at +36%. It rises steeply <em>after</em> a downturn starts, which makes it a confirming measure and not a leading one. Shown because how far claims sit off their floor is worth knowing; captioned so it is not mistaken for a signal. <b>Analyst-derived.</b></p>
+        <div class="chart" id="cLow" style="height:230px"></div>
       </div>
     </div>
 
@@ -115,7 +150,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=99fe6da402"></script>
+<script src="/assets/brb-dash.js?v=9b56963f1d"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -154,6 +189,77 @@ BRB.render({
     { el: "cRev", type: "line", format: "signed_count", tick: 25, left: 52,
       window: 260, hline: 0,
       series: [{ id: "ICSA.revision", label: "Revision", color: "ink", width: 1.6 }] },
+    { el: "cBreadth", type: "line", format: "pct", tick: 25, left: 36,
+      window: 520, hline: 50, hlineLabel: "50",
+      series: [{ id: "STATE.ic_breadth", label: "States rising year on year",
+                 color: "ink", width: 1.7 }] },
+    { el: "cStates", type: "heatmap", months: 52, transform: "yoy", periods: 52,
+      cap: 40, format: "pct", left: 150,
+      capText: ["\u2265 +40%", "\u2264 \u221240%"],
+      series: [{ id: "AKICLAIMS", label: "Alaska" },
+               { id: "ALICLAIMS", label: "Alabama" },
+               { id: "ARICLAIMS", label: "Arkansas" },
+               { id: "AZICLAIMS", label: "Arizona" },
+               { id: "CAICLAIMS", label: "California" },
+               { id: "COICLAIMS", label: "Colorado" },
+               { id: "CTICLAIMS", label: "Connecticut" },
+               { id: "DCICLAIMS", label: "the District of Columbia" },
+               { id: "DEICLAIMS", label: "Delaware" },
+               { id: "FLICLAIMS", label: "Florida" },
+               { id: "GAICLAIMS", label: "Georgia" },
+               { id: "HIICLAIMS", label: "Hawaii" },
+               { id: "IAICLAIMS", label: "Iowa" },
+               { id: "IDICLAIMS", label: "Idaho" },
+               { id: "ILICLAIMS", label: "Illinois" },
+               { id: "INICLAIMS", label: "Indiana" },
+               { id: "KSICLAIMS", label: "Kansas" },
+               { id: "KYICLAIMS", label: "Kentucky" },
+               { id: "LAICLAIMS", label: "Louisiana" },
+               { id: "MAICLAIMS", label: "Massachusetts" },
+               { id: "MDICLAIMS", label: "Maryland" },
+               { id: "MEICLAIMS", label: "Maine" },
+               { id: "MIICLAIMS", label: "Michigan" },
+               { id: "MNICLAIMS", label: "Minnesota" },
+               { id: "MOICLAIMS", label: "Missouri" },
+               { id: "MSICLAIMS", label: "Mississippi" },
+               { id: "MTICLAIMS", label: "Montana" },
+               { id: "NCICLAIMS", label: "North Carolina" },
+               { id: "NDICLAIMS", label: "North Dakota" },
+               { id: "NEICLAIMS", label: "Nebraska" },
+               { id: "NHICLAIMS", label: "New Hampshire" },
+               { id: "NJICLAIMS", label: "New Jersey" },
+               { id: "NMICLAIMS", label: "New Mexico" },
+               { id: "NVICLAIMS", label: "Nevada" },
+               { id: "NYICLAIMS", label: "New York" },
+               { id: "OHICLAIMS", label: "Ohio" },
+               { id: "OKICLAIMS", label: "Oklahoma" },
+               { id: "ORICLAIMS", label: "Oregon" },
+               { id: "PAICLAIMS", label: "Pennsylvania" },
+               { id: "PRIICLAIMS", label: "Puerto Rico" },
+               { id: "RIICLAIMS", label: "Rhode Island" },
+               { id: "SCICLAIMS", label: "South Carolina" },
+               { id: "SDICLAIMS", label: "South Dakota" },
+               { id: "TNICLAIMS", label: "Tennessee" },
+               { id: "TXICLAIMS", label: "Texas" },
+               { id: "UTICLAIMS", label: "Utah" },
+               { id: "VAICLAIMS", label: "Virginia" },
+               { id: "VIRICLAIMS", label: "the U.S. Virgin Islands" },
+               { id: "VTICLAIMS", label: "Vermont" },
+               { id: "WAICLAIMS", label: "Washington" },
+               { id: "WIICLAIMS", label: "Wisconsin" },
+               { id: "WVICLAIMS", label: "West Virginia" },
+               { id: "WYICLAIMS", label: "Wyoming" }] },
+    { el: "cLow", type: "line", format: "pct", tick: 25, left: 40, window: 520,
+      series: [{ id: "IC4WSA.above_low", label: "Above the 52-week low",
+                 color: "ink", width: 1.6 }] },
+    // scale 0.001 because the two sides are in different units: continuing
+    // claims are persons and the unemployment level is thousands, so the raw
+    // ratio reads 271 where the answer is 0.27. Trap 7.
+    // Five years, not ten: the pandemic programmes take the ratio above 1 and
+    // flatten everything else into the floor. The peak is in the note instead.
+    { el: "cRecip", type: "line", format: "ratio", tick: 52, window: 260, left: 40,
+      series: [{ id: "CCSA", over: "UNEMPLOY", scale: 0.001,
+                 label: "Recipiency rate", color: "ink" }] },
     { el: "cLead", type: "line", format: "num", tick: 25, window: 260, left: 42,
       // rebase, not index100: index100 baselines on the first value of the
       // whole series -- 1967 here, 1939 for payrolls -- and this panel is
