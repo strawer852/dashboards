@@ -39,6 +39,9 @@
         <a href="#t5"><span>5</span>Hires and separations</a>
         <a href="#t6"><span>6</span>Separations</a>
         <a href="#t7"><span>7</span>Cross-check</a>
+        <a href="#t8"><span>8</span>By industry</a>
+        <a href="#t9"><span>9</span>Quits by industry</a>
+        <a href="#t10"><span>10</span>By region</a>
       </div>
 
     </nav>
@@ -116,6 +119,96 @@
       </div>
     </div>
 
+    <div class="row one">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">Job openings by industry</span><span class="u">Change in openings, thousands, 48 months</span></div>
+        <p class="note">The twelve supersectors sum to total nonfarm across all 308 months with a worst residual of <b>3k</b> on an average of 5,510k &mdash; rounding, which is how you know none is missing. Four of them &mdash; mining and logging, information, financial activities and other services &mdash; are published by BLS but not carried by FRED, so they arrived through the second source and carry <b>no revision history</b>. Monthly change rather than the level, because the scale diverges around zero.</p>
+        <div class="chart" id="cJInd" style="height:330px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Quits rate by industry</span><span class="u">Per cent of employment, ten years</span></div>
+        <p class="note">The quits rate is the closest thing JOLTS has to a measure of worker confidence: people leave when they believe they can be hired elsewhere. The page shows it for total nonfarm only, which hides the finding &mdash; <b>the level differs more across industries than it does across the cycle</b>. Leisure and hospitality runs near four per cent where government runs under one, and no aggregate conveys that. Twelve small multiples rather than twelve lines on one axis: past six categories the palette stops, and a rate is a level, so each is ink.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Mining and logging</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ110099000000000" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Construction</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ2300" style="height:150px"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Manufacturing</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ3000" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Trade, transportation, utilities</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ4000" style="height:150px"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Information</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ510000000000000" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Financial activities</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ510099000000000" style="height:150px"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Professional and business services</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ540099" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Private education and health</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ6000" style="height:150px"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Leisure and hospitality</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ7000" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Other services</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ810000000000000" style="height:150px"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="t">
+        <div class="th"><span class="ti">Federal</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ910000000000000" style="height:150px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">State and local</span><span class="u">Quits rate, %</span></div>
+        <div class="chart" id="cJQ9200" style="height:150px"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">Openings rate by census region</span><span class="u">Per cent, ten years</span></div>
+        <p class="note">Four regions, which the categorical palette carries without folding, so colour identifies a region here rather than encoding a value.</p>
+        <p class="key"><i class="ks1">Northeast</i><i class="ks2">Midwest</i><i class="ks3">South</i><i class="ks4">West</i></p>
+        <div class="chart" id="cJRegO" style="height:230px"></div>
+      </div>
+      <div class="t">
+        <div class="th"><span class="ti">Quits rate by census region</span><span class="u">Per cent, ten years</span></div>
+        <p class="note">The same four regions on the other side of the decision to move. Read with the openings panel: a region where openings fall while quits hold is losing demand faster than workers have noticed.</p>
+        <p class="key"><i class="ks1">Northeast</i><i class="ks2">Midwest</i><i class="ks3">South</i><i class="ks4">West</i></p>
+        <div class="chart" id="cJRegQ" style="height:230px"></div>
+      </div>
+    </div>
+
     <div class="src">
       <span id="generated"></span>
       <span>Source: BLS Job Openings and Labor Turnover Survey, via FRED / ALFRED</span>
@@ -178,6 +271,54 @@ BRB.render({
       series: [{ id: "JTSHIR", label: "Hires rate" },
                { id: "JTSQUR", label: "Quits rate", color: "s2" },
                { id: "JTSLDR", label: "Layoffs rate", color: "s3" }] },
+    { el: "cJInd", type: "heatmap", months: 48, cap: 40, left: 176,
+      capText: ["\u2265 +40k", "\u2264 \u221240k"],
+      series: [{ id: "JTS110099000000000JOL", label: "Mining and logging" },
+               { id: "JTS2300JOL", label: "Construction" },
+               { id: "JTS3000JOL", label: "Manufacturing" },
+               { id: "JTS4000JOL", label: "Trade, transportation, utilities" },
+               { id: "JTS510000000000000JOL", label: "Information" },
+               { id: "JTS510099000000000JOL", label: "Financial activities" },
+               { id: "JTS540099JOL", label: "Professional and business services" },
+               { id: "JTS6000JOL", label: "Private education and health" },
+               { id: "JTS7000JOL", label: "Leisure and hospitality" },
+               { id: "JTS810000000000000JOL", label: "Other services" },
+               { id: "JTS910000000000000JOL", label: "Federal" },
+               { id: "JTS9200JOL", label: "State and local" }] },
+    { el: "cJQ110099000000000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS110099000000000QUR", label: "Mining and logging", color: "ink" }] },
+    { el: "cJQ2300", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS2300QUR", label: "Construction", color: "ink" }] },
+    { el: "cJQ3000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS3000QUR", label: "Manufacturing", color: "ink" }] },
+    { el: "cJQ4000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS4000QUR", label: "Trade, transportation, utilities", color: "ink" }] },
+    { el: "cJQ510000000000000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS510000000000000QUR", label: "Information", color: "ink" }] },
+    { el: "cJQ510099000000000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS510099000000000QUR", label: "Financial activities", color: "ink" }] },
+    { el: "cJQ540099", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS540099QUR", label: "Professional and business services", color: "ink" }] },
+    { el: "cJQ6000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS6000QUR", label: "Private education and health", color: "ink" }] },
+    { el: "cJQ7000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS7000QUR", label: "Leisure and hospitality", color: "ink" }] },
+    { el: "cJQ810000000000000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS810000000000000QUR", label: "Other services", color: "ink" }] },
+    { el: "cJQ910000000000000", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS910000000000000QUR", label: "Federal", color: "ink" }] },
+    { el: "cJQ9200", type: "line", format: "pct", tick: 23, left: 34,
+      window: 120, series: [{ id: "JTS9200QUR", label: "State and local", color: "ink" }] },
+    { el: "cJRegO", type: "line", format: "pct", tick: 11, left: 34,
+      window: 120, series: [{ id: "JTS00NEJOR", label: "Northeast", color: "s1" },
+               { id: "JTS00MWJOR", label: "Midwest", color: "s2" },
+               { id: "JTS00SOJOR", label: "South", color: "s3" },
+               { id: "JTS00WEJOR", label: "West", color: "s4" }] },
+    { el: "cJRegQ", type: "line", format: "pct", tick: 11, left: 34,
+      window: 120, series: [{ id: "JTS00NEQUR", label: "Northeast", color: "s1" },
+               { id: "JTS00MWQUR", label: "Midwest", color: "s2" },
+               { id: "JTS00SOQUR", label: "South", color: "s3" },
+               { id: "JTS00WEQUR", label: "West", color: "s4" }] },
   ],
 });
 </script>

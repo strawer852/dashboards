@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 
@@ -65,12 +66,21 @@ def main() -> int:
     ap.add_argument("--source", choices=("fred", "bls"), default="fred",
                     help="FRED wherever both carry the series: it is the "
                          "only free source of vintages.")
+    ap.add_argument("--titles", metavar="JSON",
+                    help="metadata for series the source has no catalog block "
+                         "for: {series_id: {title, unit, sa}}. Compose it from "
+                         "the source's own structure files -- never type it.")
     ap.add_argument("--no-publish", action="store_true",
                     help="Ingest for analysis, not for display: the series is "
                          "stored and refreshed like any other but is never "
                          "swept into a dashboard bundle. A spec can still ask "
                          "for it by name in include_series.")
     args = ap.parse_args()
+
+    supplied = {}
+    if args.titles:
+        with open(args.titles, encoding="utf-8") as fh:
+            supplied = json.load(fh)
 
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
         cur.execute("SELECT name FROM macro_releases WHERE release_id=%s", (args.release,))
@@ -84,15 +94,23 @@ def main() -> int:
         for sid in args.series:
             if args.source == "bls":
                 cat = bls_cat.get(sid)
-                if not cat:
-                    print(f"!! {sid}: BLS returned no catalog block. Metadata is "
-                          "not available for every series; add it by hand rather "
-                          "than guessing.", file=sys.stderr)
+                sup = supplied.get(sid)
+                if not cat and not sup:
+                    print(f"!! {sid}: BLS returned no catalog block and --titles "
+                          "does not describe it. Metadata is not available for "
+                          "every series; compose it from the source's own "
+                          "structure files rather than guessing.", file=sys.stderr)
                     return 1
-                title = cat.get("series_title") or cat.get("measure_data_type")
+                if cat:
+                    title = cat.get("series_title") or cat.get("measure_data_type")
+                    sa = ("SA" if str(cat.get("seasonality", "")).lower().startswith("s")
+                          else "NSA")
+                    unit = cat.get("measure_data_type")
+                else:
+                    title = sup["title"]
+                    sa = sup.get("sa", "SA")
+                    unit = sup.get("unit")
                 freq = "M"          # every BLS series in this catalog is monthly
-                sa = "SA" if str(cat.get("seasonality", "")).lower().startswith("s") else "NSA"
-                unit = cat.get("measure_data_type")
                 url = f"https://data.bls.gov/timeseries/{sid}"
                 # No ALFRED equivalent, so the vintage IS the fetch date and
                 # revision history accrues only from ingestion onward. The

@@ -85,7 +85,12 @@ def main() -> int:
               id: el.id,
               h: Math.round(el.getBoundingClientRect().height),
               svg: !!svg,
-              marks: svg ? svg.querySelectorAll('path,rect,circle,line').length : 0,
+              // Data marks only. Axes and gridlines are <line>, so counting
+              // them made a healthy one-line small multiple (11) sit right on
+              // the same threshold as an empty panel -- the check cried wolf
+              // on two charts with 308 observations each.
+              marks: svg ? svg.querySelectorAll('path,rect,circle').length : 0,
+              rules: svg ? svg.querySelectorAll('line').length : 0,
               text: svg ? svg.querySelectorAll('text').length : 0,
             });
           });
@@ -101,7 +106,9 @@ def main() -> int:
             pg.screenshot(path=str(dest), full_page=True)
         b.close()
 
-    empty = [c for c in counts if c["marks"] < 12 or c["h"] < 40]
+    # A panel that mounted with no series still draws its axes, so the test is
+    # whether it drew any DATA mark, not whether it drew anything.
+    empty = [c for c in counts if c["marks"] < 3 or c["h"] < 40 or not c["svg"]]
     print("%d charts; %d suspicious" % (len(counts), len(empty)))
     print("%-12s %6s %6s %6s %6s" % ("chart", "height", "svg", "marks", "text"))
     for c in counts:
