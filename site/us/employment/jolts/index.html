@@ -217,7 +217,7 @@
       <div class="t" id="t11">
         <div class="th"><span class="n">Table 11</span><span class="ti">What kind of separation?</span><span class="u">Millions per month, ten years</span></div>
         <p class="note">Table 6 draws these as levels, which means the reader has to divide in their head to answer the question that matters: <b>when separations rise, are people leaving or being let go?</b> Stacked, the mix is the chart. Quits have run as high as <b>73.3%</b> of all separations (April 2022) and as low as <b>17.3%</b> in April 2020, when layoffs briefly took nearly everything &mdash; a swing no level chart shows. Five years rather than ten: that April 2020 bar reaches 15.9m against a normal 5.5m, and on a ten-year axis it flattens every other month into the floor. Stacking is honest here because the three parts are a partition: they reconcile to total separations with a worst residual of <b>1k</b> on an average of 5,715k across 91 months. The ink line is that total, so any daylight is rounding.</p>
-        <p class="key"><i class="ks1">Quits</i><i class="ks2">Layoffs and discharges</i><i class="ks3">Other separations</i></p>
+        <p class="key"><i class="ks1">Layoffs and discharges</i><i class="ks2">Quits</i><i class="ks3">Other separations</i></p>
         <div class="chart" id="cJMix" style="height:270px"></div>
       </div>
     </div>
@@ -333,8 +333,15 @@ BRB.render({
     // Trap 8 with a different cause. The 2020 figure is in the note instead.
     { el: "cJMix", type: "stacked", window: 60, format: "millions",
       axisFormat: "millions", tick: 11, left: 46, width: 9,
-      series: [{ id: "JTSQUL", label: "Quits" },
-               { id: "JTSLDL", label: "Layoffs and discharges" },
+      // Layoffs first so it takes s1, the warm slot. Elsewhere on this site
+      // blue is a gain and red a loss; with the ladder taken in order from
+      // quits, the voluntary category came out red and the involuntary one
+      // blue, inverting that reading for anyone moving between pages.
+      // Reordering the SERIES rather than assigning colours by hand is what
+      // keeps the validated adjacency: the bands stay s1-s2 and s2-s3, where
+      // hand-assignment would have created an s1-s3 pair nothing has checked.
+      series: [{ id: "JTSLDL", label: "Layoffs and discharges" },
+               { id: "JTSQUL", label: "Quits" },
                { id: "JTSOSL", label: "Other separations" }],
       total: { id: "JTSTSL", label: "Total separations" } },
     { el: "cJRegQ", type: "line", format: "pct", tick: 11, left: 34,
