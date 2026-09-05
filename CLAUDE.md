@@ -110,6 +110,26 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
   to something else that matters. The PPI detail panels were chosen that way,
   which is why they do not match the release's own emphasis.
 
+- **Chart type follows structure, and the structure is measured.** For a
+  decomposition the choice between a stack and ranked bars is not taste. A
+  stack needs two things: the parts must partition the whole, and there must be
+  at most six of them, because that is where the categorical palette stops
+  (trap 21). Both are testable. Eleven of the fourteen payroll supersectors
+  reconcile to their parent with six or fewer children and are drawn stacked;
+  retail's nine and transportation's ten reconcile too but exceed the palette,
+  so they are ranked contribution bars, where colour encodes sign instead of
+  identity and the count does not matter. Utilities has no children in Table
+  B-1 at all and gets a note saying so rather than an invented chart.
+
+  Getting the child set right needed three attempts and none of them was
+  guesswork: display level alone gives Utilities no children and Construction
+  five that double-count to 13,635 against a parent of 8,359, because B-1 skips
+  levels and lists some children beside their own parent. Walking spans fixes
+  Mining; the industry-code tier fixes Construction. **The test that settles it
+  is reconciliation to the parent** -- the same test validate.py already applies
+  to the supersectors against PAYEMS -- and every one of the fourteen now passes
+  it, worst residual 0.5k.
+
 - **A stack is only honest for a partition.** `PANELS.stacked` draws the
   aggregate as a line over the bars so any residual shows as daylight instead of
   being absorbed. Food, energy, medical care and both unemployment cuts qualify;
