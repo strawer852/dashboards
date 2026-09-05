@@ -57,6 +57,15 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
   Every revision is its own row. This is the point of the whole system.
 - **Plain tables, not hypertables.** See traps.
 - **The page never queries Postgres.** Bundles are static files.
+- **`publish` decides what a bundle carries, and it is a column.** The database
+  holds far more than the dashboards draw -- the whole establishment survey, the
+  CPI item structure, the PPI FD-ID system, all of JOLTS and ECI -- because
+  depth is worth having for analysis before anybody designs a panel for it.
+  `publish=false` means hold and refresh this series but never sweep it into a
+  bundle. It is a property of the *series*, so it lives in a column rather than
+  as a list in a spec; a spec naming one in `include_series` still gets it,
+  because an explicit request beats a default. Default TRUE, so nothing that
+  predates the column changed behaviour.
 - **One release per dashboard.** Nonfarm Payroll, JOLTS and Weekly Claims each
   have exactly one release, so the stamp under the title is unambiguous.
 - **A dashboard is a spec plus a panel list.** If a new dashboard needs a change
@@ -445,6 +454,138 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     way, by their `00:00:00` UTC time. Scoped to the 103 rows the release itself
     wrote, the old predicate returns 0 and the fixed one 103.
 
+35. **The orchestrator has never once passed a BLS series to ingest.**
+    `refresh.py`'s `series_for()` selects `WHERE source='fred'` in **both**
+    branches, so every scheduled run -- windowed and sweep alike -- fetches only
+    the FRED catalogue. `ingest.py` grew its source dispatch long ago and
+    handles the BLS batch correctly; the filter in the *caller* was never
+    removed. This is the loose end trap 15 named -- "that has to become a
+    dispatch before any non-FRED series is added" -- finished in the callee and
+    missed in the caller.
+
+    The symptom is the quietest one this system produces. On 5 September the
+    sweep logged `ingest rc=0 fetched 128897 observations; inserted 0 rows`
+    while six BLS-only series sat a month behind data the API was serving right
+    then. A run that fetches everything and inserts nothing is
+    indistinguishable from a healthy day on which nothing changed. Nothing
+    alarmed, and validation passed 36/36, because every assertion pins a
+    published figure rather than a freshness.
+
+    **37 series were affected** -- 36 in the Employment Situation and
+    `CUSR0000SETE` in the CPI. **Fixed 5 September 2026**: the filter is gone
+    from both branches and the docstring says not to reintroduce one, because
+    if a source ever does need excluding from a scheduled run that is a
+    property of the series and belongs in a column, not in a literal in the
+    orchestrator.
+
+    Proving it took more than reading the diff. The data was already current,
+    so diff-on-write inserted nothing and the database could not show whether a
+    fetch had happened. The **archive manifest** could: it is append-only and
+    records every fetch whether or not the bytes deduplicate. A forced run over
+    the Employment Situation added 266 manifest entries -- 261 FRED plus
+    **5 BLS**, exactly the five 20-year spans that 36 BLS series chunk into.
+    Before the fix that number was 0. Verify a fetch where fetches are
+    recorded, not where rows would land if they happened to be new.
+
+36. **A FRED id derived from a BLS industry code 404s on exactly the biggest
+    aggregates.** The CES id is `CES` + 8-digit industry code + 2-digit data
+    type, and it resolves for all the fine industry detail -- then fails for
+    goods-producing, durable goods, nondurable goods and
+    trade/transportation/utilities, which FRED carries **only** as `USGOOD`,
+    `DMANEMP`, `NDMANEMP` and `USTPU`. Every one of the 19 average-weekly-hours
+    series is the same shape (`AWHAETP`, `AWHAEGP`, ...): data type `02` 404s
+    universally, while `03`, `04` and `11` resolve normally. So a derivation
+    script succeeds on 140 small industries and silently drops the five that
+    carry the most employment.
+
+    A further **29 of the 174 Table B-1 industries are not on FRED at all** --
+    mostly health-care and professional-services detail -- and are reachable
+    only through the BLS API, hence without vintages, hence trap 15.
+
+    The method that works: take the industry list from BLS's own `ce.industry`
+    file, take FRED's ids from `fred/release/series` for a release id
+    *discovered* from a series already held, then **verify every candidate by
+    checking it reproduces the published figure** in the news release table.
+    Titles alone do not catch the mnemonic cases; values do.
+
+37. **The bundle takes the whole release, so cataloguing a series ships it.**
+    `export.py` builds each bundle from the spec's `include_releases`, i.e.
+    every catalogued series for that release. The design assumes you only
+    catalogue what you intend to draw, and that held until 5 September, when
+    205 series were ingested for analysis rather than display. The payroll
+    bundle went 906 KB / 106 series to **1933 KB / 311 series** in one export,
+    and `coverage.py` fell from 100% to **34.1%**.
+
+    Note which check noticed. `export.py` asserts the *other* end -- every
+    catalogued series lands in some bundle -- and printed "all catalogued
+    series are consumed by at least one dashboard" while 205 of them were dead
+    weight in the payload. Only `coverage.py`, which reads the page, saw it.
+
+    nginx gzips `application/json`, so the wire cost was 535 KB rather than
+    1.9 MB, which made this a degradation rather than a breakage. It still had
+    to be settled, because **a permanently red check is a disabled check**:
+    left at 34.1%, `coverage.py` stops being the thing that catches the next
+    real defect.
+
+    **Fixed 5 September** by the `publish` column above. The release sweep
+    reads `WHERE publish`, and so does the orphan check -- that second half
+    matters, because an unpublished series is intentionally consumed by nothing
+    and counting it as an orphan fails the export, which `refresh.py`
+    escalates into a failed refresh and an alert. All five bundles returned to
+    their pre-ingest size and coverage to 100% while 2,344 analysis-only series
+    sat in the database untouched.
+
+38. **`ingest.py` warned about an unknown series id and exited zero.** A
+    one-off driver built its list with `cat` over six files that had been
+    written without trailing newlines, so the last id of each was glued to the
+    first of the next: five nonsense tokens, ten real series never fetched.
+    Ingest printed `!! not in catalog`, ingested the other 2,240, and returned
+    **0**. The step logged RC=0 and the hole surfaced only at
+    `validate.py`'s structural check -- "catalogued series with no
+    observations: 9" -- which on a normal release would have been a whole
+    release later.
+
+    It now **refuses**: an id the caller named that is not catalogued means the
+    caller built its list wrongly. The orchestrator only ever passes
+    `series_for()` output, which cannot contain an unknown id, so nothing
+    legitimate is refused. The general form is the one worth keeping: *a
+    warning that does not change the exit code is invisible to everything
+    downstream.*
+
+39. **BLS was refetching ninety years of history on every routine run.** The
+    API caps at 50 series and 20 years per call, so 300 BLS-sourced series is
+    7 x 5 = 35 calls -- every ingest, against a 500/day key limit. A release
+    morning with several windows could reach it, and a cap breach fails ingest,
+    which fails the refresh and alerts. `ingest.py` now asks what it already
+    has: a series with nothing stored still gets the full history, otherwise
+    five years back from the batch's oldest last-observation, which is wider
+    than any seasonal-factor revision BLS applies (trap 25) and one call
+    instead of five.
+
+40. **FRED can stop updating a series that BLS still publishes, and it looks
+    exactly like a discontinued one.** Trap 28 was a series dead at source.
+    This is the opposite and is not visible from FRED at all: FRED's
+    `observation_end` simply stops, the title carries no "DISCONTINUED" marker,
+    and every check that compares us against FRED agrees we are current --
+    because we are. We are faithfully mirroring a stale mirror.
+
+    Found by asking the *other* source. Of 74 series holding nothing newer than
+    a year old, all 74 ended exactly where FRED ended them, so nothing was
+    behind. But **six ECI series were stuck at October 2017 while BLS had data
+    to April 2026** -- eight and a half years missing -- plus two CPI series a
+    year behind. They are now `source='bls'`, and where the two sources overlap
+    they agree to within 0.1 index point, which is ECI's own revision
+    granularity rather than a difference of basis.
+
+    The remaining 66 are genuinely dead: the BLS API returns nothing at all for
+    the 19 PPI and 45 Productivity ids, and agrees with FRED on the last 2 ECI.
+    `WPS3012` -- trap 28's series -- still returns rows to 2011, which is what
+    proves the probe works rather than the ids being malformed.
+
+    **The check is cheap and worth repeating** whenever a series looks frozen:
+    compare the last observation against BLS as well as FRED, because "FRED
+    agrees with us" answers a different question from "this series is current".
+
 ## How it runs
 
 ```
@@ -579,12 +720,67 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
-## State as of 4 September 2026, end of day
+## State as of 5 September 2026, end of day
 
-**172 series across 8 releases, ~379,000 vintage rows over ~129,000
-observations, 36/36 validations, and every exported series drawn by its page on
-all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
+**2,641 series across 8 releases, ~2,851,000 vintage rows over ~919,000
+observations, 36/36 validations, and every *published* series drawn by its page
+on all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
 PPI 24, JOLTS 7, Weekly Claims 6.
+
+Every release is now complete at the level its news release publishes, and the
+split between what is held and what is drawn is explicit:
+
+| Release | Published | Analysis-only | Total |
+|---|---|---|---|
+| `bls.ppi` | 28 | 611 | 639 |
+| `bls.jolts` | 12 | 528 | 540 |
+| `bls.cpi` | 40 | 429 | 469 |
+| `bls.eci` | 2 | 402 | 404 |
+| `bls.employment_situation` | 92 | 205 | 297 |
+| `bls.productivity` | 2 | 280 | 282 |
+| `eta.claims` | 6 | 3 | 9 |
+| `frb.wage_tracker` | 1 | 0 | 1 |
+
+CPI is the whole of news release Table 2 -- all 338 expenditure categories,
+mapped to item codes with none unmatched. PPI is the entire Final
+Demand-Intermediate Demand system. JOLTS, ECI and Productivity are their whole
+national catalogues.
+
+**FRED does not carry most CPI detail.** Only 71 of the 338 published Table 2
+categories are on it; 267 come from the BLS API and therefore have no vintage
+history at all, the same shape as the 29 CES industries. In total **312 series
+are BLS-sourced and 359 FRED series have no ALFRED history either** -- all 671
+carry `vintage_mode='fetch_date'`, corrected in bulk on 5 September from the
+`from_row` they were added with, by asking which series still held only
+provisional `fred_csv` rows after a backfill.
+
+**66 analysis-only series are dead at source** -- 45 Productivity (annual PRS
+lines ending 2022), 19 PPI, 2 ECI -- confirmed against the BLS API, not just
+against FRED (trap 40). What is held for them is the complete history; there is
+nothing to recover. Eight others that looked identical were not dead but
+stale-on-FRED, and were re-sourced. None of the 66 is drawn, so none can
+produce trap 28's empty chart, but check the last observation before building a
+panel on any of them.
+
+The Employment Situation went from 92 series to **297** on 5 September: the
+establishment survey is now complete at the level the news release publishes it
+-- **all 174 Table B-1 industries**, plus B-2 average weekly hours and overtime
+and B-3 average hourly and weekly earnings for all 19. Every id was verified
+against the published August 2026 figure before ingestion (trap 36), and all
+174 reproduce from the database afterwards. 176 came from FRED with full ALFRED
+history; 29 exist only on the BLS API and so carry no vintages at all.
+
+Two pre-existing defects surfaced during that verification. **28 series had
+never been backfilled** and still sat on provisional `fred_csv` rows with one
+vintage each, although ALFRED held real history for them (`LNS14000003` depth
+1.19, `CES9091000001` 1.98) -- mostly the household-survey unemployment cuts and
+government employment. That is fixed: the release now carries **zero**
+provisional rows. The second is trap 35 and is **not yet fixed**.
+
+Deliberately not ingested, each a straightforward repeat of the same pass: NSA
+counterparts of the 174; production and non-supervisory workers (Tables B-5 to
+B-8); and the Table B-4 aggregate-hours indexes, which are derivable from
+employment times hours.
 
 Every release now carries real ALFRED vintages: CPI and PPI were both backfilled
 on 4 September, 66,152 and 16,194 vintage rows, and both stamps picked up their
@@ -708,7 +904,26 @@ Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
 
 **`planned.yml` is empty and every release has its vintage history.** What is
-left is small, and none of it is blocking.
+left is small, and one item now blocks.
+
+0. **Design what to draw.** Ingestion is finished and nothing is blocking.
+   2,344 series sit in the database at `publish=false`, drawn by nothing. The
+   rule for promoting one has not changed -- large by weight, persistently
+   volatile, or a direct input to something else that matters -- and the
+   mechanics are now a spec-file exercise: name it in `include_series`, or set
+   `publish=true`, then give it a panel.
+
+   Two things to weigh when that starts. The CPI and PPI item structures are
+   far too big to stack (trap 21 stops at six colours, and a partition is the
+   only honest stack, per the settled decisions). And a `fetch_date` series
+   must never be offered a revision overlay -- there are now 665 of them, so
+   check `vintage_mode` rather than assuming, especially anywhere in CPI
+   detail, where 267 of 338 categories are BLS-only.
+
+   Still true and worth rechecking as the catalogue grows: each ingest makes
+   BLS API calls against a 500/day key limit. Trap 39 cut that from 35 calls
+   per run to 7 by fetching only the years not already held, which is what
+   made 304 BLS series affordable at all.
 
 1. **Do not self-host ntfy.** Asked and answered, 4 September 2026. The
    alerting exists to say the pipeline broke; running the notifier on the box

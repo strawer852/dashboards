@@ -1,10 +1,9 @@
-# Handoff — 4 September 2026, end of day
+# Handoff — 5 September 2026, end of day
 
-**Read `CLAUDE.md` first.** It is 778 lines and it is the authority: 34 traps,
-the settled decisions, the running state, the guardrails. This file is only the
-part that would be stale by the time you read it — where things stand right
-now, what is pending, and what the next decision is. Nothing here overrides
-CLAUDE.md; where they disagree, CLAUDE.md is right and this file is old.
+**Read `CLAUDE.md` first.** It is the authority: 39 traps, the settled
+decisions, the running state, the guardrails. This file is only the part that
+would be stale by the time you read it. Nothing here overrides CLAUDE.md; where
+they disagree, CLAUDE.md is right and this file is old.
 
 Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 `~/dashboards`. Nothing of substance is on the laptop.
@@ -13,134 +12,109 @@ Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 
 ## Where it stands
 
-**183 series across 8 releases, ~389,000 vintage rows, 36/36 validations, and
-100% coverage on all five dashboards.** Every exported series is drawn by its
-page and still published by its source.
+**2,641 series across 8 releases, ~2,851,000 vintage rows over ~919,000
+observations, 36/36 validations, and 100% coverage on all five dashboards.**
 
-| Dashboard | Tables | Charts |
-|---|---|---|
-| `us/employment/nonfarm-payroll` | 33 | 33 |
-| `us/inflation/cpi` | 31 | 38 |
-| `us/inflation/ppi` | 20 | 24 |
-| `us/employment/jolts` | 7 | 7 |
-| `us/employment/weekly-claims` | 6 | 6 |
+Every release is now complete at the level its news release publishes it, and
+what is held is deliberately separated from what is drawn:
 
-Two timers, both armed:
+| Release | Published | Analysis-only | Total |
+|---|---|---|---|
+| `bls.ppi` | 28 | 611 | 639 |
+| `bls.jolts` | 12 | 528 | 540 |
+| `bls.cpi` | 40 | 429 | 469 |
+| `bls.eci` | 2 | 402 | 404 |
+| `bls.employment_situation` | 92 | 205 | 297 |
+| `bls.productivity` | 2 | 280 | 282 |
+| `eta.claims` | 6 | 3 | 9 |
+| `frb.wage_tracker` | 1 | 0 | 1 |
 
-| Timer | Fires | Runs |
-|---|---|---|
-| `macro-refresh-due` | 08:35–14:55 ET weekdays | whatever the calendar says is outstanding |
-| `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
+**No dashboard changed.** All five bundles are the size they were before any of
+this, because 2,344 series carry `publish=false`.
 
-Plus `dashboards-push` (23:30) and `dashboards-timer-check` (06:30 ET).
+**Ingestion is automatic for all of it.** Seven of eight releases have forward
+calendar rows and `macro-refresh-due` resolves per release; the Atlanta Fed
+tracker correctly has none and rides the 01:40 sweep. Trap 35 was fixed
+earlier today, so every source — BLS included — now reaches ingest.
 
----
-
-## The one thing to watch
-
-**Thursday 10 and Friday 11 September are the first live test of this
-session's scheduling work**, and they test two things that have never run for
-real:
-
-- `macro-refresh-due` replaced three hand-written timers. It has been proved
-  against seven simulated moments but has never fired on a release day.
-- The already-landed guard **had never once fired** before it was fixed. It
-  compared an ALFRED vintage in `America/New_York`, and ALFRED stores vintages
-  at midnight UTC — so the 4 September vintage read as 3 September and never
-  matched. The log shows the release landing at 13:35Z and the 13:45Z and
-  13:55Z windows each refetching all 64,220 observations.
-
-10 September carries **two releases on one day** — `bls.ppi` and `eta.claims`
-— which is exactly the case the old grouped gate would have mishandled. That
-makes it the most informative day available.
-
-What good looks like in `logs/refresh.log`: a `refresh start (bls.ppi,eta.claims)`
-after 08:35 ET, `ingest` inserting rows, `validate rc=0`, `export`, an ntfy
-push — and then the *following* windows saying nothing outstanding rather than
-refetching. If they keep refetching, the guard is still wrong.
-
-Then **look at the rendered pages**, which is not optional and not the same as
-a DOM probe. Yesterday every chart drew perfectly while a contents list had
-been deleted; today a series that had been dead since 2011 sat on the PPI page
-drawing nothing while validation, coverage and export all reported success.
+Next firings worth watching: **PPI and claims on 10 September** (two releases in
+one day, the case the old grouped gate would have mishandled) and **CPI on
+11 September**, which will be the first release to exercise 304 BLS-sourced
+series through the new year-window logic.
 
 ---
 
-## The open decision
+## The one thing to do next
 
-Nothing structural is outstanding — the backlog in CLAUDE.md's "Open right
-now" is down to a note about two dead columns. Two reasonable directions:
+**Design what to draw.** Nothing is blocking. Promoting a series is a spec-file
+exercise — name it in `include_series`, or set `publish=true` — and the rule
+for deserving a panel is unchanged: large by weight, persistently volatile, or
+a direct input to something else that matters.
 
-1. **Hold until the 10th/11th** and verify the release runs. Costs nothing and
-   is the highest-information event available.
-2. **Build dashboard #6.** The strongest candidate is **PCE** — it is what the
-   Fed actually targets, the PPI dashboard now explains at length which
-   producer prices feed it (physician care, hospital inpatient care, portfolio
-   management), and there is no dashboard for the measure itself. Retail
-   sales, industrial production or housing starts would also fit.
+Two cautions before that starts:
 
-   The rule for a new dashboard, from CLAUDE.md and worth restating: **a spec
-   file plus catalogue rows and no new JavaScript. If it needs any, that is an
-   engine defect, not a special case.** That rule found four real engine gaps
-   this session.
+- **The CPI and PPI item structures are far too big to stack.** Trap 21 stops
+  the categorical palette at six, and a stack is only honest for a partition.
+- **665 series have no vintage history** and carry `vintage_mode='fetch_date'`.
+  None of them may be offered a revision overlay. Check the column rather than
+  assuming, especially in CPI detail, where 267 of 338 categories are BLS-only.
 
 ---
 
 ## Loose ends, none blocking
 
-- **`~/bigricebowl` has an unpushed commit of mine** (`5995cf5`, the EverOS
-  pin) and, from before, `10e2850` plus uncommitted deletions that are not
-  mine. I did not push, because pushing would have carried unreviewed work.
-  William's call.
-- **`~/backups/everos-data-pre-1.2.3-20260904.tar.gz`** is the pre-upgrade
-  snapshot. Delete it once 1.2.3 has run a while.
-- **The dead-man's switch `/fail` path is unproven.** The ok ping returns 2xx
-  and healthchecks is receiving. `/fail` has only ever fired against a
-  placeholder URL. Firing it for real sends a genuine down-alert and then
-  recovers on the next run — needs William's say-so.
-- **`pub_lag_days` and `staleness_mode`** are columns with no consumer, all
-  182 rows NULL. Superseded by the forward calendar and the coverage
-  staleness check. Drop them or leave them, but do not build on them.
-- **A bearer token was printed into the previous session's transcript** while
-  reading the Caddy config. Nothing leaked — it is William's own secret in his
-  own session — but rotate it if that log is ever shared.
-- **ntfy self-hosting is closed as a no**, with reasons, in CLAUDE.md. Do not
-  reopen it without a new argument: the notifier must not live on the box it
-  watches.
+- **66 analysis-only series are dead at source** — 45 Productivity, 19 PPI,
+  2 ECI — confirmed against the BLS API rather than only against FRED. What is
+  held for them is the complete history; there is nothing to recover. None is
+  drawn, but check the last observation before building a panel on any.
+- **Eight that looked identical were not dead, and are fixed.** FRED had
+  silently stopped updating them while BLS kept publishing: six ECI series were
+  stuck at October 2017 against BLS's April 2026, nearly nine years missing,
+  plus two CPI series a year behind. They are now `source='bls'`, and the two
+  sources agree to within 0.1 index point where they overlap. See trap 40 —
+  the check is to ask the other source, because "FRED agrees with us" answers
+  a different question from "this series is current".
+- **PPI commodity detail is not ingested.** The FD-ID system is complete, but
+  FRED carries 12,323 PPI series in total against the 639 held. The same is
+  true of CPI's regional and city-level series (4,609 on FRED, 469 held). Both
+  are a repeat of the same pass if ever wanted.
+- **Production and non-supervisory workers** (Employment Situation Tables B-5
+  to B-8) and the **NSA counterparts** of Table B-1 are still not ingested.
+- **The one-off scripts are in `~/ingest_run/`** with their logs. Nothing in
+  the repo depends on them.
+- **Everything is uncommitted.** `dashboards-push` pushes only committed work —
+  it logs "working tree is dirty" and moves on. The 03:00 restic backup covers
+  the working tree, so nothing is at risk of loss, only of being absent from
+  the repository history. Changed: `macro/export.py`, `macro/ingest.py`,
+  `macro/add_series.py`, `macro/refresh.py`, `macro/schema.sql`, `CLAUDE.md`,
+  `HANDOFF.md`, plus a `publish` column added to `macro_series_meta`.
+- **`~/bigricebowl` still has an unpushed commit** (`5995cf5`, the EverOS pin)
+  and, from before, `10e2850` plus uncommitted deletions that are not mine.
+- **The dead-man's switch `/fail` path is still unproven.**
+- **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
 
 ---
 
 ## What this session did
 
-Seven commits, `2dee011..9f81a75`, all pushed to `origin/master` via the
-`github-dashboards` deploy key.
+- **Completed the establishment survey** — all 174 Table B-1 industries plus
+  B-2 hours and B-3 earnings, 205 series, every id verified against the
+  published August figure before ingestion.
+- **Completed CPI, PPI, JOLTS, ECI and Productivity** — 2,250 further series,
+  including all 338 CPI Table 2 categories with none unmapped.
+- **Fixed trap 35** — the orchestrator had never passed a BLS series to ingest.
+  Verified through the archive manifest, because the data was already current
+  and no row could prove a fetch had happened.
+- **Fixed 28 series that had never been backfilled** and were sitting on
+  provisional rows despite ALFRED holding real history for them.
+- **Added the `publish` column** (trap 37), which is what let the database grow
+  seven-fold without a single byte reaching a page.
+- **Cut BLS API usage from 35 calls per run to 7** (trap 39), without which
+  304 BLS series would have risked the 500/day cap on a release morning.
+- **Made `ingest.py` refuse an uncatalogued id** (trap 38) after a warning that
+  did not change an exit code hid a nine-series hole behind RC=0.
 
-- **PPI detail panels paired year|month** in the CPI convention — one row per
-  topic, twelve-month left, one-month right, right half unnumbered.
-- **Found a dead series.** `WPS3012` stopped in December 2011 and FRED still
-  serves it. It had observations, so export was content; it had a panel, so
-  coverage reported it drawn at 100%; its tests pin old vintages, so
-  validation passed. Every number correct, the chart empty. Replaced with
-  `WPS301`, the live SA parent. `coverage.py` now checks that everything it
-  ships is still published, and testing that check against seven synthetic
-  series found **two bugs in the check itself**.
-- **Scheduling became a question asked of the catalogue.** `refresh.py --due`
-  reads `macro_release_dates`; three typed timers became one. Resolves per
-  release, respects each embargo, treats an empty calendar as a fault.
-- **Four engine gaps closed** rather than worked around: `PANELS.line` had no
-  `axisFormat`; `export.py` could not express "discontinued" (now
-  `exclude_series`); `install-timers.sh` could add a unit but never retire
-  one; `dashboards-timer-check` watched a **typed list** of timers and so was
-  blind to the one added that same day — its watch list now derives from
-  `systemd/*.timer`.
-- **Charts in a row now share a baseline**, and five payroll rows whose charts
-  had different declared heights were equalised.
-- **EverOS upgraded 1.1.2 → v1.2.3**, closing `GHSA-grm3-hcqf-hm28` (CVSS
-  8.2). It was not reachable — 8000 is never published to the host, Caddy
-  proxies `everos_mcp:8001`, and the MCP wrapper calls only four
-  `/api/v1/memory` endpoints — but fixed rather than relied upon.
-
-The recurring shape, and the reason so much of this file is about verification
-rather than features: **every one of these was found by looking at the thing
-itself, not at a report about it.** Four separate green checks — validation,
-coverage, export, and a DOM probe — all passed over a chart that drew nothing.
+The recurring shape, unchanged: **every one of these was found by comparing the
+thing against its source.** The big ingest returned RC=0 on the step that had
+silently dropped nine series, and it was `validate.py`'s structural check —
+not the run's own report — that gave it away.
