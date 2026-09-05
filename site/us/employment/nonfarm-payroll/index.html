@@ -172,13 +172,13 @@
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Retail trade</span><span class="u">Thousands, s.a., latest month</span></div>
-        <p class="note">9 sub-sectors, which is past the six the categorical palette carries, so this is ranked by contribution rather than stacked: bars scale where hues do not, and colour here encodes sign rather than identity.</p>
-        <div class="chart" id="cSubRet" style="height:238px"></div>
+        <p class="note">9 sub-sectors, which is past the six the categorical palette carries, so this is a heatmap rather than a stack &mdash; the same form Table 6 uses for the fourteen supersectors, and the same 48 months as the stacks above, so the sector reads on the same horizon as its neighbours. Each cell is one month&rsquo;s change. The scale is capped at &plusmn;12k, which is measured rather than chosen: over these four years retail&rsquo;s monthly moves sit between &minus;10.2k and +9.7k nineteen times in twenty and transport&rsquo;s between &minus;7.5k and +7.2k, so the cap keeps the ordinary month legible and admits that the tails clip. Both panels share it, because the same colour meaning a different number in adjacent charts would be worse than clipping.</p>
+        <div class="chart" id="cSubRet" style="height:300px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Transportation and warehousing</span><span class="u">Thousands, s.a., latest month</span></div>
-        <p class="note">10 sub-sectors, which is past the six the categorical palette carries, so this is ranked by contribution rather than stacked: bars scale where hues do not, and colour here encodes sign rather than identity.</p>
-        <div class="chart" id="cSubTrn" style="height:260px"></div>
+        <p class="note">10 sub-sectors, which is past the six the categorical palette carries, so this is a heatmap rather than a stack &mdash; the same form Table 6 uses for the fourteen supersectors, and the same 48 months as the stacks above, so the sector reads on the same horizon as its neighbours. Each cell is one month&rsquo;s change. The scale is capped at &plusmn;12k, which is measured rather than chosen: over these four years retail&rsquo;s monthly moves sit between &minus;10.2k and +9.7k nineteen times in twenty and transport&rsquo;s between &minus;7.5k and +7.2k, so the cap keeps the ordinary month legible and admits that the tails clip. Both panels share it, because the same colour meaning a different number in adjacent charts would be worse than clipping.</p>
+        <div class="chart" id="cSubTrn" style="height:320px"></div>
       </div>
     </div>
     <div class="row">
@@ -445,7 +445,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=9b56963f1d"></script>
+<script src="/assets/brb-dash.js?v=a637be88eb"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -541,7 +541,8 @@ BRB.render({
                { id: "CES4142400001", label: "Merchant wholesalers, nondurable", transform: "diff" },
                { id: "CES4142500001", label: "Agents and brokers", transform: "diff" }],
       total: { id: "USWTRADE", label: "Wholesale trade, total", transform: "diff" } },
-    { el: "cSubRet", type: "contribution", left: 176,
+    { el: "cSubRet", type: "heatmap", months: 48, cap: 12, left: 176, tick: 5,
+      capText: ["\u2265 +12k", "\u2264 \u221212k"],
       series: [{ id: "CES4244100001", label: "Motor vehicle and parts" },
                { id: "CES4244400001", label: "Building material and garden" },
                { id: "CES4244500001", label: "Food and beverage" },
@@ -551,7 +552,8 @@ BRB.render({
                { id: "CES4244700001", label: "Gasoline stations" },
                { id: "CES4244800001", label: "Clothing and accessories" },
                { id: "CES4245100001", label: "Sporting goods and hobby" }] },
-    { el: "cSubTrn", type: "contribution", left: 176,
+    { el: "cSubTrn", type: "heatmap", months: 48, cap: 12, left: 176, tick: 5,
+      capText: ["\u2265 +12k", "\u2264 \u221212k"],
       series: [{ id: "CES4348100001", label: "Air transportation" },
                { id: "CES4348200001", label: "Rail transportation" },
                { id: "CES4348300001", label: "Water transportation" },

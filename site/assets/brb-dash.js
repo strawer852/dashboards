@@ -465,7 +465,11 @@
       tooltip: Object.assign(base(P).tooltip, {
         formatter: x => `<b>${names[x.data[1]]}</b><br>${label(cats[x.data[0]], "M")}  ${fmt(x.data[2])}` }),
       xAxis: { type: "category", data: cats, splitArea: { show: false },
-        axisLabel: { color: P.muted, fontSize: 9, interval: 2, formatter: v => label(v, "M") },
+        // `tick` like every other panel type. Hard-coded at 2 this collided
+        // into unreadable overlap the moment a heatmap was put in a half-width
+        // cell rather than across the page.
+        axisLabel: { color: P.muted, fontSize: 9, interval: p.tick == null ? 2 : p.tick,
+                     formatter: v => label(v, "M") },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       yAxis: { type: "category", data: names, splitArea: { show: false },
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
