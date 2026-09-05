@@ -198,11 +198,6 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     instead. **Check the range of what you are plotting against the range you
     care about**, and look at it.
 
-8b. **Original note retained:** Without one, payrolls plot from 1939 and
-   the war years put the axis at ±5,000k, flattening everything recent to a
-   line. The window is applied *after* transforms so a 3-month average at the
-   left edge still uses real prior data.
-
 9. **A near-flat or quantised series lies when auto-scaled.** Average weekly
    hours moves only 34.2–34.3; sparklines floor their range at 2% of the level,
    and the chart carries a 3-month average through the square wave.
