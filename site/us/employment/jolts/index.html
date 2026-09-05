@@ -42,6 +42,7 @@
         <a href="#t8"><span>8</span>By industry</a>
         <a href="#t9"><span>9</span>Quits by industry</a>
         <a href="#t10"><span>10</span>By region</a>
+        <a href="#t11"><span>11</span>Separation mix</a>
       </div>
 
     </nav>
@@ -194,18 +195,30 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row one">
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">Openings rate by census region</span><span class="u">Per cent, ten years</span></div>
         <p class="note">Four regions, which the categorical palette carries without folding, so colour identifies a region here rather than encoding a value.</p>
         <p class="key"><i class="ks1">Northeast</i><i class="ks2">Midwest</i><i class="ks3">South</i><i class="ks4">West</i></p>
-        <div class="chart" id="cJRegO" style="height:230px"></div>
+        <div class="chart" id="cJRegO" style="height:260px"></div>
       </div>
+    </div>
+
+    <div class="row one">
       <div class="t">
         <div class="th"><span class="ti">Quits rate by census region</span><span class="u">Per cent, ten years</span></div>
         <p class="note">The same four regions on the other side of the decision to move. Read with the openings panel: a region where openings fall while quits hold is losing demand faster than workers have noticed.</p>
         <p class="key"><i class="ks1">Northeast</i><i class="ks2">Midwest</i><i class="ks3">South</i><i class="ks4">West</i></p>
-        <div class="chart" id="cJRegQ" style="height:230px"></div>
+        <div class="chart" id="cJRegQ" style="height:260px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">What kind of separation?</span><span class="u">Millions per month, ten years</span></div>
+        <p class="note">Table 6 draws these as levels, which means the reader has to divide in their head to answer the question that matters: <b>when separations rise, are people leaving or being let go?</b> Stacked, the mix is the chart. Quits have run as high as <b>73.3%</b> of all separations (April 2022) and as low as <b>17.3%</b> in April 2020, when layoffs briefly took nearly everything &mdash; a swing no level chart shows. Five years rather than ten: that April 2020 bar reaches 15.9m against a normal 5.5m, and on a ten-year axis it flattens every other month into the floor. Stacking is honest here because the three parts are a partition: they reconcile to total separations with a worst residual of <b>1k</b> on an average of 5,715k across 91 months. The ink line is that total, so any daylight is rounding.</p>
+        <p class="key"><i class="ks1">Quits</i><i class="ks2">Layoffs and discharges</i><i class="ks3">Other separations</i></p>
+        <div class="chart" id="cJMix" style="height:270px"></div>
       </div>
     </div>
 
@@ -314,6 +327,16 @@ BRB.render({
                { id: "JTS00MWJOR", label: "Midwest", color: "s2" },
                { id: "JTS00SOJOR", label: "South", color: "s3" },
                { id: "JTS00WEJOR", label: "West", color: "s4" }] },
+    // Five years, not ten. At 120 months the April 2020 bar reaches 15.9m
+    // against a normal 5.5m and squashes nine years of composition into the
+    // bottom third -- the panel exists to show the mix and the outlier hid it.
+    // Trap 8 with a different cause. The 2020 figure is in the note instead.
+    { el: "cJMix", type: "stacked", window: 60, format: "millions",
+      axisFormat: "millions", tick: 11, left: 46, width: 9,
+      series: [{ id: "JTSQUL", label: "Quits" },
+               { id: "JTSLDL", label: "Layoffs and discharges" },
+               { id: "JTSOSL", label: "Other separations" }],
+      total: { id: "JTSTSL", label: "Total separations" } },
     { el: "cJRegQ", type: "line", format: "pct", tick: 11, left: 34,
       window: 120, series: [{ id: "JTS00NEQUR", label: "Northeast", color: "s1" },
                { id: "JTS00MWQUR", label: "Midwest", color: "s2" },

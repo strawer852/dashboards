@@ -182,7 +182,23 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
    7.27m); weekly claims arrive in *persons* (203000 = 203k). Continuing claims
    rendered as "1778.00m" before the formats distinguished them.
 
-8. **Panels need a trailing window.** Without one, payrolls plot from 1939 and
+8. **Panels need a trailing window, and one outlier can defeat the window you
+    chose.** Two versions of the same trap. Without a window at all, payrolls
+    plot from 1939 and the war years put the axis at +/-5,000k, flattening
+    everything recent to a line. The window is applied *after* transforms so a
+    3-month average at the left edge still uses real prior data.
+
+    The second version is subtler and only a picture catches it. The JOLTS
+    separations mix was drawn stacked over 120 months, and April 2020 -- when
+    layoffs took nearly every separation and the bar reached 15.9m against a
+    normal 5.5m -- squashed nine years of composition into the bottom third.
+    Every check passed: the panel drew 371 marks, coverage was 100%, validation
+    36/36. The chart was simply useless for the one question it existed to
+    answer. Sixty months excludes the spike and the note carries the figure
+    instead. **Check the range of what you are plotting against the range you
+    care about**, and look at it.
+
+8b. **Original note retained:** Without one, payrolls plot from 1939 and
    the war years put the axis at ±5,000k, flattening everything recent to a
    line. The window is applied *after* transforms so a 3-month average at the
    left edge still uses real prior data.
