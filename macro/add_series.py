@@ -27,15 +27,16 @@ UPSERT = """
 INSERT INTO macro_series_meta
   (series_id, source, title, frequency, country, category, importance,
    seasonal_adjustment, validation_mode, originator, dataset, release_id,
-   source_url, unit, vintage_mode)
+   source_url, unit, vintage_mode, publish)
 VALUES
   (%(sid)s, %(source)s, %(title)s, %(freq)s, 'US', %(cat)s, %(imp)s,
    %(sa)s, 'zscore', %(orig)s, %(dataset)s, %(rel)s,
-   %(url)s, %(unit)s, %(vmode)s)
+   %(url)s, %(unit)s, %(vmode)s, %(publish)s)
 ON CONFLICT (series_id) DO UPDATE SET
   title = EXCLUDED.title, frequency = EXCLUDED.frequency,
   seasonal_adjustment = EXCLUDED.seasonal_adjustment,
-  release_id = EXCLUDED.release_id, importance = EXCLUDED.importance
+  release_id = EXCLUDED.release_id, importance = EXCLUDED.importance,
+  publish = EXCLUDED.publish
 """
 
 FREQ = {"Monthly": "M", "Quarterly": "Q", "Annual": "A",
@@ -64,6 +65,11 @@ def main() -> int:
     ap.add_argument("--source", choices=("fred", "bls"), default="fred",
                     help="FRED wherever both carry the series: it is the "
                          "only free source of vintages.")
+    ap.add_argument("--no-publish", action="store_true",
+                    help="Ingest for analysis, not for display: the series is "
+                         "stored and refreshed like any other but is never "
+                         "swept into a dashboard bundle. A spec can still ask "
+                         "for it by name in include_series.")
     args = ap.parse_args()
 
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
@@ -107,12 +113,15 @@ def main() -> int:
 
             cur.execute(UPSERT, {
                 "sid": sid, "title": title, "freq": freq,
+                "publish": not args.no_publish,
                 "cat": args.category, "imp": args.importance, "sa": sa,
                 "orig": "U.S. Bureau of Labor Statistics", "dataset": dataset,
                 "rel": args.release, "url": url, "unit": unit,
                 "source": args.source, "vmode": vmode,
             })
-            print(f"  {sid:<16} {freq} {sa:<4} {args.source:<4} {str(title)[:52]}")
+            flag = "     " if not args.no_publish else " (--)"
+            print(f"  {sid:<16} {freq} {sa:<4} {args.source:<4}{flag} "
+                  f"{str(title)[:46]}")
         conn.commit()
 
     print(f"\n{len(args.series)} series upserted into {args.release}")

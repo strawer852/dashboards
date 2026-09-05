@@ -44,6 +44,10 @@ CREATE TABLE IF NOT EXISTS macro_series_meta (
     country              TEXT,
     category             TEXT,                          -- employment, prices, ...
     importance           INT         CHECK (importance BETWEEN 1 AND 10),
+    -- FALSE means: hold and refresh this series, but never sweep it into a
+    -- dashboard bundle. Ingested for analysis rather than display. A spec can
+    -- still ask for it by name in include_series.
+    publish              BOOLEAN     NOT NULL DEFAULT TRUE,
     seasonal_adjustment  TEXT,                          -- SA, NSA, N/A
     companion_series_id  TEXT,                          -- the SA<->NSA twin
     validation_mode      TEXT        NOT NULL DEFAULT 'zscore',

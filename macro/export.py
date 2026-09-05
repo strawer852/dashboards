@@ -10,7 +10,9 @@ CHECKED, not assumed: a weekly series with a missing week would otherwise be
 silently re-dated by the reconstruction on the page.
 
 Coverage is asserted at the end. A catalogued series that no dashboard consumes
-is a gap nothing else would surface.
+is a gap nothing else would surface -- but only among series marked `publish`.
+A series ingested for analysis rather than display carries publish=false, is
+never swept into a bundle, and is not an orphan for not being in one.
 
 Usage:  venv/bin/python export.py [--out DIR]
 """
@@ -128,7 +130,14 @@ def main() -> int:
     generated = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
-        cur.execute("SELECT series_id, release_id FROM macro_series_meta")
+        # The release sweep ships only series marked for publication. Series
+        # ingested for analysis rather than display -- the payroll industry
+        # detail, and everything the other releases are about to gain -- carry
+        # publish=false and stay in the database without weighing down a page.
+        # A spec that names one in `include_series` still gets it: an explicit
+        # request beats the default.
+        cur.execute("SELECT series_id, release_id FROM macro_series_meta "
+                    "WHERE publish")
         by_release = defaultdict(list)
         for sid, rel in cur.fetchall():
             by_release[rel].append(sid)
@@ -289,7 +298,11 @@ def main() -> int:
             print(f"{spec['id']:<34} {len(series_out):>3} series  "
                   f"{withrev:>2} with revisions  {kb:>7.1f} KB  -> {dest.name}")
 
-        cur.execute("SELECT series_id FROM macro_series_meta")
+        # Only publishable series can be orphans. An unpublished one is
+        # intentionally consumed by nothing, and counting it here would fail
+        # the export -- which refresh.py escalates into a failed refresh and an
+        # alert, so the check has to know the difference.
+        cur.execute("SELECT series_id FROM macro_series_meta WHERE publish")
         orphans = sorted({r[0] for r in cur.fetchall()} - consumed)
 
     if orphans:
