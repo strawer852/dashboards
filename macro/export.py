@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import os
 import sys
 from collections import defaultdict
@@ -81,6 +82,8 @@ SELECT f.observation_dt,
            AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1)
 FROM firsts f ORDER BY 1
 """
+SITE = Path(__file__).resolve().parent.parent / "site"
+
 STEP_INTERVAL = {"M": "1 month", "Q": "3 months", "A": "1 year",
                  "W": "7 days", "D": "1 day"}
 
@@ -102,6 +105,68 @@ def regular_step(dates: list[date], freq: str):
                 return None
         return freq
     return None
+
+
+PANEL_RE = re.compile(r"\{\s*el:\s*\"")
+
+
+def page_requirements(html: str) -> dict:
+    """Longest history each series is actually drawn over, read from the page.
+
+    Panels are the objects in the page's `panels` array. Within one, `window`
+    or `months` is how much is shown and `periods` is how far a transform looks
+    back beyond that -- a 52-week heatmap of a year-on-year change needs 104
+    observations, not 52. Series are matched on `id: "..."` only, never on any
+    quoted string, so a colour name or a label word cannot be mistaken for one.
+    """
+    out: dict = {}
+    starts = [m.start() for m in PANEL_RE.finditer(html)]
+    for i, a in enumerate(starts):
+        chunk = html[a: starts[i + 1] if i + 1 < len(starts) else len(html)]
+        nums = lambda k: [int(x) for x in re.findall(k + r":\s*(\d+)", chunk)]
+        shown = max(nums("window") + nums("months") or [0])
+        look = max(nums("periods") or [0])
+        need = shown + look
+        for sid in re.findall(r'id:\s*"([A-Za-z0-9_.]+)"', chunk):
+            out[sid] = max(out.get(sid, 0), need)
+    return out
+
+
+def truncation_for(spec: dict, page_html: str) -> dict:
+    """series_id -> observations to keep, having checked the page allows it."""
+    keep_by_sid: dict = {}
+    need = page_requirements(page_html)
+
+    # A requirement can arrive through a derived measure. The state claims are
+    # named by a 52-week heatmap, and also feed a breadth line drawn over 520 --
+    # so the inputs need 520 plus the breadth measure's own 52-period lookback,
+    # not the 104 the heatmap alone implies. coverage.py already applies this
+    # rule to consumption; it belongs here too.
+    for d in spec.get("derived", []) or []:
+        drawn = need.get(d["id"])
+        if not drawn:
+            continue
+        look = int(d.get("periods", d.get("window", 0)) or 0)
+        of = d["of"]
+        for src in ([of] if isinstance(of, str) else of):
+            need[src] = max(need.get(src, 0), drawn + look)
+
+    for group in spec.get("truncate_history", []) or []:
+        k = int(group["keep"])
+        for sid in group["series"]:
+            if sid not in need:
+                raise SystemExit(
+                    f"{spec['id']}: truncate_history names {sid}, which no panel "
+                    "on the page draws. A series nothing draws should not be "
+                    "published, let alone truncated.")
+            if k < need[sid]:
+                raise SystemExit(
+                    f"{spec['id']}: truncate_history keeps {k} observations of "
+                    f"{sid}, but the page draws it over {need[sid]} "
+                    "(window plus transform lookback). That would render an "
+                    "empty chart.")
+            keep_by_sid[sid] = k
+    return keep_by_sid
 
 
 def main() -> int:
@@ -163,6 +228,11 @@ def main() -> int:
             consumed.update(drop)
             consumed.update(wanted)
 
+            # Read from the page, not taken on trust from the spec.
+            page = SITE / spec["path"] / "index.html"
+            truncate = truncation_for(
+                spec, page.read_text(encoding="utf-8") if page.exists() else "")
+
             series_out: dict = {}
             for sid in wanted:
                 cur.execute(
@@ -174,6 +244,12 @@ def main() -> int:
                     continue
                 dates = [r[0] for r in rows]
                 values = [None if r[1] is None else float(r[1]) for r in rows]
+                # Before anything else reads them, so first_print, the first
+                # reported difference and regular_step all follow the same axis
+                # and start is recomputed rather than arithmetic'd.
+                k = truncate.get(sid)
+                if k and len(dates) > k:
+                    dates, values = dates[-k:], values[-k:]
 
                 (_, title, freq, sa, companion, importance, rel, url, unit,
                  vintage_mode) = meta[sid]

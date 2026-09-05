@@ -658,6 +658,35 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     correlation at every lag; including it collapses every JOLTS figure to
     about 0.1 and would have hidden all of the above.
 
+43. **A bundle is a rendering cache; the database is the archive.** They had
+    been the same thing, so 53 state claims series shipped 112,529
+    observations to draw a 52-week heatmap. `truncate_history` in a spec ships
+    a recent window instead. It discards nothing: every observation and every
+    vintage stays in Postgres and the next export can widen the window
+    straight from it. The claims bundle went 1,769 KB to 791 KB with no
+    visible change to the page.
+
+    **The guard is the whole of it, and mine had the exact hole it existed to
+    prevent.** Cutting a series below what its panel needs empties the chart
+    silently, so the requirement is read from the PAGE rather than trusted from
+    the spec: for each truncated series, the panels naming it, their window (or
+    months) plus any transform lookback. That gave 104 for the state series --
+    the heatmap draws 52 weeks of a year-on-year change -- and 156 looked
+    generous.
+
+    It was wrong, because a requirement can arrive **through a derived
+    measure**. Those same 53 series feed a breadth line drawn over 520 weeks
+    that compares each state with itself 52 weeks earlier, needing 572. The
+    line lost eight of its ten years, still drew, and tripped nothing;
+    `coverage.py` already knew the rule -- a drawn derived series consumes
+    whatever it was built from -- and the guard did not. What gave it away was
+    the axis losing half its tick labels between two screenshots.
+
+    So: follow `derived_from` before believing a requirement, and note that
+    the check "no series lost observations against the shipped bundle" is
+    weaker for a truncated series, since it can only see loss below the kept
+    window.
+
 ## How it runs
 
 ```

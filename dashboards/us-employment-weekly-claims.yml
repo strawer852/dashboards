@@ -100,3 +100,71 @@ derived:
       - WIICLAIMS
       - WVICLAIMS
       - WYICLAIMS
+
+# The database keeps every observation and every vintage of these back to
+# 1986; a bundle is a rendering cache, not the archive. Shipping the full
+# history cost 112,529 observations where the page draws 30,316.
+#
+# 624, not 156. The heatmap in Table 9 draws 52 weeks of a year-on-year
+# change and so needs 104 -- but these same series also FEED the breadth
+# line in Table 8, which is drawn over 520 weeks and compares each state
+# with itself 52 weeks earlier, requiring 572. 156 was set from the
+# heatmap alone and quietly cost that line eight of its ten years. The
+# guard in export.py now follows derived measures back to their inputs and
+# refuses anything under 572; 624 is twelve years, leaving head room.
+truncate_history:
+  - keep: 624
+    series:
+      - AKICLAIMS
+      - ALICLAIMS
+      - ARICLAIMS
+      - AZICLAIMS
+      - CAICLAIMS
+      - COICLAIMS
+      - CTICLAIMS
+      - DCICLAIMS
+      - DEICLAIMS
+      - FLICLAIMS
+      - GAICLAIMS
+      - HIICLAIMS
+      - IAICLAIMS
+      - IDICLAIMS
+      - ILICLAIMS
+      - INICLAIMS
+      - KSICLAIMS
+      - KYICLAIMS
+      - LAICLAIMS
+      - MAICLAIMS
+      - MDICLAIMS
+      - MEICLAIMS
+      - MIICLAIMS
+      - MNICLAIMS
+      - MOICLAIMS
+      - MSICLAIMS
+      - MTICLAIMS
+      - NCICLAIMS
+      - NDICLAIMS
+      - NEICLAIMS
+      - NHICLAIMS
+      - NJICLAIMS
+      - NMICLAIMS
+      - NVICLAIMS
+      - NYICLAIMS
+      - OHICLAIMS
+      - OKICLAIMS
+      - ORICLAIMS
+      - PAICLAIMS
+      - PRIICLAIMS
+      - RIICLAIMS
+      - SCICLAIMS
+      - SDICLAIMS
+      - TNICLAIMS
+      - TXICLAIMS
+      - UTICLAIMS
+      - VAICLAIMS
+      - VIRICLAIMS
+      - VTICLAIMS
+      - WAICLAIMS
+      - WIICLAIMS
+      - WVICLAIMS
+      - WYICLAIMS
