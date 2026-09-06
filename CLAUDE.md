@@ -896,6 +896,38 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     no DDL rights -- `POSTGRES_USER` is `strawer`, the table's owner, and is the
     role for a schema change.
 
+55. **The landing page is generated three ways over, and carries no rail.**
+    Rebuilt 6 September around a coverage map. Three blocks on it are written by
+    `tools/build_nav.py` from the specs and must never be hand-edited: the
+    dashboard index (`<!-- idx:start -->`), the map (`<!-- map:start -->`), and
+    the scope line (`<div id="scope">`). A fourth, the masthead figures, comes
+    from `status.json` at runtime. The hand-written version of the index is why
+    the front page offered Consumer Prices as "next to be built" three days
+    after CPI shipped, with PPI, PCE and Labour Costs missing entirely.
+
+    **A region is drawn filled and clickable because a SPEC says it exists.**
+    Build a country's first dashboard and it colours itself in, links itself to
+    its own section, and updates its own count. Territories with geometry but no
+    dashboards draw as dashed outlines and are deliberately **not** links --
+    nothing on the page promises a page that does not exist.
+
+    Geometry is `tools/coverage-map.json`: Natural Earth 1:110m via
+    `world-atlas`, public domain, projected with d3-geo and baked to static
+    paths, so the page loads no mapping library and makes no network call.
+    Regenerate with `tools/gen_coverage_map.mjs`. **That file also carries the
+    label positions, and they are fitted to the projection** -- regenerate the
+    paths without re-fitting the labels and they land on top of Texas, which is
+    exactly what happened. Antarctica is dropped deliberately (a third of the
+    ink, none of the economies) and the projection is fitted to what is drawn,
+    not to the full dataset. Malta is absent at 1:110m; it starts mattering only
+    when the Euro Area is built, and the 1:50m file has it at roughly three
+    times the bytes.
+
+    **The landing page is the only page with no rail**, so `build_nav.py` skips
+    it by name rather than reporting it as missing markers -- `page_path()`
+    returning None is what identifies it. Every other page without markers is
+    still a fault.
+
 ## How it runs
 
 ```

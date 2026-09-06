@@ -94,6 +94,17 @@ Traps 4 and 22 carry the detail.
 
 ---
 
+## Built on the 6th: the landing page
+
+Rebuilt around a **coverage map** — a real Natural Earth basemap where a
+covered country is filled, carries its dashboard count, and links to its own
+section. The rail is gone from this page only; the map is its navigation.
+
+Everything on it that could go stale is generated from the specs by
+`tools/build_nav.py`: the index, the map, and the scope line. Adding a country
+colours it in. See trap 55 before editing that page by hand — three of its four
+blocks are written, not typed.
+
 ## Built on the 6th: Labour Costs
 
 The seventh dashboard, 15 tables, and the first to need **no ingestion at all**.

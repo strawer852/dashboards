@@ -90,12 +90,16 @@ def index_html(items: list[dict]) -> str:
         group.sort(key=lambda i: (i["topic"], i["order"], i["title"]))
 
     rows = []
-    multi = len(tree) > 1
     for region, group in sorted(
             tree.items(),
             key=lambda kv: (all(i["planned"] for i in kv[1]), kv[0])):
-        if multi:
-            rows.append('      <h2 class="reg">%s</h2>' % html.escape(region))
+        # Always emitted, and always with the id: the coverage map links to
+        # this anchor, so suppressing it on a one-region site would leave the
+        # map pointing at nothing.
+        rows.append('      <h2 class="reg" id="%s"><span>%s</span>'
+                    '<span class="n">%d dashboard%s</span></h2>'
+                    % (slug(region), html.escape(region), len(group),
+                       "" if len(group) == 1 else "s"))
         for it in group:
             nm = html.escape(it.get("index_title") or it["title"])
             ag = html.escape(it["agency"])
@@ -134,6 +138,117 @@ def write_index(items: list[dict]) -> bool:
     if s[a:b] == body:
         return False
     page.write_text(s[:a] + body + s[b:], encoding="utf-8")
+    return True
+
+
+
+MAP_START, MAP_END = "<!-- map:start -->", "<!-- map:end -->"
+MAP_DATA = ROOT / "tools" / "coverage-map.json"
+
+
+def coverage_svg(items: list[dict]) -> str:
+    """The landing page's coverage map.
+
+    Filled and linked where a region has live dashboards; dashed outline for a
+    territory we hold geometry for but have not built. The distinction comes
+    from the catalogue, so building a country's first dashboard colours it in
+    and nothing else has to be edited.
+    """
+    import json
+    geo = json.loads(MAP_DATA.read_text(encoding="utf-8"))
+
+    live: dict = {}
+    for it in items:
+        if it["planned"]:
+            continue
+        r = live.setdefault(it["region"], {"n": 0, "agencies": []})
+        r["n"] += 1
+        ag = (it.get("agency") or "").split("\u00b7")[0].strip()
+        if ag and ag not in r["agencies"]:
+            r["agencies"].append(ag)
+
+    parts = ['<svg class="map" viewBox="0 0 %d %d" role="img" '
+             'aria-label="Countries covered">' % (geo["w"], geo["h"]),
+             '<path class="land" d="%s"/>' % geo["base"]]
+
+    # Every territory needs the land fill underneath, covered or not, or an
+    # unbuilt country reads as a hole in the map rather than as a place.
+    for name, t in geo["territories"].items():
+        parts.append('<path class="land" d="%s"/>' % t["d"])
+
+    for name, t in geo["territories"].items():
+        lx, ly = t["label"]
+        sx, sy = t["sub"]
+        anchor = t.get("anchor", "middle")
+        if name in live:
+            r = live[name]
+            agencies = " &middot; ".join(r["agencies"]) or "&mdash;"
+            dx, dy = t.get("disc", t["label"])
+            parts.append(
+                '<a href="#%s" aria-label="%s, %d dashboards">'
+                '<title>%s &mdash; %d dashboards</title>'
+                '<path class="terr" d="%s"/>'
+                '<circle class="disc" cx="%s" cy="%s" r="13"/>'
+                '<text class="discn" x="%s" y="%s">%d</text>'
+                '<path class="lead" d="%s"/>'
+                '<text class="lbl" x="%s" y="%s" text-anchor="%s">%s</text>'
+                '<text class="sub" x="%s" y="%s" text-anchor="%s">%s</text>'
+                '</a>'
+                % (slug(name), html.escape(name), r["n"], html.escape(name),
+                   r["n"], t["d"], dx, dy, dx, dy + 4, r["n"], t["lead"],
+                   lx, ly, anchor, html.escape(name), sx, sy, anchor, agencies))
+        else:
+            parts.append(
+                '<path class="cand" d="%s"/>'
+                '<path class="lead" d="%s"/>'
+                '<text class="lbl-c" x="%s" y="%s" text-anchor="%s">%s</text>'
+                '<text class="sub-c" x="%s" y="%s" text-anchor="%s">%s &middot; not built</text>'
+                % (t["d"], t["lead"], lx, ly, anchor, html.escape(name),
+                   sx, sy, anchor, html.escape(t.get("agency", ""))))
+
+    parts.append("</svg>")
+    return "\n      ".join(parts)
+
+
+def write_map(items: list[dict]) -> bool:
+    """Rewrite the landing page's map block. True if it changed."""
+    page = SITE / "index.html"
+    s = page.read_text(encoding="utf-8")
+    if MAP_START not in s or MAP_END not in s:
+        print("  !! landing page has no map markers; map not written",
+              file=sys.stderr)
+        return False
+    a = s.index(MAP_START) + len(MAP_START)
+    b = s.index(MAP_END)
+    body = "\n      " + coverage_svg(items) + "\n      "
+    if s[a:b] == body:
+        return False
+    page.write_text(s[:a] + body + s[b:], encoding="utf-8")
+    return True
+
+
+
+def write_scope(items: list[dict], tree: dict) -> bool:
+    """The one-line summary under the masthead stats.
+
+    Counted, not typed: the page said "53 series" for weeks once, and this is
+    the same class of sentence.
+    """
+    live = [i for i in items if not i["planned"]]
+    n_reg = len({i["region"] for i in live})
+    txt = ("%d dashboard%s &middot; %d region%s"
+           % (len(live), "" if len(live) == 1 else "s",
+              n_reg, "" if n_reg == 1 else "s"))
+    page = SITE / "index.html"
+    s = page.read_text(encoding="utf-8")
+    a, b = '<div id="scope">', '</div>'
+    if a not in s:
+        return False
+    i = s.index(a) + len(a)
+    j = s.index(b, i)
+    if s[i:j] == txt:
+        return False
+    page.write_text(s[:i] + txt + s[j:], encoding="utf-8")
     return True
 
 
@@ -225,10 +340,20 @@ def main() -> int:
     print(f"{n_regions} region(s), {n_live} live dashboard(s)")
     if not args.check and write_index(items):
         print('  updated  site/index.html (dashboard index)')
+    if not args.check and write_map(items):
+        print('  updated  site/index.html (coverage map)')
+    if not args.check and write_scope(items, tree):
+        print('  updated  site/index.html (scope line)')
 
     changed = missing = 0
     for f in sorted(SITE.rglob("index.html")):
         text = f.read_text(encoding="utf-8")
+        if page_path(f) is None:
+            # The landing page has no rail by design -- the map is its
+            # navigation -- so it is not missing markers, it has no need of
+            # them. Anything else without markers is still a fault.
+            print(f"  skipped  {f.relative_to(ROOT)} (no rail on the landing page)")
+            continue
         if START not in text or END not in text:
             print(f"  !! no nav markers in {f.relative_to(ROOT)}", file=sys.stderr)
             missing += 1
