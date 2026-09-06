@@ -124,7 +124,11 @@ def main() -> int:
                           file=sys.stderr)
                     return 1
                 title = info["title"]
-                sa = "SA" if info.get("seasonal_adjustment_short") == "SA" else "NSA"
+                # Record what FRED says rather than collapsing it. Its
+                # vocabulary includes SAAR -- seasonally adjusted at an annual
+                # rate -- and testing for equality with "SA" filed every BEA
+                # level series as UNADJUSTED, which is the opposite of true.
+                sa = (info.get("seasonal_adjustment_short") or "NSA").strip() or "NSA"
                 unit = info.get("units_short")
                 url = f"https://fred.stlouisfed.org/series/{sid}"
                 vmode = "from_row"

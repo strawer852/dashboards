@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCE — BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
+    <nav aria-label="Dashboards">
+  <!-- nav:start -->
+  <button class="region" type="button" aria-expanded="true" aria-controls="r-united-states"><span class="mk"></span>United States</button>
+  <div class="grp" id="r-united-states">
+    <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-employment"><span class="mk"></span>Employment</button>
+    <div class="grp" id="g-united-states-employment" hidden>
+      <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+      <a href="/us/employment/jolts/">JOLTS</a>
+      <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+    </div>
+    <button class="topic" type="button" aria-expanded="true" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
+    <div class="grp" id="g-united-states-inflation">
+      <a href="/us/inflation/cpi/">CPI</a>
+      <a href="/us/inflation/ppi/">PPI</a>
+      <a href="/us/inflation/pce/" aria-current="page">PCE</a>
+    </div>
+  </div>
+  <!-- nav:end -->
+
+      <div class="inpage">
+        <div class="h">In this report</div>
+        <a href="#t1"><span>1</span>Headline and core</a>
+        <a href="#t2"><span>2</span>Supercore</a>
+        <a href="#t3"><span>3</span>PCE against CPI</a>
+        <a href="#t4"><span>4</span>Goods and services</a>
+        <a href="#t5"><span>5</span>Food and energy</a>
+        <a href="#t6"><span>6</span>Market-based prices</a>
+        <a href="#t7"><span>7</span>Real spending</a>
+        <a href="#t8"><span>8</span>Saving rate</a>
+        <a href="#t9"><span>9</span>Real income, with and without transfers</a>
+        <a href="#t10"><span>10</span>Where the level went</a>
+        <a href="#t11"><span>11</span>Income against spending</a>
+      </div>
+        <a href="#t1"><span>1</span>Final demand</a>
+        <a href="#t2"><span>2</span>Month and year</a>
+        <a href="#t3"><span>3</span>Goods, services, building</a>
+        <a href="#t4"><span>4</span>What makes it up, year</a>
+        <a href="#t5"><span>5</span>What makes it up, month</a>
+        <a href="#t6"><span>6</span>What each is worth</a>
+        <a href="#t7"><span>7</span>The chain, year</a>
+        <a href="#t8"><span>8</span>The chain, month</a>
+        <a href="#t9"><span>9</span>How much arrives</a>
+        <a href="#t10"><span>10</span>The chain over 4 years</a>
+        <a href="#t11"><span>11</span>The volatile three</a>
+        <a href="#t12"><span>12</span>Trade services</a>
+        <a href="#t13"><span>13</span>By commodity type</a>
+        <a href="#t14"><span>14</span>The long run</a>
+        <a href="#t15"><span>15</span>Fuel and materials</a>
+        <a href="#t16"><span>16</span>Freight and travel</a>
+        <a href="#t17"><span>17</span>What PCE takes</a>
+        <a href="#t18"><span>18</span>Portfolio management</a>
+        <a href="#t19"><span>19</span>Levels</a>
+        <a href="#t20"><span>20</span>Revisions</a>
+        <a href="#t21"><span>21</span>Components</a>
+        <a href="#t22"><span>22</span>Three-month</a>
+        <a href="#t23"><span>23</span>Breadth</a>
+      </div>
+
+    </nav>
+  </aside>
+
+  <main>
+    <div class="crumb">United States <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> PCE</div>
+    <div class="mast">
+      <h1>PCE</h1>
+      <div class="stamp" id="stamp"></div>
+    </div>
+
+    <div id="status" hidden></div>
+
+    <p class="lede">Consumer prices as the Federal Reserve measures them, and the income and spending they are computed from. The 2% target is written in this index and not in the CPI, and the two disagree by enough to matter.</p>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="row one">
+      <div class="t" id="t1">
+        <div class="th"><span class="n">Table 1</span><span class="ti">Headline and core</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">The target is written on the headline. The case for watching core is that food and energy are volatile and largely outside policy&rsquo;s reach.</p>
+        <p class="key"><i class="kink">Headline</i><i class="ks1">Core</i></p>
+        <div class="chart" id="cHead" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t2">
+        <div class="th"><span class="n">Table 2</span><span class="ti">Supercore</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Services excluding energy and housing: what is left after the component that moves with commodity prices and the one that lags rents by two years. It is the part of inflation most closely tied to wages.</p>
+        <p class="key"><i class="kink">Services ex energy and housing</i><i class="ks1">Core</i><i class="ks2">All items ex food, energy and housing</i></p>
+        <div class="chart" id="cSuper" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t3">
+        <div class="th"><span class="n">Table 3</span><span class="ti">PCE against CPI</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">The same country, two numbers. PCE reweights every quarter from what people actually bought where the CPI reweights every two years from a survey, and PCE also counts what employers and government spend on a household&rsquo;s behalf &mdash; chiefly medical care. <b>PCE runs below CPI nearly always</b>, which is why a 2% target is not a 2% CPI.</p>
+        <p class="key"><i class="kink">PCE</i><i class="ks1">CPI</i><i class="ks2">PCE core</i><i class="ks3">CPI core</i></p>
+        <div class="chart" id="cVsCpi" style="height:270px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t4">
+        <div class="th"><span class="n">Table 4</span><span class="ti">Goods and services</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Goods deflated for most of the decade before 2020 and services never did. Reading them apart is the difference between a supply shock and a wage story.</p>
+        <p class="key"><i class="ks1">Goods</i><i class="ks2">Services</i><i class="ks3">Durable goods</i><i class="ks4">Nondurable goods</i></p>
+        <div class="chart" id="cGS" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">Food and energy</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">The two that core removes. Energy is why headline and core part company, and it does so in both directions.</p>
+        <p class="key"><i class="ks1">Food</i><i class="ks2">Energy</i></p>
+        <div class="chart" id="cFE" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">Market-based prices</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Roughly a quarter of the PCE basket has no market transaction behind it &mdash; imputed rent on owned homes, financial services measured as a spread, insurance. The market-based index drops those. Where it parts from the headline, the difference is measurement rather than prices.</p>
+        <p class="key"><i class="kink">Market-based</i><i class="ks1">Headline</i><i class="ks2">Market-based ex food and energy</i></p>
+        <div class="chart" id="cMkt" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">Real spending</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Volumes, with prices divided out. Durable goods swing hardest because they are the purchases most easily postponed.</p>
+        <p class="key"><i class="kink">Total</i><i class="ks1">Durable goods</i><i class="ks2">Nondurable goods</i><i class="ks3">Services</i></p>
+        <div class="chart" id="cReal" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">Saving rate</span><span class="u">Per cent of disposable income, twenty years</span></div>
+        <p class="note">What households take in less what they spend. It fell to a record low in 2022 as pandemic balances were run down, which is the other half of why spending held up while real income did not.</p>
+        <div class="chart" id="cSave" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Real income, with and without transfers</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Excluding transfer receipts strips out the payments that made 2020 and 2021 look like a boom in household income. What is left is closer to what the labour market pays.</p>
+        <p class="key"><i class="kink">Real disposable income</i><i class="ks1">Real income ex transfers</i></p>
+        <div class="chart" id="cInc" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">Where the level went</span><span class="u">Five years ago = 100</span></div>
+        <p class="note">Rates say how fast, this says how far. Prices do not return to an old level when inflation falls; they stop rising as quickly.</p>
+        <p class="key"><i class="kink">PCE</i><i class="ks1">Core</i><i class="ks2">CPI</i></p>
+        <div class="chart" id="cLevel" style="height:250px"></div>
+      </div>
+    </div>
+
+
+    <div class="row one">
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">Income against spending</span><span class="u">Twelve-month change, %, nominal</span></div>
+        <p class="note">All three in current dollars, so the gap between them is the saving decision rather than a price effect. When spending grows faster than disposable income, the difference is coming out of savings &mdash; which is Table 8 seen from the other side.</p>
+        <p class="key"><i class="kink">Personal income</i><i class="ks1">Disposable income</i><i class="ks2">Spending</i></p>
+        <div class="chart" id="cIncSpend" style="height:250px"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/assets/echarts-5.6.0.min.js"></script>
+<script src="/assets/brb-dash.js?v=a637be88eb"></script>
+<script>
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+// Ink is the destination, the four slots are the stages in order. Taken in the
+// validated order and never cycled; see CLAUDE.md under settled decisions.
+const C1 = { color: "ink", width: 2.0 };
+const C2 = { color: "s1",  width: 1.6 };
+const C3 = { color: "s2",  width: 1.6 };
+const C4 = { color: "s3",  width: 1.6 };
+const C5 = { color: "s4",  width: 1.6 };
+
+// The chain, once. Final demand first so it takes ink and leads the legend;
+// the stages follow in production order.
+const CHAIN = [
+  { id: "PPIFIS",  label: "Final demand", ...C1 },
+  { id: "WPSID51", label: "Stage 1", ...C2 },
+  { id: "WPSID52", label: "Stage 2", ...C3 },
+  { id: "WPSID53", label: "Stage 3", ...C4 },
+  { id: "WPSID54", label: "Stage 4", ...C5 },
+];
+const yoy = specs => specs.map(s => Object.assign({ transform: "yoy" }, s));
+const mom = specs => specs.map(s => Object.assign({ transform: "yoy", periods: 1 }, s));
+
+BRB.render({
+  bundle: "/data/v1/dashboards/us-inflation-pce.json",
+  summary: [
+    { label: "PCE", series: "PCEPI", transform: "yoy", format: "pct",
+      source: "BEA", note1: "year over year" },
+    { label: "Core PCE", series: "PCEPILFE", transform: "yoy", format: "pct",
+      source: "BEA", note1: "year over year" },
+    { label: "Supercore", series: "IA001260M", transform: "yoy", format: "pct",
+      source: "BEA", note1: "services ex energy, housing" },
+    { label: "Real spending", series: "DPCERA3M086SBEA", transform: "yoy",
+      format: "pct", source: "BEA", note1: "year over year" },
+    { label: "Saving rate", series: "PSAVERT", format: "pct", source: "BEA" },
+    { label: "Real income", series: "DSPIC96", transform: "yoy", format: "pct",
+      source: "BEA", note1: "disposable, year over year" },
+  ],
+  panels: [
+    { el: "cHead", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "PCEPI", label: "Headline", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
+               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" }] },
+    { el: "cSuper", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "IA001260M", label: "Services ex energy and housing", transform: "yoy", periods: 12,
+                 color: "ink", width: 1.9 },
+               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" },
+               { id: "IA001176M", label: "All items ex food, energy and housing",
+                 transform: "yoy", periods: 12, color: "s2" }] },
+    { el: "cVsCpi", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "PCEPI", label: "PCE", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
+               { id: "CPIAUCSL", label: "CPI", transform: "yoy", periods: 12, color: "s1" },
+               { id: "PCEPILFE", label: "PCE core", transform: "yoy", periods: 12, color: "s2", dash: true },
+               { id: "CPILFESL", label: "CPI core", transform: "yoy", periods: 12, color: "s3", dash: true }] },
+    { el: "cGS", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "DGDSRG3M086SBEA", label: "Goods", transform: "yoy", periods: 12, color: "s1" },
+               { id: "DSERRG3M086SBEA", label: "Services", transform: "yoy", periods: 12, color: "s2" },
+               { id: "DDURRG3M086SBEA", label: "Durable goods", transform: "yoy", periods: 12, color: "s3" },
+               { id: "DNDGRG3M086SBEA", label: "Nondurable goods", transform: "yoy", periods: 12, color: "s4" }] },
+    { el: "cFE", type: "line", format: "pct", tick: 11, left: 50, window: 120,
+      series: [{ id: "DFXARG3M086SBEA", label: "Food", transform: "yoy", periods: 12, color: "s1" },
+               { id: "DNRGRG3M086SBEA", label: "Energy", transform: "yoy", periods: 12, color: "s2" }] },
+    { el: "cMkt", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "DPCMRG3M086SBEA", label: "Market-based", transform: "yoy", periods: 12,
+                 color: "ink", width: 1.9 },
+               { id: "PCEPI", label: "Headline", transform: "yoy", periods: 12, color: "s1" },
+               { id: "DPCXRG3M086SBEA", label: "Market-based ex food/energy",
+                 transform: "yoy", periods: 12, color: "s2" }] },
+    { el: "cReal", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "DPCERA3M086SBEA", label: "Total", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
+               { id: "DDURRA3M086SBEA", label: "Durable goods", transform: "yoy", periods: 12, color: "s1" },
+               { id: "DNDGRA3M086SBEA", label: "Nondurable goods", transform: "yoy", periods: 12, color: "s2" },
+               { id: "DSERRA3M086SBEA", label: "Services", transform: "yoy", periods: 12, color: "s3" }] },
+    { el: "cIncSpend", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "PI", label: "Personal income", transform: "yoy", periods: 12,
+                 color: "ink", width: 1.9 },
+               { id: "DSPI", label: "Disposable income", transform: "yoy",
+                 periods: 12, color: "s1" },
+               { id: "PCE", label: "Spending", transform: "yoy", periods: 12,
+                 color: "s2" }] },
+    { el: "cSave", type: "line", format: "pct", tick: 23, left: 46, window: 240,
+      series: [{ id: "PSAVERT", label: "Saving rate", color: "ink", width: 1.8 }] },
+    { el: "cInc", type: "line", format: "pct", tick: 11, left: 46, window: 120,
+      series: [{ id: "DSPIC96", label: "Real disposable income", transform: "yoy", periods: 12,
+                 color: "ink", width: 1.9 },
+               { id: "W875RX1", label: "Real income ex transfers", transform: "yoy", periods: 12, color: "s1" }] },
+    // rebase, not index100: index100 baselines on the first value of the whole
+    // series -- 1946 here -- and this panel is captioned "five years ago = 100".
+    // CLAUDE.md trap 16.
+    { el: "cLevel", type: "line", format: "num", tick: 11, left: 42, window: 60,
+      series: [{ id: "PCEPI", label: "PCE", rebase: "index", color: "ink", width: 1.9 },
+               { id: "PCEPILFE", label: "Core", rebase: "index", color: "s1" },
+               { id: "CPIAUCSL", label: "CPI", rebase: "index", color: "s2" }] },
+  ],
+});
+</script>
+</body>
+</html>

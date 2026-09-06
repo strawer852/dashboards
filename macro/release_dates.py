@@ -17,7 +17,8 @@ only. The times below are stated in the releases themselves and are stable
 policy, not inference:
 
     08:30 ET  Employment Situation, CPI, ECI, Productivity and Costs,
-              ETA weekly claims   (each news release carries "8:30 a.m. (ET)")
+              ETA weekly claims, Personal Income and Outlays
+              (each news release carries "8:30 a.m. (ET)")
     10:00 ET  JOLTS               (matches the 10:05 ET refresh window)
 
 Run it from the daily sweep; the calendar changes rarely and a stale future
@@ -46,6 +47,7 @@ RELEASE_TIME = {
     "bls.eci":                  time(8, 30),
     "bls.productivity":         time(8, 30),
     "eta.claims":               time(8, 30),
+    "bea.personal_income":      time(8, 30),
     "bls.jolts":                time(10, 0),
 }
 

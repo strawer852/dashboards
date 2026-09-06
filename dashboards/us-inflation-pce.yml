@@ -1,0 +1,18 @@
+id: us.inflation.pce
+path: us/inflation/pce
+region: United States
+topic: Inflation
+nav_order: 3
+title: PCE
+# The stamp under the title comes from this release, and only this one.
+release: bea.personal_income
+include_releases:
+  - bea.personal_income
+
+# CPI alongside, because the wedge between the two is the whole of Table 3 and
+# is the first thing a reader arriving from the CPI page will want. Each
+# carries its own release date, so neither may be presented under the PCE
+# stamp.
+include_series:
+  - CPIAUCSL
+  - CPILFESL
