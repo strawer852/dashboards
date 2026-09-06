@@ -927,10 +927,13 @@ panel, dashed and captioned: it is on a different basis *and* swings −20% to
 Both inflation dashboards carry contributions. PPI news release **Table 1** has
 a relative-importance column, dated Dec. 2025, exactly as CPI Table 1 does — the
 weights reconcile (goods 29.028 + services 68.338 + construction 2.634 =
-100.000) which is how you know they are the published ones. What has no weights
-is **intermediate demand**: every stage and commodity-type index is published at
-100.000, each being its own aggregation base rather than a share of anything, so
-the chain cannot be stacked and is drawn as rates.
+100.000) which is how you know they are the published ones. What was said here about
+**intermediate demand** was too strong, and 6 September corrected it: Table 1
+publishes relative importances for ID5 (147 rows) and ID6 (55). What is true is
+that they are shares of their OWN group rather than of a common total -- each
+stage index is its own aggregation base at 100.000 -- so they cannot be pooled
+with final demand or with each other, and the chain is still drawn as rates
+rather than stacked.
 
 The 4 September Employment Situation was the first release to run through the
 rebuilt pipeline, and it held. The timer fired at **08:35 ET** — the first

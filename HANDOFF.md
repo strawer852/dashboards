@@ -1,9 +1,9 @@
-# Handoff — 5 September 2026, end of day
+# Handoff — 6 September 2026, end of day
 
-**Read `CLAUDE.md` first.** It is the authority: 39 traps, the settled
+**Read `CLAUDE.md` first.** It is the authority: 43 traps, the settled
 decisions, the running state, the guardrails. This file is only the part that
-would be stale by the time you read it. Nothing here overrides CLAUDE.md; where
-they disagree, CLAUDE.md is right and this file is old.
+would be stale by the time you read it. Where they disagree, CLAUDE.md is right
+and this file is old.
 
 Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 `~/dashboards`. Nothing of substance is on the laptop.
@@ -12,109 +12,107 @@ Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 
 ## Where it stands
 
-**2,641 series across 8 releases, ~2,851,000 vintage rows over ~919,000
-observations, 36/36 validations, and 100% coverage on all five dashboards.**
+**2,891 series across 8 releases, ~3,130,000 vintage rows over ~1,189,000
+observations, 36/36 validations, 100% coverage on all five dashboards, and no
+label overflowing its chart.**
 
-Every release is now complete at the level its news release publishes it, and
-what is held is deliberately separated from what is drawn:
-
-| Release | Published | Analysis-only | Total |
+| Release | Drawn | Held | Bundle |
 |---|---|---|---|
-| `bls.ppi` | 28 | 611 | 639 |
-| `bls.jolts` | 12 | 528 | 540 |
-| `bls.cpi` | 40 | 429 | 469 |
-| `bls.eci` | 2 | 402 | 404 |
-| `bls.employment_situation` | 92 | 205 | 297 |
-| `bls.productivity` | 2 | 280 | 282 |
-| `eta.claims` | 6 | 3 | 9 |
-| `frb.wage_tracker` | 1 | 0 | 1 |
+| `bls.employment_situation` | 138 | 297 | 964 KB |
+| `bls.cpi` | 178 | 469 | 1,060 KB |
+| `eta.claims` | 59 | 115 | 791 KB |
+| `bls.ppi` | 61 | 639 | 222 KB |
+| `bls.jolts` | 44 | 684 | 171 KB |
+| `bls.eci` | 2 | 404 | — no dashboard |
+| `bls.productivity` | 2 | 282 | — no dashboard |
+| `frb.wage_tracker` | 1 | 1 | — |
 
-**No dashboard changed.** All five bundles are the size they were before any of
-this, because 2,344 series carry `publish=false`.
+Every release is complete at the level its news release publishes. **815 series
+carry `vintage_mode='fetch_date'`** and have no revision history — 312
+BLS-sourced plus 503 FRED series ALFRED holds no vintages for. None of them may
+ever be offered a revision overlay; check the column rather than assuming.
 
-**Ingestion is automatic for all of it.** Seven of eight releases have forward
-calendar rows and `macro-refresh-due` resolves per release; the Atlanta Fed
-tracker correctly has none and rides the 01:40 sweep. Trap 35 was fixed
-earlier today, so every source — BLS included — now reaches ingest.
-
-Next firings worth watching: **PPI and claims on 10 September** (two releases in
-one day, the case the old grouped gate would have mishandled) and **CPI on
-11 September**, which will be the first release to exercise 304 BLS-sourced
-series through the new year-window logic.
+**There is now a browser on the box.** `tools/shoot.py` screenshots a page from
+inside the docker network, where Authelia is not in the way, and reports what
+each chart actually drew. `tools/clipcheck.py` asks whether any label overflows
+its chart. Both found real defects on their first run. Use them; four green
+checks have passed over an empty chart before.
 
 ---
 
-## The one thing to do next
+## The one thing to watch
 
-**Design what to draw.** Nothing is blocking. Promoting a series is a spec-file
-exercise — name it in `include_series`, or set `publish=true` — and the rule
-for deserving a panel is unchanged: large by weight, persistently volatile, or
-a direct input to something else that matters.
+**Thursday 10 and Friday 11 September.** PPI and claims land on the same day,
+then CPI. This is the first release since a great deal changed, and it
+exercises all of it at once: BLS series reaching ingest on a release day at
+all (trap 35), the year-window change across 312 BLS series (trap 39),
+`truncate_history` in a real export, and six new derived measures.
 
-Two cautions before that starts:
+What good looks like in `logs/refresh.log`: `refresh start (bls.ppi,eta.claims)`
+after 08:35 ET, `BLS: ... series from <a recent year>` rather than 1939,
+`validate rc=0`, `export`, an ntfy push — and the following windows saying
+nothing outstanding rather than refetching.
 
-- **The CPI and PPI item structures are far too big to stack.** Trap 21 stops
-  the categorical palette at six, and a stack is only honest for a partition.
-- **665 series have no vintage history** and carry `vintage_mode='fetch_date'`.
-  None of them may be offered a revision overlay. Check the column rather than
-  assuming, especially in CPI detail, where 267 of 338 categories are BLS-only.
+Then **look at the pages**, which is no longer difficult.
+
+---
+
+## The open decision
+
+**PCE as dashboard #6.** FRED release 54, *Personal Income and Outlays*: 144
+monthly series with a forward calendar, so it needs a calendar row and nothing
+else. The site has CPI and PPI but not the measure the Fed targets, and the PPI
+page already explains which producer prices feed it while pointing at nothing.
+
+Two things to know before starting. FRED's 144 series give a headline and
+composition dashboard, **not a distributional one** — PCE's ~200 NIPA item
+categories live in BEA's tables, so the CPI median does not transfer without
+the BEA key. And **ECI and Productivity are already ingested and undrawn**;
+they are quarterly and thin alone, but together they are unit labour costs,
+which is the wage measure that bears on inflation. That is a more coherent
+dashboard than either separately.
 
 ---
 
 ## Loose ends, none blocking
 
-- **66 analysis-only series are dead at source** — 45 Productivity, 19 PPI,
-  2 ECI — confirmed against the BLS API rather than only against FRED. What is
-  held for them is the complete history; there is nothing to recover. None is
-  drawn, but check the last observation before building a panel on any.
-- **Eight that looked identical were not dead, and are fixed.** FRED had
-  silently stopped updating them while BLS kept publishing: six ECI series were
-  stuck at October 2017 against BLS's April 2026, nearly nine years missing,
-  plus two CPI series a year behind. They are now `source='bls'`, and the two
-  sources agree to within 0.1 index point where they overlap. See trap 40 —
-  the check is to ask the other source, because "FRED agrees with us" answers
-  a different question from "this series is current".
-- **PPI commodity detail is not ingested.** The FD-ID system is complete, but
-  FRED carries 12,323 PPI series in total against the 639 held. The same is
-  true of CPI's regional and city-level series (4,609 on FRED, 469 held). Both
-  are a repeat of the same pass if ever wanted.
-- **Production and non-supervisory workers** (Employment Situation Tables B-5
-  to B-8) and the **NSA counterparts** of Table B-1 are still not ingested.
-- **The one-off scripts are in `~/ingest_run/`** with their logs. Nothing in
-  the repo depends on them.
-- **Everything is uncommitted.** `dashboards-push` pushes only committed work —
-  it logs "working tree is dirty" and moves on. The 03:00 restic backup covers
-  the working tree, so nothing is at risk of loss, only of being absent from
-  the repository history. Changed: `macro/export.py`, `macro/ingest.py`,
-  `macro/add_series.py`, `macro/refresh.py`, `macro/schema.sql`, `CLAUDE.md`,
-  `HANDOFF.md`, plus a `publish` column added to `macro_series_meta`.
+- **7 commits unpushed**; `dashboards-push` runs at 23:30 and verifies by hash.
+- **66 series are dead at source** — 45 Productivity, 19 PPI, 2 ECI —
+  confirmed against the BLS API, not just against FRED. Nothing to recover.
+- **CLAUDE.md's claim that intermediate demand carries no weights is too
+  strong.** PPI Table 1 publishes relative importances for ID5 (147 rows) and
+  ID6 (55); what is true is that they are shares of their own group rather than
+  of a common total, so they cannot be pooled.
+- **PPI has no distributional measure and should not get one.** Table 1 is the
+  only PPI table with weights, and its finest split of final demand leaves a
+  single 34% leaf. Table 23 counts components instead.
 - **`~/bigricebowl` still has an unpushed commit** (`5995cf5`, the EverOS pin)
-  and, from before, `10e2850` plus uncommitted deletions that are not mine.
+  plus older uncommitted deletions that are not mine.
 - **The dead-man's switch `/fail` path is still unproven.**
 - **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
+- **The one-off scripts are in `~/ingest_run/`** with their logs.
 
 ---
 
-## What this session did
+## What the 5th and 6th did
 
-- **Completed the establishment survey** — all 174 Table B-1 industries plus
-  B-2 hours and B-3 earnings, 205 series, every id verified against the
-  published August figure before ingestion.
-- **Completed CPI, PPI, JOLTS, ECI and Productivity** — 2,250 further series,
-  including all 338 CPI Table 2 categories with none unmapped.
-- **Fixed trap 35** — the orchestrator had never passed a BLS series to ingest.
-  Verified through the archive manifest, because the data was already current
-  and no row could prove a fetch had happened.
-- **Fixed 28 series that had never been backfilled** and were sitting on
-  provisional rows despite ALFRED holding real history for them.
-- **Added the `publish` column** (trap 37), which is what let the database grow
-  seven-fold without a single byte reaching a page.
-- **Cut BLS API usage from 35 calls per run to 7** (trap 39), without which
-  304 BLS series would have risked the 500/day cap on a release morning.
-- **Made `ingest.py` refuse an uncatalogued id** (trap 38) after a warning that
-  did not change an exit code hid a nine-series hole behind RC=0.
+Ingestion went from 183 series to 2,891 and every dashboard gained depth.
 
-The recurring shape, unchanged: **every one of these was found by comparing the
-thing against its source.** The big ingest returned RC=0 on the step that had
-silently dropped nine series, and it was `validate.py`'s structural check —
-not the run's own report — that gave it away.
+- **The establishment survey completed** — all 174 Table B-1 industries plus
+  B-2 hours and B-3 earnings, each id verified against the published August
+  figure before ingestion.
+- **CPI, PPI, JOLTS, ECI and Productivity completed** — 2,250 series, including
+  all 338 CPI Table 2 categories, and later 144 JOLTS series FRED does not
+  carry at all.
+- **Six new derived measures**: a weighted median and a breadth measure for
+  CPI, a counted breadth for PPI, state breadth and distance-off-the-low for
+  claims, and the arity and weighting machinery to express them.
+- **Depth on every page**: payroll sub-sectors under Table 7, JOLTS by industry
+  and region, state-level claims, CPI's median, PPI's component heatmaps.
+
+The recurring shape, and the reason so much of this file is about verification:
+**every defect this session was found by comparing the thing against its
+source, or by looking at it.** Validation passed 36/36 while 28 series had no
+revision history, six ECI series were eight years stale, a breadth line lost
+eight of its ten years, and a chart's numbers were wrong by a factor of a
+thousand. None of those moved a single check.
