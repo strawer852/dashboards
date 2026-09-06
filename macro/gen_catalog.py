@@ -17,9 +17,13 @@ COLS = ['series_id', 'source', 'title', 'frequency', 'country', 'category',
         'native_unit']
 
 # What we carry into the new schema.
+# pub_lag_days and staleness_mode are deliberately NOT carried across: both
+# were dropped on 6 September 2026, having never been read by anything.
+# COLS above still lists them because it describes 0018's column order, which
+# is fixed history and has to keep matching the file being parsed.
 KEEP = ['series_id', 'source', 'title', 'frequency', 'country', 'category',
         'importance', 'seasonal_adjustment', 'companion_series_id',
-        'validation_mode', 'pub_lag_days', 'staleness_mode', 'originator',
+        'validation_mode', 'originator',
         'dataset', 'source_url', 'unit']
 
 # The old catalog held `dataset` as free text. Map it to a real release key so a

@@ -125,9 +125,12 @@ something that matters.
   confirmed against the BLS API, not just against FRED. Nothing to recover. The
   4 CPI ones (household operations, legal services) stopped during 2024 and read
   as current until the freshness check stopped counting null rows (trap 49).
-- **`frb.wage_tracker` has no rows in `macro_release_dates`**, so `--due` never
-  fires for it; it refreshes only on the 01:40 sweep. One series, so it has not
-  mattered, but it is a gap in a mechanism that is otherwise complete.
+- **`frb.wage_tracker` has no calendar rows, and that is correct.** Checked
+  against FRED on 6 September: release 637, *Wage Growth Tracker*, publishes
+  **zero** forward dates, so there is nothing to sync and the stamp shows no
+  "Next" rather than a guess — which `release_dates.py` has said in its
+  docstring all along. `--due` cannot fire for it and does not need to: one
+  monthly series, picked up by the 01:40 sweep within a day. Not a gap.
 - **The flatness check in `tools/clipcheck.py` is quiet and calibrated.** Its
   first cut flagged 15 panels; all 15 were looked at, 14 were fine, and the
   metric was re-cut around what share of its axis a series occupies rather than
@@ -136,7 +139,6 @@ something that matters.
   payroll `cUnSex`, CPI `cVehM` — and nothing else is outstanding. Add the same
   attribute when a new one turns out to be intended; it stays counted, just not
   listed. Verified to still fire by restoring the four-line price panel.
-- **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
 - **The dead-man's switch is proven end to end** (6 September): the `/fail`
   path fired against the real hc-ping.com URL twice, once on a genuine fault
   at 06:30 ET and once deliberately, and recovered both times. Re-test with

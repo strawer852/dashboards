@@ -51,8 +51,6 @@ CREATE TABLE IF NOT EXISTS macro_series_meta (
     seasonal_adjustment  TEXT,                          -- SA, NSA, N/A
     companion_series_id  TEXT,                          -- the SA<->NSA twin
     validation_mode      TEXT        NOT NULL DEFAULT 'zscore',
-    pub_lag_days         INT,                           -- staleness detection
-    staleness_mode       TEXT,
     originator           TEXT,                          -- publishing agency
     dataset              TEXT,                          -- release name as the old catalog held it
     -- Real FK to the release, so a dashboard resolves its "as of" stamp by key
