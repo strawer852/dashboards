@@ -795,6 +795,41 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     own nulls.** Wherever currency matters, ask when the source last said
     something, not when it last said nothing.
 
+50. **A title outlives the fact it states.** Six ECI series carried
+    "(DISCONTINUED)" in their titles, captured from FRED, while running current
+    to 2026 Q2 off the BLS API -- they were re-sourced under trap 40 and the
+    *data* was fixed while the *label* was not. All six were `publish=false`, so
+    the lie had never reached a page and no check looks at titles. It would have
+    shipped on the labour costs dashboard as a caption reading DISCONTINUED
+    under a line running to last quarter. **When you re-source a series, the
+    title is part of what you re-source.** Found by reading the catalogue before
+    drawing from it, which is the habit to keep: a title is a claim, and this
+    repo verifies ids by value (trap 36) precisely because names lie.
+
+51. **When one series flattens a panel, measure the rest before splitting it
+    out.** Table 5's four-line price decomposition was unreadable because unit
+    profits ranges -20% to +51%. Splitting profits into its own panel and
+    looking again showed the panel *still* flat: unit non-labour costs swings
+    -20% to +21% too, and the assumption that the loudest series was the only
+    loud one cost a second pass. **The honest split turned out to follow the
+    economics rather than the axis** -- the labour side in one panel, the
+    non-labour side in another -- which is both readable and a better answer to
+    the question than a four-line chart would have been. The general rule: a
+    crowded axis is a symptom, and the fix is a grouping that means something,
+    not the removal of whichever line is currently worst.
+
+52. **A panel that hard-codes a frequency works until the first series of
+    another one.** `PANELS.heatmap` formatted its axis and tooltip with a
+    literal `"M"`. Every heatmap on the site had been monthly, so nothing was
+    visibly wrong for as long as that held; the first quarterly heatmap would
+    have labelled 2026 Q2 as "Apr 26", on the axis and again in the tooltip,
+    with nothing raised. `label()` had handled `Q`, `W` and `D` since it was
+    written -- the heatmap simply never passed the frequency it already had.
+    Fixed generically: it now takes the frequency from the same series it takes
+    the date axis from, so the two cannot disagree. **Anywhere a default stands
+    in for a property the data already carries, it is waiting for the first
+    case that differs.**
+
 ## How it runs
 
 ```
@@ -943,13 +978,13 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
-## State as of 6 September 2026, end of day
+## State as of 6 September 2026, end of day (second pass)
 
 **3,126 series across 9 releases and three sources, 3,442,990 vintage rows
 over 1,367,052 observations spanning 1913-01-01 to 2026-08-29, 37/37
-validations, and every *published* series drawn by its page on all six
+validations, and every *published* series drawn by its page on all seven
 dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 33, PPI 23, PCE
-15, JOLTS 11, Weekly Claims 10 -- 125 in all. **818 series are on a page and
+15, Labour Costs 15, JOLTS 11, Weekly Claims 10 -- 140 in all. **818 series are on a page and
 2,308 are held for analysis**, which is the split the `publish` column exists to
 make (trap 43).
 
@@ -967,6 +1002,17 @@ split between what is held and what is drawn is explicit:
 | `bea.personal_income` | 232 | 3 | 235 |
 | `eta.claims` | 59 | 56 | 115 |
 | `frb.wage_tracker` | 1 | 0 | 1 |
+
+**Labour Costs is the seventh dashboard**, built 6 September and the first to
+need **no ingestion at all** -- ECI and Productivity had been in the database
+and drawn by nothing since 5 September. It names its 39 series in
+`include_series` rather than taking a release whole, because between them the
+two releases hold 686 and the page draws 39; an explicit list overrides
+`publish=false` without touching the catalogue, which is what that path in
+`export.py` exists for. It is also the **first page fed by two releases that
+publish a week apart** (ECI 30 October, Productivity 5 November), so one half is
+routinely fresher than the other and the lede says so. Nothing special is needed
+to keep it current: `export.py` writes every spec on every run.
 
 CPI is the whole of news release Table 2 -- all 338 expenditure categories,
 mapped to item codes with none unmatched. PPI is the entire Final

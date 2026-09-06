@@ -14,7 +14,7 @@ Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 
 **3,126 series across 9 releases and three sources, 3,442,990 vintage rows over
 1,367,052 observations spanning 1913 to August 2026, 37/37 validations, 100%
-coverage on all six dashboards, and no label overflowing its chart.**
+coverage on all seven dashboards, and no label overflowing its chart.**
 
 | Release | Published | Held | Bundle |
 |---|---|---|---|
@@ -24,8 +24,8 @@ coverage on all six dashboards, and no label overflowing its chart.**
 | `bea.personal_income` | 232 | 235 | 586 KB |
 | `bls.ppi` | 61 | 639 | 222 KB |
 | `bls.jolts` | 44 | 684 | 171 KB |
-| `bls.eci` | 2 | 404 | — no dashboard |
-| `bls.productivity` | 2 | 282 | — no dashboard |
+| `bls.eci` | 2 | 404 | 90 KB (shared) |
+| `bls.productivity` | 2 | 282 | 90 KB (shared) |
 | `frb.wage_tracker` | 1 | 1 | — |
 
 Every release is complete at the level its news release publishes. **1,025
@@ -94,14 +94,25 @@ Traps 4 and 22 carry the detail.
 
 ---
 
+## Built on the 6th: Labour Costs
+
+The seventh dashboard, 15 tables, and the first to need **no ingestion at all**.
+Its spine is an identity that holds to a tenth of a point in every quarter
+measured: **unit labour costs are hourly compensation less productivity**.
+
+The finding worth knowing, from Table 5 and Table 6: in the nonfinancial
+corporate sector, **unit labour costs ran +0.4% in 2026 Q2 while unit profits
+ran +17.8% and the price deflator +4.3%.** The mirror of 2023, when labour costs
+were at 4.6%. That decomposition exists for no other sector, because
+nonfinancial corporations is the only one where profits can be measured against
+output — and it is the one thing the site could discuss but not show until now.
+
 ## The open decision
 
-**A labour costs dashboard.** ECI (404 series) and Productivity (282) are
-already ingested and drawn by nothing. Quarterly and thin apart, together they
-are unit labour costs — the wage measure that bears on inflation, and the one
-thing the site discusses without showing. **Zero ingestion required**; it is a
-spec file and catalogue rows. 45 of the Productivity series are dead at source,
-so check the last observation before putting any of them on a panel (trap 28).
+**Nothing is blocking, and `planned.yml` is empty.** What is left is design: 2,308
+series sit at `publish=false`, drawn by nothing. The rule for promoting one has
+not changed — large by weight, persistently volatile, or a direct input to
+something that matters.
 
 ---
 

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labour Costs — BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
+    <nav aria-label="Dashboards">
+  <!-- nav:start -->
+  <button class="region" type="button" aria-expanded="true" aria-controls="r-united-states"><span class="mk"></span>United States</button>
+  <div class="grp" id="r-united-states">
+    <button class="topic" type="button" aria-expanded="true" aria-controls="g-united-states-employment"><span class="mk"></span>Employment</button>
+    <div class="grp" id="g-united-states-employment">
+      <a href="/us/employment/nonfarm-payroll/">Nonfarm Payroll</a>
+      <a href="/us/employment/jolts/">JOLTS</a>
+      <a href="/us/employment/weekly-claims/">Weekly Claims</a>
+      <a href="/us/employment/labour-costs/" aria-current="page">Labour Costs</a>
+    </div>
+    <button class="topic" type="button" aria-expanded="false" aria-controls="g-united-states-inflation"><span class="mk"></span>Inflation</button>
+    <div class="grp" id="g-united-states-inflation" hidden>
+      <a href="/us/inflation/cpi/">CPI</a>
+      <a href="/us/inflation/ppi/">PPI</a>
+      <a href="/us/inflation/pce/">PCE</a>
+    </div>
+  </div>
+  <!-- nav:end -->
+
+      <div class="inpage">
+        <div class="h">In this report</div>
+        <a href="#t1"><span>1</span>Unit labour costs</a>
+        <a href="#t2"><span>2</span>Pay less productivity</a>
+        <a href="#t3"><span>3</span>The Employment Cost Index</a>
+        <a href="#t4"><span>4</span>Three wage measures disagree</a>
+        <a href="#t5"><span>5</span>What is pushing prices up</a>
+        <a href="#t6"><span>6</span>Unit profits</a>
+        <a href="#t7"><span>7</span>The labour share</a>
+        <a href="#t8"><span>8</span>Private against government</a>
+        <a href="#t9"><span>9</span>Wages against benefits</a>
+        <a href="#t10"><span>10</span>Wage growth by industry</a>
+        <a href="#t11"><span>11</span>Wage growth by occupation</a>
+        <a href="#t12"><span>12</span>Productivity by sector</a>
+        <a href="#t13"><span>13</span>Output and hours</a>
+        <a href="#t14"><span>14</span>Real hourly pay</a>
+        <a href="#t15"><span>15</span>Labour costs against core inflation</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Labour Costs</div>
+    <div class="mast">
+      <h1>Labour Costs</h1>
+      <div class="stamp" id="stamp"></div>
+    </div>
+
+    <div id="status" hidden></div>
+
+    <p class="lede">What labour costs per unit of what it produces, and whether that is where inflation is coming from. Pay rises are only inflationary net of productivity, and that subtraction is the spine of this page. <b>Two releases feed it and they publish about a week apart</b> &mdash; the Employment Cost Index at the end of October, Productivity and Costs in early November &mdash; so one half is routinely a week fresher than the other. The stamp above follows Productivity.</p>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="row one">
+      <div class="t" id="t1">
+        <div class="th"><span class="n">Table 1</span><span class="ti">Unit labour costs</span><span class="u">Nonfarm business, % change</span></div>
+        <p class="note">What an hour of labour costs an employer for each unit it produces. This is the number that connects wages to prices: if pay rises are matched by output per hour, unit costs do not move and there is no pressure on prices from labour at all. The annualised line is what the news release leads on and it is <b>far noisier</b> &mdash; a single quarter of it has swung more than five points inside a year. Read the twelve-month line for direction.</p>
+        <p class="key"><i class="kink">Year over year</i><i class="ks1">Annualised quarterly</i></p>
+        <div class="chart" id="cUlc" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t2">
+        <div class="th"><span class="n">Table 2</span><span class="ti">Pay less productivity</span><span class="u">Nonfarm business, twelve-month change, %</span></div>
+        <p class="note">The whole of Table 1 in one subtraction. <b>Unit labour costs are hourly compensation minus productivity</b>, and this is an identity rather than an estimate &mdash; measured across every quarter here the two sides agree to a tenth of a point, which is rounding. It is the most useful chart on the page because it says <i>which</i> of the two moved. Pay decelerating and unit costs falling is a labour market cooling; productivity accelerating with pay unchanged is the same fall in unit costs for an entirely different reason.</p>
+        <p class="key"><i class="kink">Unit labour costs</i><i class="ks1">Hourly compensation</i><i class="ks2">Productivity</i></p>
+        <div class="chart" id="cSpine" style="height:260px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t3">
+        <div class="th"><span class="n">Table 3</span><span class="ti">The Employment Cost Index</span><span class="u">All civilian workers, twelve-month change, %</span></div>
+        <p class="note">The cleanest wage measure published, because it prices a <b>fixed job mix</b>. If a recession removes low-paid jobs, average pay rises without anyone getting a rise; the ECI holds occupation and industry weights still so that cannot happen. Benefits are the half that is usually ignored and they do not track wages &mdash; health insurance and retirement move on their own schedule.</p>
+        <p class="key"><i class="kink">Total compensation</i><i class="ks1">Wages and salaries</i><i class="ks2">Benefits</i></p>
+        <div class="chart" id="cEci" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t4">
+        <div class="th"><span class="n">Table 4</span><span class="ti">Three wage measures disagree</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Three respectable measures of the same thing, and they routinely differ by more than a point. <b>Average hourly earnings</b> is the one quoted on the day and the one most easily misread: it is a simple average, so it rises when low-paid jobs disappear and falls when they come back &mdash; which is why it spiked in 2020 while nobody received a rise. <b>Hourly compensation</b> from the productivity release includes benefits and employer taxes and is revised heavily. <b>The ECI</b> holds the job mix fixed. When they disagree, the mix is usually why. Note that earnings is monthly and the other two are quarterly.</p>
+        <p class="key"><i class="kink">ECI, total compensation</i><i class="ks1">Hourly compensation</i><i class="ks2">Average hourly earnings</i></p>
+        <div class="chart" id="cWageMeas" style="height:260px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t5">
+        <div class="th"><span class="n">Table 5</span><span class="ti">What is pushing prices up</span><span class="u">Nonfinancial corporations, twelve-month change, %</span></div>
+        <p class="note">The question this page exists to ask. Nonfinancial corporations is the only sector for which BLS splits the price of output into what it costs to make and what is kept, because it is the only one where profits can be measured against output. Here are the price of output and the labour half of its cost; <b>the non-labour half is Table 6</b>, drawn apart because it swings four times as wide and flattens these two into a band. The deflator is a share-weighted combination of the three components, roughly sixty per cent labour, and <b>the shares move</b> &mdash; so these are lines rather than a stack, which would assert a partition that does not hold to the decimal.</p>
+        <p class="key"><i class="kink">Price deflator</i><i class="ks1">Unit labour costs</i></p>
+        <div class="chart" id="cPrices" style="height:270px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">The non-labour side</span><span class="u">Nonfinancial corporations, twelve-month change, %</span></div>
+        <p class="note">The other two components of Table 5&rsquo;s deflator: everything that is not labour, split into what it costs and what is kept. Both range from about &minus;20% to +50% where unit labour costs stays inside ten points, which is why they are here and not there. Read them against Table 5, because the question is only ever comparative &mdash; whether the price of output is moving because of what it costs to produce or because of what is retained. <b>Unit profits is the most heavily revised series on this page</b>, estimated late and restated afterwards, so a single quarter of it should not carry an argument.</p>
+        <p class="key"><i class="kink">Unit non-labour costs</i><i class="ks1">Unit profits</i></p>
+        <div class="chart" id="cProfits" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t7">
+        <div class="th"><span class="n">Table 7</span><span class="ti">The labour share</span><span class="u">Nonfarm business, index 2017 = 100</span></div>
+        <p class="note">The share of what is produced that goes to the people who produced it. Drawn over the <b>full history back to 1947</b> deliberately, because the interesting thing about this series is not the quarter &mdash; it is that the level sat roughly flat for thirty years and then fell through the 2000s and has not recovered. Published as an index rather than a percentage, so read the shape and not the number.</p>
+        <p class="key"><i class="kink">Labour share</i></p>
+        <div class="chart" id="cShare" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t8">
+        <div class="th"><span class="n">Table 8</span><span class="ti">Private against government</span><span class="u">Total compensation, twelve-month change, %</span></div>
+        <p class="note">State and local government pay is set by budget cycles and bargaining agreements rather than by hiring competition, so it turns late and it turns slowly. That lag is visible in both directions: government trailed badly through the 2021&ndash;22 acceleration and then kept rising after private pay had begun to cool.</p>
+        <p class="key"><i class="kink">All civilian</i><i class="ks1">Private industry</i><i class="ks2">State and local government</i></p>
+        <div class="chart" id="cOwner" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t9">
+        <div class="th"><span class="n">Table 9</span><span class="ti">Wages against benefits</span><span class="u">Private industry, twelve-month change, %</span></div>
+        <p class="note">Benefits are about thirty per cent of what an employer pays and they are driven by something else entirely &mdash; chiefly health insurance premiums and pension funding. A gap opening between these two lines means the cost of employing someone is moving for reasons that have nothing to do with the labour market.</p>
+        <p class="key"><i class="kink">Total compensation</i><i class="ks1">Wages and salaries</i><i class="ks2">Benefits</i></p>
+        <div class="chart" id="cWageBen" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t10">
+        <div class="th"><span class="n">Table 10</span><span class="ti">Wage growth by industry</span><span class="u">Private industry, twelve-month change in total compensation, %</span></div>
+        <p class="note">Where the pressure actually is. A heatmap rather than lines because there are ten rows and the palette stops at six &mdash; the colour order is what makes the charts readable without colour vision, so a seventh line would have to reuse a slot. Goods-producing and service-providing are the two aggregates and the rest sit inside them, so <b>the rows are not a partition</b> and are not meant to add up.</p>
+        <div class="chart" id="cInd" style="height:330px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t11">
+        <div class="th"><span class="n">Table 11</span><span class="ti">Wage growth by occupation</span><span class="u">Private industry, twelve-month change in total compensation, %</span></div>
+        <p class="note">The same question cut the other way. Occupation cuts across industry &mdash; a driver is in production and transportation whether they work for a retailer or a factory &mdash; so this shows whether a wage acceleration is concentrated in a kind of work rather than a kind of employer.</p>
+        <p class="key"><i class="kink">Management and professional</i><i class="ks1">Sales and office</i><i class="ks2">Natural resources and construction</i><i class="ks3">Production and transport</i></p>
+        <div class="chart" id="cOcc" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">Productivity by sector</span><span class="u">Output per hour, twelve-month change, %</span></div>
+        <p class="note">Manufacturing productivity is measured against physical output and is far more volatile than the business-sector aggregate; durable goods swings hardest of all. The business and nonfarm business lines differ only by farms and sit almost on top of each other, which is a useful check that nothing has gone wrong rather than a finding.</p>
+        <p class="key"><i class="kink">Nonfarm business</i><i class="ks1">Business</i><i class="ks2">Manufacturing</i><i class="ks3">Durable goods</i><i class="ks4">Nondurable goods</i></p>
+        <div class="chart" id="cProd" style="height:260px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">Output and hours</span><span class="u">Nonfarm business, twelve-month change, %</span></div>
+        <p class="note">Table 2 one level down. <b>Productivity is output divided by hours</b>, so these two lines decompose it the same way pay and productivity decompose unit labour costs &mdash; and the distinction matters, because output per hour rises for two very different reasons. Output growing faster than hours is an economy producing more. Hours falling faster than output is an economy shedding labour, which raises measured productivity while nothing improves. The 2020 spike is the second kind and is the clearest example in the series.</p>
+        <p class="key"><i class="kink">Productivity</i><i class="ks1">Real output</i><i class="ks2">Hours worked</i></p>
+        <div class="chart" id="cOutHrs" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t14">
+        <div class="th"><span class="n">Table 14</span><span class="ti">Real hourly pay</span><span class="u">Nonfarm business, twelve-month change, %</span></div>
+        <p class="note">Hourly compensation after inflation: whether an hour of work buys more than it did a year ago. Below zero for most of 2021 and 2022, which is the single clearest statement of what that inflation did to households, and the reason wage growth that looks high in Table 3 did not feel like it.</p>
+        <p class="key"><i class="kink">Real hourly compensation</i></p>
+        <div class="chart" id="cReal" style="height:230px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t15">
+        <div class="th"><span class="n">Table 15</span><span class="ti">Labour costs against core inflation</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">The question the whole page exists to answer. Unit labour costs are what the Federal Reserve watches for evidence that inflation has become self-sustaining through wages. The two are related but the relationship is loose and the lead is not reliable in either direction &mdash; this is drawn so the gap can be seen, not because one predicts the other. Core PCE is monthly and lives on the <a href="/us/inflation/pce/">PCE dashboard</a>.</p>
+        <p class="key"><i class="kink">Unit labour costs</i><i class="ks1">Core PCE</i></p>
+        <div class="chart" id="cUlcPce" style="height:250px"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="/assets/echarts-5.6.0.min.js"></script>
+<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script>
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}));
+
+// Ink is the answer, the slots are the components in order. Taken in the
+// validated order and never cycled; see CLAUDE.md under settled decisions.
+const C1 = { color: "ink", width: 2.0 };
+const C2 = { color: "s1",  width: 1.6 };
+const C3 = { color: "s2",  width: 1.6 };
+const C4 = { color: "s3",  width: 1.6 };
+const C5 = { color: "s4",  width: 1.6 };
+
+// The ECI series are INDEXES (Dec 2005 = 100) and every panel here wants a
+// twelve-month change, so they carry transform: "yoy". They are quarterly, so
+// perYear gives periods 4 and it does not need stating. The productivity
+// series are ALREADY percent changes and must not be transformed again --
+// that asymmetry is the one thing to get right on this page.
+const eci = (id, label, c) => Object.assign({ id, label, transform: "yoy" }, c);
+
+BRB.render({
+  bundle: "/data/v1/dashboards/us-employment-labour-costs.json",
+  summary: [
+    { label: "Unit labour costs", series: "PRS85006111", format: "pct",
+      source: "BLS", note1: "nonfarm business, year over year" },
+    { label: "Productivity", series: "PRS85006091", format: "pct",
+      source: "BLS", note1: "output per hour, year over year" },
+    { label: "Hourly compensation", series: "PRS85006101", format: "pct",
+      source: "BLS", note1: "nonfarm business, year over year" },
+    { label: "ECI", series: "CIS1010000000000I", transform: "yoy",
+      format: "pct", source: "BLS", note1: "total compensation, year over year" },
+    { label: "Real hourly pay", series: "PRS85006151", format: "pct",
+      source: "BLS", note1: "after inflation, year over year" },
+    { label: "Unit profits", series: "PRS88003191", format: "pct",
+      source: "BLS", note1: "nonfinancial corporations" },
+  ],
+  panels: [
+    { el: "cUlc", type: "line", format: "pct", tick: 8, left: 46, window: 100,
+      series: [{ id: "PRS85006111", label: "Year over year", ...C1 },
+               { id: "PRS85006112", label: "Annualised quarterly", ...C2 }] },
+
+    // The gap between the second and third lines IS the first. Unit labour
+    // costs takes ink because it is the answer, not because it is the biggest.
+    { el: "cSpine", type: "line", format: "pct", tick: 8, left: 46, window: 100,
+      series: [{ id: "PRS85006111", label: "Unit labour costs", ...C1 },
+               { id: "PRS85006101", label: "Hourly compensation", ...C2 },
+               { id: "PRS85006091", label: "Productivity", ...C3 }] },
+
+    { el: "cEci", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [eci("CIS1010000000000I", "Total compensation", C1),
+               eci("CIS1020000000000I", "Wages and salaries", C2),
+               eci("CIS1030000000000I", "Benefits", C3)] },
+
+    // Mixed frequency on purpose: earnings is monthly, the other two quarterly.
+    // The engine aligns every series onto the FIRST series' date axis by date,
+    // so the ECI leads and the monthly series is read at quarter ends.
+    { el: "cWageMeas", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [eci("CIS1010000000000I", "ECI, total compensation", C1),
+               { id: "PRS85006101", label: "Hourly compensation", ...C2 },
+               { id: "CES0500000003", label: "Average hourly earnings",
+                 transform: "yoy", periods: 12, ...C3 }] },
+
+    // Two lines, because two is what the question takes. Adding either
+    // non-labour component put a series ranging -20% to +51% on the same axis
+    // as two that stay inside ten points, and flattened both into a band.
+    { el: "cPrices", type: "line", format: "pct", tick: 4, left: 46, window: 64,
+      series: [{ id: "PRS88003141", label: "Price deflator", ...C1 },
+               { id: "PRS88003111", label: "Unit labour costs", ...C2 }] },
+
+    // The non-labour half. These two share a range with each other and with
+    // nothing else on the page, which is the whole reason they are here.
+    { el: "cProfits", type: "line", format: "pct", tick: 4, left: 46, window: 64,
+      series: [{ id: "PRS88003121", label: "Unit non-labour costs", ...C1 },
+               { id: "PRS88003191", label: "Unit profits", ...C2 }] },
+
+    // No window: the point of this one is the full run back to 1947.
+    { el: "cShare", type: "line", format: "num", tick: 20, left: 42,
+      series: [{ id: "PRS85006173", label: "Labour share", ...C1 }] },
+
+    { el: "cOwner", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [eci("CIS1010000000000I", "All civilian", C1),
+               eci("CIS2010000000000I", "Private industry", C2),
+               eci("CIS3010000000000I", "State and local government", C3)] },
+
+    { el: "cWageBen", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [eci("CIS2010000000000I", "Total compensation", C1),
+               eci("CIS2020000000000I", "Wages and salaries", C2),
+               eci("CIS2030000000000I", "Benefits", C3)] },
+
+    // The first quarterly heatmap on the site. It takes its frequency from the
+    // series now rather than assuming months, so the axis reads "Q2 26".
+    { el: "cInd", type: "heatmap", months: 44, transform: "yoy", periods: 4,
+      cap: 6, format: "pct", left: 208, tick: 4,
+      capText: ["≥ +6%", "≤ −6%"],
+      // Listed bottom-to-top: a category axis puts the FIRST entry at the
+      // bottom, so this reads Goods-producing, Service-providing, then the
+      // detail rows downwards, with the two aggregates at the top.
+      series: [{ id: "CIS2018100000000I", label: "Other services" },
+               { id: "CIS2017000000000I", label: "Leisure & hospitality" },
+               { id: "CIS2016000000000I", label: "Education & health" },
+               { id: "CIS201540A000000I", label: "Professional & business" },
+               { id: "CIS201520A000000I", label: "Financial activities" },
+               { id: "CIS2015100000000I", label: "Information" },
+               { id: "CIS2014000000000I", label: "Trade, transport, utilities" },
+               { id: "CIS2013000000000I", label: "Manufacturing" },
+               { id: "CIS201S000000000I", label: "Service-providing" },
+               { id: "CIS201G000000000I", label: "Goods-producing" }] },
+
+    { el: "cOcc", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [eci("CIS2010000100000I", "Management and professional", C1),
+               eci("CIS2010000200000I", "Sales and office", C2),
+               eci("CIS2010000400000I", "Natural resources and construction", C3),
+               eci("CIS2010000500000I", "Production and transport", C4)] },
+
+    { el: "cProd", type: "line", format: "pct", tick: 8, left: 46, window: 100,
+      series: [{ id: "PRS85006091", label: "Nonfarm business", ...C1 },
+               { id: "PRS84006091", label: "Business", ...C2 },
+               { id: "PRS30006091", label: "Manufacturing", ...C3 },
+               { id: "PRS31006091", label: "Durable goods", ...C4 },
+               { id: "PRS32006091", label: "Nondurable goods", ...C5 }] },
+
+    { el: "cOutHrs", type: "line", format: "pct", tick: 8, left: 46, window: 100,
+      series: [{ id: "PRS85006091", label: "Productivity", ...C1 },
+               { id: "PRS85006041", label: "Real output", ...C2 },
+               { id: "PRS85006031", label: "Hours worked", ...C3 }] },
+
+    { el: "cReal", type: "line", format: "pct", tick: 8, left: 46, window: 100,
+      series: [{ id: "PRS85006151", label: "Real hourly compensation", ...C1 }] },
+
+    { el: "cUlcPce", type: "line", format: "pct", tick: 8, left: 46, window: 96,
+      series: [{ id: "PRS85006111", label: "Unit labour costs", ...C1 },
+               { id: "PCEPILFE", label: "Core PCE", transform: "yoy",
+                 periods: 12, ...C2 }] },
+  ],
+});
+</script>
+</body>
+</html>

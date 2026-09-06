@@ -1,0 +1,97 @@
+id: us.employment.labour-costs
+path: us/employment/labour-costs
+region: United States
+topic: Employment
+nav_order: 4
+title: Labour Costs
+# TWO releases feed this page and they publish about a week apart -- ECI on 30
+# October, Productivity on 5 November. Neither is "the" release, but the stamp
+# takes one, and unit labour costs is the headline, so Productivity it is. The
+# page says so in its lede rather than letting a reader assume both halves are
+# equally fresh. Nothing is lost by the choice: export.py writes every spec on
+# every run, so an ECI release refreshes this bundle whichever id is named here.
+release: bls.productivity
+
+# NOT include_releases. Between them ECI and Productivity hold 686 series, of
+# which 639 are live, and this page draws 44. Naming them is the difference
+# between a 130 KB bundle and a 2 MB one, and an explicit list overrides
+# publish=false without touching the catalogue.
+include_series:
+  # ---- the spine: unit labour costs and what it is made of -----------------
+  # ULC = hourly compensation less productivity, and it holds to a tenth of a
+  # point in every quarter measured -- it is an identity, not an estimate. The
+  # three are drawn together because the gap IS the top line.
+  - PRS85006111   # ULC, % change from a year earlier
+  - PRS85006112   # ULC, % change at an annual rate
+  - PRS85006101   # hourly compensation, year earlier
+  - PRS85006091   # labour productivity (output per hour), year earlier
+  - PRS85006151   # real hourly compensation, year earlier
+  - PRS85006173   # labour share, index 2017=100 -- the long view
+  - PRS85006031   # hours worked
+  - PRS85006041   # real output
+
+  # ---- productivity by sector ----------------------------------------------
+  - PRS84006091   # business
+  - PRS30006091   # manufacturing
+  - PRS31006091   # manufacturing, durable
+  - PRS32006091   # manufacturing, nondurable
+
+  # ---- what is actually pushing prices up ----------------------------------
+  # Nonfinancial corporations is the ONLY sector for which BLS decomposes the
+  # price deflator, because it is the only one where profits can be measured
+  # against output. Unit labour costs, unit non-labour costs and unit profits
+  # combine to the deflator -- share-weighted, not summed, which is why the
+  # panel draws four lines and not a stack (see the note on Table 5).
+  - PRS88003141   # value-added price deflator
+  - PRS88003111   # unit labour costs
+  - PRS88003121   # unit non-labour costs
+  - PRS88003191   # unit profits
+
+  # ---- the Employment Cost Index -------------------------------------------
+  # The cleanest wage measure there is: it prices a FIXED job mix, so it cannot
+  # be moved by the composition shifts that push average hourly earnings about.
+  # All six of these carry vintage_mode='fetch_date' and came off the BLS API
+  # after FRED stopped updating them (trap 40); FRED's "(DISCONTINUED)" suffix
+  # was still on the titles and was removed on 6 September, because the series
+  # are current to 2026 Q2 and the label was false.
+  - CIS1010000000000I   # civilian, total compensation
+  - CIS1020000000000I   # civilian, wages and salaries
+  - CIS1030000000000I   # civilian, total benefits
+  - CIS2010000000000I   # private industry, total compensation
+  - CIS2020000000000I   # private industry, wages and salaries
+  - CIS2030000000000I   # private industry, total benefits
+  - CIS3010000000000I   # state and local government, total compensation
+
+  # ---- ECI by industry, for the heatmap ------------------------------------
+  # Ten rows, which is why this is a heatmap and not a line chart: the palette
+  # stops at six and the ordering IS the colourblind-safety mechanism, so a
+  # seventh line would have to reuse a slot (trap 21).
+  - CIS201G000000000I   # goods-producing
+  - CIS201S000000000I   # service-providing
+  - CIS2013000000000I   # manufacturing
+  - CIS2014000000000I   # trade, transportation and utilities
+  - CIS2015100000000I   # information
+  - CIS201520A000000I   # financial activities
+  - CIS201540A000000I   # professional and business services
+  - CIS2016000000000I   # education and health services
+  - CIS2017000000000I   # leisure and hospitality
+  - CIS2018100000000I   # other services
+
+  # ---- ECI by occupation ---------------------------------------------------
+  - CIS2010000100000I   # management, professional and related
+  - CIS2010000200000I   # sales and office
+  - CIS2010000400000I   # natural resources, construction and maintenance
+  - CIS2010000500000I   # production, transportation and material moving
+
+  # ---- cross-release, for the two comparisons that need them ---------------
+  # Average hourly earnings is the wage measure everyone quotes and the one
+  # most easily misread: it is monthly and it moves with job mix, which is the
+  # whole point of Table 4. Core PCE is what unit labour costs are supposed to
+  # bear on, and lives on the PCE dashboard.
+  - CES0500000003   # average hourly earnings, total private
+  - PCEPILFE        # core PCE price index
+
+# No truncate_history. Quarterly series are cheap -- the longest here is the
+# labour share at 316 observations back to 1947, and the whole bundle is a
+# fraction of the CPI's. Table 6 draws that full history deliberately, so a
+# truncation would have to be excluded for it anyway.

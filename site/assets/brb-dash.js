@@ -482,13 +482,15 @@
     const fmt = p.format ? fmtFor(p) : (v => sgn(v, 1) + "k");
     const months = p.months || 24;
     const names = [], data = [];
-    let cats = null;
+    // The frequency comes from the series, not from an assumption. Taken from
+    // the same series the date axis is taken from, so the two cannot disagree.
+    let cats = null, freq = "M";
     p.series.forEach((sp, yi) => {
       const s = ctx.series(sp.id);
       const v = (tf === "none" ? s.values
                                : derive(s, { transform: tf, periods: p.periods }))
                 .slice(-months);
-      if (!cats) cats = axis(s).slice(-months);
+      if (!cats) { cats = axis(s).slice(-months); freq = s.frequency || "M"; }
       names.push(sp.label || shortName(s.title));
       v.forEach((val, xi) => { if (val != null) data.push([xi, yi, val]); });
     });
@@ -496,13 +498,13 @@
     mount(el, Object.assign(base(P), {
       grid: { left: p.left || 132, right: 20, top: 8, bottom: 48 },
       tooltip: Object.assign(base(P).tooltip, {
-        formatter: x => `<b>${names[x.data[1]]}</b><br>${label(cats[x.data[0]], "M")}  ${fmt(x.data[2])}` }),
+        formatter: x => `<b>${names[x.data[1]]}</b><br>${label(cats[x.data[0]], freq)}  ${fmt(x.data[2])}` }),
       xAxis: { type: "category", data: cats, splitArea: { show: false },
         // `tick` like every other panel type. Hard-coded at 2 this collided
         // into unreadable overlap the moment a heatmap was put in a half-width
         // cell rather than across the page.
         axisLabel: { color: P.muted, fontSize: 9, interval: p.tick == null ? 2 : p.tick,
-                     formatter: v => label(v, "M") },
+                     formatter: v => label(v, freq) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       yAxis: { type: "category", data: names, splitArea: { show: false },
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
