@@ -107,7 +107,9 @@ so check the last observation before putting any of them on a panel (trap 28).
 
 ## Loose ends, none blocking
 
-- **14 commits unpushed**; `dashboards-push` runs at 23:30 and verifies by hash.
+- **Commits sit unpushed until 23:30**, when `dashboards-push` runs and
+  verifies by hash. A count was written here twice and was stale within the
+  hour both times; `git log --oneline @{u}..HEAD` is the answer.
 - **74 series are dead at source** — 45 Productivity, 23 PPI, 4 CPI, 2 ECI —
   confirmed against the BLS API, not just against FRED. Nothing to recover. The
   4 CPI ones (household operations, legal services) stopped during 2024 and read

@@ -1006,7 +1006,10 @@ never been backfilled** and still sat on provisional `fred_csv` rows with one
 vintage each, although ALFRED held real history for them (`LNS14000003` depth
 1.19, `CES9091000001` 1.98) -- mostly the household-survey unemployment cuts and
 government employment. That is fixed: the release now carries **zero**
-provisional rows. The second is trap 35 and is **not yet fixed**.
+provisional rows. The second is trap 35 -- the orchestrator had never once passed a BLS
+series to ingest -- and it was **fixed the same day**. The trap records how
+the archive manifest proved it, the database being unable to: a run that
+fetches everything and inserts nothing looks exactly like a healthy one.
 
 Deliberately not ingested, each a straightforward repeat of the same pass: NSA
 counterparts of the 174; production and non-supervisory workers (Tables B-5 to

@@ -616,7 +616,13 @@
     // it takes thousands; claims arrive in persons and must not be rescaled.
     if (f === "signed_count") return v => (v > 0 ? "+" : v < 0 ? "\u2212" : "") +
       Math.abs(Math.round(v)).toLocaleString("en-GB");
-    return v => String(Math.round(v * 100) / 100);
+    if (f === "num") return v => String(Math.round(v * 100) / 100);
+    // No silent default. `derive` throws on an unknown transform and this must
+    // behave the same way: a format name that does not exist here used to fall
+    // through to the line above and render a chart with the wrong decimals,
+    // reporting nothing (trap 46). Every panel call is wrapped in try/catch, so
+    // this breaks one panel loudly instead of mis-formatting all of it quietly.
+    throw new Error("unknown format: " + f);
   }
   const shortName = t => t.replace(/^All Employees,\s*/, "")
                           .replace(/Private Education and Health Services/, "Educ & health")
