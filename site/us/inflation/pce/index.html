@@ -46,6 +46,8 @@
         <a href="#t11"><span>11</span>Income against spending</a>
         <a href="#t12"><span>12</span>What the typical price is doing</a>
         <a href="#t13"><span>13</span>How much of the basket is running hot</a>
+        <a href="#t14"><span>14</span>What the two baskets are made of</a>
+        <a href="#t15"><span>15</span>What each core leaves out</a>
       </div>
 
     </nav>
@@ -181,11 +183,30 @@
       </div>
     </div>
 
+
+    <div class="row one">
+      <div class="t" id="t14">
+        <div class="th"><span class="n">Table 14</span><span class="ti">What the two baskets are made of</span><span class="u">Share of each index, %</span></div>
+        <p class="note">The two indexes disagree mostly because they weight the same country differently. <b>Shelter is 35% of the CPI and 16% of PCE</b>; <b>health care is the reverse</b>, because PCE counts what employers and government pay on a household&rsquo;s behalf and the CPI counts only what the household pays directly. Food and clothing are close, which is why the gap is not about prices. Each side is that agency&rsquo;s own definition for its own index &mdash; CPI relative importances against PCE nominal expenditure shares &mdash; and the categories are near-equivalents, not a common taxonomy.</p>
+        <p class="key"><i class="ks1">CPI</i><i class="ks2">PCE</i></p>
+        <div class="chart" id="cBasket" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t15">
+        <div class="th"><span class="n">Table 15</span><span class="ti">What each core leaves out</span><span class="u">Share of each index, %</span></div>
+        <p class="note">This one is exact rather than approximate: both agencies publish it for their own index and no mapping is involved. <b>Core CPI covers 79% of its basket; core PCE covers 89%.</b> The reason is a definition rather than a judgement &mdash; PCE excludes food purchased for off-premises consumption and energy, so <b>restaurant meals stay inside core PCE</b> and are removed from core CPI along with groceries. Seven per cent of the PCE basket is therefore treated as core where the CPI treats it as food.</p>
+        <p class="key"><i class="ks1">CPI</i><i class="ks2">PCE</i></p>
+        <div class="chart" id="cCore" style="height:150px"></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a637be88eb"></script>
+<script src="/assets/brb-dash.js?v=9866652e89"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -241,6 +262,19 @@ BRB.render({
       window: 120, hline: 50, hlineLabel: "50",
       series: [{ id: "PCE.share_above3", label: "Share above 3%",
                  color: "ink", width: 1.7 }] },
+    { el: "cBasket", type: "compare", format: "pct", left: 168,
+      labelA: "CPI", labelB: "PCE", colorA: "s1", colorB: "s2",
+      items: [{ label: "Shelter / housing", a: 35.304, b: 15.572 },
+               { label: "Health care", a: 8.252, b: 17.217 },
+               { label: "Food, total", a: 13.522, b: 14.104 },
+               { label: "Energy", a: 7.432, b: 3.822 },
+               { label: "Food away from home", a: 5.29, b: 7.045 },
+               { label: "Recreation services", a: 3.154, b: 3.945 },
+               { label: "Clothing and footwear", a: 2.437, b: 2.695 }] },
+    { el: "cCore", type: "compare", format: "pct", left: 168,
+      labelA: "CPI", labelB: "PCE", colorA: "s1", colorB: "s2",
+      items: [{ label: "Covered by core", a: 79.047, b: 89.119 },
+               { label: "Excluded from core", a: 20.955, b: 10.881 }] },
     { el: "cHead", type: "line", format: "pct", tick: 11, left: 46, window: 120,
       series: [{ id: "PCEPI", label: "Headline", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
                { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" }] },

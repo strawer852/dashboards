@@ -438,6 +438,39 @@
     }));
   };
 
+  /* Two baskets, one row per category, values stated in the spec. The only
+     panel here that does not read a series: a composition is a fact about a
+     moment and has no history to plot. Bars are drawn from a common zero and
+     the axis is forced to include it, because these are shares and a truncated
+     baseline would make every length a lie about its size. */
+  PANELS.compare = (el, ctx, p) => {
+    const P = ctx.P, fmt = fmtFor(p);
+    const items = p.items || [];
+    const cats = items.map(i => i.label);
+    const mk = (key, name, slot) => ({
+      name, type: "bar", data: items.map(i => i[key]),
+      barMaxWidth: p.width || 9, barGap: "10%",
+      itemStyle: { color: P[slot] },
+      label: { show: p.labels !== false, position: "right",
+               formatter: x => fmt(x.value), color: P.muted,
+               fontFamily: P.mono, fontSize: 9.5 },
+    });
+    mount(el, Object.assign(base(P), {
+      grid: { left: p.left || 150, right: p.right || 54, top: 8, bottom: 24 },
+      tooltip: Object.assign(base(P).tooltip, {
+        trigger: "axis", axisPointer: { type: "shadow" },
+        formatter: ps => "<b>" + ps[0].axisValue + "</b>" +
+          ps.map(x => "<br>" + x.seriesName + " " + fmt(x.data)).join(""),
+      }),
+      xAxis: Object.assign(yAxis(P, fmt), { type: "value", scale: false }),
+      yAxis: { type: "category", data: cats, inverse: true,
+        axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
+        axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
+      series: [mk("a", p.labelA || "A", p.colorA || "s1"),
+               mk("b", p.labelB || "B", p.colorB || "s2")],
+    }));
+  };
+
   PANELS.heatmap = (el, ctx, p) => {
     const P = ctx.P;
     // As with PANELS.contribution: the transform and the unit were both
