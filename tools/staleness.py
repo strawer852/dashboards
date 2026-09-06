@@ -123,6 +123,38 @@ def self_test() -> int:
 
 
 
+# Words a source puts in a title when it stops publishing. FRED writes
+# "(DISCONTINUED)"; the point is not the exact spelling but that the title
+# makes a CLAIM which the observations can be asked about.
+DEAD_WORDS = ("DISCONTINUED", "DISCONTINUED SERIES")
+
+
+def label_contradicts_data(cur, months=9):
+    """Series whose title says discontinued while the data says otherwise.
+
+    Six ECI series were re-sourced from the BLS API after FRED stopped
+    updating them (trap 40) and stayed current, but kept FRED's
+    "(DISCONTINUED)" in the title -- a caption that would have rendered under
+    a line running to last quarter. The data was fixed and the label was not,
+    and nothing looks at labels.
+    """
+    cur.execute("""
+        SELECT m.series_id, m.title, m.source, m.publish,
+               max(o.observation_dt) FILTER (WHERE o.value IS NOT NULL)
+        FROM macro_series_meta m LEFT JOIN macro_observations o USING (series_id)
+        WHERE m.title ILIKE '%DISCONTINUED%'
+        GROUP BY m.series_id, m.title, m.source, m.publish
+    """)
+    out = []
+    for sid, title, src, pub, last in cur.fetchall():
+        if last is None:
+            continue
+        age = (date.today() - last).days / 30.44
+        if age <= months:
+            out.append((sid, src, pub, last, round(age, 1)))
+    return out
+
+
 def source_split(cur, months=1):
     """Releases where one source is more than `months` behind another.
 
@@ -190,6 +222,7 @@ def main() -> int:
         BUNDLES = Path(args.bundles)
     with psycopg.connect(os.environ["MACRO_DSN"]) as _c, _c.cursor() as _cur:
         split = source_split(_cur)
+        mislabelled = label_contradicts_data(_cur)
     on_a_page = shipped()
     empty, stale = [], []
     for sid, rel, src, freq, pub, last in rows:
@@ -208,6 +241,12 @@ def main() -> int:
         print("\n!! %d catalogued series have NO observations: %s"
               % (len(empty), ", ".join(s for s, _, _ in empty[:12])))
 
+    if mislabelled:
+        print("\n=== a title says DISCONTINUED and the data disagrees ===")
+        for sid, src, pub, last, age in mislabelled:
+            print("  %-20s src=%-5s last value %s (%.1f months ago)%s"
+                  % (sid, src, last, age, "  ON A PAGE" if pub else ""))
+
     if split:
         print("\n=== a release is half updated: one source behind another ===")
         for rel, src, last, asrc, alast in split:
@@ -216,7 +255,7 @@ def main() -> int:
 
     if not stale:
         print("\nno series is overdue for its own frequency")
-        return 1 if (empty or split) else 0
+        return 1 if (empty or split or mislabelled) else 0
 
     stale.sort(key=lambda r: -r["overdue"])
     probeable = [r for r in stale if BLS_ID.match(r["id"])]
@@ -292,7 +331,8 @@ def main() -> int:
     # things are faults: a source that has newer data than we hold, and a dead
     # series that is still on a page, which is trap 28 with the alarm attached.
     drawn_dead = [r for r in dead if r["drawn"]]
-    return 1 if (fixable or empty or drawn_dead or split) else 0
+    return 1 if (fixable or empty or drawn_dead or split
+                 or mislabelled) else 0
 
 
 if __name__ == "__main__":

@@ -830,6 +830,33 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     in for a property the data already carries, it is waiting for the first
     case that differs.**
 
+53. **A check that reports the same fifteen things forever is one people scroll
+    past.** Both checks added on 6 September were built because two defects had
+    been found only by a human looking, and a defect found by looking is found
+    only if someone looks. `staleness.py` now asks whether a *title* claiming
+    discontinuation is contradicted by current data, and `clipcheck.py` asks the
+    rendered chart whether one series' range dwarfs its neighbours'.
+
+    The second one immediately found **fifteen panels**, and looking at the
+    worst -- JOLTS separations at 67x -- showed the check cannot decide on its
+    own. There the flat line **is** the finding: other separations are
+    negligible beside quits and layoffs, and drawing them to scale is what says
+    so. On the labour costs page the flattened lines carried the answer to the
+    question the page existed to ask. Same measurement, opposite verdicts.
+
+    So it reports rather than fails, and the judgement is **recorded where the
+    thing is**, as `data-span="intended: <why>"` on the chart div -- the same
+    shape as `exclude_series` naming a dead series with its reason instead of
+    deleting it in silence. An acknowledged panel is still measured and still
+    counted, just not listed, so a **new** one stands out. Without that, the
+    check would have printed fifteen lines every run until it was ignored,
+    which is the green-check failure mode wearing the opposite face.
+
+    **Prove a check by making it fire.** The title check was verified by
+    appending "(DISCONTINUED)" to `PAYEMS` in a transaction, watching it report
+    the series as ON A PAGE, and restoring the title -- the same discipline the
+    dead-man's switch needed, and for the same reason.
+
 ## How it runs
 
 ```

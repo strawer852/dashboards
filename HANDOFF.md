@@ -128,9 +128,12 @@ something that matters.
 - **`frb.wage_tracker` has no rows in `macro_release_dates`**, so `--due` never
   fires for it; it refreshes only on the 01:40 sweep. One series, so it has not
   mattered, but it is a gap in a mechanism that is otherwise complete.
-- **`fmtFor` falls back silently on an unknown format name** where `derive`
-  throws on an unknown transform. Trap 46. Making it throw is a five-line change
-  and would have caught `pct1` immediately.
+- **14 panels have one series flattening the rest**, listed by
+  `tools/clipcheck.py`. Not failures — each needs a look, and when the answer is
+  that the small series being small *is* the point, record it on the chart div
+  as `data-span="intended: <why>"` and it drops off the list. JOLTS `cSep` is
+  done as the worked example. The labour costs page is deliberately absent: it
+  was on that list until Tables 5 and 6 were split.
 - **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
 - **The dead-man's switch is proven end to end** (6 September): the `/fail`
   path fired against the real hc-ping.com URL twice, once on a genuine fault
