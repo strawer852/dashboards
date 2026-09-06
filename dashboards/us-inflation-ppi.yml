@@ -50,6 +50,53 @@ exclude_series:
 # but the magnitudes of the two groups are alike (median 0.15 against 0.10), so
 # the split is in when, not how much.
 derived:
+  # Counted, not weighted. Table 1 is the only PPI table publishing relative
+  # importances, and its finest split of final demand leaves a single 34 per cent item
+  # -- "finished consumer services less trade, transportation and warehousing"
+  # is a leaf with no breakdown at all. A weighted median over that is mostly
+  # one series, so this counts components instead, which is how the payroll
+  # diffusion indexes work and is a real measure rather than a fallback.
+  - id: PPI.fd_breadth
+    kind: share_above
+    periods: 12
+    threshold: 3.0
+    title: Share of final demand components rising faster than 3 per cent
+    unit: Per cent
+    importance: 6
+    of:
+      - WPSFD41113
+      - WPSFD41112
+      - WPSFD4112
+      - WPSFD4113
+      - WPSFD4121
+      - WPSFD4122
+      - WPSFD4123
+      - WPSFD413111
+      - WPSFD413112
+      - WPSFD413121
+      - WPSFD413122
+      - WPSFD41321
+      - WPSFD41322
+      - WPSFD4133
+      - WPSFD42311
+      - WPSFD42312
+      - WPSFD42321
+      - WPSFD42322
+      - WPSFD4233
+      - WPSFD42211
+      - WPSFD42212
+      - WPSFD42213
+      - WPSFD422211
+      - WPSFD422212
+      - WPSFD42222
+      - WPSFD42223
+      - WPSFD42111
+      - WPSFD42112
+      - WPSFD42121
+      - WPSFD42122
+      - WPSFD4213
+      - WPSFD431
+      - WPSFD432
   - id: PPI.rev_fd
     kind: level_revision
     of: PPIFIS
@@ -208,3 +255,43 @@ derived:
     title: Share of final demand taken by final demand construction
     unit: Percent of the basket
     importance: 3
+
+# Drawn only in a 48-month heatmap of a twelve-month change and
+# through the breadth measure over 120 months; 180 covers both with
+# head room. export.py checks it against the page and refuses too small.
+truncate_history:
+  - keep: 180
+    series:
+      - WPSFD41113
+      - WPSFD41112
+      - WPSFD4112
+      - WPSFD4113
+      - WPSFD4121
+      - WPSFD4122
+      - WPSFD4123
+      - WPSFD413111
+      - WPSFD413112
+      - WPSFD413121
+      - WPSFD413122
+      - WPSFD41321
+      - WPSFD41322
+      - WPSFD4133
+      - WPSFD42311
+      - WPSFD42312
+      - WPSFD42321
+      - WPSFD42322
+      - WPSFD4233
+      - WPSFD42211
+      - WPSFD42212
+      - WPSFD42213
+      - WPSFD422211
+      - WPSFD422212
+      - WPSFD42222
+      - WPSFD42223
+      - WPSFD42111
+      - WPSFD42112
+      - WPSFD42121
+      - WPSFD42122
+      - WPSFD4213
+      - WPSFD431
+      - WPSFD432

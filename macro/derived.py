@@ -391,10 +391,22 @@ def share_above_year_ago(srcs, periods: int = 52, **_):
 
 def _weighted_rates(srcs, weights, periods):
     """(rate, weight) per input at each index, for a 12-period change."""
-    if weights is None or len(weights) != len(srcs):
+    # No weights means equal weights: a count across components rather than a
+    # share of spending. That is a real measure, not a fallback -- the payroll
+    # diffusion indexes count industries, and the PPI final-demand basket
+    # cannot be weighted usefully because its finest published split leaves a
+    # single 34% item.
+    if weights is None:
+        weights = [1.0] * len(srcs)
+    if len(weights) != len(srcs):
         raise SystemExit("weighted measures need one weight per input series: "
-                         f"got {0 if weights is None else len(weights)} weights "
-                         f"for {len(srcs)} series")
+                         f"got {len(weights)} weights for {len(srcs)} series")
+    # The completeness floor has to be a SHARE of the weights supplied, not an
+    # absolute. Written as "at least 50" it silently assumed weights summing to
+    # 100: with 33 components counted equally the total is 33, every month
+    # failed the test, and the series came out entirely null while the panel
+    # still drew its axes.
+    full = sum(float(w) for w in weights)
     n = max(len(s["values"]) for s in srcs)
     for i in range(n):
         pairs = []
@@ -406,7 +418,7 @@ def _weighted_rates(srcs, weights, periods):
             if a is None or b is None or not b:
                 continue
             pairs.append((100.0 * (a / b - 1.0), float(w)))
-        yield i, pairs
+        yield i, pairs, full
 
 
 def weighted_median(srcs, periods: int = 12, weights=None, **_):
@@ -418,10 +430,10 @@ def weighted_median(srcs, periods: int = 12, weights=None, **_):
     that is changes month to month.
     """
     out: list[float | None] = []
-    for _i, pairs in _weighted_rates(srcs, weights, periods):
+    for _i, pairs, full in _weighted_rates(srcs, weights, periods):
         total = sum(w for _, w in pairs)
         # Below half the basket present, a "median" is of something else.
-        if not pairs or total < 50.0:
+        if not pairs or total < 0.5 * full:
             out.append(None)
             continue
         pairs.sort()
@@ -444,9 +456,9 @@ def weighted_share_above(srcs, periods: int = 12, threshold: float = 3.0,
     here, which is the whole point of asking.
     """
     out: list[float | None] = []
-    for _i, pairs in _weighted_rates(srcs, weights, periods):
+    for _i, pairs, full in _weighted_rates(srcs, weights, periods):
         total = sum(w for _, w in pairs)
-        if not pairs or total < 50.0:
+        if not pairs or total < 0.5 * full:
             out.append(None)
             continue
         hot = sum(w for r, w in pairs if r > threshold)
@@ -477,6 +489,9 @@ KINDS = {
                           "minus participation at the start times the change in u over {periods} months"),
     "contribution":      (contribution, 2,
                           "relative importance of {weight}% at {weight_date}, re-drifted with relative prices, times the component's own change over {periods} months"),
+    "share_above": (weighted_share_above, None,
+                          "share of the listed components, counted equally, "
+                          "whose {periods}-period change exceeds {threshold}%"),
     "weighted_median": (weighted_median, None,
                           "rate at the middle of the basket by weight, "
                           "{periods}-period change"),
@@ -504,6 +519,7 @@ _PASS = {
     "epop_unemployment_effect": ("periods",),
     "contribution": ("weight", "weight_date", "periods"),
     "relative_importance": ("weight", "weight_date"),
+    "share_above": ("periods", "threshold"),
     "weighted_median": ("periods", "weights"),
     "weighted_share_above": ("periods", "threshold", "weights"),
     "above_trailing_min": ("window",),

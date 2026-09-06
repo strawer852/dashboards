@@ -52,6 +52,8 @@
         <a href="#t18"><span>18</span>Portfolio management</a>
         <a href="#t19"><span>19</span>Levels</a>
         <a href="#t20"><span>20</span>Revisions</a>
+        <a href="#t21"><span>21</span>Components</a>
+        <a href="#t22"><span>22</span>Breadth</a>
       </div>
 
     </nav>
@@ -265,6 +267,21 @@
       <span>Seasonally adjusted</span>
       <span>Final Demand&ndash;Intermediate Demand framework; the older stage-of-processing series are discontinued</span>
     </div>
+    <div class="row one">
+      <div class="t" id="t21">
+        <div class="th"><span class="n">Table 21</span><span class="ti">Where final demand inflation sits</span><span class="u">Twelve-month change, %, 48 months</span></div>
+        <p class="note">The 33 components that partition final demand, each against its own level a year earlier. The chain above says how a shock travels; this says <b>what is moving now</b>. Capped at &plusmn;15%, which covers about nine readings in ten. Read it for columns rather than cells.</p>
+        <div class="chart" id="cFdHeat" style="height:760px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t22">
+        <div class="th"><span class="n">Table 22</span><span class="ti">How broad is producer inflation?</span><span class="u">Share of 33 components above 3%, %</span></div>
+        <p class="note">Breadth rather than level: a final demand index held up by one violent component and one held up by a general rise read the same on the headline. <b>Counted, not weighted</b> &mdash; Table 1 is the only PPI table with relative importances, and its finest split leaves a single component worth 34% of the basket, so a weighted median would mostly be that one series. Counting is how the payroll diffusion indexes work.</p>
+        <div class="chart" id="cFdBreadth" style="height:230px"></div>
+      </div>
+    </div>
 
   </main>
 </div>
@@ -313,6 +330,47 @@ BRB.render({
       source: "PPI", note1: "rawest input" },
   ],
   panels: [
+    { el: "cFdHeat", type: "heatmap", months: 48, transform: "yoy",
+      periods: 12, cap: 15, format: "pct", left: 210, tick: 5,
+      capText: ["\u2265 +15%", "\u2264 \u221215%"],
+      series: [{ id: "WPSFD41113", label: "Fin. consumer foods, crude" },
+               { id: "WPSFD41112", label: "Fin. consumer foods, processed" },
+               { id: "WPSFD4112", label: "Government purchased foods" },
+               { id: "WPSFD4113", label: "Foods for export" },
+               { id: "WPSFD4121", label: "Fin. consumer energy goods" },
+               { id: "WPSFD4122", label: "Government purchased energy" },
+               { id: "WPSFD4123", label: "Energy for export" },
+               { id: "WPSFD413111", label: "Nondurable consumer goods less food…" },
+               { id: "WPSFD413112", label: "Durable consumer goods" },
+               { id: "WPSFD413121", label: "Priv. capital equipment for manufac…" },
+               { id: "WPSFD413122", label: "Priv. capital equipment for nonmanu…" },
+               { id: "WPSFD41321", label: "Government purchased goods excludin…" },
+               { id: "WPSFD41322", label: "Government purchased capital equipm…" },
+               { id: "WPSFD4133", label: "Goods for export ex food/energy" },
+               { id: "WPSFD42311", label: "Trade, personal consumption goods" },
+               { id: "WPSFD42312", label: "Trade, private capital equipment" },
+               { id: "WPSFD42321", label: "Trade, government purchased goods…" },
+               { id: "WPSFD42322", label: "Trade, government purchased capital…" },
+               { id: "WPSFD4233", label: "Trade, exports" },
+               { id: "WPSFD42211", label: "Transportation of private passengers" },
+               { id: "WPSFD42212", label: "Transportation of government passen…" },
+               { id: "WPSFD42213", label: "Transportation of passengers for ex…" },
+               { id: "WPSFD422211", label: "Transportation and warehousing of p…" },
+               { id: "WPSFD422212", label: "Transportation and warehousing of p…" },
+               { id: "WPSFD42222", label: "Transportation and warehousing of g…" },
+               { id: "WPSFD42223", label: "Transportation and warehousing of e…" },
+               { id: "WPSFD42111", label: "Fin. consumer services less trade…" },
+               { id: "WPSFD42112", label: "Priv. capital investment services l…" },
+               { id: "WPSFD42121", label: "Gov. purchased services less trade…" },
+               { id: "WPSFD42122", label: "Government purchased capital invest…" },
+               { id: "WPSFD4213", label: "Services for export less trade, tra…" },
+               { id: "WPSFD431", label: "Construction for private capital in…" },
+               { id: "WPSFD432", label: "Construction for government" }] },
+    { el: "cFdBreadth", type: "line", format: "pct", tick: 11, left: 36,
+      window: 120, hline: 50, hlineLabel: "50",
+      series: [{ id: "PPI.fd_breadth", label: "Components above 3%",
+                 color: "ink", width: 1.7 }] },
+
     { el: "cFD", type: "line", format: "pct", tick: 11, left: 42, window: 60,
       series: yoy([{ id: "PPIFIS", label: "Final demand", ...C1 },
                    { id: "PPIFES", label: "Less foods and energy", ...C2 },
