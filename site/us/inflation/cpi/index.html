@@ -493,14 +493,14 @@ BRB.render({
       source: "CPI-U" },
   ],
   panels: [
-    { el: "cMedian", type: "line", format: "pct", tick: 11, left: 36,
+    { el: "cMedian", type: "line", format: "pct", tick: 11, left: 42,
       window: 120,
       series: [{ id: "CPI.median", label: "Median item", color: "ink", width: 1.9 },
                { id: "CPIAUCNS", label: "Headline", transform: "yoy", periods: 12,
                  color: "s1" },
                { id: "CUUR0000SA0L1E", label: "Core", transform: "yoy",
                  periods: 12, color: "s2" }] },
-    { el: "cBroad", type: "line", format: "pct", tick: 11, left: 36,
+    { el: "cBroad", type: "line", format: "pct", tick: 11, left: 48,
       window: 120, hline: 50, hlineLabel: "50",
       series: [{ id: "CPI.share_above3", label: "Share above 3%",
                  color: "ink", width: 1.7 }] },
@@ -680,7 +680,7 @@ BRB.render({
                { id: "CPI.md_comm_m", label: "Commodities" },
                { id: "CPI.md_serv_m", label: "Services" }] },
 
-    { el: "cVehY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+    { el: "cVehY", type: "line", format: "pct", tick: 11, left: 48, window: 60,
       series: [
                // Insurance leads on ink: it is the largest mover of the five and
                // the only one that has been falling outright.
@@ -690,7 +690,7 @@ BRB.render({
                { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", ...C4 },
                { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", ...C5 }] },
 
-    { el: "cVehM", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+    { el: "cVehM", type: "line", format: "pct", tick: 11, left: 48, window: 60,
       series: [
                { id: "CUSR0000SETE", label: "Motor vehicle insurance", transform: "yoy", periods: 1, ...C1 },
                { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", periods: 1, ...C2 },

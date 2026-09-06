@@ -38,6 +38,7 @@ no local build step.
 | `systemd/` | The refresh timers. Wall-clock ET, `Persistent=true` |
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
+| `tools/clipcheck.py` | Asks the browser whether any axis label overflows its chart. A guess at character width is what made them too narrow |
 | `tools/shoot.py` | Screenshots a dashboard as it renders, from inside the docker network so Authelia is not in the way. The answer to trap 13 |
 | `tools/staleness.py` | Every catalogued series against its own frequency — and against BLS before calling one dead. Covers the ~2,350 that reach no bundle, which `coverage.py` cannot see |
 | `tools/build_nav.py` | Generates the rail from the specs into every page. **Run after adding a dashboard** |
