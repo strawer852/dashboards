@@ -389,6 +389,71 @@ def share_above_year_ago(srcs, periods: int = 52, **_):
     return out
 
 
+def _weighted_rates(srcs, weights, periods):
+    """(rate, weight) per input at each index, for a 12-period change."""
+    if weights is None or len(weights) != len(srcs):
+        raise SystemExit("weighted measures need one weight per input series: "
+                         f"got {0 if weights is None else len(weights)} weights "
+                         f"for {len(srcs)} series")
+    n = max(len(s["values"]) for s in srcs)
+    for i in range(n):
+        pairs = []
+        for s, w in zip(srcs, weights):
+            v = s["values"]
+            if i >= len(v) or i < periods:
+                continue
+            a, b = v[i], v[i - periods]
+            if a is None or b is None or not b:
+                continue
+            pairs.append((100.0 * (a / b - 1.0), float(w)))
+        yield i, pairs
+
+
+def weighted_median(srcs, periods: int = 12, weights=None, **_):
+    """The rate at the middle of the basket, by weight.
+
+    Half the basket by expenditure share is rising faster than this and half
+    slower. Unlike core it removes nothing by assumption: an item is set aside
+    only for being at the edge of the distribution this month, and which item
+    that is changes month to month.
+    """
+    out: list[float | None] = []
+    for _i, pairs in _weighted_rates(srcs, weights, periods):
+        total = sum(w for _, w in pairs)
+        # Below half the basket present, a "median" is of something else.
+        if not pairs or total < 50.0:
+            out.append(None)
+            continue
+        pairs.sort()
+        run, half, val = 0.0, total / 2.0, None
+        for r, w in pairs:
+            run += w
+            if run >= half:
+                val = r
+                break
+        out.append(None if val is None else round(val, 3))
+    return out
+
+
+def weighted_share_above(srcs, periods: int = 12, threshold: float = 3.0,
+                         weights=None, **_):
+    """Share of the basket, by weight, rising faster than `threshold` per cent.
+
+    Breadth rather than level. A headline held down by one large falling item
+    and one held up by a general rise read the same on the mean and differently
+    here, which is the whole point of asking.
+    """
+    out: list[float | None] = []
+    for _i, pairs in _weighted_rates(srcs, weights, periods):
+        total = sum(w for _, w in pairs)
+        if not pairs or total < 50.0:
+            out.append(None)
+            continue
+        hot = sum(w for r, w in pairs if r > threshold)
+        out.append(round(100.0 * hot / total, 3))
+    return out
+
+
 KINDS = {
     "revision":          (revision, 1,
                           "latest monthly change minus the change as first reported"),
@@ -412,6 +477,12 @@ KINDS = {
                           "minus participation at the start times the change in u over {periods} months"),
     "contribution":      (contribution, 2,
                           "relative importance of {weight}% at {weight_date}, re-drifted with relative prices, times the component's own change over {periods} months"),
+    "weighted_median": (weighted_median, None,
+                          "rate at the middle of the basket by weight, "
+                          "{periods}-period change"),
+    "weighted_share_above": (weighted_share_above, None,
+                          "share of the basket by weight whose {periods}-period "
+                          "change exceeds {threshold}%"),
     "above_trailing_min": (above_trailing_min, 1,
                           "per cent above the lowest value of the trailing {window} periods"),
     "share_above_year_ago": (share_above_year_ago, None,
@@ -433,6 +504,8 @@ _PASS = {
     "epop_unemployment_effect": ("periods",),
     "contribution": ("weight", "weight_date", "periods"),
     "relative_importance": ("weight", "weight_date"),
+    "weighted_median": ("periods", "weights"),
+    "weighted_share_above": ("periods", "threshold", "weights"),
     "above_trailing_min": ("window",),
     "share_above_year_ago": ("periods",),
 }

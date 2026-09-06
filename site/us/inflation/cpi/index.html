@@ -63,6 +63,8 @@
         <a href="#t29"><span>29</span>Levels</a>
         <a href="#t30"><span>30</span>Seasonal adjustment</a>
         <a href="#t31"><span>31</span>What revises</a>
+        <a href="#t32"><span>32</span>Median</a>
+        <a href="#t33"><span>33</span>Breadth</a>
       </div>
 
     </nav>
@@ -374,6 +376,22 @@
       <span>Seasonally adjusted</span>
       <span>Contributions and weights analyst-derived from published relative importances</span>
     </div>
+    <div class="row one">
+      <div class="t" id="t32">
+        <div class="th"><span class="n">Table 32</span><span class="ti">What the typical price is doing</span><span class="u">Twelve-month change, %, unadjusted</span></div>
+        <p class="note">Headline and core are weighted <b>means</b>, and a mean is what a few violent items carry. This is the <b>median</b>: half the basket by expenditure share rising faster, half slower. The difference is the point &mdash; headline peaked near 9% in mid-2022, the median at <b>8.1% in April 2023</b>, ten months later, and it has fallen far more slowly since. Core removes food and energy by assumption; the median sets an item aside only for being at the edge this month. Built on a 137-item partition whose weights sum to 99.8; October 2025 is blank because the CPI was barely collected that month. <b>Analyst-derived.</b></p>
+        <p class="key"><i class="kink">Median item</i><i class="ks1">Headline</i><i class="ks2">Core</i></p>
+        <div class="chart" id="cMedian" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t33">
+        <div class="th"><span class="n">Table 33</span><span class="ti">How much of the basket is running hot</span><span class="u">Share of expenditure weight above 3%, %</span></div>
+        <p class="note">Breadth rather than level. A headline held down by one large falling item and one held up by a general rise read the same on the mean and differently here. Above 50 more than half the basket, by what people spend, is rising faster than 3 per cent a year.</p>
+        <div class="chart" id="cBroad" style="height:230px"></div>
+      </div>
+    </div>
 
   </main>
 </div>
@@ -475,6 +493,18 @@ BRB.render({
       source: "CPI-U" },
   ],
   panels: [
+    { el: "cMedian", type: "line", format: "pct", tick: 11, left: 36,
+      window: 120,
+      series: [{ id: "CPI.median", label: "Median item", color: "ink", width: 1.9 },
+               { id: "CPIAUCNS", label: "Headline", transform: "yoy", periods: 12,
+                 color: "s1" },
+               { id: "CUUR0000SA0L1E", label: "Core", transform: "yoy",
+                 periods: 12, color: "s2" }] },
+    { el: "cBroad", type: "line", format: "pct", tick: 11, left: 36,
+      window: 120, hline: 50, hlineLabel: "50",
+      series: [{ id: "CPI.share_above3", label: "Share above 3%",
+                 color: "ink", width: 1.7 }] },
+
     // Five years everywhere: the CPI runs from 1947 and the 1970s would put
     // the axis at 15%, flattening the post-2021 episode into the floor.
     { el: "cHead", type: "line", format: "pct", tick: 11, left: 42, window: 60,
