@@ -121,7 +121,11 @@ so check the last observation before putting any of them on a panel (trap 28).
   throws on an unknown transform. Trap 46. Making it throw is a five-line change
   and would have caught `pct1` immediately.
 - **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
-- **The dead-man's switch `/fail` path is still unproven.**
+- **The dead-man's switch is proven end to end** (6 September): the `/fail`
+  path fired against the real hc-ping.com URL twice, once on a genuine fault
+  at 06:30 ET and once deliberately, and recovered both times. Re-test with
+  `MAX_AGE_HOURS=0 ops/dashboards-timer-check`, then run it again bare to
+  recover; it sends a real alarm, which is the point.
 - **`~/bigricebowl` still has an unpushed commit** (`5995cf5`, the EverOS pin)
   plus older uncommitted deletions that are not mine.
 - **The one-off scripts are in `~/ingest_run/`** with their logs.

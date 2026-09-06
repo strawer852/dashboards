@@ -1123,10 +1123,26 @@ it says "Hi strawer852!" the account key is still doing the work.
 
 - **The dead-man's switch is live.** `HEALTHCHECK_URL` is set and the ok
   ping returns 2xx; `dashboards-timer-check` runs daily at 06:30 ET and
-  pings on success, `URL/fail` on failure. The `/fail` path has fired
-  against a placeholder URL but not yet against the real one, so the alarm
-  half is inferred rather than proven — firing it sends a real down-alert
-  and then recovers on the next run.
+  pings on success, `URL/fail` on failure. **Both paths are now proven against
+  the real hc-ping.com URL, 6 September 2026.** The `/fail` half fired twice
+  that day: once unplanned at 10:30Z, when the scheduled run caught two dead
+  CPI series still in the exported bundle and alarmed correctly, and once
+  deliberately at 13:10Z. Success pings at 13:09Z and 13:10:31Z recovered it
+  each time, and the ping-failure count in `logs/timer-check.log` did not move,
+  which is how you know a ping was accepted rather than merely attempted.
+
+  Induce a fault without touching anything: `MAX_AGE_HOURS=0
+  ops/dashboards-timer-check`. It is read as `${MAX_AGE_HOURS:-26}`, so the
+  real script takes its real failure path over real data, sends a real Telegram
+  alarm and a real `/fail`, and exits 1. Then run it again with no override to
+  recover. **Exit 1 is the alarm having been sent, not a fault in the check** --
+  the unit records that as `SuccessExitStatus=0 1`.
+
+  One caution learned from the 10:30Z firing: `shipped()` reads the *exported
+  bundles*, so its verdict changes the moment an export runs. That alarm was
+  right when it fired and stale forty minutes later, which is correct
+  behaviour, not a flap -- but do not conclude a check was wrong because a
+  later run disagrees. Check what the bundle held at the time.
 - Alerting is ntfy.sh for the pipeline and Telegram for ops. **William prefers to
   self-host ntfy** — swap `NTFY_URL` when convenient. The Telegram path has been
   fired and confirmed delivered, and **ntfy fired for real on 4 September**
