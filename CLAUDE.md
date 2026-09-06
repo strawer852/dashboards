@@ -160,9 +160,33 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
    first print.** May 2026 ran 172 → 129 → 63 across three releases; the PDF's
    "revised down by 66,000, from +129,000" is the last step only.
 
-4. **The October 2025 gap is household-survey only.** `UNRATE`, `CIVPART`,
-   `EMRATIO` are genuinely null; `PAYEMS` carries 158,408. A blanket "October
-   2025 is missing" rule punches a false hole in the payroll line.
+4. **The October 2025 gap is household-survey only, and it is PERMANENT.**
+   The federal shutdown that began 1 October 2025 stopped CPS field collection,
+   and BLS has said the October reference period will not be collected
+   retroactively: a monthly unemployment rate published continuously since
+   January 1948 now has one empty month, for good. `UNRATE`, `CIVPART`,
+   `EMRATIO`, `U6RATE` and every other CPS series are genuinely null; `PAYEMS`
+   carries 158,408, because the establishment survey ran on electronically
+   filed employer records and BLS merged October into November's report.
+   Measured across the catalogue: **59 of 59 household-survey series lost
+   October, 201 of 202 establishment series kept it.**
+
+   **The rule that predicts the shape, and the one worth remembering: a survey
+   that had to be taken during the month is gone; a record that could be
+   collected later survived.** It also explains the single establishment
+   casualty -- `CES0500000013`, average hourly earnings in 1982-84 dollars,
+   which is deflated by a CPI that does not exist for October.
+
+   So a blanket "October 2025 is missing" rule punches a false hole in the
+   payroll line, and a blanket "the payroll release is fine" rule invents a
+   household survey that was never taken. Two consequences that outlive the
+   event: **never wait for this month to arrive** (it is not late, it is
+   absent -- trap 49), and **never interpolate across it**. The transforms in
+   `brb-dash.js` return null when either endpoint is null, and the bundle
+   encodes months as `start` + `step` with a dense `values` array, so the hole
+   survives export as a null slot rather than a dropped one. That is not
+   incidental: if the exporter ever compacted nulls away, every date after
+   October 2025 would silently shift by a month.
 
 5. **Never serve an unversioned asset as `immutable`.** `brb-dash.js` was matched
    by the fingerprinted-asset rule and cached for a year. Chrome will not
@@ -325,8 +349,13 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     and plum both failed at 13.9 and 14.8). The bar had to gain real chroma.
 
 22. **October 2025 in the CPI is a PARTIAL hole, and the opposite shape from
-    trap 4.** 34 of 37 series are null; only **new vehicles, used cars and
-    gasoline** were priced, from administrative sources. So a blanket "October
+    trap 4.** Measured across all 469 monthly CPI series: **439 are null in
+    October and fine again in November**, and only 20 were priced at all --
+    new vehicles, used cars and gasoline among them, from administrative
+    sources that needed no field visit (trap 4's rule again). A further **10
+    went null in October 2025 and have not returned since**, which is a
+    different fault wearing the same shape and must not be counted as shutdown
+    damage; find those by last non-null value, not last row (trap 49). So a blanket "October
     2025 is missing" rule blanks three series that have data, and a blanket "the
     CPI is fine" rule keeps 34 that do not. One missing month costs exactly one
     month of the twelve-month change — and a second in **October 2026**, when
@@ -701,6 +730,71 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     observations of payload against a chart that renders short rather than
     empty -- which is the failure nothing else here would catch.
 
+44. **A BEA hierarchy cannot be recovered from the numbers.** The 210 series
+    behind PCE are a tree -- line items under aggregates under the total -- and
+    the API returns them as a flat list. Reconstructing the tree by testing
+    which children sum to which parent failed **twice, in both directions**: a
+    loose tolerance made nested items look like siblings of their own parent,
+    and an exact one found no children at all, because published rounding means
+    a parent rarely equals its children to the last decimal. The structure is
+    not in the values and no tolerance will find it. **BEA publishes the
+    hierarchy as indentation in the downloadable workbook** -- read it from
+    there. The general form: when a shape is documented somewhere, do not infer
+    it from data that merely reflects it.
+
+45. **`add_series.py` recorded SAAR as unadjusted.** Its adjustment flag had two
+    branches, seasonally adjusted and not, and BEA returns a third thing --
+    seasonally adjusted at annual rates. That fell through to the `else` and was
+    filed `NSA`. Nothing failed: the series ingested, drew and validated, while
+    the catalogue recorded the opposite of the truth about them. It is the kind
+    of error that surfaces only when someone later compares an SA series with an
+    NSA one and cannot see why the shapes disagree. **Record what the source
+    states, not the nearest of the options already coded for.**
+
+46. **A format name the engine does not have fails silently to the default.**
+    `format: "pct1"` was invented in a spec on the assumption that it meant one
+    decimal place. `fmtFor` has no such name, matched nothing, and returned the
+    default formatter -- so the chart rendered, with the wrong number of
+    decimals, and nothing anywhere reported an unknown name. Compare `derive`,
+    which **throws** on an unknown transform. The formatter should do the same;
+    until it does, check a format name against `fmtFor` before using it. **Any
+    lookup that falls back instead of failing will hide a typo forever.**
+
+47. **A cloned page keeps the original's contents list.** The PCE dashboard was
+    built by copying the PPI page and replacing the body. The replacement ran
+    from the first table heading downwards, so everything above it survived --
+    including the in-page contents nav, which listed PPI's tables on the PCE
+    page and linked to anchors that did not exist. **The user found this, and no
+    check did**, which is the whole lesson: nothing validated the page against
+    itself. `tools/clipcheck.py` now resolves every in-page link, and the
+    contents list is **generated from the tables actually present** rather than
+    written by hand. Build a nav from the document, never in parallel with it.
+
+48. **The engine could only draw a series, and a composition is not one.** Every
+    panel type read a series from the bundle and plotted it against time.
+    Comparing what the CPI and PCE baskets are *made of* has no time axis at
+    all -- a weight is a fact about a moment. There was no way to express it,
+    and the temptation was to hand-write a chart into the page. That is exactly
+    the defect the second project rule names: **if a dashboard needs new
+    JavaScript, the engine is missing a panel type.** `PANELS.compare` is that
+    panel -- two named baskets, any number of rows -- and it is generic, not a
+    CPI-versus-PCE special case. Note what it deliberately does not do: it takes
+    its numbers from the spec, because they are published weights from two
+    agencies rather than series in the database, and the page states the source
+    beside them.
+
+49. **A published null is still a row, so freshness read from the last ROW is a
+    lie.** `tools/staleness.py` measured currency as `max(observation_dt)`,
+    which counts months in which the source published nothing but a hole. Two
+    CPI items whose last real figure was **September and October 2024** carried
+    null rows forward to October 2025 and so read as a year fresher than they
+    were -- and I repeated that error to the user, describing them as October
+    2025 stops when October 2025 was merely their last empty row. Changing the
+    check to `max(observation_dt) FILTER (WHERE value IS NOT NULL)` moved the
+    overdue count from 62 to 74: **twelve series had been hiding behind their
+    own nulls.** Wherever currency matters, ask when the source last said
+    something, not when it last said nothing.
+
 ## How it runs
 
 ```
@@ -849,25 +943,29 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
-## State as of 5 September 2026, end of day
+## State as of 6 September 2026, end of day
 
-**2,641 series across 8 releases, ~2,851,000 vintage rows over ~919,000
-observations, 36/36 validations, and every *published* series drawn by its page
-on all five dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 31,
-PPI 24, JOLTS 7, Weekly Claims 6.
+**3,126 series across 9 releases and three sources, 3,442,990 vintage rows
+over 1,367,052 observations spanning 1913-01-01 to 2026-08-29, 37/37
+validations, and every *published* series drawn by its page on all six
+dashboards.** Nonfarm Payroll runs to 33 numbered tables, CPI 33, PPI 23, PCE
+15, JOLTS 11, Weekly Claims 10 -- 125 in all. **818 series are on a page and
+2,308 are held for analysis**, which is the split the `publish` column exists to
+make (trap 43).
 
 Every release is now complete at the level its news release publishes, and the
 split between what is held and what is drawn is explicit:
 
 | Release | Published | Analysis-only | Total |
 |---|---|---|---|
-| `bls.ppi` | 28 | 611 | 639 |
-| `bls.jolts` | 12 | 528 | 540 |
-| `bls.cpi` | 40 | 429 | 469 |
+| `bls.jolts` | 44 | 640 | 684 |
+| `bls.ppi` | 61 | 578 | 639 |
+| `bls.cpi` | 176 | 293 | 469 |
 | `bls.eci` | 2 | 402 | 404 |
-| `bls.employment_situation` | 92 | 205 | 297 |
+| `bls.employment_situation` | 138 | 159 | 297 |
 | `bls.productivity` | 2 | 280 | 282 |
-| `eta.claims` | 6 | 3 | 9 |
+| `bea.personal_income` | 232 | 3 | 235 |
+| `eta.claims` | 59 | 56 | 115 |
 | `frb.wage_tracker` | 1 | 0 | 1 |
 
 CPI is the whole of news release Table 2 -- all 338 expenditure categories,
@@ -877,19 +975,23 @@ national catalogues.
 
 **FRED does not carry most CPI detail.** Only 71 of the 338 published Table 2
 categories are on it; 267 come from the BLS API and therefore have no vintage
-history at all, the same shape as the 29 CES industries. In total **312 series
-are BLS-sourced and 359 FRED series have no ALFRED history either** -- all 671
+history at all, the same shape as the 29 CES industries. In total **456 series
+are BLS-sourced, 210 are BEA-sourced, and 359 FRED series have no ALFRED history
+either** -- all 1,025
 carry `vintage_mode='fetch_date'`, corrected in bulk on 5 September from the
 `from_row` they were added with, by asking which series still held only
 provisional `fred_csv` rows after a backfill.
 
-**66 analysis-only series are dead at source** -- 45 Productivity (annual PRS
-lines ending 2022), 19 PPI, 2 ECI -- confirmed against the BLS API, not just
+**74 analysis-only series are dead at source** -- 45 Productivity (annual PRS
+lines ending 2022), 23 PPI, 4 CPI, 2 ECI -- confirmed against the BLS API, not just
 against FRED (trap 40). What is held for them is the complete history; there is
 nothing to recover. Eight others that looked identical were not dead but
-stale-on-FRED, and were re-sourced. None of the 66 is drawn, so none can
+stale-on-FRED, and were re-sourced. None of the 74 is drawn, so none can
 produce trap 28's empty chart, but check the last observation before building a
-panel on any of them.
+panel on any of them. The 4 CPI ones are the household-operations family and
+legal services, which BLS stopped publishing during 2024 and which read as
+current until the freshness check was taught to ignore null rows (trap 49); they
+are in no spec and no bundle.
 
 The Employment Situation went from 92 series to **297** on 5 September: the
 establishment survey is now complete at the level the news release publishes it
@@ -949,9 +1051,14 @@ FRED's own clock is **US Central**, and it published roughly an hour after the
 08:30 ET embargo on both the July and August releases. The 08:35–09:55 window
 covers that, but only just — see the calendar note under Open right now.
 
-Two sources. FRED/ALFRED for anything it carries; the BLS API **only** for what
+**Three sources.** FRED/ALFRED for anything it carries; the BLS API for what
 it does not — the diffusion indexes, `LNS16000000`, real earnings and seasonally
-adjusted marginal attachment. Those carry no vintage history at all (trap 15).
+adjusted marginal attachment, and most CPI detail; and the **BEA API** for the
+PCE underlying detail, which exists nowhere else. Neither the BLS nor the BEA
+API serves vintages, so all 666 of their series carry `fetch_date` and have no
+point-in-time history at all (trap 15). A release fed by two of the three can be
+half updated with every check green, which is why `tools/staleness.py` compares
+sources *within* a release.
 
 Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all with
 `Persistent=true`. Lingering is on; without it none of them run.
@@ -1035,11 +1142,12 @@ it says "Hi strawer852!" the account key is still doing the work.
 Dated deliberately: this block is the only part of this file that is about a
 moment rather than about the system, and it should look stale when it is.
 
-**`planned.yml` is empty and every release has its vintage history.** What is
-left is small, and one item now blocks.
+**`planned.yml` is empty, every release has its vintage history, and nothing
+blocks.** The BEA key is in place and PCE shipped on it. What is left is
+design.
 
 0. **Design what to draw.** Ingestion is finished and nothing is blocking.
-   2,344 series sit in the database at `publish=false`, drawn by nothing. The
+   2,308 series sit in the database at `publish=false`, drawn by nothing. The
    rule for promoting one has not changed -- large by weight, persistently
    volatile, or a direct input to something else that matters -- and the
    mechanics are now a spec-file exercise: name it in `include_series`, or set
@@ -1048,14 +1156,23 @@ left is small, and one item now blocks.
    Two things to weigh when that starts. The CPI and PPI item structures are
    far too big to stack (trap 21 stops at six colours, and a partition is the
    only honest stack, per the settled decisions). And a `fetch_date` series
-   must never be offered a revision overlay -- there are now 665 of them, so
-   check `vintage_mode` rather than assuming, especially anywhere in CPI
-   detail, where 267 of 338 categories are BLS-only.
+   must never be offered a revision overlay -- there are now **1,025** of them,
+   so check `vintage_mode` rather than assuming, especially anywhere in CPI
+   detail, where 267 of 338 categories are BLS-only, and anywhere in PCE, where
+   all 210 BEA lines are.
+
+   **The concrete candidate is a labour costs dashboard.** ECI (404 series) and
+   Productivity (282) are ingested and drawn by nothing. Quarterly and thin
+   apart, together they are unit labour costs -- the wage measure that bears on
+   inflation, and the one thing the site discusses without showing. It needs no
+   ingestion at all: a spec file and catalogue rows. 45 of the Productivity
+   series are dead at source, so check the last observation before putting any
+   of them on a panel (traps 28 and 49).
 
    Still true and worth rechecking as the catalogue grows: each ingest makes
    BLS API calls against a 500/day key limit. Trap 39 cut that from 35 calls
    per run to 7 by fetching only the years not already held, which is what
-   made 304 BLS series affordable at all.
+   made 456 BLS series affordable at all.
 
 1. **Do not self-host ntfy.** Asked and answered, 4 September 2026. The
    alerting exists to say the pipeline broke; running the notifier on the box

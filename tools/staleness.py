@@ -129,12 +129,15 @@ def source_split(cur, months=1):
     Returns (release, behind_source, behind_date, ahead_source, ahead_date).
     """
     cur.execute("""
-        SELECT m.release_id, m.source, max(o.observation_dt)
+        SELECT m.release_id, m.source,
+               max(o.observation_dt) FILTER (WHERE o.value IS NOT NULL)
         FROM macro_series_meta m JOIN macro_observations o USING (series_id)
         GROUP BY 1, 2
     """)
     by_rel = {}
     for rel, src, last in cur.fetchall():
+        if last is None:
+            continue
         by_rel.setdefault(rel, []).append((src, last))
     out = []
     for rel, rows in by_rel.items():
@@ -168,8 +171,13 @@ def main() -> int:
     today = date.today()
     with psycopg.connect(os.environ["MACRO_DSN"]) as conn, conn.cursor() as cur:
         cur.execute("""
+            -- The last observation that HAS A VALUE. A published null is
+            -- still a row, so max(observation_dt) counts months the source
+            -- stopped reporting: two CPI items whose last real figure was
+            -- late 2024 carried null rows to October 2025 and read as a year
+            -- fresher than they were.
             SELECT m.series_id, m.release_id, m.source, m.frequency, m.publish,
-                   max(o.observation_dt)
+                   max(o.observation_dt) FILTER (WHERE o.value IS NOT NULL)
             FROM macro_series_meta m
             LEFT JOIN macro_observations o USING (series_id)
             GROUP BY 1, 2, 3, 4, 5
@@ -223,7 +231,13 @@ def main() -> int:
                                        start_year=oldest.year,
                                        end_year=today.year)
             for r in capped:
-                v = obs.get(r["id"]) or []
+                # Both sides of this comparison must mean the same thing.
+                # `r["last"]` is our last non-null observation, so this must be
+                # BLS's last non-null one too: the API returns the months it
+                # published nothing as rows with an empty value, and taking the
+                # max date over those says a dead series is current.
+                v = [(d, val) for d, val in (obs.get(r["id"]) or [])
+                     if val is not None]
                 if v:
                     bl = max(d for d, _ in v)
                     if bl > r["last"]:
