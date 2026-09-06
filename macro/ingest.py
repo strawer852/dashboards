@@ -29,6 +29,7 @@ from datetime import datetime, timezone
 
 import psycopg
 
+import bea
 import bls
 import fred
 
@@ -37,7 +38,7 @@ DSN = os.environ.get("MACRO_DSN", "postgresql://strawer@127.0.0.1:5432/macro")
 # is PROVISIONAL: the ALFRED backfill replaces those rows per series with
 # true realtime_start vintages. Nothing replaces the BLS rows, because the
 # API has no point-in-time history at all -- see CLAUDE.md trap 15.
-ROW_SOURCE = {"fred": "fred_csv", "bls": "bls_api"}
+ROW_SOURCE = {"fred": "fred_csv", "bls": "bls_api", "bea": "bea_api"}
 
 UPSERT = """
 WITH incoming AS (
@@ -73,7 +74,7 @@ def main() -> int:
     with psycopg.connect(DSN, autocommit=False) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT series_id, title, source FROM macro_series_meta "
+                "SELECT series_id, title, source, dataset FROM macro_series_meta "
                 "ORDER BY importance DESC, series_id"
             )
             catalog = cur.fetchall()
@@ -124,12 +125,36 @@ def main() -> int:
                     failures.append((sid, f"{type(exc).__name__}: {exc}"))
                 print(f"!! BLS batch failed: {exc}", file=sys.stderr)
 
+        # BEA: one request returns a whole table's history, so group by table
+        # and fetch each once rather than per series. The table is held in the
+        # catalog's `dataset` column as "<dataset>:<TableName>".
+        bea_rows: dict[str, list] = {}
+        bea_by_table: dict[str, list[str]] = {}
+        for r in catalog:
+            if r[2] == "bea":
+                bea_by_table.setdefault(r[3] or bea.DEFAULT_TABLE, []).append(r[0])
+        for spec, ids in bea_by_table.items():
+            try:
+                print(f"BEA: {len(ids)} series from {spec}")
+                bea_rows.update(bea.get_observations(ids, spec))
+            except Exception as exc:                      # noqa: BLE001
+                for sid in ids:
+                    failures.append((sid, f"{type(exc).__name__}: {exc}"))
+                print(f"!! BEA fetch failed for {spec}: {exc}", file=sys.stderr)
+
         print(f"{len(catalog)} series to load\n")
         print(f"{'series':<22} {'rows':>6} {'new':>6}  {'from':<8} {'to':<8}")
         print("-" * 56)
 
-        for sid, _title, source in catalog:
-            if source == "bls":
+        for sid, _title, source, _dataset in catalog:
+            if source == "bea":
+                rows = bea_rows.get(sid)
+                if not rows:
+                    if sid not in [f[0] for f in failures]:
+                        failures.append((sid, "BEA returned no observations"))
+                        print(f"{sid:<22} {'FAIL':>6}  no observations")
+                    continue
+            elif source == "bls":
                 rows = bls_rows.get(sid)
                 if not rows:
                     if sid not in [f[0] for f in failures]:

@@ -44,6 +44,8 @@
         <a href="#t9"><span>9</span>Real income, with and without transfers</a>
         <a href="#t10"><span>10</span>Where the level went</a>
         <a href="#t11"><span>11</span>Income against spending</a>
+        <a href="#t12"><span>12</span>What the typical price is doing</a>
+        <a href="#t13"><span>13</span>How much of the basket is running hot</a>
       </div>
 
     </nav>
@@ -161,6 +163,24 @@
       </div>
     </div>
 
+
+    <div class="row one">
+      <div class="t" id="t12">
+        <div class="th"><span class="n">Table 12</span><span class="ti">What the typical price is doing</span><span class="u">Twelve-month change, %</span></div>
+        <p class="note">Headline and core are weighted <b>means</b>, and a mean is what a few violent items carry. This is the <b>median</b>: half the basket by expenditure share rising faster, half slower. Core removes food and energy by assumption; the median sets an item aside only for being at the edge this month. Built on a 210-item partition from BEA&rsquo;s underlying detail &mdash; FRED carries 25 of those lines &mdash; whose weights sum to 99.7. <b>Analyst-derived, and BEA-sourced, so it carries no revision history even though the headline above it does.</b></p>
+        <p class="key"><i class="kink">Median item</i><i class="ks1">Headline</i><i class="ks2">Core</i></p>
+        <div class="chart" id="cMedian" style="height:250px"></div>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t13">
+        <div class="th"><span class="n">Table 13</span><span class="ti">How much of the basket is running hot</span><span class="u">Share of expenditure weight above 3%, %</span></div>
+        <p class="note">Breadth rather than level. A headline held down by one large falling item and one held up by a general rise read the same on the mean and differently here. Above 50 more than half the basket, by what people spend, is rising faster than 3 per cent a year.</p>
+        <div class="chart" id="cBroad" style="height:230px"></div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -209,6 +229,18 @@ BRB.render({
       source: "BEA", note1: "disposable, year over year" },
   ],
   panels: [
+    { el: "cMedian", type: "line", format: "pct", tick: 11, left: 46,
+      window: 120,
+      series: [{ id: "PCE.median", label: "Median item", color: "ink",
+                 width: 1.9 },
+               { id: "PCEPI", label: "Headline", transform: "yoy",
+                 periods: 12, color: "s1" },
+               { id: "PCEPILFE", label: "Core", transform: "yoy",
+                 periods: 12, color: "s2" }] },
+    { el: "cBroad", type: "line", format: "pct", tick: 11, left: 48,
+      window: 120, hline: 50, hlineLabel: "50",
+      series: [{ id: "PCE.share_above3", label: "Share above 3%",
+                 color: "ink", width: 1.7 }] },
     { el: "cHead", type: "line", format: "pct", tick: 11, left: 46, window: 120,
       series: [{ id: "PCEPI", label: "Headline", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
                { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" }] },

@@ -63,9 +63,13 @@ def main() -> int:
     ap.add_argument("--release", required=True)
     ap.add_argument("--category", default="employment")
     ap.add_argument("--importance", type=int, default=5)
-    ap.add_argument("--source", choices=("fred", "bls"), default="fred",
+    ap.add_argument("--source", choices=("fred", "bls", "bea"), default="fred",
                     help="FRED wherever both carry the series: it is the "
                          "only free source of vintages.")
+    ap.add_argument("--dataset", metavar="SPEC",
+                    help="for --source bea: the table these series come from, "
+                         "as '<dataset>:<TableName>'. Stored per series so "
+                         "ingest fetches each table once.")
     ap.add_argument("--titles", metavar="JSON",
                     help="metadata for series the source has no catalog block "
                          "for: {series_id: {title, unit, sa}}. Compose it from "
@@ -90,9 +94,27 @@ def main() -> int:
         dataset = row[0]
 
         bls_cat = bls.get_catalog(args.series) if args.source == "bls" else {}
+        if args.source == "bea":
+            if not args.dataset:
+                raise SystemExit("--source bea needs --dataset '<dataset>:<Table>'")
+            dataset = args.dataset
 
         for sid in args.series:
-            if args.source == "bls":
+            if args.source == "bea":
+                sup = supplied.get(sid)
+                if not sup:
+                    print(f"!! {sid}: --titles does not describe it. BEA sends "
+                          "no catalog block, so compose the title from the "
+                          "table's own line descriptions.", file=sys.stderr)
+                    return 1
+                title, freq = sup["title"], "M"
+                sa = sup.get("sa", "SA")
+                unit = sup.get("unit")
+                url = "https://apps.bea.gov/iTable/"
+                # BEA serves the current estimate and nothing else, so the
+                # vintage IS the fetch date. CLAUDE.md trap 15.
+                vmode = "fetch_date"
+            elif args.source == "bls":
                 cat = bls_cat.get(sid)
                 sup = supplied.get(sid)
                 if not cat and not sup:
