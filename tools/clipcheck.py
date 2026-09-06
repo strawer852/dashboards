@@ -74,38 +74,57 @@ ANCHORS = """() => {
 SPANS = """() => {
   const out = [];
   if (!window.echarts) return out;
+  // 2nd-98th percentile, so a single spike cannot set the scale. JOLTS rates
+  // was flagged for one COVID layoffs point while being perfectly readable.
+  const pct = (a, q) => {
+    if (!a.length) return null;
+    const i = (a.length - 1) * q;
+    const lo = Math.floor(i), hi = Math.ceil(i);
+    return a[lo] + (a[hi] - a[lo]) * (i - lo);
+  };
   document.querySelectorAll('.chart').forEach(el => {
     const inst = echarts.getInstanceByDom(el);
     if (!inst) return;
     const opt = inst.getOption();
     const ser = opt.series || [];
     if (ser.length < 2 || ser.some(s => s.type !== 'line')) return;
-    const spans = [];
+    // Grouped by axis. A dual-axis panel draws two independent scales and a
+    // series is only ever squashed relative to the one it is plotted against.
+    const byAxis = {};
     ser.forEach(s => {
-      let lo = Infinity, hi = -Infinity;
+      const vals = [];
       (s.data || []).forEach(d => {
         const v = Array.isArray(d) ? d[d.length - 1]
                 : (d && typeof d === 'object' ? d.value : d);
         const n = Number(v);
         if (v === null || v === undefined || Number.isNaN(n)) return;
-        if (n < lo) lo = n;
-        if (n > hi) hi = n;
+        vals.push(n);
       });
-      if (lo <= hi) spans.push({ name: s.name || '?', span: hi - lo });
+      if (vals.length < 8) return;
+      vals.sort((a, b) => a - b);
+      const lo = pct(vals, 0.02), hi = pct(vals, 0.98);
+      const k = String(s.yAxisIndex || 0);
+      (byAxis[k] = byAxis[k] || []).push(
+        { name: s.name || '?', lo: lo, hi: hi, span: hi - lo });
     });
-    if (spans.length < 2) return;
-    spans.sort((a, b) => b.span - a.span);
-    const wide = spans[0], thin = spans[spans.length - 1];
-    if (thin.span > 0 && wide.span / thin.span >= 4) {
-      // data-span on the chart div records a judgement already made. It is
-      // not a threshold override: the panel is still measured, still counted,
-      // just not listed again every run.
-      out.push({ id: el.id, wide: wide.name, thin: thin.name,
-                 ok: !!el.dataset.span,
-                 ws: Math.round(wide.span * 10) / 10,
-                 ts: Math.round(thin.span * 10) / 10,
-                 ratio: Math.round(wide.span / thin.span * 10) / 10 });
-    }
+    Object.keys(byAxis).forEach(k => {
+      const rows = byAxis[k];
+      if (rows.length < 2) return;
+      // The axis a reader sees, estimated the same robust way.
+      const axis = Math.max.apply(null, rows.map(r => r.hi))
+                 - Math.min.apply(null, rows.map(r => r.lo));
+      if (!(axis > 0)) return;
+      const share = r => r.span / axis;
+      const squashed = rows.filter(r => share(r) < 0.20)
+                           .sort((a, b) => share(a) - share(b));
+      // One smooth line among readable ones is normal, and is usually the
+      // finding. Two or more is a panel whose small series cannot be read.
+      if (squashed.length < 2) return;
+      out.push({ id: el.id, ok: !!el.dataset.span,
+                 n: squashed.length, of: rows.length,
+                 names: squashed.map(r => r.name + ' ' +
+                          Math.round(share(r) * 100) + '%').join(', ') });
+    });
   });
   return out;
 }"""
@@ -129,9 +148,9 @@ with sync_playwright() as pw:
                 acked += 1
                 continue
             flat += 1
-            print("FLATTENED %-25s %-12s %s spans %s vs %s at %s -- %sx"
-                  % (path.split("/")[-1], r["id"], r["wide"], r["ws"],
-                     r["thin"], r["ts"], r["ratio"]))
+            print("FLATTENED %-25s %-12s %d of %d series under a fifth of "
+                  "the axis: %s" % (path.split("/")[-1], r["id"], r["n"],
+                                    r["of"], r["names"]))
 
         dangling = pg.evaluate(ANCHORS)
         if dangling:

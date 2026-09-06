@@ -128,12 +128,14 @@ something that matters.
 - **`frb.wage_tracker` has no rows in `macro_release_dates`**, so `--due` never
   fires for it; it refreshes only on the 01:40 sweep. One series, so it has not
   mattered, but it is a gap in a mechanism that is otherwise complete.
-- **14 panels have one series flattening the rest**, listed by
-  `tools/clipcheck.py`. Not failures — each needs a look, and when the answer is
-  that the small series being small *is* the point, record it on the chart div
-  as `data-span="intended: <why>"` and it drops off the list. JOLTS `cSep` is
-  done as the worked example. The labour costs page is deliberately absent: it
-  was on that list until Tables 5 and 6 were split.
+- **The flatness check in `tools/clipcheck.py` is quiet and calibrated.** Its
+  first cut flagged 15 panels; all 15 were looked at, 14 were fine, and the
+  metric was re-cut around what share of its axis a series occupies rather than
+  how it compares with its neighbours. Three panels are recorded as deliberate
+  with `data-span="intended: <why>"` on the chart div — JOLTS `cSep`,
+  payroll `cUnSex`, CPI `cVehM` — and nothing else is outstanding. Add the same
+  attribute when a new one turns out to be intended; it stays counted, just not
+  listed. Verified to still fire by restoring the four-line price panel.
 - **`pub_lag_days` and `staleness_mode`** remain columns with no consumer.
 - **The dead-man's switch is proven end to end** (6 September): the `/fail`
   path fired against the real hc-ping.com URL twice, once on a genuine fault

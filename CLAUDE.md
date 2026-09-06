@@ -830,32 +830,45 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     in for a property the data already carries, it is waiting for the first
     case that differs.**
 
-53. **A check that reports the same fifteen things forever is one people scroll
-    past.** Both checks added on 6 September were built because two defects had
-    been found only by a human looking, and a defect found by looking is found
-    only if someone looks. `staleness.py` now asks whether a *title* claiming
-    discontinuation is contradicted by current data, and `clipcheck.py` asks the
-    rendered chart whether one series' range dwarfs its neighbours'.
+53. **A check with 7% precision is noise, and only looking tells you which.**
+    Two defects behind the labour costs dashboard had been found by eye, so two
+    checks were built to catch their kind: `staleness.py` now asks whether a
+    *title* claiming discontinuation is contradicted by current data, and
+    `clipcheck.py` asks the rendered chart whether a series is too flat to read.
 
-    The second one immediately found **fifteen panels**, and looking at the
-    worst -- JOLTS separations at 67x -- showed the check cannot decide on its
-    own. There the flat line **is** the finding: other separations are
-    negligible beside quits and layoffs, and drawing them to scale is what says
-    so. On the labour costs page the flattened lines carried the answer to the
-    question the page existed to ask. Same measurement, opposite verdicts.
+    The second found **fifteen panels on its first run**. Looking at all fifteen
+    showed **fourteen were fine** -- and the three reasons they were fine are
+    the whole lesson, because none could be reasoned out from the numbers:
 
-    So it reports rather than fails, and the judgement is **recorded where the
-    thing is**, as `data-span="intended: <why>"` on the chart div -- the same
-    shape as `exclude_series` naming a dead series with its reason instead of
-    deleting it in silence. An acknowledged panel is still measured and still
-    counted, just not listed, so a **new** one stands out. Without that, the
-    check would have printed fifteen lines every run until it was ignored,
-    which is the green-check failure mode wearing the opposite face.
+    * **The flat line is often the finding.** JOLTS separations at 67x is
+      correct: other separations *are* negligible beside quits and layoffs, and
+      drawing them to scale is what says so.
+    * **One outlier inflates a range without hurting readability.** JOLTS rates
+      was flagged entirely on a single COVID layoffs spike.
+    * **A ratio between two small series means nothing.** CPI other goods was
+      flagged at 6.3x for 3.3% against 0.5%, on an axis running -2% to +2%.
 
-    **Prove a check by making it fire.** The title check was verified by
-    appending "(DISCONTINUED)" to `PAYEMS` in a transaction, watching it report
-    the series as ON A PAGE, and restoring the title -- the same discipline the
-    dead-man's switch needed, and for the same reason.
+    Re-cut, the question became *what share of the axis does each series
+    occupy* -- what a reader actually experiences -- asked robustly: spans and
+    the axis both from the 2nd-98th percentile, so no spike sets the scale, and
+    a panel flagged only when **two or more** series fall under a fifth of it,
+    because one smooth line among readable ones is normal. **Fifteen became
+    two**, both then judged deliberate and recorded.
+
+    A third fault was mine and only the re-cut version exposed it: it pooled
+    series across **different y-axes**, inventing a 3-to-40 axis for the
+    dual-axis manufacturing hours panel that no reader ever sees. Series are now
+    grouped by `yAxisIndex` before being judged.
+
+    Two habits this leaves behind. **Record the judgement where the thing is** --
+    `data-span="intended: <why>"` on the chart div, the same shape as
+    `exclude_series` naming a dead series with its reason -- so an acknowledged
+    panel is still measured and counted but never re-listed, and a *new* one
+    stands out. And **prove a check by making it fire**: the title check by
+    appending "(DISCONTINUED)" to `PAYEMS` and restoring it, the flatness check
+    by temporarily putting back the four-line panel that was wrong, which it
+    caught at "Price deflator 14%, Unit labour costs 14%" and then went quiet
+    on. A check that has never fired is a check nobody knows works.
 
 ## How it runs
 
