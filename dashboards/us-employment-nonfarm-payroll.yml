@@ -4,6 +4,10 @@ region: United States
 topic: Employment
 nav_order: 1
 title: Nonfarm Payroll
+# Shown on the landing index, which is generated from these specs.
+agency: BLS · Employment Situation
+blurb: >-
+  Payrolls, unemployment, participation, wages and hours, with all 174 published industries and the first-print revision overlay.
 # The stamp under the title comes from this release, and only this one.
 release: bls.employment_situation
 include_releases:

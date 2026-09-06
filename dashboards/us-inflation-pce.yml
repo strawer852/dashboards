@@ -4,6 +4,11 @@ region: United States
 topic: Inflation
 nav_order: 3
 title: PCE
+index_title: 'Personal Consumption Expenditures'
+# Shown on the landing index, which is generated from these specs.
+agency: BEA · Personal Income and Outlays
+blurb: >-
+  The index the Federal Reserve targets, its underlying detail, and what its basket holds that the CPI’s does not.
 # The stamp under the title comes from this release, and only this one.
 release: bea.personal_income
 include_releases:

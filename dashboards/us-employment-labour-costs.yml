@@ -4,6 +4,10 @@ region: United States
 topic: Employment
 nav_order: 4
 title: Labour Costs
+# Shown on the landing index, which is generated from these specs.
+agency: BLS · ECI and Productivity
+blurb: >-
+  Unit labour costs as pay less productivity, the Employment Cost Index, and what is moving the price of corporate output.
 # TWO releases feed this page and they publish about a week apart -- ECI on 30
 # October, Productivity on 5 November. Neither is "the" release, but the stamp
 # takes one, and unit labour costs is the headline, so Productivity it is. The

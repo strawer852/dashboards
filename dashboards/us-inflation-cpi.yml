@@ -4,6 +4,11 @@ region: United States
 topic: Inflation
 nav_order: 1
 title: CPI
+index_title: 'Consumer Prices'
+# Shown on the landing index, which is generated from these specs.
+agency: BLS · Consumer Price Index
+blurb: >-
+  All 338 published expenditure categories, contributions to the headline, and a weighted median item.
 # The stamp under the title comes from this release, and only this one.
 release: bls.cpi
 include_releases:

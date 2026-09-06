@@ -52,14 +52,89 @@ def catalog() -> list[dict]:
         d = yaml.safe_load(p.read_text(encoding="utf-8"))
         out.append({"region": d["region"], "topic": d["topic"],
                     "title": d["title"], "path": "/" + d["path"].strip("/") + "/",
-                    "order": d.get("nav_order", 99), "planned": False})
+                    "order": d.get("nav_order", 99), "planned": False,
+                    "agency": d.get("agency", ""), "blurb": d.get("blurb", ""),
+                    "index_title": d.get("index_title", d["title"]),
+                    "bundle": d["path"].replace("/", "-")})
     planned = ROOT / "planned.yml"
     if planned.exists():
         for d in yaml.safe_load(planned.read_text(encoding="utf-8")) or []:
             out.append({"region": d["region"], "topic": d["topic"],
                         "title": d["title"], "path": None,
-                        "order": d.get("nav_order", 99), "planned": True})
+                        "order": d.get("nav_order", 99), "planned": True,
+                        "agency": d.get("agency", ""),
+                        "blurb": d.get("blurb", "Next to be built."),
+                        "bundle": None})
     return sorted(out, key=lambda d: (d["order"], d["title"]))
+
+
+
+IDX_START, IDX_END = "<!-- idx:start -->", "<!-- idx:end -->"
+
+
+def index_html(items: list[dict]) -> str:
+    """The landing page's index of dashboards, grouped by region.
+
+    Hand-written, this list went stale the day a dashboard shipped: it was
+    still offering Consumer Prices as "next to be built" with CPI, PPI, PCE and
+    Labour Costs all live. Same source as the rail, so it cannot drift again.
+
+    Grouped by region even while there is only one, because the heading is what
+    makes a second country an addition rather than a redesign -- and because a
+    flat list silently asserts that everything here describes one place.
+    """
+    tree: dict = {}
+    for it in items:
+        tree.setdefault(it["region"], []).append(it)
+    for group in tree.values():
+        group.sort(key=lambda i: (i["topic"], i["order"], i["title"]))
+
+    rows = []
+    multi = len(tree) > 1
+    for region, group in sorted(
+            tree.items(),
+            key=lambda kv: (all(i["planned"] for i in kv[1]), kv[0])):
+        if multi:
+            rows.append('      <h2 class="reg">%s</h2>' % html.escape(region))
+        for it in group:
+            nm = html.escape(it.get("index_title") or it["title"])
+            ag = html.escape(it["agency"])
+            bl = html.escape(it["blurb"])
+            if it["planned"]:
+                rows.append(
+                    '      <div class="row coming">\n'
+                    '        <span class="nm">%s</span>\n'
+                    '        <span class="agency">%s</span>\n'
+                    '        <span class="desc">%s</span>\n'
+                    '        <span class="meta">&mdash;</span>\n'
+                    '      </div>' % (nm, ag, bl))
+            else:
+                rows.append(
+                    '      <a class="row" href="%s">\n'
+                    '        <span class="nm">%s</span>\n'
+                    '        <span class="agency">%s</span>\n'
+                    '        <span class="desc">%s</span>\n'
+                    '        <span class="meta" data-bundle="%s">&hellip;</span>\n'
+                    '      </a>' % (html.escape(it["path"]), nm, ag, bl,
+                                    html.escape(it["bundle"])))
+    return "\n".join(rows)
+
+
+def write_index(items: list[dict]) -> bool:
+    """Rewrite the landing page's index block. True if it changed."""
+    page = SITE / "index.html"
+    s = page.read_text(encoding="utf-8")
+    if IDX_START not in s or IDX_END not in s:
+        print("  !! landing page has no idx markers; index not written",
+              file=sys.stderr)
+        return False
+    a = s.index(IDX_START) + len(IDX_START)
+    b = s.index(IDX_END)
+    body = "\n" + index_html(items) + "\n      "
+    if s[a:b] == body:
+        return False
+    page.write_text(s[:a] + body + s[b:], encoding="utf-8")
+    return True
 
 
 def grouped(items: list[dict]) -> dict:
@@ -143,10 +218,13 @@ def main() -> int:
                     help="report what would change, write nothing")
     args = ap.parse_args()
 
-    tree = grouped(catalog())
+    items = catalog()
+    tree = grouped(items)
     n_regions = len(tree)
     n_live = sum(1 for r in tree.values() for t in r.values() for i in t if not i["planned"])
     print(f"{n_regions} region(s), {n_live} live dashboard(s)")
+    if not args.check and write_index(items):
+        print('  updated  site/index.html (dashboard index)')
 
     changed = missing = 0
     for f in sorted(SITE.rglob("index.html")):

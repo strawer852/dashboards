@@ -4,6 +4,10 @@ region: United States
 topic: Employment
 nav_order: 3
 title: Weekly Claims
+# Shown on the landing index, which is generated from these specs.
+agency: ETA · UI Weekly Claims
+blurb: >-
+  Initial and continuing claims and the insured rate — the highest-frequency read, five weeks ahead of the payroll report.
 release: eta.claims
 include_releases:
   - eta.claims

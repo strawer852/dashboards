@@ -4,6 +4,11 @@ region: United States
 topic: Inflation
 nav_order: 2
 title: PPI
+index_title: 'Producer Prices'
+# Shown on the landing index, which is generated from these specs.
+agency: BLS · Producer Price Index
+blurb: >-
+  The whole Final Demand–Intermediate Demand system, stage by stage, with the producer prices that feed PCE.
 # The stamp under the title comes from this release, and only this one.
 release: bls.ppi
 include_releases:

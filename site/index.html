@@ -34,6 +34,12 @@
     .idx a.row { grid-template-columns: 1fr; }
     .idx .agency, .idx .meta { grid-column: 1; text-align: left; }
   }
+  .idx h2.reg {
+    font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); font-weight: 500;
+    margin: 26px 0 0; padding: 10px 0 8px; border-bottom: 1px solid var(--rule-hi);
+  }
+  .idx h2.reg:first-child { margin-top: 0; }
   .coming { color: var(--faint); }
   .coming .nm { color: var(--faint); }
 </style>
@@ -80,39 +86,55 @@
     can always be read as it stands today, or as it was first reported.</p>
 
     <div class="idx" id="idx">
+      <!-- idx:start -->
       <a class="row" href="/us/employment/nonfarm-payroll/">
         <span class="nm">Nonfarm Payroll</span>
-        <span class="agency">BLS &middot; Employment Situation</span>
-        <span class="desc">Payrolls, unemployment, participation, wages and hours, with the
-          fourteen supersectors and the first-print revision overlay.</span>
+        <span class="agency">BLS · Employment Situation</span>
+        <span class="desc">Payrolls, unemployment, participation, wages and hours, with all 174 published industries and the first-print revision overlay.</span>
         <span class="meta" data-bundle="us-employment-nonfarm-payroll">&hellip;</span>
       </a>
       <a class="row" href="/us/employment/jolts/">
         <span class="nm">Job Openings &amp; Labor Turnover</span>
-        <span class="agency">BLS &middot; JOLTS</span>
-        <span class="desc">Openings, hires, quits and layoffs, vacancies per jobseeker,
-          and the Beveridge curve.</span>
+        <span class="agency">BLS · JOLTS</span>
+        <span class="desc">Openings, hires, quits and layoffs, vacancies per jobseeker, and the flow identity checked against the payroll count.</span>
         <span class="meta" data-bundle="us-employment-jolts">&hellip;</span>
       </a>
       <a class="row" href="/us/employment/weekly-claims/">
         <span class="nm">Weekly Claims</span>
-        <span class="agency">ETA &middot; UI Weekly Claims</span>
-        <span class="desc">Initial and continuing claims and the insured rate &mdash; the
-          highest-frequency read, five weeks ahead of the payroll report.</span>
+        <span class="agency">ETA · UI Weekly Claims</span>
+        <span class="desc">Initial and continuing claims and the insured rate — the highest-frequency read, five weeks ahead of the payroll report.</span>
         <span class="meta" data-bundle="us-employment-weekly-claims">&hellip;</span>
       </a>
-      <div class="row coming">
+      <a class="row" href="/us/employment/labour-costs/">
+        <span class="nm">Labour Costs</span>
+        <span class="agency">BLS · ECI and Productivity</span>
+        <span class="desc">Unit labour costs as pay less productivity, the Employment Cost Index, and what is moving the price of corporate output.</span>
+        <span class="meta" data-bundle="us-employment-labour-costs">&hellip;</span>
+      </a>
+      <a class="row" href="/us/inflation/cpi/">
         <span class="nm">Consumer Prices</span>
-        <span class="agency">BLS &middot; CPI</span>
-        <span class="desc">Next to be built.</span>
-        <span class="meta">&mdash;</span>
-      </div>
+        <span class="agency">BLS · Consumer Price Index</span>
+        <span class="desc">All 338 published expenditure categories, contributions to the headline, and a weighted median item.</span>
+        <span class="meta" data-bundle="us-inflation-cpi">&hellip;</span>
+      </a>
+      <a class="row" href="/us/inflation/ppi/">
+        <span class="nm">Producer Prices</span>
+        <span class="agency">BLS · Producer Price Index</span>
+        <span class="desc">The whole Final Demand–Intermediate Demand system, stage by stage, with the producer prices that feed PCE.</span>
+        <span class="meta" data-bundle="us-inflation-ppi">&hellip;</span>
+      </a>
+      <a class="row" href="/us/inflation/pce/">
+        <span class="nm">Personal Consumption Expenditures</span>
+        <span class="agency">BEA · Personal Income and Outlays</span>
+        <span class="desc">The index the Federal Reserve targets, its underlying detail, and what its basket holds that the CPI’s does not.</span>
+        <span class="meta" data-bundle="us-inflation-pce">&hellip;</span>
+      </a>
+      <!-- idx:end -->
     </div>
 
     <div class="src">
       <span id="health">&hellip;</span>
-      <span>Source: BLS and ETA, via FRED and ALFRED</span>
-      <span>Private &middot; family access only</span>
+      <span>Sources: BLS, BEA, ETA and the Atlanta Fed &mdash; via FRED and ALFRED where they carry vintages, and the agencies&rsquo; own APIs where they do not</span>
     </div>
   </main>
 </div>
@@ -151,8 +173,14 @@ const fmtDate = iso => { const d = new Date(iso.length === 10 ? iso + "T00:00:00
     // 231,000 vintage rows" long after it was 78 and 259,000.
     const size = document.getElementById("size");
     if (st.series && st.vintage_rows) {
-      size.innerHTML = `<b>${st.series} series</b> &middot; ` +
-        `${Math.round(st.vintage_rows / 1000)},000 vintage rows`;
+      // Rounded to thousands on purpose -- the exact row count is false
+      // precision on a masthead -- but FORMATTED, not string-concatenated.
+      // Appending a literal ",000" to a number already divided by 1000 was
+      // right at 231,000 and wrong the moment the count passed a million:
+      // 3,442,990 rendered as "3443,000".
+      const k = Math.round(st.vintage_rows / 1000) * 1000;
+      size.innerHTML = `<b>${st.series.toLocaleString("en-GB")} series</b> &middot; ` +
+        `${k.toLocaleString("en-GB")} vintage rows`;
     } else {
       size.textContent = "";
     }

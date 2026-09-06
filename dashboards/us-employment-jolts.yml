@@ -4,6 +4,11 @@ region: United States
 topic: Employment
 nav_order: 2
 title: JOLTS
+index_title: 'Job Openings & Labor Turnover'
+# Shown on the landing index, which is generated from these specs.
+agency: BLS · JOLTS
+blurb: >-
+  Openings, hires, quits and layoffs, vacancies per jobseeker, and the flow identity checked against the payroll count.
 release: bls.jolts
 include_releases:
   - bls.jolts
