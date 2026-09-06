@@ -122,6 +122,33 @@ def self_test() -> int:
     return 1 if bad else 0
 
 
+
+def source_split(cur, months=1):
+    """Releases where one source is more than `months` behind another.
+
+    Returns (release, behind_source, behind_date, ahead_source, ahead_date).
+    """
+    cur.execute("""
+        SELECT m.release_id, m.source, max(o.observation_dt)
+        FROM macro_series_meta m JOIN macro_observations o USING (series_id)
+        GROUP BY 1, 2
+    """)
+    by_rel = {}
+    for rel, src, last in cur.fetchall():
+        by_rel.setdefault(rel, []).append((src, last))
+    out = []
+    for rel, rows in by_rel.items():
+        if len(rows) < 2:
+            continue
+        ahead = max(rows, key=lambda r: r[1])
+        for src, last in rows:
+            gap = ((ahead[1].year - last.year) * 12
+                   + ahead[1].month - last.month)
+            if gap > months:
+                out.append((rel, src, last, ahead[0], ahead[1]))
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-probe", action="store_true",
@@ -153,6 +180,8 @@ def main() -> int:
     global BUNDLES
     if args.bundles:
         BUNDLES = Path(args.bundles)
+    with psycopg.connect(os.environ["MACRO_DSN"]) as _c, _c.cursor() as _cur:
+        split = source_split(_cur)
     on_a_page = shipped()
     empty, stale = [], []
     for sid, rel, src, freq, pub, last in rows:
@@ -171,9 +200,15 @@ def main() -> int:
         print("\n!! %d catalogued series have NO observations: %s"
               % (len(empty), ", ".join(s for s, _, _ in empty[:12])))
 
+    if split:
+        print("\n=== a release is half updated: one source behind another ===")
+        for rel, src, last, asrc, alast in split:
+            print("  %-24s %s stops at %s while %s has %s"
+                  % (rel, src, last, asrc, alast))
+
     if not stale:
         print("\nno series is overdue for its own frequency")
-        return 1 if empty else 0
+        return 1 if (empty or split) else 0
 
     stale.sort(key=lambda r: -r["overdue"])
     probeable = [r for r in stale if BLS_ID.match(r["id"])]
@@ -243,7 +278,7 @@ def main() -> int:
     # things are faults: a source that has newer data than we hold, and a dead
     # series that is still on a page, which is trap 28 with the alarm attached.
     drawn_dead = [r for r in dead if r["drawn"]]
-    return 1 if (fixable or empty or drawn_dead) else 0
+    return 1 if (fixable or empty or drawn_dead or split) else 0
 
 
 if __name__ == "__main__":

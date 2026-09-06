@@ -149,7 +149,6 @@ derived:
       - CUUR0000SEHD
       - CUUR0000SEHG01
       - CUUR0000SEHG02
-      - CUUR0000SEHP
       - CUUR0000SEMC01
       - CUUR0000SEMC02
       - CUUR0000SEMC03
@@ -179,7 +178,6 @@ derived:
       - CUUR0000SEED04
       - CUUR0000SEEE03
       - CUUR0000SEGC01
-      - CUUR0000SEGD01
       - CUUR0000SEGD02
       - CUUR0000SEGD03
       - CUUR0000SEGD04
@@ -287,7 +285,6 @@ derived:
       - 0.288
       - 0.783
       - 0.357
-      - 0.915
       - 1.66
       - 0.917
       - 0.317
@@ -317,7 +314,6 @@ derived:
       - 0.124
       - 0.915
       - 0.667
-      - 0.377
       - 0.164
       - 0.13
       - 0.029
@@ -432,7 +428,6 @@ derived:
       - CUUR0000SEHD
       - CUUR0000SEHG01
       - CUUR0000SEHG02
-      - CUUR0000SEHP
       - CUUR0000SEMC01
       - CUUR0000SEMC02
       - CUUR0000SEMC03
@@ -462,7 +457,6 @@ derived:
       - CUUR0000SEED04
       - CUUR0000SEEE03
       - CUUR0000SEGC01
-      - CUUR0000SEGD01
       - CUUR0000SEGD02
       - CUUR0000SEGD03
       - CUUR0000SEGD04
@@ -570,7 +564,6 @@ derived:
       - 0.288
       - 0.783
       - 0.357
-      - 0.915
       - 1.66
       - 0.917
       - 0.317
@@ -600,7 +593,6 @@ derived:
       - 0.124
       - 0.915
       - 0.667
-      - 0.377
       - 0.164
       - 0.13
       - 0.029
@@ -1358,7 +1350,6 @@ truncate_history:
       - CUUR0000SEHD
       - CUUR0000SEHG01
       - CUUR0000SEHG02
-      - CUUR0000SEHP
       - CUUR0000SEMC01
       - CUUR0000SEMC02
       - CUUR0000SEMC03
@@ -1388,7 +1379,6 @@ truncate_history:
       - CUUR0000SEED04
       - CUUR0000SEEE03
       - CUUR0000SEGC01
-      - CUUR0000SEGD01
       - CUUR0000SEGD02
       - CUUR0000SEGD03
       - CUUR0000SEGD04
