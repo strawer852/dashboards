@@ -387,3 +387,29 @@ scrolls horizontally, and the first four tables of each were looked at.
   with the total drawn over it, every rebased index starts at 100, every
   October 2025 gap shows as a gap, and every heatmap reads top-down.
 
+**The prose, by value.** Every sentence in the 140 notes that carries a
+number -- 147 of them -- was read, and the 45 that state a measurement were
+recomputed from `macro_observations_current` or the bundles (the rest are
+cross-references, definitions, or figures already documented as measured in
+the traps). Thirty-nine reproduce exactly, among them the Beveridge-curve
+averages (4.49, 6.88, 4.34), the JOLTS net-flow gap (mean 3.4k, sd 936k over
+308 months), the supersector sums (3.0k worst on 5,510k; 1k on 5,715k), the
+quits-share extremes (73.3% April 2022, 17.3% April 2020), 70.9% of months
+since 1990 clearing ±122,000, the claims revision medians (+1,000 recent,
+16,000 and 7.5% at three to five years), the CPI weight ratios, the 8.1%
+median peak in April 2023, the PPI cap covering 92% of cells, and the
+±122,000 interval against the August technical note. Six did not, and are
+fixed:
+
+| Page, table | Said | Measured |
+|---|---|---|
+| JOLTS 11 | April 2020 bar 15.9m | March 2020, 16.3m (April 11.5m) |
+| PCE 8 | saving rate "record low in 2022" | 2.2% June 2022; the record is 1.4%, July 2005 |
+| CPI 18 | shelter "thirteen times gasoline" | 35.304 / 3.852 = 9.2 |
+| PPI 18 | portfolio management "−20% to +25%" | −14.1% to +33.3% since 2010 |
+| PPI 22 | sign agreement 60%, autocorrelation 0.02; 80% and 0.62 | 63% and 0.09; 83% and 0.67, pooled over 2010–2026 |
+| Payroll 20 | teen rate three to four times adult "at all times" | 1.75× in April 2020; "in normal times" |
+
+Two counts that drift by one every month -- "66 months since 2021" (CPI 31)
+and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
+
