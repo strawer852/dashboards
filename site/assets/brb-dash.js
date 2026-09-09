@@ -954,7 +954,7 @@
     // the error panel can read the scored calls from ctx; a record that
     // fails to load leaves its block saying so rather than blank.
     if (cfg.forecast) {
-      const host = document.getElementById(cfg.forecast.el || "fcBlock");
+      const host = document.getElementById(cfg.forecast.into || "fcBlock");
       try {
         const r = await fetch(cfg.forecast.url, { credentials: "same-origin", cache: "no-cache" });
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);

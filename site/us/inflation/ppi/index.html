@@ -341,7 +341,7 @@ BRB.render({
   // The forecast record beside this page. The engine renders the latest
   // call into #fcBlock and scores every call against the bundle's
   // as-first-printed changes; the error panel below draws the record.
-  forecast: { url: "/us/inflation/ppi/forecasts.json", el: "fcBlock" },
+  forecast: { url: "/us/inflation/ppi/forecasts.json", into: "fcBlock" },
   summary: [
     { label: "Final demand", series: "PPIFIS", transform: "yoy", format: "pct",
       source: "PPI", note1: "year over year" },
