@@ -40,9 +40,22 @@ derived:
   # Distributional measures over a 135-item PARTITION of the basket, built by
   # descending Table 2 only where the children reconcile to their parent; the
   # weights sum to 98.52 of 100 (counted, 9 September 2026 -- an earlier
-  # comment here said 137 and 99.81), and 14 of them are exact residuals where BLS
+  # comment here said 137 and 99.81), and 10 of them are exact residuals where BLS
   # publishes no relative importance for a single child. Every input is the
   # unadjusted index, so a twelve-month change needs no seasonal adjustment.
+  #
+  # Every input is a row of Table 2 (verified by value against the July 2026
+  # release with tools/reconcile.py, 9 September 2026) except SEMC04,
+  # services by other medical professionals, which is the residual of
+  # professional services less physicians, dental and eyeglasses and is
+  # priced irregularly. Two inputs used to be sparse children of monthly
+  # Table 2 rows -- intracity mass transit (SS53031, last priced April
+  # 2026) and food at elementary and secondary schools (SSFV031A, some
+  # months missing) -- and, truncated to their last 180 observations, they
+  # ended one to three months before the rest. That is what made the
+  # by-date alignment (trap 60) change the median in 30 months and the
+  # breadth in 164 when it landed. They are now the Table 2 parents, which
+  # carry the same weights.
   #
   # These answer what headline, core and every contribution panel cannot: all
   # of those are weighted MEANS, and a mean is what a few violent items carry.
@@ -74,7 +87,7 @@ derived:
       - CUUR0000SAF115
       - CUUR0000SEFV01
       - CUUR0000SEFV02
-      - CUUR0000SSFV031A
+      - CUUR0000SEFV03     # food at employee sites and schools (Table 2); its child SSFV031A is priced only some months
       - CUUR0000SEFV04
       - CUUR0000SEFV05
       - CUUR0000SEHE01
@@ -171,7 +184,7 @@ derived:
       - CUUR0000SS52051
       - CUUR0000SETG01
       - CUUR0000SS53023
-      - CUUR0000SS53031
+      - CUUR0000SETG03     # intracity transportation (Table 2); its child SS53031 stopped at April 2026
       - CUUR0000SERA02
       - CUUR0000SERA04
       - CUUR0000SERB02
@@ -353,7 +366,7 @@ derived:
       - CUUR0000SAF115
       - CUUR0000SEFV01
       - CUUR0000SEFV02
-      - CUUR0000SSFV031A
+      - CUUR0000SEFV03     # food at employee sites and schools (Table 2); its child SSFV031A is priced only some months
       - CUUR0000SEFV04
       - CUUR0000SEFV05
       - CUUR0000SEHE01
@@ -450,7 +463,7 @@ derived:
       - CUUR0000SS52051
       - CUUR0000SETG01
       - CUUR0000SS53023
-      - CUUR0000SS53031
+      - CUUR0000SETG03     # intracity transportation (Table 2); its child SS53031 stopped at April 2026
       - CUUR0000SERA02
       - CUUR0000SERA04
       - CUUR0000SERB02
@@ -1247,7 +1260,7 @@ derived:
     unit: Index points
     importance: 4
 
-# The 137 median inputs are drawn only through the two derived
+# The 135 median inputs are drawn only through the two derived
 # measures above, over 120 months of a twelve-month change. The database
 # keeps their full history; export.py reads the requirement off the page,
 # follows the derived measures back to these inputs, and refuses too small.
@@ -1275,7 +1288,7 @@ truncate_history:
       - CUUR0000SAF115
       - CUUR0000SEFV01
       - CUUR0000SEFV02
-      - CUUR0000SSFV031A
+      - CUUR0000SEFV03     # food at employee sites and schools (Table 2); its child SSFV031A is priced only some months
       - CUUR0000SEFV04
       - CUUR0000SEFV05
       - CUUR0000SEHE01
@@ -1372,7 +1385,7 @@ truncate_history:
       - CUUR0000SS52051
       - CUUR0000SETG01
       - CUUR0000SS53023
-      - CUUR0000SS53031
+      - CUUR0000SETG03     # intracity transportation (Table 2); its child SS53031 stopped at April 2026
       - CUUR0000SERA02
       - CUUR0000SERA04
       - CUUR0000SERB02

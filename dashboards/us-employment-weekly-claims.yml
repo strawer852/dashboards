@@ -9,8 +9,15 @@ agency: ETA · UI Weekly Claims
 blurb: >-
   Initial and continuing claims and the insured rate — the highest-frequency read, three to four weeks ahead of the payroll report.
 release: eta.claims
+# Two FRED releases feed this page. The national report (FRED 180) publishes
+# on Thursday and dates the stamp; the 106 state and territory series are the
+# State Unemployment Insurance Weekly Claims Report (FRED 469), which FRED
+# updates on the Friday. They were one release until 9 September 2026, and
+# that made the stamp read Friday's date and the calendar fill with Fridays
+# (CLAUDE.md trap 61). A release here maps to exactly one FRED release.
 include_releases:
   - eta.claims
+  - eta.state_claims
 # Claims do NOT lead payrolls -- measured, the correlation peaks at a lead of
 # nought in every era (see Table 5). What they have is timeliness, and showing
 # the monthly series alongside is still the point. UNEMPLOY is the denominator
