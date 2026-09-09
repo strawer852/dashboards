@@ -34,6 +34,11 @@ page and `/us/` screenshotted and looked at. Then areas A and B of
   and the breadth in 164, because three inputs end early; an independent
   computation confirms the new values, and two sparse inputs are now their
   Table 2 parents (trap 60).
+- **Every table was looked at**, at 1280px and 430px. Axis labels collided
+  on the weekly axes and on nearly every panel at phone width; the engine
+  now sizes the label interval from measured widths and waits for the
+  webfonts, and `clipcheck.py` tests label collision at both widths
+  (trap 64). A quarterly stamp read "April 2026"; it reads "2026 Q2".
 - **359 FRED series marked `fetch_date` had ALFRED histories** the backfill
   had skipped, because its "no history" test could not tell a never-revised
   series from a vintage-less one (trap 63). Test fixed, all 359 backfilled

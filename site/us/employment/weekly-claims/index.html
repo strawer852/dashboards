@@ -152,7 +152,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
+<script src="/assets/brb-dash.js?v=f63b20c8ec"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -175,14 +175,19 @@ BRB.render({
       signed: true, source: "CES", note1: "monthly, for contrast" },
   ],
   panels: [
+    // `tick` is the ECharts label interval in periods, so on a weekly axis 25
+    // is a label every six months: right across the full width over five
+    // years, but the labels collided in a half-width cell (Tables 2 and 3)
+    // and over ten years (Tables 8 and 10). 52 on those. Found by looking,
+    // 9 September 2026; clipcheck.py now measures label overlap too.
     { el: "cIC", type: "line", format: "k_units", tick: 25, window: 260, left: 46,
       series: [{ id: "ICSA", label: "Weekly", color: "muted", width: 1 },
                { id: "IC4WSA", label: "4-week average", width: 1.8 }] },
-    { el: "cCC", type: "line", format: "m_units", tick: 25, window: 260, left: 46,
+    { el: "cCC", type: "line", format: "m_units", tick: 52, window: 260, left: 46,
       series: [{ id: "CCSA", label: "Continuing claims" }] },
     // U-3 is monthly on a weekly axis; alignAsOf carries each month's value
     // forward across the weeks that follow it.
-    { el: "cIUR", type: "line", format: "pct", tick: 25, window: 260, left: 40,
+    { el: "cIUR", type: "line", format: "pct", tick: 52, window: 260, left: 40,
       series: [{ id: "IURSA", label: "Insured unemployment rate", color: "s1" },
                { id: "UNRATE", label: "Unemployment rate", color: "ink", width: 1.8 }] },
     { el: "cSA", type: "line", format: "k_units", tick: 13, window: 157, left: 46,
@@ -191,7 +196,7 @@ BRB.render({
     { el: "cRev", type: "line", format: "signed_count", tick: 25, left: 52,
       window: 260, hline: 0,
       series: [{ id: "ICSA.revision", label: "Revision", color: "ink", width: 1.6 }] },
-    { el: "cBreadth", type: "line", format: "pct", tick: 25, left: 48,
+    { el: "cBreadth", type: "line", format: "pct", tick: 52, left: 48,
       window: 520, hline: 50, hlineLabel: "50",
       series: [{ id: "STATE.ic_breadth", label: "States rising year on year",
                  color: "ink", width: 1.7 }] },
@@ -251,7 +256,7 @@ BRB.render({
                { id: "WIICLAIMS", label: "Wisconsin" },
                { id: "WVICLAIMS", label: "West Virginia" },
                { id: "WYICLAIMS", label: "Wyoming" }] },
-    { el: "cLow", type: "line", format: "pct", tick: 25, left: 54, window: 520,
+    { el: "cLow", type: "line", format: "pct", tick: 52, left: 54, window: 520,
       series: [{ id: "IC4WSA.above_low", label: "Above the 52-week low",
                  color: "ink", width: 1.6 }] },
     // scale 0.001 because the two sides are in different units: continuing

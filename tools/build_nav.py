@@ -383,6 +383,8 @@ document.querySelectorAll(".meta[data-bundle]").forEach(async el => {{
     const rp = rel.ref_period.split("-");
     const period = rel.cadence === "weekly"
       ? `week to ${{fmtDate(rel.ref_period)}}`
+      : rel.cadence === "quarterly"
+      ? `${{rp[0]}} Q${{Math.ceil(+rp[1] / 3)}}`
       : `${{MFULL[+rp[1] - 1]}} ${{rp[0]}}`;
     const days = Math.floor((Date.now() - new Date(rel.released_at)) / 86400000);
     el.innerHTML = `<b>${{period}}</b><br>released ${{fmtDate(rel.released_at)}}` +

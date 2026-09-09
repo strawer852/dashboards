@@ -38,7 +38,7 @@ no local build step.
 | `systemd/` | The refresh timers. Wall-clock ET, `Persistent=true` |
 | `tools/install-timers.sh` | Installs and enables them as user units. Idempotent |
 | `tools/coverage.py` | Bundle series no page draws. The exporter checks the other end only |
-| `tools/clipcheck.py` | Asks the browser whether any axis label overflows its chart. A guess at character width is what made them too narrow |
+| `tools/clipcheck.py` | Asks the browser whether any axis label overflows its chart or collides with its neighbour, at 1280px and 430px. A guess at character width is what made them too narrow |
 | `tools/shoot.py` | Screenshots a dashboard as it renders, from inside the docker network so Authelia is not in the way. The answer to trap 13 |
 | `tools/staleness.py` | Every catalogued series against its own frequency — and against BLS before calling one dead. Covers the ~2,350 that reach no bundle, which `coverage.py` cannot see |
 | `tools/build_nav.py` | Generates the rail, the landing index, map and scope line, and the region pages (`site/<region>/index.html`) from the specs. **Run after adding a dashboard** |
@@ -1100,6 +1100,28 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     else, which is the point. The 456 BLS and 210 BEA series are the ones
     genuinely without vintages. **Ask the source whether it has vintages;
     do not infer it from the shape of what was fetched.**
+
+64. **A label interval chosen for one width is wrong at every other, and
+    overlapping labels overflow nothing.** `tick` is the ECharts label
+    interval and every panel carried one tuned for its desktop cell. In a
+    half-width cell and on a ten-year weekly axis the dates collided at
+    1280px; at 430px nearly every panel on the site did, because a phone
+    holds a third of the labels. `clipcheck.py` was green throughout: it
+    asked whether a label crossed the chart's edge, and these crossed each
+    other. Found by looking at every table, 9 September 2026.
+
+    Fixed in the engine rather than per page: `hideOverlap` on every axis,
+    the interval computed at render from the chart's real width and the
+    labels' real width -- `measureText` in the axis font, which is a
+    measurement, not the character-width guess trap 13 forbids -- as the
+    smallest multiple of the page's `tick`, so the desktop cadence survives
+    with labels dropped rather than overprinted; and rendering deferred
+    until `document.fonts.ready` (capped at 1.5 s), because ECharts had
+    been measuring the fallback monospace and painting JetBrains Mono, and
+    the labels it judged to fit then touched. `clipcheck.py` measures label
+    collision at 1280px **and 430px**, and counts a gap under 4px as a
+    collision, because two monospace labels that touch read as one word.
+    **A check that runs at one width certifies one width.**
 
 ## How it runs
 

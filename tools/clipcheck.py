@@ -44,6 +44,36 @@ JS = """() => {
 }"""
 
 
+# Axis labels that run into each other are unreadable and overflow nothing:
+# the weekly claims axes did it for weeks in half-width cells and over ten
+# years, with `tick` set for a five-year full-width chart, and the overflow
+# test above was green throughout. Found by looking, 9 September 2026.
+# Measured as rendered: the text boxes along the bottom of each chart, sorted
+# left to right, and any pair whose boxes intersect horizontally.
+OVERLAP = """() => {
+  const out = [];
+  document.querySelectorAll('.chart').forEach(el => {
+    const cb = el.getBoundingClientRect();
+    const boxes = [];
+    el.querySelectorAll('text').forEach(t => {
+      const b = t.getBoundingClientRect();
+      if (b.width > 0 && b.top > cb.bottom - 34) boxes.push({l: b.left, r: b.right, t: b.top, s: t.textContent});
+    });
+    boxes.sort((a, b) => a.l - b.l);
+    let n = 0, eg = '';
+    // Same baseline only: the lowest value-axis label sits beside the first
+    // date label and shares its horizontal span without touching it.
+    for (let i = 1; i < boxes.length; i++) {
+      const a = boxes[i - 1], b = boxes[i];
+      // Touching is failing too: two monospace labels with no gap read as one.
+      if (b.l < a.r + 4 && Math.abs(b.t - a.t) < 3) { n++; if (!eg) eg = a.s + ' | ' + b.s; }
+    }
+    if (n) out.push({id: el.id, n: n, eg: eg});
+  });
+  return out;
+}"""
+
+
 # An in-page link whose target does not exist scrolls nowhere and says nothing.
 # A page cloned from another carries the ORIGINAL's contents list until every
 # entry is replaced, which is how the PCE page shipped with eleven tables and
@@ -134,15 +164,23 @@ flat = 0    # reported, not failed: a wide ratio is sometimes the point
 acked = 0   # panels whose dominant series is recorded as deliberate
 with sync_playwright() as pw:
     b = pw.chromium.launch()
+    # Labels that fit at 1280px collided at 430px on nearly every panel, so
+    # the two label tests run at both widths; the span test needs only one.
+    phone = b.new_page(viewport={"width": 430, "height": 900})
     pg = b.new_page(viewport={"width": 1280, "height": 1000})
     for path in PAGES:
-        pg.goto("http://%s/%s/" % (ip, path), wait_until="networkidle",
-                timeout=45000)
-        pg.wait_for_timeout(3500)
-        for r in pg.evaluate(JS):
-            bad += 1
-            print("CLIPPED  %-26s %-12s %3dpx of %r"
-                  % (path.split("/")[-1], r["id"], r["over"], r["text"]))
+        for page, width in ((pg, 1280), (phone, 430)):
+            page.goto("http://%s/%s/" % (ip, path), wait_until="networkidle",
+                      timeout=45000)
+            page.wait_for_timeout(3500)
+            for r in page.evaluate(JS):
+                bad += 1
+                print("CLIPPED  %-26s %-12s @%-4d %3dpx of %r"
+                      % (path.split("/")[-1], r["id"], width, r["over"], r["text"]))
+            for r in page.evaluate(OVERLAP):
+                bad += 1
+                print("OVERLAP  %-26s %-12s @%-4d %d colliding label pair(s), e.g. %r"
+                      % (path.split("/")[-1], r["id"], width, r["n"], r["eg"]))
         for r in pg.evaluate(SPANS):
             if r["ok"]:
                 acked += 1
@@ -169,6 +207,6 @@ if acked:
     print("%d further panel(s) have a dominant series recorded as deliberate."
           % acked)
 
-print("\n%s" % ("no label overflows its chart, and every in-page link resolves"
+print("\n%s" % ("no label overflows its chart or collides with its neighbour, and every in-page link resolves"
                 if not bad else "%d problem(s)" % bad))
 sys.exit(1 if bad else 0)

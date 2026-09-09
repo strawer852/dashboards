@@ -45,6 +45,45 @@
   };
   const sgn = (v, dp) => (v > 0 ? "+" : "") + (dp == null ? v : v.toFixed(dp));
 
+  // The label interval a chart can afford, from the width it actually has and
+  // the width its labels actually measure. `tick` is the page's choice for a
+  // desktop cell and stays the floor; a narrower chart gets the smallest
+  // multiple of it whose labels fit with a gap, so the cadence a reader
+  // learned on a wide screen survives on a phone with every other label
+  // dropped rather than every label overprinted. Measured with canvas
+  // measureText in the axis font, after the webfonts are in -- a character
+  // width guessed once is what trap 13 is about. hideOverlap on the axis
+  // stays as the backstop.
+  const labelInterval = (el, cats, freq, tick, gutter, size, font) => {
+    if (tick == null) return "auto";
+    const plot = el.clientWidth - gutter;
+    if (!(plot > 0) || !cats.length) return tick;
+    const c = labelInterval.ctx ||
+      (labelInterval.ctx = document.createElement("canvas").getContext("2d"));
+    c.font = `${size}px ${font}`;
+    let w = 0;
+    for (const v of cats) w = Math.max(w, c.measureText(label(v, freq)).width);
+    const fit = Math.max(1, Math.floor(plot / (w + 8)));
+    const need = Math.ceil(cats.length / fit);
+    return Math.max(tick, Math.ceil(need / tick) * tick);
+  };
+  // The same question for a value axis, answered as an explicit tick step:
+  // ECharts treats splitNumber as a hint and kept six labels on a phone
+  // where four fit. The step is the smallest "nice" one (1, 2, 2.5, 5 x a
+  // power of ten) that puts no more labels of `sample`'s measured width
+  // across the plot than fit with a gap.
+  const valueInterval = (el, gutter, sample, size, font, maxAbs) => {
+    const plot = el.clientWidth - gutter;
+    if (!(plot > 0) || !(maxAbs > 0)) return undefined;
+    const c = labelInterval.ctx ||
+      (labelInterval.ctx = document.createElement("canvas").getContext("2d"));
+    c.font = `${size}px ${font}`;
+    const fit = Math.max(2, Math.min(5, Math.floor(plot / (c.measureText(sample).width + 12))));
+    const raw = maxAbs / fit, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    for (const m of [1, 2, 2.5, 5, 10]) if (maxAbs / (m * mag) <= fit) return m * mag;
+    return 10 * mag;
+  };
+
   /* ---------- transforms --------------------------------------------------
    * Every one preserves nulls. A gap in the source (October 2025 in the
    * household survey) must stay a gap, never become a zero or an interpolation.
@@ -184,7 +223,13 @@
       }),
       xAxis: {
         type: "category", data: cats, boundaryGap: false,
-        axisLabel: { color: P.muted, fontSize: 9.5, interval: p.tick || "auto",
+        // `tick` is the label interval the page chose for its desktop width.
+        // hideOverlap drops whichever labels would still collide -- measured at
+        // render, so a 430px phone gets fewer labels, not overprinted ones.
+        // Every weekly and every ten-year axis collided on a phone before this;
+        // clipcheck.py measures label overlap at both widths (9 September 2026).
+        axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
+                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
                      formatter: v => label(v, first.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -291,7 +336,8 @@
       }),
       xAxis: {
         type: "category", data: cats,
-        axisLabel: { color: P.muted, fontSize: 9.5, interval: p.tick || "auto",
+        axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
+                     interval: labelInterval(el, cats, s.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
                      formatter: v => label(v, s.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -349,8 +395,11 @@
       grid: { left: p.left || 132, right: 46, top: 8, bottom: 24 },
       tooltip: Object.assign(base(P).tooltip, {
         trigger: "item", formatter: x => `<b>${x.name}</b><br>${fmt(x.value)}` }),
-      xAxis: { type: "value", splitNumber: 5,
-        axisLabel: { color: P.muted, fontSize: 9.5, formatter: axisFmt },
+      xAxis: { type: "value",
+        interval: valueInterval(el, (p.left || 132) + 46,
+                                axisFmt(Math.max(...rows.map(r => Math.abs(r[1])))), 9.5, P.mono,
+                                Math.max(...rows.map(r => Math.abs(r[1])))),
+        axisLabel: { color: P.muted, fontSize: 9.5, formatter: axisFmt, hideOverlap: true },
         splitLine: { lineStyle: { color: P.grid } } },
       yAxis: { type: "category", data: rows.map(r => r[0]),
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
@@ -425,7 +474,8 @@
       }),
       xAxis: {
         type: "category", data: cats,
-        axisLabel: { color: P.muted, fontSize: 9.5, interval: p.tick || "auto",
+        axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
+                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
                      formatter: v => label(v, first.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -465,7 +515,10 @@
         formatter: ps => "<b>" + ps[0].axisValue + "</b>" +
           ps.map(x => "<br>" + x.seriesName + " " + fmt(x.data)).join(""),
       }),
-      xAxis: Object.assign(yAxis(P, fmt), { type: "value", scale: false }),
+      xAxis: Object.assign(yAxis(P, fmt), { type: "value", scale: false,
+        interval: valueInterval(el, (p.left || 150) + (p.right || 54),
+                                fmt(Math.max(...items.map(i => Math.max(i.a, i.b)))), 9.5, P.mono,
+                                Math.max(...items.map(i => Math.max(i.a, i.b)))) }),
       yAxis: { type: "category", data: cats, inverse: true,
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
@@ -506,7 +559,8 @@
         // `tick` like every other panel type. Hard-coded at 2 this collided
         // into unreadable overlap the moment a heatmap was put in a half-width
         // cell rather than across the page.
-        axisLabel: { color: P.muted, fontSize: 9, interval: p.tick == null ? 2 : p.tick,
+        axisLabel: { color: P.muted, fontSize: 9, hideOverlap: true,
+                     interval: labelInterval(el, cats, freq, p.tick == null ? 2 : p.tick, (p.left || 132) + 20, 9, P.mono),
                      formatter: v => label(v, freq) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       // Rows read top-down in the order the page lists them, the same order
@@ -589,7 +643,7 @@
   /* ---------- helpers ----------------------------------------------------- */
   const yAxis = (P, fmt) => ({
     type: "value", scale: true,
-    axisLabel: { color: P.muted, fontSize: 9.5, formatter: fmt },
+    axisLabel: { color: P.muted, fontSize: 9.5, formatter: fmt, hideOverlap: true },
     splitLine: { lineStyle: { color: P.grid } },
   });
   const endMarker = (P, cats, vals) => {
@@ -728,8 +782,13 @@
       const MFULL = ["January","February","March","April","May","June","July",
                      "August","September","October","November","December"];
       const rp = rel.ref_period.split("-");
+      // The reference period follows the release's cadence, which the
+      // bundle carries: a quarterly release's ref_period is the quarter's
+      // first month, and "April 2026" for 2026 Q2 was trap 52's shape.
       const period = rel.cadence === "weekly"
         ? `week to ${fmtDate(rel.ref_period)}`
+        : rel.cadence === "quarterly"
+        ? `${rp[0]} Q${Math.ceil(+rp[1] / 3)}`
         : `${MFULL[+rp[1] - 1]} ${rp[0]}`;
       const bits = [`<span><b>${rel.name}</b> &middot; ${period}</span>`];
       // A release the bundle cannot date prints no date. It reached here as
@@ -741,6 +800,14 @@
     }
 
     if (cfg.summary) summary(document.getElementById("summary"), ctx, cfg.summary);
+
+    // Measure with the font that will be drawn. ECharts sizes axis labels
+    // when it lays out, and hideOverlap trusts those sizes; before the
+    // webfonts arrive it measures the fallback monospace and the labels
+    // then collide once JetBrains Mono paints. Capped so a blocked font
+    // host delays a page by at most a second and a half.
+    if (document.fonts && document.fonts.ready)
+      await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
 
     cfg.panels.forEach(p => {
       const el = document.getElementById(p.el);

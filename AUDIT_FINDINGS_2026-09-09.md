@@ -353,3 +353,37 @@ is Table 2's figure. Three DB titles differ cosmetically from BEA's
   residual, with gaps handled by date.
 - Everything in section 1's "Recorded, not changed" stands.
 
+### 4.6 Area I -- every page looked at, at 1280px and 430px
+
+Every one of the 140 numbered tables (and the JOLTS small multiples) was
+rendered from the real bundles at 1280px and looked at as its own image;
+every page, the landing page and `/us/` were rendered whole at 430px, none
+scrolls horizontally, and the first four tables of each were looked at.
+
+- **Axis labels collided, and no check saw it.** On the weekly claims axes
+  in half-width cells (Tables 2 and 3) and over ten years (Tables 8 and 10)
+  the date labels ran into each other at desktop width; at 430px nearly
+  every panel did -- ten-year monthly, four-year monthly, 25-year quarterly
+  -- because `tick`, the ECharts label interval, is a per-panel constant
+  chosen for a desktop cell. Fixed in the engine three ways (trap 64):
+  `hideOverlap` on every axis; the interval computed at render as the
+  smallest multiple of the page's `tick` whose labels, measured with
+  `measureText` in the axis font, fit the chart's actual width with a gap;
+  and rendering deferred until the webfonts are in, since ECharts had been
+  measuring the fallback monospace and drawing JetBrains Mono. The four
+  claims panels also got a sane desktop interval. `clipcheck.py` now
+  measures label collision at both widths, counting touching labels as
+  colliding, and was proven to fire on the old claims Table 2 (7 pairs) and
+  go quiet after.
+- **A quarterly reference period read "April 2026"** on the Labour Costs
+  stamp, the landing index and the region page: the formatter had monthly
+  and weekly branches only (trap 52's shape). Now "2026 Q2" in all three.
+- **Payroll Table 21** draws prime-age participation in the muted grey by
+  design (`color: "muted"`, a reference line; the same device on Tables 1
+  and 31). Recorded as deliberate.
+- **Payroll Table 28**'s title wraps under its number in a half-width cell.
+  Cosmetic; left.
+- Nothing else. Every key matches its lines, every stack is a partition
+  with the total drawn over it, every rebased index starts at 100, every
+  October 2025 gap shows as a gap, and every heatmap reads top-down.
+
