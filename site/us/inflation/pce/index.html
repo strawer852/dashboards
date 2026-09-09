@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PCE — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -55,7 +55,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> PCE</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> PCE</div>
     <div class="mast">
       <h1>PCE</h1>
       <div class="stamp" id="stamp"></div>
@@ -79,7 +79,7 @@
     <div class="row one">
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Supercore</span><span class="u">Twelve-month change, %</span></div>
-        <p class="note">Services excluding energy and housing: what is left after the component that moves with commodity prices and the one that lags rents by two years. It is the part of inflation most closely tied to wages.</p>
+        <p class="note">Services excluding energy and housing: what is left after the component that moves with commodity prices and the one that follows market rents with a lag of a year or more. It is the part of inflation most closely tied to wages.</p>
         <p class="key"><i class="kink">Services ex energy and housing</i><i class="ks1">Core</i><i class="ks2">All items ex food, energy and housing</i></p>
         <div class="chart" id="cSuper" style="height:250px"></div>
       </div>
@@ -88,8 +88,8 @@
     <div class="row one">
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">PCE against CPI</span><span class="u">Twelve-month change, %</span></div>
-        <p class="note">The same country, two numbers. PCE reweights every quarter from what people actually bought where the CPI reweights every two years from a survey, and PCE also counts what employers and government spend on a household&rsquo;s behalf &mdash; chiefly medical care. <b>PCE runs below CPI nearly always</b>, which is why a 2% target is not a 2% CPI.</p>
-        <p class="key"><i class="kink">PCE</i><i class="ks1">CPI</i><i class="ks2">PCE core</i><i class="ks3">CPI core</i></p>
+        <p class="note">The same country, two numbers. PCE is a chain index whose weights follow what people actually buy from period to period, where the CPI holds a survey-based basket fixed for a year at a time; PCE also counts what employers and government spend on a household&rsquo;s behalf &mdash; chiefly medical care. <b>PCE runs below CPI nearly always</b>, which is why a 2% target is not a 2% CPI.</p>
+        <p class="key"><i class="kink">PCE</i><i class="ks1">CPI</i><i class="ks2">PCE core (dashed)</i><i class="ks3">CPI core (dashed)</i></p>
         <div class="chart" id="cVsCpi" style="height:270px"></div>
       </div>
     </div>
@@ -115,7 +115,7 @@
     <div class="row one">
       <div class="t" id="t6">
         <div class="th"><span class="n">Table 6</span><span class="ti">Market-based prices</span><span class="u">Twelve-month change, %</span></div>
-        <p class="note">Roughly a quarter of the PCE basket has no market transaction behind it &mdash; imputed rent on owned homes, financial services measured as a spread, insurance. The market-based index drops those. Where it parts from the headline, the difference is measurement rather than prices.</p>
+        <p class="note">Part of the PCE basket has no market transaction behind it &mdash; imputed rent on owned homes, financial services measured as a spread, insurance. The market-based index drops those. Where it parts from the headline, the difference is measurement rather than prices.</p>
         <p class="key"><i class="kink">Market-based</i><i class="ks1">Headline</i><i class="ks2">Market-based ex food and energy</i></p>
         <div class="chart" id="cMkt" style="height:250px"></div>
       </div>
@@ -203,11 +203,17 @@
       </div>
     </div>
 
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: BEA Personal Income and Outlays, via FRED and the BEA API; CPI via FRED</span>
+      <span>Seasonally adjusted</span>
+      <span>Median and breadth analyst-derived from BEA underlying detail</span>
+    </div>
   </main>
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

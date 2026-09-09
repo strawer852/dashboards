@@ -7,7 +7,7 @@ title: Weekly Claims
 # Shown on the landing index, which is generated from these specs.
 agency: ETA · UI Weekly Claims
 blurb: >-
-  Initial and continuing claims and the insured rate — the highest-frequency read, five weeks ahead of the payroll report.
+  Initial and continuing claims and the insured rate — the highest-frequency read, three to four weeks ahead of the payroll report.
 release: eta.claims
 include_releases:
   - eta.claims

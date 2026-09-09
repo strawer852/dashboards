@@ -37,9 +37,10 @@ include_releases:
 # headline CPI to 0.017pp at July 2026 and 0.042pp worst over the trailing
 # fifteen months.
 derived:
-  # Distributional measures over a 137-item PARTITION of the basket, built by
+  # Distributional measures over a 135-item PARTITION of the basket, built by
   # descending Table 2 only where the children reconcile to their parent; the
-  # weights sum to 99.81 of 100, and 14 of them are exact residuals where BLS
+  # weights sum to 98.52 of 100 (counted, 9 September 2026 -- an earlier
+  # comment here said 137 and 99.81), and 14 of them are exact residuals where BLS
   # publishes no relative importance for a single child. Every input is the
   # unadjusted index, so a twelve-month change needs no seasonal adjustment.
   #

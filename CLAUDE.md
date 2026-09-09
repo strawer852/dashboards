@@ -41,7 +41,9 @@ no local build step.
 | `tools/clipcheck.py` | Asks the browser whether any axis label overflows its chart. A guess at character width is what made them too narrow |
 | `tools/shoot.py` | Screenshots a dashboard as it renders, from inside the docker network so Authelia is not in the way. The answer to trap 13 |
 | `tools/staleness.py` | Every catalogued series against its own frequency — and against BLS before calling one dead. Covers the ~2,350 that reach no bundle, which `coverage.py` cannot see |
-| `tools/build_nav.py` | Generates the rail from the specs into every page. **Run after adding a dashboard** |
+| `tools/build_nav.py` | Generates the rail, the landing index, map and scope line, and the region pages (`site/<region>/index.html`) from the specs. **Run after adding a dashboard** |
+| `tools/keycheck.py` | Static page checks: legend classes defined, tables numbered in order, footer last, divs balanced, chart divs and panels one to one, contents complete. No browser, no data. Trap 57 |
+| `AUDIT.md`, `AUDIT_FINDINGS_2026-09-09.md` | The pre-ingestion audit: terms of reference, and what the 9 September pass found, fixed and left |
 | `ops/dashboards-timer-check` | Alarms when the refresh timers stop firing. Daily, 06:30 ET |
 | `planned.yml` | Dashboards in the rail but not yet built. At the root, NOT in `dashboards/` |
 | `.env` | `MACRO_DSN`, `FRED_API_KEY`, `BLS_API_KEY`, `NTFY_URL`. Mode 600, gitignored |
@@ -928,6 +930,77 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     returning None is what identifies it. Every other page without markers is
     still a fault.
 
+    Since 9 September the same script also writes **one page per region**,
+    `site/<prefix>/index.html` (`/us/` today), whole, from the specs: the
+    region's dashboards by topic, each with its own release's freshness,
+    under the rail with that region open. The map's filled territory and the
+    landing index heading link to it, and every dashboard's breadcrumb links
+    back. It is generated in full -- there is no hand-written part -- so
+    never edit it; the fourth copy of the dashboard list would be the first
+    to rot.
+
+56. **A doc can be corrupted by the tool that edits it, and look committed.**
+    `HANDOFF.md` went from 10 KB to 15 MB in the commit that added `AUDIT.md`:
+    the "Loose ends" section repeated 228 times, 152 lines of real content
+    gone, and the commit message said "docs: AUDIT.md". An edit that appends
+    in a loop produces a file that still opens and still reads sensibly at
+    the top. **Before committing a document, read `git diff --stat`**: a
+    +252,000-line change to a handoff is not a handoff. Restored from the
+    prior commit on 9 September.
+
+57. **A legend class the stylesheet never defines renders in the inherited
+    colour, and nothing complains.** The PCE and Labour Costs pages, built
+    later than the CSS, named the ink swatch `kink`; `brb-dash.css` had only
+    `k1`..`k5` and `ks1`..`ks6`. Twenty-four legends drew the ink series in
+    muted grey while the line on the chart was ink, across three pages, and
+    `clipcheck.py`, `shoot.py` and `coverage.py` -- which look at charts, not
+    keys -- were all green. `tools/keycheck.py` now asserts every `.key i`
+    class exists, and also that tables are numbered in document order (claims
+    Table 6 sat after Table 10), that the source footer is the last block
+    (CPI's and PPI's had tables beneath them; PCE and Labour Costs had none),
+    that divs balance (PPI Table 22's row was opened inside Table 21's cell),
+    and that chart divs and panels match one to one. **A check that reads the
+    page as text catches the class of defect the browser checks cannot see.**
+
+58. **ECharts puts category 0 at the BOTTOM of a category axis.** A heatmap
+    therefore rendered its rows in the reverse of the order the page listed
+    them. Two panels had been hand-reversed to compensate (PPI Table 10,
+    Labour Costs Table 10, each with a comment explaining the trick); the
+    other seven heatmaps -- the 33-row PPI Tables 21 and 22, the payroll
+    supersectors and sub-sectors, JOLTS by industry, the 53 states -- had
+    not, and read upwards against their own key and prose. `PANELS.heatmap`
+    now sets `inverse: true`, so **rows read top-down in the order listed**,
+    and the two compensated lists were put back in reading order. Never
+    reverse a list to fix a rendering; fix the renderer once.
+
+59. **A caption that quotes the current print is a hard-coded fact in prose,
+    and rots at the next release.** Fourteen notes carried an undated figure
+    from the July or August 2026 release -- "+35,000 in August", "energy
+    contributed nearly as much as food and core goods combined this month",
+    "it led final demand services in July at +6.5%", "both series turned down
+    in July". Every one becomes false the morning the next release lands,
+    and no check reads prose. Traps 18-20 for captions: **write the
+    mechanism, not the reading; if a figure earns its place, date it.**
+    Measured historical facts -- a correlation over 1990-2026, a peak in
+    April 2023 -- are stable and may stay.
+
+60. **The set-valued derived measures aligned their inputs by position, and
+    a step nobody intended as alignment made it look right.** `derived.py`'s
+    docstring says multi-input measures align by date (trap 6), and the
+    two-input kinds do. `_weighted_rates` (the CPI and PCE median and
+    breadth) and `share_above_year_ago` (state claims breadth) zipped `v[i]`
+    across series whose histories start in different years -- airline fares
+    1989, college tuition 1977 -- so index i was a different month in each.
+    The output was correct only because `truncate_history` had cut every
+    input to its last 180 observations, lining their ends up. Shorten the
+    keep, drop the truncation, or add one input with a shorter history, and
+    the median would have mixed months silently. Aligned by date on 9
+    September, and proven with synthetic inputs of different starts against
+    an independent computation. **A result that is right because of an
+    unrelated step is not right; it is waiting.** The same fix made `axis()`
+    handle weekly and daily series and give explicit and generated date
+    arrays the same shape, which they never had.
+
 ## How it runs
 
 ```
@@ -1027,7 +1100,8 @@ external. If ntfy is self-hosted for other reasons, keep the ops alerts
 ```bash
 # on the VPS
 cd ~/dashboards/macro && set -a && . ../.env && set +a
-../venv/bin/python validate.py            # 24 assertions against the releases
+../venv/bin/python validate.py            # 37 assertions against the releases
+python3 ../tools/keycheck.py              # static page checks, no browser
 ../venv/bin/python refresh.py --force     # re-export without waiting for data
 ../venv/bin/python add_series.py --release bls.employment_situation \
     --category employment --importance 6 SERIESID

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CPI — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -73,7 +73,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> CPI</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> CPI</div>
     <div class="mast">
       <h1>CPI</h1>
       <div class="stamp" id="stamp"></div>
@@ -90,7 +90,7 @@
     <div class="row one">
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Headline and core CPI</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Core removes food and energy &mdash; not because they do not count, but because they are volatile enough to swamp the signal in any single month. Both lines break at <b>October 2025</b>, which was never published: the shutdown stopped collection, and BLS priced only three items that month from administrative sources. One missing month costs exactly one month of the twelve-month change here &mdash; and will cost another in <b>October 2026</b>, when the hole becomes the base rather than the current value.</p>
+        <p class="note">Core removes food and energy &mdash; not because they do not count, but because they are volatile enough to swamp the signal in any single month. Both lines break at <b>October 2025</b>, which was never published: the shutdown stopped field collection, and BLS priced only the few items it could take from administrative sources. One missing month costs exactly one month of the twelve-month change here &mdash; and will cost another in <b>October 2026</b>, when the hole becomes the base rather than the current value.</p>
         <p class="key"><i class="k4">All items</i><i class="ks2">Less food and energy</i></p>
         <div class="chart" id="cHead" style="height:250px"></div>
       </div>
@@ -159,12 +159,12 @@
     <div class="row">
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">What makes up the CPI, latest month</span><span class="u">Percentage points of the 12-month change</span></div>
-        <p class="note">Not inflation rates &mdash; <b>contributions</b>: each item&rsquo;s own twelve-month change multiplied by its share of the basket, so the four add up to the headline rather than merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>. On the current vintage the four close on headline CPI to <b>0.017pp</b> at July 2026, and 0.042pp at worst over fifteen months. <b>Analyst-derived.</b></p>
+        <p class="note">Not inflation rates &mdash; <b>contributions</b>: each item&rsquo;s own twelve-month change multiplied by its share of the basket, so the four add up to the headline rather than merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>; the residual against the headline is a few hundredths of a point, and Table 2 shows it as daylight. <b>Analyst-derived.</b></p>
         <div class="chart" id="cSplit" style="height:180px"></div>
       </div>
       <div class="t" id="t11">
         <div class="th"><span class="n">Table 11</span><span class="ti">And what each is worth</span><span class="u">Percent of the basket</span></div>
-        <p class="note">The weights behind the bars to the left, on the same four parts. Read the two together: energy contributed nearly as much as food and core goods combined this month while carrying <b>7.4%</b> of the basket, because its own rate was ten times theirs. Weights drift with relative prices every month by BLS&rsquo;s own rule, so these are current, not a fixed table.</p>
+        <p class="note">The weights behind the bars to the left, on the same four parts. Read the two together: a part with a small weight outranks a large one only by running at many times its rate, which is how energy, at <b>7.4%</b> of the basket, can carry as much of the headline as food. Weights drift with relative prices every month by BLS&rsquo;s own rule, so these are current, not a fixed table.</p>
         <div class="chart" id="cWSplit" style="height:180px"></div>
       </div>
     </div>
@@ -172,7 +172,7 @@
     <div class="row one">
       <div class="t" id="t12">
         <div class="th"><span class="n">Table 12</span><span class="ti">The same four parts, over time</span><span class="u">Percentage points of the 12-month change</span></div>
-        <p class="note">The bars above are one month of this chart. The four sum to the headline rate at every point, so &ldquo;what is inflation made of&rdquo; has a different answer in 2022 &mdash; when energy and core goods carried it &mdash; from 2026, where <b>core services carry almost all of it</b> and core goods contribute close to nothing. A line here can be negative while the headline stays positive; that is an item pulling the index down. <b>Analyst-derived.</b></p>
+        <p class="note">The bars above are one month of this chart. The four sum to the headline rate at every point, so &ldquo;what is inflation made of&rdquo; has a different answer in 2022, when energy and core goods carried it, from the years since, when <b>core services have carried almost all of it</b>. A line here can be negative while the headline stays positive; that is an item pulling the index down. <b>Analyst-derived.</b></p>
         <p class="key"><i class="k4">Core services</i><i class="ks2">Core goods</i><i class="ks1">Energy</i><i class="ks3">Food (dashed)</i></p>
         <div class="chart" id="cSplitT" style="height:250px"></div>
       </div>
@@ -230,7 +230,7 @@
     <div class="row one">
       <div class="t" id="t20">
         <div class="th"><span class="n">Table 20</span><span class="ti">The same items, over four years</span><span class="u">Percentage points, 48 months</span></div>
-        <p class="note">The ranking in Table 17 is one column of this. Contributions rather than rates, so cells are directly comparable across items: a dark cell is a large push on the index, not merely a large price move on something small. Four years reaches back into the 2022 peak, where gasoline and used cars ran dark and shelter had not yet taken over. <b>October 2025 is the blank column.</b> Only new vehicles, used cars and gasoline were priced that month, so only those three carry a contribution through it. A near-white cell anywhere else is a <em>small</em> contribution, not a missing one: the hole is the column blank in every other row.</p>
+        <p class="note">The ranking in Table 17 is one column of this. Contributions rather than rates, so cells are directly comparable across items: a dark cell is a large push on the index, not merely a large price move on something small. Four years reaches back into the 2022 peak, where gasoline and used cars ran dark and shelter had not yet taken over. <b>October 2025 is the blank column.</b> Only a few items were priced that month from administrative sources &mdash; new vehicles, used cars and gasoline among them &mdash; so only those rows carry a contribution through it. A near-white cell anywhere else is a <em>small</em> contribution, not a missing one: the hole is the column blank in every other row.</p>
         <div class="chart" id="cItemsH" style="height:400px"></div>
       </div>
     </div>
@@ -238,7 +238,7 @@
     <div class="row">
       <div class="t" id="t21">
         <div class="th"><span class="n">Table 21</span><span class="ti">Food, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="note">Groceries and restaurants behave differently: food at home is a commodity price and turns quickly, food away from home is mostly labour and turns slowly. Weighted against <em>food</em> rather than the basket &mdash; at home is 8.2% of the CPI but <b>60.9% of food</b> &mdash; so the two bars close on the food line. Residual at July 2026: <b>0.018pp</b>.</p>
+        <p class="note">Groceries and restaurants behave differently: food at home is a commodity price and turns quickly, food away from home is mostly labour and turns slowly. Weighted against <em>food</em> rather than the basket &mdash; at home is 8.2% of the CPI but <b>60.9% of food</b> &mdash; so the two bars close on the food line.</p>
         <p class="key"><i class="k4">Food (line)</i><i class="ks1">At home</i><i class="ks2">Away from home</i></p>
         <div class="chart" id="cFoodY" style="height:250px"></div>
       </div>
@@ -253,7 +253,7 @@
     <div class="row">
       <div class="t" id="t22">
         <div class="th"><span class="n">Table 22</span><span class="ti">Energy, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="note">The four fuels that make up energy, weighted against <em>energy</em>. They close on it exactly: motor fuel 53.4%, electricity 34.3%, utility gas 10.1%, fuel oil and other 2.2%. Motor fuel dominates the swings; the two utility series move in regulated steps and rarely fall. Residual: <b>0.076pp</b>.</p>
+        <p class="note">The four fuels that make up energy, weighted against <em>energy</em>. They close on it exactly: motor fuel 53.4%, electricity 34.3%, utility gas 10.1%, fuel oil and other 2.2%. Motor fuel dominates the swings; the two utility series move in regulated steps and rarely fall.</p>
         <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Motor fuel</i><i class="ks2">Fuel oil & other</i><i class="ks3">Electricity</i><i class="ks4">Utility gas</i></p>
         <div class="chart" id="cEnY" style="height:250px"></div>
       </div>
@@ -283,7 +283,7 @@
     <div class="row">
       <div class="t" id="t24">
         <div class="th"><span class="n">Table 24</span><span class="ti">Medical care, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="note">Commodities are drugs and equipment, services are physicians, hospitals and insurance. Weighted against <em>medical care</em>: 17.1% and 82.9%, closing on it to <b>0.002pp</b>. The two diverge persistently, and services carry five-sixths of the weight.</p>
+        <p class="note">Commodities are drugs and equipment, services are physicians, hospitals and insurance. Weighted against <em>medical care</em>: 17.1% and 82.9%, closing on it to within rounding. The two diverge persistently, and services carry five-sixths of the weight.</p>
         <p class="key"><i class="k4">Medical care (line)</i><i class="ks1">Commodities</i><i class="ks2">Services</i></p>
         <div class="chart" id="cMdY" style="height:250px"></div>
       </div>
@@ -298,7 +298,7 @@
     <div class="row">
       <div class="t" id="t25">
         <div class="th"><span class="n">Table 25</span><span class="ti">Vehicles and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Lines, not a stack. These five are a <b>selection, not a decomposition</b> &mdash; stacking them would draw a total that does not exist, and two of them sit inside transportation services rather than beside it, which is exactly why they are absent from the single-item contribution charts above. <b>Motor vehicle insurance is the striking one</b>: 2.6% of the basket and falling outright at -4.5% over the year, having risen at double digits for most of the preceding three. It is published by BLS but not carried by FRED as a seasonally adjusted series, so it arrives through the BLS adapter with no revision history (trap 15). Two of the three series that survived October 2025 are here &mdash; new and used vehicles; the third was gasoline.</p>
+        <p class="note">Lines, not a stack. These five are a <b>selection, not a decomposition</b> &mdash; stacking them would draw a total that does not exist, and two of them sit inside transportation services rather than beside it, which is exactly why they are absent from the single-item contribution charts above. <b>Motor vehicle insurance is the one to watch</b>: 2.6% of the basket, it ran at double-digit rates through 2022&ndash;24 before turning negative. It is published by BLS but not carried by FRED seasonally adjusted, so it arrives through the BLS adapter with no revision history. New and used vehicles were among the few items priced in October 2025, so those two lines run through the gap that breaks the others.</p>
         <p class="key"><i class="k4">Motor vehicle insurance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i><i class="ks4">Maintenance</i></p>
         <div class="chart" id="cVehY" style="height:250px"></div>
       </div>
@@ -357,7 +357,7 @@
       </div>
       <div class="t" id="t30">
         <div class="th"><span class="n">Table 30</span><span class="ti">What seasonal adjustment removes</span><span class="u">Percent, month on month</span></div>
-        <p class="note">The same index twice, as <em>monthly</em> changes: the published unadjusted series and its seasonally adjusted form. Over twelve months the two are nearly identical &mdash; seasonality cancels &mdash; so every other chart here can use either. Month to month they are not remotely the same, and the unadjusted line is the one that would have you reading January as a shock every year. The only panel on the page carrying an <b>unadjusted</b> series.</p>
+        <p class="note">The same index twice, as <em>monthly</em> changes: the published unadjusted series and its seasonally adjusted form. Over twelve months the two are nearly identical &mdash; seasonality cancels &mdash; so every other chart here can use either. Month to month they are not remotely the same, and the unadjusted line is the one that would have you reading January as a shock every year.</p>
         <p class="key"><i class="k4">Seasonally adjusted</i><i class="ks2">Unadjusted</i></p>
         <div class="chart" id="cSA" style="height:250px"></div>
       </div>
@@ -372,16 +372,10 @@
       </div>
     </div>
 
-    <div class="src">
-      <span id="generated"></span>
-      <span>Source: BLS Consumer Price Index, via FRED</span>
-      <span>Seasonally adjusted</span>
-      <span>Contributions and weights analyst-derived from published relative importances</span>
-    </div>
     <div class="row one">
       <div class="t" id="t32">
         <div class="th"><span class="n">Table 32</span><span class="ti">What the typical price is doing</span><span class="u">Twelve-month change, %, unadjusted</span></div>
-        <p class="note">Headline and core are weighted <b>means</b>, and a mean is what a few violent items carry. This is the <b>median</b>: half the basket by expenditure share rising faster, half slower. The difference is the point &mdash; headline peaked near 9% in mid-2022, the median at <b>8.1% in April 2023</b>, ten months later, and it has fallen far more slowly since. Core removes food and energy by assumption; the median sets an item aside only for being at the edge this month. Built on a 137-item partition whose weights sum to 98.5; October 2025 is blank because the CPI was barely collected that month. <b>Analyst-derived.</b></p>
+        <p class="note">Headline and core are weighted <b>means</b>, and a mean is what a few violent items carry. This is the <b>median</b>: half the basket by expenditure share rising faster, half slower. The difference is the point &mdash; headline peaked near 9% in mid-2022, the median at <b>8.1% in April 2023</b>, ten months later, and it has fallen far more slowly since. Core removes food and energy by assumption; the median sets an item aside only for being at the edge this month. Built on a 135-item partition of the unadjusted index whose weights sum to 98.5 of 100; October 2025 is blank because the CPI was barely collected that month. <b>Analyst-derived.</b></p>
         <p class="key"><i class="kink">Median item</i><i class="ks1">Headline</i><i class="ks2">Core</i></p>
         <div class="chart" id="cMedian" style="height:250px"></div>
       </div>
@@ -395,11 +389,17 @@
       </div>
     </div>
 
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: BLS Consumer Price Index, via FRED and the BLS API</span>
+      <span>Seasonally adjusted unless stated</span>
+      <span>Contributions and weights analyst-derived from published relative importances</span>
+    </div>
   </main>
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

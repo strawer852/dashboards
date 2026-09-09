@@ -130,6 +130,8 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
   text-transform: uppercase; color: var(--faint); margin-bottom: 11px;
 }
 .crumb b { color: var(--muted); font-weight: 400; }
+.crumb a { color: inherit; text-decoration: none; }
+.crumb a:hover { color: var(--ink); }
 .mast { border-bottom: 2px solid var(--ink); padding-bottom: 12px; }
 .mast h1 {
   font-family: var(--serif), Georgia, serif; font-weight: 600; font-size: 34px;
@@ -215,6 +217,10 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .key i::before { content: ""; width: 13px; height: 2px; background: currentColor; display: block; }
 .key .k1 { color: var(--pos); } .key .k2 { color: var(--alt); } .key .k3 { color: var(--neg); }
 .key .k4 { color: var(--ink); }
+/* `kink` is the name the newer pages use for the ink swatch. It had no rule,
+   so twenty-four legends drew the ink series in muted grey while the line on
+   the chart was ink -- and nothing complained (tools/keycheck.py now does). */
+.key .kink { color: var(--ink); }
 .key .k5 { color: var(--muted); }
 /* Series-slot swatches. k1-k5 name the SEMANTIC colours (gain, loss,
    second series, ink, muted); these name the categorical slots, which
@@ -234,6 +240,47 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
   text-transform: uppercase; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 24px;
 }
 .src a { color: var(--neg); text-decoration: none; }
+
+
+/* ---------- dashboard index rows ----------
+   The landing page's index and each region's page are the same list at two
+   depths, so the rows live here rather than in either page. */
+.idx { border-top: 3px solid var(--ink); column-count: 2; column-gap: 44px; }
+.idx a.row, .idx .coming { break-inside: avoid; }
+.idx h2.reg { column-span: all; font-family: var(--mono), monospace; font-size: 9.5px;
+              letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+              font-weight: 500; margin: 30px 0 0; padding: 12px 0 9px;
+              border-bottom: 1px solid var(--rule-hi); display: flex;
+              justify-content: space-between; scroll-margin-top: 16px; }
+.idx h2.reg:first-child { margin-top: 0; }
+.idx h2.reg .n { color: var(--faint); }
+.idx h2.reg a { color: inherit; text-decoration: none; }
+.idx h2.reg a:hover { color: var(--ink); }
+.idx a.row {
+  display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 3px 24px;
+  align-items: baseline; padding: 12px 0 11px;
+  border-bottom: 1px solid var(--rule); text-decoration: none; color: inherit;
+}
+.idx a.row:hover { background: var(--panel); }
+.idx .nm { font-family: var(--serif), Georgia, serif; font-weight: 600; font-size: 16px;
+           letter-spacing: -.01em; color: var(--ink); }
+.idx .agency { font-family: var(--mono), monospace; font-size: 8.5px; letter-spacing: .1em;
+               text-transform: uppercase; color: var(--faint); text-align: right;
+               white-space: nowrap; }
+.idx .desc { font-size: 11.5px; color: var(--muted); grid-column: 1; }
+.idx .meta { grid-column: 2; text-align: right; font-family: var(--mono), monospace;
+             font-size: 9px; color: var(--muted); font-variant-numeric: tabular-nums;
+             white-space: nowrap; line-height: 1.65; }
+.idx .meta b { color: var(--ink-2); font-weight: 500; }
+.idx .meta .stale { color: var(--neg); }
+.coming, .coming .nm { color: var(--faint); }
+/* A region page: one column per topic is too narrow, so the rows run in one. */
+.idx.one { column-count: 1; }
+@media (max-width: 900px) {
+  .idx { column-count: 1; }
+  .idx a.row { grid-template-columns: 1fr; }
+  .idx .agency, .idx .meta { grid-column: 1; text-align: left; }
+}
 
 @media (max-width:1160px){ .summary{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 @media (max-width:980px){

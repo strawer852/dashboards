@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nonfarm Payroll — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -73,7 +73,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Nonfarm Payroll</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Nonfarm Payroll</div>
     <div class="mast">
       <h1>Nonfarm Payroll</h1>
       <div class="stamp" id="stamp"></div>
@@ -90,7 +90,7 @@
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Change in nonfarm payroll employment</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">Monthly change with a three-month average. The dashed line is the figure <b>as first reported</b>, before revision; the ink rule marks the latest month. The paper band is the release’s own 90% sampling interval of ±122,000 — a bar inside it cannot be distinguished from no change at all. Whether a given month is <em>weak</em> depends on what it is measured against; Table 2 supplies that.</p>
-        <p class="key"><i class="k1">Monthly change</i><i class="k2">As first reported</i></p>
+        <p class="key"><i class="k1">Monthly change</i><i class="k5">3-month average</i><i class="k2">As first reported</i></p>
         <div class="chart" id="cPay" style="height:250px"></div>
       </div>
     </div>
@@ -98,7 +98,7 @@
     <div class="row one">
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Breakeven employment growth</span><span class="u">Thousands per month, s.a.</span></div>
-        <p class="note">Unemployment holds steady when employment grows with the labour force, so the gain required is the labour force&rsquo;s own growth net of the share that stays unemployed &mdash; an accounting identity, not a forecast. The labour force is shrinking, so breakeven has fallen through zero and a negative payroll print can still sit above it. Two windows are drawn because the estimate is <b>sensitive to how far back it looks</b>, the monthly change carrying sampling error of several hundred thousand; it is negative on both. <b>January is excluded</b> as a population-control level break rather than a flow, and the line breaks where the October 2025 household survey was not collected. Breakeven is on the household concept while payrolls count jobs, so the comparison is indicative. <b>Analyst-derived.</b></p>
+        <p class="note">Unemployment holds steady when employment grows with the labour force, so the gain required is the labour force&rsquo;s own growth net of the share that stays unemployed &mdash; an accounting identity, not a forecast. When the labour force shrinks, breakeven falls through zero and a negative payroll print can still sit above it. Two windows are drawn because the estimate is <b>sensitive to how far back it looks</b>, the monthly change carrying sampling error of several hundred thousand. <b>January is excluded</b> as a population-control level break rather than a flow, and the line breaks where the October 2025 household survey was not collected. Breakeven is on the household concept while payrolls count jobs, so the comparison is indicative. <b>Analyst-derived.</b></p>
         <p class="key"><i class="k4">Breakeven, 6-month</i><i class="k4">Breakeven, 12-month (dashed)</i><i class="ks1">Payrolls, 3-month average</i></p>
         <div class="chart" id="cBrk" style="height:250px"></div>
       </div>
@@ -117,7 +117,7 @@
       <div class="t" id="t4">
         <div class="th"><span class="n">Table 4</span><span class="ti">Revision to the monthly change</span><span class="u">Thousands, first reported to latest</span></div>
         <p class="note">How far each month moved after it was first published. Bars are the revision itself, the ink line its trailing twelve-month mean &mdash; the bias, rather than any single month's surprise. First-to-latest includes the annual benchmark, so it runs well above the first-to-final figure usually quoted. The dashed line is the mean <em>absolute</em> revision: how large the typical correction is, regardless of direction. The newest two months are preliminary and barely revised yet. <b>Analyst-derived</b> from the vintage history.</p>
-        <p class="key"><i class="k4">12-month mean revision</i><i class="k5">Mean absolute (dashed)</i></p>
+        <p class="key"><i class="k1">Revision</i><i class="k4">12-month mean revision</i><i class="k5">Mean absolute (dashed)</i></p>
         <div class="chart" id="cRev" style="height:215px"></div>
       </div>
       <div class="t" id="t5">
@@ -130,7 +130,7 @@
     <div class="row one">
       <div class="t" id="t6">
         <div class="th"><span class="n">Table 6</span><span class="ti">Payroll change by supersector</span><span class="u">Thousands, 48 months</span></div>
-        <p class="note">The fourteen supersectors sum to total nonfarm across 655 months with a worst residual of 0.5k &mdash; rounding, which is how you know none is missing. Four years, which reaches back into the 2022 reopening: the scale saturates beyond &plusmn;60k, and leisure and hospitality spends much of 2022 outside it.</p>
+        <p class="note">The fourteen supersectors sum to total nonfarm in every month of the history with a worst residual of 0.5k &mdash; rounding, which is how you know none is missing. Four years, which reaches back into the 2022 reopening: the scale saturates beyond &plusmn;60k, and leisure and hospitality spends much of 2022 outside it.</p>
         <div class="chart" id="cHeat" style="height:360px"></div>
       </div>
     </div>
@@ -138,21 +138,20 @@
     <div class="row one">
       <div class="t" id="t7">
         <div class="th"><span class="n">Table 7</span><span class="ti">Sector contribution, latest month</span><span class="u">Thousands, s.a.</span></div>
+        <p class="note">Each supersector&rsquo;s change in the latest month, ranked. Colour is sign here, not identity: a gain is blue, a loss is red. The heatmap above is the same fourteen over four years; the panels below take each one apart.</p>
         <div class="chart" id="cSec" style="height:300px"></div>
       </div>
     </div>
 
-    <p class="note sub">Table 7 continued &mdash; each supersector decomposed into the sub-sectors that make it up. Chart type follows structure: a stack where the parts partition the sector and number six or fewer, ranked bars where there are more than the palette can carry.</p>
+    <p class="note sub">Table 7 continued &mdash; each supersector decomposed into the sub-sectors that make it up, monthly change over 48 months. Chart type follows structure: a stack where the parts partition the sector and number six or fewer, with the sector&rsquo;s own change drawn over it in ink so that any daylight is rounding; a heatmap where there are more parts than the palette carries.</p>
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Mining and logging</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Logging</i><i class="ks2">Mining, quarrying, oil and gas</i></p>
         <div class="chart" id="cSubMine" style="height:230px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Construction</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Building construction</i><i class="ks2">Heavy and civil engineering</i><i class="ks3">Specialty trade contractors</i></p>
         <div class="chart" id="cSubCons" style="height:230px"></div>
       </div>
@@ -160,26 +159,24 @@
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Manufacturing</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Durable goods</i><i class="ks2">Nondurable goods</i></p>
         <div class="chart" id="cSubMfg" style="height:230px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Wholesale trade</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Merchant wholesalers, durable</i><i class="ks2">Merchant wholesalers, nondurable</i><i class="ks3">Agents and brokers</i></p>
         <div class="chart" id="cSubWhl" style="height:230px"></div>
       </div>
     </div>
     <div class="row">
       <div class="t">
-        <div class="th"><span class="ti">Retail trade</span><span class="u">Thousands, s.a., latest month</span></div>
-        <p class="note">9 sub-sectors, past the six the palette carries, so a heatmap rather than a stack. Each cell is one month&rsquo;s change, over the same 48 months as the stacks above. Capped at &plusmn;12k and shared with the panel beside it, so a colour means the same number in both; the tails clip.</p>
+        <div class="th"><span class="ti">Retail trade</span><span class="u">Thousands, s.a., 48 months</span></div>
+        <p class="note">Nine sub-sectors, past the six the palette carries, so a heatmap. Capped at &plusmn;12k, shared with the panel beside it so a colour means the same number in both; the tails clip.</p>
         <div class="chart" id="cSubRet" style="height:300px"></div>
       </div>
       <div class="t">
-        <div class="th"><span class="ti">Transportation and warehousing</span><span class="u">Thousands, s.a., latest month</span></div>
-        <p class="note">10 sub-sectors, past the six the palette carries, so a heatmap rather than a stack. Each cell is one month&rsquo;s change, over the same 48 months as the stacks above. Capped at &plusmn;12k and shared with the panel beside it, so a colour means the same number in both; the tails clip.</p>
+        <div class="th"><span class="ti">Transportation and warehousing</span><span class="u">Thousands, s.a., 48 months</span></div>
+        <p class="note">Ten sub-sectors, so a heatmap on the same &plusmn;12k scale as retail beside it.</p>
         <div class="chart" id="cSubTrn" style="height:320px"></div>
       </div>
     </div>
@@ -190,7 +187,6 @@
       </div>
       <div class="t">
         <div class="th"><span class="ti">Information</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Motion picture and sound</i><i class="ks2">Publishing</i><i class="ks3">Broadcasting and content</i><i class="ks4">Telecommunications</i><i class="ks5">Computing infrastructure providers, data processing, web hosting, and related services</i><i class="ks6">Web search and other information</i></p>
         <div class="chart" id="cSubInfo" style="height:230px"></div>
       </div>
@@ -198,13 +194,11 @@
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Financial activities</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Finance and insurance</i><i class="ks2">Real estate, rental and leasing</i></p>
         <div class="chart" id="cSubFin" style="height:230px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Professional and business services</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Professional and technical</i><i class="ks2">Management of companies</i><i class="ks3">Administrative and waste services</i></p>
         <div class="chart" id="cSubPbs" style="height:230px"></div>
       </div>
@@ -212,13 +206,11 @@
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Private education and health services</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Private educational services</i><i class="ks2">Health care and social assistance</i></p>
         <div class="chart" id="cSubEhs" style="height:230px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Leisure and hospitality</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Arts, entertainment, recreation</i><i class="ks2">Accommodation and food services</i></p>
         <div class="chart" id="cSubLah" style="height:230px"></div>
       </div>
@@ -226,13 +218,11 @@
     <div class="row">
       <div class="t">
         <div class="th"><span class="ti">Other services</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Repair and maintenance</i><i class="ks2">Personal and laundry services</i><i class="ks3">Religious, civic and professional</i></p>
         <div class="chart" id="cSubSrv" style="height:230px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="ti">Government</span><span class="u">Thousands, s.a., 48 months</span></div>
-        <p class="note">Monthly change, stacked, with the sector&rsquo;s own change drawn over it as a line. The parts are a partition of the whole &mdash; they reconcile to the sector &mdash; so any daylight between the line and the stack is rounding, visible rather than asserted.</p>
         <p class="key"><i class="ks1">Federal</i><i class="ks2">State government</i><i class="ks3">Local government</i></p>
         <div class="chart" id="cSubGov" style="height:230px"></div>
       </div>
@@ -242,12 +232,12 @@
       <div class="t" id="t8">
         <div class="th"><span class="n">Table 8</span><span class="ti">Private hiring outside health care</span><span class="u">Thousands, s.a.</span></div>
         <p class="note">Health care and social assistance hires through the cycle rather than with it, so it can carry a private payroll number that has otherwise stalled. Bars are private employment with it removed; the line is private employment in total. <b>When the two separate, the private gain is concentrated in one acyclical sector.</b> Note this is <em>not</em> the private education and health services supersector, which would also strip out private education. Components are seasonally adjusted independently, so the difference is approximate. <b>Analyst-derived.</b></p>
-        <p class="key"><i class="ks1">Private, total</i></p>
+        <p class="key"><i class="k1">Private ex health care</i><i class="ks1">Private, total</i></p>
         <div class="chart" id="cCyc" style="height:250px"></div>
       </div>
       <div class="t" id="t9">
         <div class="th"><span class="n">Table 9</span><span class="ti">Breadth of the payroll change</span><span class="u">Diffusion index, 50 = balance</span></div>
-        <p class="note">The heatmap above splits fourteen supersectors; these indexes count roughly <b>250 private industries</b>, scoring each span as the share expanding plus half the share unchanged. Above 50 more industries are adding than shedding. It answers a question the headline cannot: whether a move is broad or the work of a few sectors. July&rsquo;s reading sat <b>above 50 while total payrolls fell</b>. The <b>twelve-month span is not seasonally adjusted</b> &mdash; no adjusted version is published &mdash; so it is drawn dashed and sits on a different basis from the other three. Source: BLS, which has no revision history for these, so they carry no first-print line.</p>
+        <p class="note">The heatmap above splits fourteen supersectors; these indexes count roughly <b>250 private industries</b>, scoring each span as the share expanding plus half the share unchanged. Above 50 more industries are adding than shedding. It answers a question the headline cannot: whether a move is broad or the work of a few sectors. The <b>twelve-month span is not seasonally adjusted</b> &mdash; no adjusted version is published &mdash; so it is drawn dashed and sits on a different basis from the other three. Source: BLS, which has no revision history for these, so they carry no first-print line.</p>
         <p class="key"><i class="ks1">1-month</i><i class="ks2">3-month</i><i class="k4">6-month</i><i class="k4">12-month (dashed, NSA)</i></p>
         <div class="chart" id="cDiff" style="height:250px"></div>
       </div>
@@ -256,13 +246,13 @@
     <div class="row">
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">Government, by level</span><span class="u">Index, 5 years ago = 100</span></div>
-        <p class="note">Summary table B of the release carries government as a <b>single line</b> &mdash; +35,000 in August &mdash; which hides that its three levels have been moving in opposite directions. Federal employment has been falling while state and local rise; the postal service is split out because it is run on a different budget from the rest of federal and moves with parcel volumes rather than policy. Indexed inside the window because local government is roughly six times federal in level.</p>
+        <p class="note">Summary table B of the release carries government as a <b>single line</b>, which hides that its three levels can move in opposite directions &mdash; through 2025&ndash;26 federal fell while state and local rose. The postal service is split out because it is run on a different budget from the rest of federal and moves with parcel volumes rather than policy. Indexed inside the window because local government is roughly six times federal in level.</p>
         <p class="key"><i class="k4">Federal</i><i class="ks1">State</i><i class="ks2">Local</i><i class="ks3">Federal ex-postal (dashed)</i></p>
         <div class="chart" id="cGov" style="height:230px"></div>
       </div>
       <div class="t" id="t11">
         <div class="th"><span class="n">Table 11</span><span class="ti">Government education</span><span class="u">Index, 5 years ago = 100</span></div>
-        <p class="note">The single largest piece of government, and the one that moved in August: <b>local government education added 42,000</b>, largely offsetting a fall the month before. It is 8.2 million of the 15.2 million people local government employs, so it drives that level almost by itself &mdash; and none of it is visible in Summary table B, which is why the release points to table B-1. School-year timing makes this series unusually dependent on seasonal adjustment: the swings are hiring that did or did not happen relative to a normal August, not net new posts.</p>
+        <p class="note">The single largest piece of government: <b>local government education is roughly 8 million of the 15 million people local government employs</b>, so it drives that level almost by itself &mdash; and none of it is visible in Summary table B, which is why the release points to table B-1. School-year timing makes this series unusually dependent on seasonal adjustment: the swings are hiring that did or did not happen relative to a normal August, not net new posts.</p>
         <p class="key"><i class="k4">Local government education</i><i class="ks1">State government education</i></p>
         <div class="chart" id="cGovEdu" style="height:230px"></div>
       </div>
@@ -301,7 +291,7 @@
     <div class="row">
       <div class="t" id="t16">
         <div class="th"><span class="n">Table 16</span><span class="ti">Why people are unemployed</span><span class="u">Millions, s.a.</span></div>
-        <p class="note">A <b>complete partition</b> of unemployment, which is why it stacks: everyone unemployed is a job loser, a job leaver, a reentrant or a new entrant. The ink line is total unemployment, so the daylight above the stack is the residual &mdash; about 33,000 in August, from the four being seasonally adjusted independently of the total. The composition matters more than the level: job losers rising is displacement, while reentrants rising is people being drawn back in, which is a different economy entirely.</p>
+        <p class="note">A <b>complete partition</b> of unemployment, which is why it stacks: everyone unemployed is a job loser, a job leaver, a reentrant or a new entrant. The ink line is total unemployment, so the daylight above the stack is the residual &mdash; a few tens of thousands, from the four being seasonally adjusted independently of the total. The composition matters more than the level: job losers rising is displacement, while reentrants rising is people being drawn back in, which is a different economy entirely.</p>
         <p class="key"><i class="k4">Total unemployed (line)</i><i class="ks1">Job losers</i><i class="ks2">Job leavers</i><i class="ks3">Reentrants</i><i class="ks4">New entrants</i></p>
         <div class="chart" id="cReason" style="height:250px"></div>
       </div>
@@ -387,7 +377,7 @@
     <div class="row">
       <div class="t" id="t27">
         <div class="th"><span class="n">Table 27</span><span class="ti">Average hourly earnings</span><span class="u">Percent, year over year</span></div>
-        <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first.</p>
+        <p class="note">All employees against production and nonsupervisory workers, whose pay tends to turn first, with weekly earnings &mdash; hourly pay times hours worked, the line that tracks take-home.</p>
         <p class="key"><i class="ks1">All employees</i><i class="ks2">Production &amp; nonsupervisory</i><i class="ks3">Weekly earnings</i></p>
         <div class="chart" id="cWage" style="height:230px"></div>
       </div>
@@ -447,7 +437,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

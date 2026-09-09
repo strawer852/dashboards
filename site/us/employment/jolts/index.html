@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JOLTS — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -51,7 +51,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> JOLTS</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Employment <b>&rsaquo;</b> JOLTS</div>
     <div class="mast">
       <h1>Job Openings &amp; Labor Turnover</h1>
       <div class="stamp" id="stamp"></div>
@@ -66,8 +66,8 @@
 
     <div class="row one">
       <div class="t" id="t1">
-        <div class="th"><span class="n">Table 1</span><span class="ti">Openings, hires, quits and layoffs</span><span class="u">Thousands, s.a.</span></div>
-        <p class="note">Openings are a stock measured on the last business day; hires, quits and layoffs are flows across the whole month.</p>
+        <div class="th"><span class="n">Table 1</span><span class="ti">Openings, hires and quits</span><span class="u">Thousands, s.a.</span></div>
+        <p class="note">Openings are a stock measured on the last business day; hires and quits are flows across the whole month. Layoffs are in Table 2, as a rate.</p>
         <p class="key"><i class="ks1">Job openings</i><i class="ks2">Hires</i><i class="ks3">Quits</i></p>
         <div class="chart" id="cFlows" style="height:250px"></div>
       </div>
@@ -75,8 +75,8 @@
 
     <div class="row">
       <div class="t" id="t2">
-        <div class="th"><span class="n">Table 2</span><span class="ti">Quits rate</span><span class="u">Percent of employment, s.a.</span></div>
-        <p class="note">The cleanest read on whether workers believe they can leave. It falls before layoffs rise.</p>
+        <div class="th"><span class="n">Table 2</span><span class="ti">Quits and layoffs rates</span><span class="u">Percent of employment, s.a.</span></div>
+        <p class="note">The quits rate is the cleanest read on whether workers believe they can leave; it falls before the layoffs rate rises.</p>
         <p class="key"><i class="ks1">Quits</i><i class="ks2">Layoffs &amp; discharges</i></p>
         <div class="chart" id="cQuits" style="height:215px"></div>
       </div>
@@ -90,15 +90,15 @@
     <div class="row one">
       <div class="t" id="t4">
         <div class="th"><span class="n">Table 4</span><span class="ti">Beveridge curve</span><span class="u">Rates, s.a.</span></div>
-        <p class="note">The vacancy rate against the unemployment rate, traced in time order. Movement <b>along</b> the curve is the cycle; a shift of the whole curve is a change in how well the market matches people to jobs &mdash; and it shifted. At the same 3.4&ndash;4.2% unemployment, vacancies averaged <b>4.5% through the 2010s, 6.9% in 2021&ndash;22, and 4.4% now</b>: it moved out and has come back. Table 3 cannot show that, because a ratio collapses both axes into one number. The 2020 excursion is 13 of these 120 months and sets the axis, which is why the rest sits to the left.</p>
+        <p class="note">The vacancy rate against the unemployment rate, traced in time order. Movement <b>along</b> the curve is the cycle; a shift of the whole curve is a change in how well the market matches people to jobs &mdash; and it shifted. At the same 3.4&ndash;4.2% unemployment, vacancies averaged <b>4.5% through the 2010s, 6.9% in 2021&ndash;22, and about 4.4% in 2025&ndash;26</b>: it moved out and has come back. Table 3 cannot show that, because a ratio collapses both axes into one number. The 2020 excursion is 13 of these 120 months and sets the axis, which is why the rest sits to the left.</p>
         <div class="chart" id="cBev" style="height:340px"></div>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t5">
-        <div class="th"><span class="n">Table 5</span><span class="ti">Hires against total separations</span><span class="u">Percent of employment, s.a.</span></div>
-        <p class="note">Employment grows only while hires exceed separations. The gap between these two lines is the payroll change.</p>
+        <div class="th"><span class="n">Table 5</span><span class="ti">Hires, quits and layoffs, as rates</span><span class="u">Percent of employment, s.a.</span></div>
+        <p class="note">Employment grows only while hires exceed total separations, of which quits and layoffs are the two large parts (Table 6 has the third). Read the hires line against the other two together; Table 7 draws the net flow directly.</p>
         <p class="key"><i class="ks1">Hires rate</i><i class="ks2">Quits rate</i><i class="ks3">Layoffs rate</i></p>
         <div class="chart" id="cRates" style="height:230px"></div>
       </div>
@@ -217,7 +217,7 @@
 
     <div class="row one">
       <div class="t" id="t11">
-        <div class="th"><span class="n">Table 11</span><span class="ti">What kind of separation?</span><span class="u">Millions per month, ten years</span></div>
+        <div class="th"><span class="n">Table 11</span><span class="ti">What kind of separation?</span><span class="u">Millions per month, five years</span></div>
         <p class="note">Table 6 draws these as levels, which means the reader has to divide in their head to answer the question that matters: <b>when separations rise, are people leaving or being let go?</b> Stacked, the mix is the chart. Quits have run as high as <b>73.3%</b> of all separations (April 2022) and as low as <b>17.3%</b> in April 2020, when layoffs briefly took nearly everything &mdash; a swing no level chart shows. Five years rather than ten: that April 2020 bar reaches 15.9m against a normal 5.5m, and on a ten-year axis it flattens every other month into the floor. Stacking is honest here because the three parts are a partition: they reconcile to total separations with a worst residual of <b>1k</b> on an average of 5,715k across 91 months. The ink line is that total, so any daylight is rounding.</p>
         <p class="key"><i class="ks1">Layoffs and discharges</i><i class="ks2">Quits</i><i class="ks3">Other separations</i></p>
         <div class="chart" id="cJMix" style="height:270px"></div>
@@ -233,7 +233,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

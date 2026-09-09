@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weekly Claims — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -50,7 +50,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Weekly Claims</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Employment <b>&rsaquo;</b> Weekly Claims</div>
     <div class="mast">
       <h1>Weekly Claims</h1>
       <div class="stamp" id="stamp"></div>
@@ -59,7 +59,7 @@
     <div id="status" hidden></div>
 
     <p class="lede">The highest-frequency read on the labour market. Published every
-    Thursday, five weeks ahead of the payroll report that covers the same period.</p>
+    Thursday, three to four weeks ahead of the payroll report covering the same week.</p>
 
     <div class="summary" id="summary"></div>
 
@@ -98,11 +98,19 @@
     <div class="row one">
       <div class="t" id="t5">
         <div class="th"><span class="n">Table 5</span><span class="ti">Claims against payroll growth</span><span class="u">Indexed, 5 years ago = 100</span></div>
-        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. <b>Claims do not lead payrolls, and measurement says they never did.</b> Correlating the insured unemployment rate against twelve-month payroll growth at leads of nought to six months, the peak sits at <b>nought in every era</b> &mdash; &minus;0.66 in the 1970s and 80s, &minus;0.78 in the 1990s, &minus;0.96 in the 2000s. What claims give you is not a lead but <b>timeliness</b>: weekly, and three to four weeks before the payroll print covering the same month. The relationship has also weakened badly &mdash; &minus;0.67 in the 2010s &mdash; and since 2021 it has <b>changed sign</b>, running +0.60 rather than near zero, almost certainly because the insured rate and payroll growth both fell together as the reopening faded rather than because one now predicts the other. Sixty-two months is not enough to call that a relationship. Layoffs stayed historically low while hiring stalled, and claims only ever see the first of those.</p>
+        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. <b>Claims do not lead payrolls, and measurement says they never did.</b> Correlating the insured unemployment rate against twelve-month payroll growth at leads of nought to six months, the peak sits at <b>nought in every era</b> &mdash; &minus;0.66 in the 1970s and 80s, &minus;0.78 in the 1990s, &minus;0.96 in the 2000s. What claims give you is <b>timeliness</b>, not a lead: weekly, and three to four weeks before the payroll print covering the same week. Since 2021 the relationship has weakened and <b>changed sign</b>, almost certainly because both series fell together as the reopening faded; sixty-odd months is not enough to call that a relationship. Layoffs stayed low while hiring stalled, and claims only ever see the first of those.</p>
         <p class="key"><i class="ks1">Initial claims, 4-week avg</i><i class="ks2">Nonfarm payrolls</i></p>
         <div class="chart" id="cLead" style="height:230px"></div>
       </div>
     </div>
+    <div class="row one">
+      <div class="t" id="t6">
+        <div class="th"><span class="n">Table 6</span><span class="ti">What the figure was when it was first published</span><span class="u">Persons, current less first print</span></div>
+        <p class="note">Two revisions sit in this one line, and they are different orders of magnitude. The <b>quiet recent stretch</b> is the weekly correction from state agencies reporting late: a median of about <b>+1,000</b>, half a percent of the level, which reverses the week-on-week move in roughly one week in sixteen. The <b>excursions further back</b> are the annual re-estimation of the seasonal factors, each spring since at least 2010, restating between 140 and 260 past weeks at once. Each year&rsquo;s lands on top of the last, so the older a figure the less it resembles its first print: weeks three to five years old sit a median <b>16,000</b> from it, <b>7.5%</b> of the level. <b>A figure noted down today is not the figure that will be here next year.</b> The line stops in 2009, where the vintage archive begins, and breaks in the autumn of 2025, when four weeks were published late &mdash; with no first print to compare against, unknown is not zero. <b>Analyst-derived</b> from the vintage history.</p>
+        <div class="chart" id="cRev" style="height:230px"></div>
+      </div>
+    </div>
+
     <div class="row one">
       <div class="t" id="t7">
         <div class="th"><span class="n">Table 7</span><span class="ti">How many of the unemployed actually draw benefits</span><span class="u">Continuing claims as a share of total unemployment</span></div>
@@ -135,14 +143,6 @@
       </div>
     </div>
 
-    <div class="row one">
-      <div class="t" id="t6">
-        <div class="th"><span class="n">Table 6</span><span class="ti">What the figure was when it was first published</span><span class="u">Persons, current less first print</span></div>
-        <p class="note">Two revisions sit in this one line, and they are different orders of magnitude. The <b>quiet recent stretch</b> is the weekly correction from state agencies reporting late: the median has been exactly <b>+1,000 in each of the last four years</b>, about half a percent of the level, and since 2023 it has changed the direction of the week-on-week move in only 6% of weeks. On its own it says nothing. The <b>excursions further back</b> are the other one &mdash; once a year, in late March or early April every year since at least 2010, the seasonal factors are re-estimated and between 140 and 260 past weeks are restated at once. Each year&rsquo;s re-estimation lands on top of the last, so the older a figure is the less it resembles what was published at the time: weeks three to five years old now sit a median <b>16,000</b> from their first print, <b>7.5%</b> of the level, against 0.5% for the past year. Fifty of the fifty-two weeks of 2019 carry a different value than the one first published. <b>A figure noted down today is not the figure that will be here next year.</b> The line stops in 2009, where the vintage archive begins, and breaks again in the autumn of 2025, when four weeks were not published until 20 November &mdash; where nothing was published on time there is no first print to compare against, and unknown is not zero. <b>Analyst-derived</b> from the vintage history.</p>
-        <div class="chart" id="cRev" style="height:230px"></div>
-      </div>
-    </div>
-
     <div class="src">
       <span id="generated"></span>
       <span>Source: US Employment and Training Administration, via FRED / ALFRED</span>
@@ -152,7 +152,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

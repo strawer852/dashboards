@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PPI — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=69163900f7">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=a9ec5290bf">
 </head>
 <body>
 <div class="app">
@@ -63,7 +63,7 @@
   </aside>
 
   <main>
-    <div class="crumb">United States <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> PPI</div>
+    <div class="crumb"><a href="/us/">United States</a> <b>&rsaquo;</b> Inflation <b>&rsaquo;</b> PPI</div>
     <div class="mast">
       <h1>PPI</h1>
       <div class="stamp" id="stamp"></div>
@@ -104,7 +104,7 @@
     <div class="row">
       <div class="t" id="t4">
         <div class="th"><span class="n">Table 4</span><span class="ti">What final demand is made of, year</span><span class="u">Percentage points, 12-month change</span></div>
-        <p class="note">Not rates &mdash; <b>contributions</b>: each part&rsquo;s own change multiplied by its share of final demand, so the five add up to the headline instead of merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>: services 68.338, goods less foods and energy 18.515, foods 5.452, energy 5.061, construction 2.634. The ink line is final demand itself, so the daylight above the stack is residual &mdash; about 0.03pp at July 2026. <b>Services carry roughly two-thirds of the weight</b>, which is why a large move in goods often barely shifts the headline.</p>
+        <p class="note">Not rates &mdash; <b>contributions</b>: each part&rsquo;s own change multiplied by its share of final demand, so the five add up to the headline instead of merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>: services 68.338, goods less foods and energy 18.515, foods 5.452, energy 5.061, construction 2.634. The ink line is final demand itself, so any daylight above the stack is the residual, shown rather than claimed away. <b>Services carry roughly two-thirds of the weight</b>, which is why a large move in goods often barely shifts the headline.</p>
         <p class="key"><i class="k4">Final demand (line)</i><i class="ks1">Services</i><i class="ks2">Goods less foods and energy</i><i class="ks3">Foods</i><i class="ks4">Energy</i><i class="ks5">Construction</i></p>
         <div class="chart" id="cStackY" style="height:265px"></div>
       </div>
@@ -189,7 +189,7 @@
     <div class="row">
       <div class="t" id="t15">
         <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b> &mdash; the July release attributes more than half of the entire fall in final demand goods to it, and that is a normal month rather than a remarkable one. Diesel is separated from it deliberately: it is the <em>freight</em> cost, moving with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
+        <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b>: a single month of it routinely accounts for most of the move in final demand goods. Diesel is separated from it deliberately: it is the <em>freight</em> cost, moving with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
         <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
         <div class="chart" id="cFuel" style="height:250px"></div>
       </div>
@@ -204,13 +204,13 @@
     <div class="row">
       <div class="t" id="t16">
         <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="note">Two services that turn with the cycle rather than with costs. <b>Transportation of freight and mail is the cleanest cyclical signal the release carries</b> &mdash; haulage and delivery are priced on spot capacity, so they react before almost anything else &mdash; and at <b>+8.5%</b> over the year to July 2026 it is running well ahead of final demand as a whole. Airline passenger services is the most volatile services line in the index, up <b>11.9%</b> on the year, and unlike most of PPI it is also something households buy directly. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
+        <p class="note">Two services that turn with the cycle rather than with costs. <b>Transportation of freight and mail is the cleanest cyclical signal the release carries</b> &mdash; haulage and delivery are priced on spot capacity, so they react before almost anything else. Airline passenger services is the most volatile services line in the index, and unlike most of the PPI it is something households buy directly. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
         <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
         <div class="chart" id="cFreight" style="height:250px"></div>
       </div>
       <div class="t">
         <div class="th"><span class="n">&nbsp;</span><span class="ti">Freight and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
-        <p class="note">Monthly, freight is the one to watch: it sits close to a spot price, so it turns months before the annual rate admits anything has changed &mdash; the <b>+3.9%</b> jump in April 2026 was visible here long before the twelve-month line beside it responded. Both series turned down in July, freight by 0.7% and airline fares by 3.4%. Fares swing harder in any given month but carry less about the cycle: they follow jet fuel and capacity decisions rather than demand for haulage.</p>
+        <p class="note">Monthly, freight is the one to watch: it sits close to a spot price, so it turns months before the annual rate beside it admits anything has changed. Fares swing harder in any given month but carry less about the cycle: they follow jet fuel and capacity decisions rather than demand for haulage.</p>
         <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
         <div class="chart" id="cFreightM" style="height:250px"></div>
       </div>
@@ -234,7 +234,7 @@
     <div class="row">
       <div class="t" id="t18">
         <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management, year</span><span class="u">Percent, year over year, <b>not</b> adjusted</span></div>
-        <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series above &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;20% and +25%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it led the whole of final demand services in July at <b>+6.5%</b>, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
+        <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series above &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;20% and +25%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it is routinely the largest single mover of final demand services, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
         <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
         <div class="chart" id="cPortfolio" style="height:250px"></div>
       </div>
@@ -264,25 +264,19 @@
       </div>
     </div>
 
-    <div class="src">
-      <span id="generated"></span>
-      <span>Source: BLS Producer Price Index, via FRED</span>
-      <span>Seasonally adjusted</span>
-      <span>Final Demand&ndash;Intermediate Demand framework; the older stage-of-processing series are discontinued</span>
-    </div>
     <div class="row one">
       <div class="t" id="t21">
         <div class="th"><span class="n">Table 21</span><span class="ti">Where final demand inflation sits</span><span class="u">Twelve-month change, %, 48 months</span></div>
         <p class="note">The 33 components that partition final demand, each against its own level a year earlier. The chain above says how a shock travels; this says <b>what is moving now</b>. Capped at &plusmn;15%, which covers about nine readings in ten. Read it for columns rather than cells. <b>ex TTW</b> is the source&rsquo;s own &ldquo;less trade, transportation, and warehousing&rdquo;.</p>
         <div class="chart" id="cFdHeat" style="height:760px"></div>
       </div>
+    </div>
     <div class="row one">
       <div class="t" id="t22">
         <div class="th"><span class="n">Table 22</span><span class="ti">The same components, three months</span><span class="u">Three-month change, %, 48 months</span></div>
         <p class="note">The panel above carries eleven months of history and turns late; this one turns four times faster. <b>Not month on month</b>, which at this granularity is noise: a component&rsquo;s monthly sign agrees with the previous month&rsquo;s only 60% of the time and its autocorrelation is 0.02, so every cell would be independent of the one beside it. At three months that is 80% and 0.62. Capped at &plusmn;5% because the moves are a quarter the size. Not annualised.</p>
         <div class="chart" id="cFd3m" style="height:760px"></div>
       </div>
-    </div>
     </div>
 
     <div class="row one">
@@ -293,11 +287,17 @@
       </div>
     </div>
 
+    <div class="src">
+      <span id="generated"></span>
+      <span>Source: BLS Producer Price Index, via FRED</span>
+      <span>Seasonally adjusted</span>
+      <span>Final Demand&ndash;Intermediate Demand framework; the older stage-of-processing series are discontinued</span>
+    </div>
   </main>
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=a61f46ce26"></script>
+<script src="/assets/brb-dash.js?v=ccbd417b08"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
@@ -447,14 +447,13 @@ BRB.render({
     { el: "cChainHeat", type: "heatmap", transform: "yoy", format: "pct",
       months: 48, cap: 12, left: 96,
       capText: ["≥ +12%", "≤ −12%"],
-      // Listed in reverse: the heatmap builds its category axis bottom-up, so
-      // this puts stage 1 at the top and final demand at the bottom, and the
-      // chain reads downward the way the prose describes it.
-      series: [{ id: "PPIFIS",  label: "Final demand" },
-               { id: "WPSID54", label: "Stage 4" },
-               { id: "WPSID53", label: "Stage 3" },
+      // Reading order: rows render top-down as listed, so stage 1 leads and
+      // final demand closes, the way the prose describes the chain.
+      series: [{ id: "WPSID51", label: "Stage 1" },
                { id: "WPSID52", label: "Stage 2" },
-               { id: "WPSID51", label: "Stage 1" }] },
+               { id: "WPSID53", label: "Stage 3" },
+               { id: "WPSID54", label: "Stage 4" },
+               { id: "PPIFIS",  label: "Final demand" }] },
 
     { el: "cVol", type: "line", format: "pct", tick: 11, left: 44, window: 60,
       series: yoy([{ id: "PPIDFS", label: "Foods", ...C1 },

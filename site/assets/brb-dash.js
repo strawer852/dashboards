@@ -217,7 +217,10 @@
           // Categorical slots, in the validated order. The previous ladder
           // ran slate -> gold -> oxblood: slate is a near-black against ink
           // at the same weight, and oxblood means "loss", not "series 3".
-          lineStyle: { color: P[sp.color || ["s1", "s2", "s3"][i] || "s4"],
+          // The full ladder, in the validated order. This stopped at three and
+          // fell back to s4 for everything after, so a fourth, fifth and sixth
+          // unnamed series would all have been the same colour.
+          lineStyle: { color: P[sp.color || ["s1", "s2", "s3", "s4", "s5", "s6"][i] || "muted"],
                        width: sp.width || 1.6, type: sp.dash ? "dashed" : "solid" },
           markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
           // A reference level the series is read against -- 50 on a diffusion
@@ -506,7 +509,11 @@
         axisLabel: { color: P.muted, fontSize: 9, interval: p.tick == null ? 2 : p.tick,
                      formatter: v => label(v, freq) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
-      yAxis: { type: "category", data: names, splitArea: { show: false },
+      // Rows read top-down in the order the page lists them, the same order
+      // as its key and its prose. ECharts puts category 0 at the BOTTOM, so
+      // without `inverse` a 33-row table read upwards, and two panels had
+      // been hand-reversed to compensate while the rest had not.
+      yAxis: { type: "category", data: names, inverse: true, splitArea: { show: false },
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       visualMap: { min: -cap, max: cap, calculable: false, orient: "horizontal",

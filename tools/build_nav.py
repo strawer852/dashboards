@@ -55,7 +55,8 @@ def catalog() -> list[dict]:
                     "order": d.get("nav_order", 99), "planned": False,
                     "agency": d.get("agency", ""), "blurb": d.get("blurb", ""),
                     "index_title": d.get("index_title", d["title"]),
-                    "bundle": d["path"].replace("/", "-")})
+                    "bundle": d["path"].replace("/", "-"),
+                    "prefix": "/" + d["path"].strip("/").split("/")[0] + "/"})
     planned = ROOT / "planned.yml"
     if planned.exists():
         for d in yaml.safe_load(planned.read_text(encoding="utf-8")) or []:
@@ -64,7 +65,7 @@ def catalog() -> list[dict]:
                         "order": d.get("nav_order", 99), "planned": True,
                         "agency": d.get("agency", ""),
                         "blurb": d.get("blurb", "Next to be built."),
-                        "bundle": None})
+                        "bundle": None, "prefix": None})
     return sorted(out, key=lambda d: (d["order"], d["title"]))
 
 
@@ -96,9 +97,14 @@ def index_html(items: list[dict]) -> str:
         # Always emitted, and always with the id: the coverage map links to
         # this anchor, so suppressing it on a one-region site would leave the
         # map pointing at nothing.
+        # The heading links to the region's own page, which exists as soon
+        # as the region has a live dashboard (write_region_pages).
+        pre = region_prefix(group)
+        name = ('<a href="%s">%s</a>' % (html.escape(pre), html.escape(region))
+                if pre else html.escape(region))
         rows.append('      <h2 class="reg" id="%s"><span>%s</span>'
                     '<span class="n">%d dashboard%s</span></h2>'
-                    % (slug(region), html.escape(region), len(group),
+                    % (slug(region), name, len(group),
                        "" if len(group) == 1 else "s"))
         for it in group:
             nm = html.escape(it.get("index_title") or it["title"])
@@ -161,7 +167,8 @@ def coverage_svg(items: list[dict]) -> str:
     for it in items:
         if it["planned"]:
             continue
-        r = live.setdefault(it["region"], {"n": 0, "agencies": []})
+        r = live.setdefault(it["region"], {"n": 0, "agencies": [],
+                                            "href": it["prefix"]})
         r["n"] += 1
         ag = (it.get("agency") or "").split("\u00b7")[0].strip()
         if ag and ag not in r["agencies"]:
@@ -185,7 +192,7 @@ def coverage_svg(items: list[dict]) -> str:
             agencies = " &middot; ".join(r["agencies"]) or "&mdash;"
             dx, dy = t.get("disc", t["label"])
             parts.append(
-                '<a href="#%s" aria-label="%s, %d dashboards">'
+                '<a href="%s" aria-label="%s, %d dashboards">'
                 '<title>%s &mdash; %d dashboards</title>'
                 '<path class="terr" d="%s"/>'
                 '<circle class="disc" cx="%s" cy="%s" r="13"/>'
@@ -194,7 +201,7 @@ def coverage_svg(items: list[dict]) -> str:
                 '<text class="lbl" x="%s" y="%s" text-anchor="%s">%s</text>'
                 '<text class="sub" x="%s" y="%s" text-anchor="%s">%s</text>'
                 '</a>'
-                % (slug(name), html.escape(name), r["n"], html.escape(name),
+                % (html.escape(r["href"]), html.escape(name), r["n"], html.escape(name),
                    r["n"], t["d"], dx, dy, dx, dy + 4, r["n"], t["lead"],
                    lx, ly, anchor, html.escape(name), sx, sy, anchor, agencies))
         else:
@@ -252,6 +259,176 @@ def write_scope(items: list[dict], tree: dict) -> bool:
     return True
 
 
+# ---------------------------------------------------------- region pages ---
+def region_prefix(group: list[dict]) -> str | None:
+    """The URL prefix a region's dashboards share, e.g. "/us/"; None if it has
+    no live dashboard. Every live dashboard in a region must sit under one
+    prefix, because the region page is served at it."""
+    pre = {i["prefix"] for i in group if not i["planned"]}
+    if not pre:
+        return None
+    if len(pre) > 1:
+        raise SystemExit("region %r spans several URL prefixes: %s"
+                         % (group[0]["region"], sorted(pre)))
+    return pre.pop()
+
+
+def asset_stamp(name: str) -> str:
+    """The same content hash tools/stamp_assets.py writes, so a regenerated
+    region page carries the current stamp instead of losing it until the
+    next stamp run (trap 5: cache-busting lives in the URL)."""
+    import hashlib
+    return hashlib.sha256((SITE / "assets" / name).read_bytes()).hexdigest()[:10]
+
+
+def region_html(region: str, group: list[dict]) -> str:
+    """One page per region: its dashboards by topic, each row carrying its own
+    release's freshness, under the same rail as every dashboard.
+
+    Generated whole from the specs, like the landing index (trap 55): a
+    hand-written version would be the fourth copy of the same list and the
+    first to go stale. The rail is filled in by the normal pass because the
+    page carries the nav markers like any other."""
+    live = [i for i in group if not i["planned"]]
+    topics: dict = {}
+    for it in sorted(live, key=lambda i: (i["topic"], i["order"], i["title"])):
+        topics.setdefault(it["topic"], []).append(it)
+    agencies = []
+    for it in live:
+        ag = (it.get("agency") or "").split("\u00b7")[0].strip()
+        if ag and ag not in agencies:
+            agencies.append(ag)
+    n = len(live)
+    rows = []
+    for topic, its in topics.items():
+        rows.append('      <h2 class="reg" id="%s"><span>%s</span>'
+                    '<span class="n">%d dashboard%s</span></h2>'
+                    % (slug(topic), html.escape(topic), len(its),
+                       "" if len(its) == 1 else "s"))
+        for it in its:
+            rows.append(
+                '      <a class="row" href="%s">\n'
+                '        <span class="nm">%s</span>\n'
+                '        <span class="agency">%s</span>\n'
+                '        <span class="desc">%s</span>\n'
+                '        <span class="meta" data-bundle="%s">&hellip;</span>\n'
+                '      </a>' % (html.escape(it["path"]),
+                                html.escape(it.get("index_title") or it["title"]),
+                                html.escape(it["agency"]), html.escape(it["blurb"]),
+                                html.escape(it["bundle"])))
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{html.escape(region)} &mdash; BigRiceBowl Data</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/brb-dash.css?v={asset_stamp("brb-dash.css")}">
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <a class="brand" href="/">BigRiceBowl<span>Data</span></a>
+    <nav aria-label="Dashboards">
+  {START}
+  {END}
+    </nav>
+  </aside>
+
+  <main>
+    <!-- GENERATED by tools/build_nav.py from dashboards/*.yml. Do not edit. -->
+    <div class="crumb"><a href="/">BigRiceBowl Data</a> <b>&rsaquo;</b> {html.escape(region)}</div>
+    <div class="mast">
+      <h1>{html.escape(region)}</h1>
+      <div class="stamp"><span><b>{n} dashboard{"" if n == 1 else "s"}</b> &middot; {len(topics)} topic{"" if len(topics) == 1 else "s"}</span><span>{html.escape(" · ".join(agencies))}</span></div>
+    </div>
+
+    <p class="lede">{html.escape(region)}: every dashboard, by topic. Each is drawn from
+    one agency release and dated by it, so the rows below carry their own reference
+    period and release date rather than one shared &ldquo;as of&rdquo;.</p>
+
+    <div class="idx one" style="margin-top: 26px">
+{chr(10).join(rows)}
+    </div>
+
+    <div class="src">
+      <span>Sources: {html.escape(", ".join(agencies))} &mdash; via FRED and ALFRED where they carry vintages, and the agencies&rsquo; own APIs where they do not</span>
+    </div>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {{
+  const open = b.getAttribute("aria-expanded") === "true";
+  b.setAttribute("aria-expanded", String(!open));
+  document.getElementById(b.getAttribute("aria-controls")).hidden = open;
+}}));
+
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MFULL = ["January","February","March","April","May","June","July",
+               "August","September","October","November","December"];
+const fmtDate = iso => {{ const d = new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso);
+  return `${{d.getUTCDate()}} ${{MN[d.getUTCMonth()]}} ${{d.getUTCFullYear()}}`; }};
+
+// The same freshness read as the landing page: each row from its own bundle,
+// because the releases run on different clocks.
+document.querySelectorAll(".meta[data-bundle]").forEach(async el => {{
+  try {{
+    const r = await fetch(`/data/v1/dashboards/${{el.dataset.bundle}}.json`,
+                          {{ credentials: "same-origin", cache: "no-cache" }});
+    if (!r.ok) throw new Error(r.status);
+    const b = await r.json();
+    const rel = b.releases[b.release];
+    const rp = rel.ref_period.split("-");
+    const period = rel.cadence === "weekly"
+      ? `week to ${{fmtDate(rel.ref_period)}}`
+      : `${{MFULL[+rp[1] - 1]}} ${{rp[0]}}`;
+    const days = Math.floor((Date.now() - new Date(rel.released_at)) / 86400000);
+    el.innerHTML = `<b>${{period}}</b><br>released ${{fmtDate(rel.released_at)}}` +
+      (rel.next_at ? `<br>next ${{fmtDate(rel.next_at)}}` : "") +
+      (days > 45 ? `<br><span class="stale">${{days}} days old</span>` : "");
+  }} catch (e) {{
+    el.innerHTML = `<span class="stale">data unavailable</span>`;
+  }}
+}});
+</script>
+</body>
+</html>
+"""
+
+
+def write_region_pages(items: list[dict]) -> list[str]:
+    """Write site/<prefix>/index.html for every region with a live dashboard.
+    Returns the paths that changed."""
+    tree: dict = {}
+    for it in items:
+        tree.setdefault(it["region"], []).append(it)
+    changed = []
+    for region, group in tree.items():
+        pre = region_prefix(group)
+        if not pre:
+            continue
+        page = SITE / pre.strip("/") / "index.html"
+        page.parent.mkdir(parents=True, exist_ok=True)
+        new = region_html(region, group)
+        if page.exists():
+            old = page.read_text(encoding="utf-8")
+            # The rail between the markers is the rail pass's business;
+            # compare everything else, so an unchanged page is not rewritten.
+            strip = lambda t: t.split(START, 1)[0] + t.split(END, 1)[-1] \
+                if START in t and END in t else t
+            if strip(old) == strip(new):
+                continue
+            # Keep the rail already in place; the rail pass rewrites it anyway.
+            if START in old and END in old:
+                rail = old[old.index(START): old.index(END) + len(END)]
+                new = new.replace(START + "\n  " + END, rail, 1)
+        page.write_text(new, encoding="utf-8")
+        changed.append(str(page.relative_to(ROOT)))
+    return changed
+
+
 def grouped(items: list[dict]) -> dict:
     """region -> topic -> [dashboards], deterministically ordered.
 
@@ -292,6 +469,12 @@ def render(tree: dict, current: str | None) -> str:
         for topic, items in topics.items():
             if current and any(i["path"] == current for i in items):
                 open_region, open_topic = region, topic
+    # A region's own page (/us/) matches no dashboard, so open the region and
+    # leave every topic closed: the page itself is the list.
+    if current and open_region is None:
+        for region, topics in tree.items():
+            if any(i["prefix"] == current for its in topics.values() for i in its):
+                open_region = region
 
     lines = [START]
     for region, topics in tree.items():
@@ -344,6 +527,9 @@ def main() -> int:
         print('  updated  site/index.html (coverage map)')
     if not args.check and write_scope(items, tree):
         print('  updated  site/index.html (scope line)')
+    if not args.check:
+        for rel in write_region_pages(items):
+            print(f'  updated  {rel} (region page)')
 
     changed = missing = 0
     for f in sorted(SITE.rglob("index.html")):

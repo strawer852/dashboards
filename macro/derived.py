@@ -13,7 +13,10 @@ gets the answer wrong.
 Multi-input measures align their inputs BY DATE. Two series in one bundle can
 start in different years -- CLF16OV in 1948, UNRATE in 1948, JTSJOL in 2000 --
 and zipping them positionally would silently pair one year's value with
-another's. CLAUDE.md trap 6.
+another's. CLAUDE.md trap 6. This was true of the two-input measures and
+FALSE of the set-valued ones (median, breadth, state breadth) until
+9 September 2026: those zipped by position, and were right only because the
+exporter's truncation had lined every input up to end on the same period.
 
 Every derived entry carries `derived: true` and a `formula` string. The page is
 required to label them; a reader must never mistake an analyst construct for a
@@ -24,16 +27,29 @@ from __future__ import annotations
 
 # ---------------------------------------------------------------- date axes --
 def axis(entry: dict) -> list[str]:
-    """The entry's own observation dates as YYYY-MM(-DD) strings."""
+    """The entry's own observation dates: YYYY-MM for monthly and coarser,
+    YYYY-MM-DD for weekly and daily.
+
+    One format per frequency, whichever way the exporter encoded the axis. It
+    emits `start` + `step` when the spacing is regular and an explicit `dates`
+    array when it is not, and the two used to come out of here in different
+    shapes -- "2026-06" against "2026-06-01" -- so a monthly series with one
+    irregular date would have matched nothing and gone silently null.
+    """
+    freq = entry.get("step") or entry.get("frequency") or "M"
     if "dates" in entry:
-        return list(entry["dates"])
+        return [d[:7] if freq in ("M", "Q", "A") else d for d in entry["dates"]]
     start, step = entry["start"], entry["step"]
+    n = len(entry["values"])
+    if step in ("W", "D"):
+        from datetime import date, timedelta
+        d0 = date.fromisoformat(start)
+        days = {"W": 7, "D": 1}[step]
+        return [(d0 + timedelta(days=i * days)).isoformat() for i in range(n)]
     y, m = int(start[:4]), int(start[5:7])
-    k = {"M": 1, "Q": 3, "A": 12}.get(step)
-    if k is None:                      # weekly or daily: dates are explicit
-        raise ValueError(f"cannot rebuild a {step} axis without explicit dates")
+    k = {"M": 1, "Q": 3, "A": 12}[step]
     out = []
-    for i in range(len(entry["values"])):
+    for i in range(n):
         mm = (m - 1) + i * k
         out.append(f"{y + mm // 12:04d}-{mm % 12 + 1:02d}")
     return out
@@ -372,19 +388,25 @@ def share_above_year_ago(srcs, periods: int = 52, **_):
     count actually compared, so a state whose history starts late dilutes
     nothing.
     """
-    n = max(len(s["values"]) for s in srcs)
+    # By date, on the first input's axis, which is the axis the derived
+    # entry is shipped on. This zipped by POSITION -- v[i] against v[i-52]
+    # in each series regardless of what date i was -- and only gave the right
+    # answer because truncate_history had cut every input to end on the same
+    # week. A state whose history started later would have been read a year
+    # or more out of step, and nothing would have looked wrong. Trap 6.
+    dates = axis(srcs[0])
+    have = [dict(zip(axis(s), s["values"])) for s in srcs]
     out: list[float | None] = []
-    for i in range(n):
+    for i, d in enumerate(dates):
         up = tot = 0
-        for s in srcs:
-            v = s["values"]
-            if i >= len(v) or i < periods:
-                continue
-            a, b = v[i], v[i - periods]
-            if a is None or b is None:
-                continue
-            tot += 1
-            up += 1 if a > b else 0
+        if i >= periods:
+            d0 = dates[i - periods]
+            for h in have:
+                a, b = h.get(d), h.get(d0)
+                if a is None or b is None:
+                    continue
+                tot += 1
+                up += 1 if a > b else 0
         out.append(round(100.0 * up / tot, 3) if tot >= 20 else None)
     return out
 
@@ -407,17 +429,23 @@ def _weighted_rates(srcs, weights, periods):
     # failed the test, and the series came out entirely null while the panel
     # still drew its axes.
     full = sum(float(w) for w in weights)
-    n = max(len(s["values"]) for s in srcs)
-    for i in range(n):
+    # Aligned by date on the first input's axis, not by position. The CPI
+    # items start in different years -- airline fares 1989, college tuition
+    # 1977, most of the basket 1947 or 1997 -- and index i is a different
+    # month in each. It worked only because truncate_history happened to cut
+    # every input to the same last 180 months; a shorter input would have
+    # been compared a year out of step, silently. Trap 6.
+    dates = axis(srcs[0])
+    have = [dict(zip(axis(s), s["values"])) for s in srcs]
+    for i, d in enumerate(dates):
         pairs = []
-        for s, w in zip(srcs, weights):
-            v = s["values"]
-            if i >= len(v) or i < periods:
-                continue
-            a, b = v[i], v[i - periods]
-            if a is None or b is None or not b:
-                continue
-            pairs.append((100.0 * (a / b - 1.0), float(w)))
+        if i >= periods:
+            d0 = dates[i - periods]
+            for h, w in zip(have, weights):
+                a, b = h.get(d), h.get(d0)
+                if a is None or b is None or not b:
+                    continue
+                pairs.append((100.0 * (a / b - 1.0), float(w)))
         yield i, pairs, full
 
 
