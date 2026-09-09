@@ -1163,6 +1163,30 @@ mechanism is generic and lives in three places:
 `release_at`, a duplicate period, an item without a series or numeric
 value, or a record with no reasons.
 
+**CPI carries a record too** (`site/us/inflation/cpi/forecasts.json`, from
+the August 2026 release). Its twelve-month call is scored on the unadjusted
+index the release prints, `CPIAUCNS`, which the bundle already held; PPI's
+is scored both ways, because the unadjusted final demand index `PPIFID` was
+catalogued only on 9 September (503 ALFRED vintage rows, `from_row`). A
+`forecast:` config may list `series:` -- what the record scores against
+that no panel draws -- so `coverage.py` counts them as consumed. The score
+shows the unrounded print beside the rounded one, in the figures, the
+table and the chart tooltip: a +0.35 called +0.3 is a coin flip, and only
+the second decimal says so.
+
+**The reminder is calendar-driven.** `tools/forecast_reminder.py` runs from
+`systemd/macro-forecast-reminder.timer` at 08:00 Europe/London, the morning
+of the day before a US release: it reads `macro_release_dates` for anything
+due within 36 hours, works out the period that release covers from the
+bundle's `ref_period`, and pushes to ntfy only if no record for that period
+exists. Nothing in it is typed; a new dashboard with a `forecasts.json`
+is covered the day it appears. Silence means "nothing due" or "already
+done". `install-timers.sh` now installs every `macro-*` unit, and the timer
+watchdog reads the same directory. A desktop scheduled task on the laptop
+(`ppi-cpi-forecast-call`, weekdays 08:30 UK) does the same check and, if a
+call is missing, makes it; the ntfy push is the fallback for a closed
+laptop.
+
 **The monthly routine, the day before each release** (the calendar is in the
 bundle's `next_at`; PPI is 08:30 ET, typically the second week):
 

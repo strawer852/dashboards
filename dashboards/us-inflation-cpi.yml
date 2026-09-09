@@ -17,6 +17,19 @@ release: bls.cpi
 include_releases:
   - bls.cpi
 
+# The forecast record beside the page (site/us/inflation/cpi/forecasts.json)
+# scores each call against the change AS FIRST PRINTED, read from the
+# vintages by the exporter. The unadjusted index never revises (trap 25),
+# so for CPIAUCNS this equals the current value; the adjusted ones move each
+# January when the seasonal factors are re-estimated, which is exactly why
+# the score must read the print and not the latest vintage.
+first_reported_pct:
+  - CPIAUCSL
+  - CPILFESL
+first_reported_yoy:
+  - CPIAUCNS
+  - CPILFESL
+
 # No first_reported_change and no revision overlay anywhere on this dashboard.
 # The CPI series entered the catalog on 4 September 2026 with current-vintage
 # history only; the ALFRED backfill has not run yet, so the vintage matrix that

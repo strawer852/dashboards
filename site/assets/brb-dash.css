@@ -169,7 +169,8 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-h b { font-weight: 500; color: var(--ink-2); }
 .fc-h .who { margin-left: auto; }
 .fc-h .late { color: var(--neg); }
-.fc-figs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 10px; }
+.fc-figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); margin-top: 10px; }
+.fc .raw, .fc-rec .raw { color: var(--faint); }
 .fc-fig { padding: 8px 18px 6px 0; border-right: 1px solid var(--rule); min-width: 0; }
 .fc-fig:last-child { border-right: none; }
 .fc-fig .lb { font-size: 10px; font-weight: 600; letter-spacing: .085em; text-transform: uppercase; min-height: 3.2em; line-height: 1.5;

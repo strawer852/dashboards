@@ -20,7 +20,11 @@
           "value": 0.3, "consensus": null, "range": [0.2, 0.5] },
         { "key": "fd_yoy", "label": "Final demand", "note": "year over year, s.a. basis",
           "series": "PPIFIS", "transform": "yoy", "periods": 12, "format": "pct",
-          "value": 5.3, "consensus": 5.3, "range": [5.1, 5.5] }
+          "value": 5.3, "consensus": 5.3, "range": [5.1, 5.5] },
+        { "key": "fd_yoy_nsa", "label": "Final demand", "note": "year over year, n.s.a., as the release prints it",
+          "series": "PPIFID", "transform": "yoy", "periods": 12, "format": "pct",
+          "value": 5.4, "consensus": 5.3, "range": [5.2, 5.6],
+          "_added": "2026-09-09, later the same day, once the unadjusted series was catalogued; the s.a. call above is left as made" }
       ],
       "reasons": [
         "<b>Energy turns from drag to push.</b> The PPI is priced on the Tuesday of the week containing the 13th, so August against July is 11 August against 14 July: retail gasoline +3.9%, diesel +9.6%, WTI +4.1%, Brent +11.6%, Henry Hub flat. Over 2015&ndash;2026 the PPI gasoline index has moved 1.06&times; the retail move at those dates and final demand energy 0.35&times; PPI gasoline, so energy is put at about <b>+2.5% s.a.</b> after &minus;6.5% in June and &minus;3.1% in July. At its drifted weight of 5.7% that is roughly +0.14 points of the headline, and diesel&rsquo;s outsized move is the upside risk to it.",

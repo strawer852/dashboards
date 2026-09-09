@@ -786,8 +786,12 @@
           }
         }
         const printed = actual == null ? null : Math.round(actual * 10) / 10;
+        // Scored at the printed precision, but the unrounded figure travels
+        // with it: a +0.35 called +0.3 is a coin flip, not a miss, and only
+        // the second decimal says so.
         return { it, actual, printed, basis,
-                 err: printed == null ? null : +(printed - it.value).toFixed(2) };
+                 err: printed == null ? null : +(printed - it.value).toFixed(2),
+                 errRaw: actual == null ? null : +(actual - it.value).toFixed(3) };
       });
       return { rec, items };
     });
@@ -817,6 +821,7 @@
       else {
         const cls = Math.abs(x.err) <= 0.1 ? "hit" : "miss";
         act = `actual <b>${fmt(x.printed)}</b> &middot; <span class="${cls}">error ${sgn(x.err, 1)}</span>` +
+              ` <span class="raw">(${sgn(x.actual, 2)} unrounded)</span>` +
               (x.basis === "latest vintage" ? ` &middot; latest vintage` : "");
       }
       return `<div class="fc-fig"><div class="lb">${esc(it.label)}${it.note ? ` <i>${esc(it.note)}</i>` : ""}</div>` +
@@ -840,7 +845,8 @@
         if (!x) return `<td class="pend">&mdash;</td>`;
         const fmt = fmtFor({ format: x.it.format || "spct" });
         if (x.printed == null) return `<td class="pend">${fmt(x.it.value)} &rarr; pending</td>`;
-        return `<td${Math.abs(x.err) > 0.1 ? ' class="err"' : ""}>${fmt(x.it.value)} &rarr; ${fmt(x.printed)} (${sgn(x.err, 1)})</td>`;
+        return `<td${Math.abs(x.err) > 0.1 ? ' class="err"' : ""} title="printed ${sgn(x.actual, 3)} unrounded, error ${sgn(x.errRaw, 2)}">` +
+               `${fmt(x.it.value)} &rarr; ${fmt(x.printed)} (${sgn(x.err, 1)}) <span class="raw">${sgn(x.actual, 2)}</span></td>`;
       }).join("") + `</tr>`;
     });
     h += `</tbody></table>`;
@@ -884,8 +890,15 @@
     const opt = Object.assign(base(P), {
       grid: { left: p.left || 46, right: p.right || 14, top: 12, bottom: 24 },
       tooltip: Object.assign(base(P).tooltip, { trigger: "axis",
-        formatter: ps => "<b>" + label(ps[0].axisValue, "M") + "</b>" +
-          ps.map(x => "<br>" + x.seriesName + " " + (x.data == null ? "not scored" : fmt(x.data))).join("") }),
+        formatter: ps => {
+          const r = recs[ps[0].dataIndex];
+          return "<b>" + label(ps[0].axisValue, "M") + "</b>" + ps.map(x => {
+            const pi = p.items.find(i => i.label === x.seriesName);
+            const sc = r && pi ? r.items.find(z => z.it.key === pi.key) : null;
+            return "<br>" + x.seriesName + " " + (x.data == null ? "not scored"
+              : fmt(x.data) + (sc ? ` (unrounded ${sgn(sc.errRaw, 2)}: called ${sgn(sc.it.value, 1)}, printed ${sgn(sc.actual, 2)})` : ""));
+          }).join("");
+        } }),
       xAxis: { type: "category", data: cats,
         axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
                      interval: labelInterval(el, cats, "M", p.tick, (p.left || 46) + 14, 9.5, P.mono),

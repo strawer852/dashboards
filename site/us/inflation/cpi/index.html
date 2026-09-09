@@ -34,6 +34,7 @@
 
       <div class="inpage">
         <div class="h">In this report</div>
+        <a href="#forecast"><span>&rarr;</span>Forecast</a>
         <a href="#t1"><span>1</span>Headline and core</a>
         <a href="#t2"><span>2</span>Stacked, year</a>
         <a href="#t3"><span>3</span>Stacked, month</a>
@@ -80,6 +81,15 @@
     </div>
 
     <div id="status" hidden></div>
+
+    <!-- The forecast record: rendered by the engine from forecasts.json
+         beside this page, the latest call with its reasons and the running
+         score of every call against the figure as first printed. -->
+    <div class="fc" id="forecast">
+      <div id="fcBlock"></div>
+      <p class="key"><i class="k4">All items, month on month</i><i class="ks1">Less food and energy, month on month</i></p>
+      <div class="chart" id="cFcErr" style="height:150px"></div>
+    </div>
 
     <p class="lede">The Consumer Price Index for All Urban Consumers, broken into the
     parts that move it &mdash; each item on its own, what each is worth in the basket,
@@ -480,6 +490,12 @@ const yoy = specs => specs.map(s => Object.assign({ transform: "yoy" }, s));
 
 BRB.render({
   bundle: "/data/v1/dashboards/us-inflation-cpi.json",
+  // The forecast record beside this page; the engine renders the latest
+  // call into #fcBlock and scores every call against the bundle's
+  // as-first-printed changes. `series` lists what the record scores
+  // against that no panel draws, so coverage counts them as consumed.
+  forecast: { url: "/us/inflation/cpi/forecasts.json", into: "fcBlock",
+              series: ["CPIAUCSL", "CPILFESL", "CPIAUCNS"] },
   summary: [
     { label: "CPI", series: "CPIAUCSL", transform: "yoy", format: "pct",
       source: "CPI-U", note1: "year over year" },
@@ -495,6 +511,10 @@ BRB.render({
       source: "CPI-U" },
   ],
   panels: [
+    // Forecast error by release, actual as first printed minus the call.
+    { el: "cFcErr", type: "forecast", format: "pt", tick: 1, left: 42,
+      items: [{ key: "cpi_mom", label: "All items", color: "ink" },
+              { key: "core_mom", label: "Less food and energy", color: "s1" }] },
     { el: "cMedian", type: "line", format: "pct", tick: 11, left: 42,
       window: 120,
       series: [{ id: "CPI.median", label: "Median item", color: "ink", width: 1.9 },

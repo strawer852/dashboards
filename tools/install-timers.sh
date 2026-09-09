@@ -16,7 +16,7 @@ loginctl enable-linger "$USER"
 # so consolidating three timers into one would have left the old three enabled
 # in ~/.config, still firing, with nothing in the repo describing them. The
 # repo is the source of truth; anything installed and not in it is stale.
-for f in "$DEST"/macro-refresh-*.timer; do
+for f in "$DEST"/macro-*.timer; do
   [ -e "$f" ] || continue
   n="$(basename "$f" .timer)"
   if [ ! -e "$SRC/$n.timer" ]; then
@@ -26,12 +26,16 @@ for f in "$DEST"/macro-refresh-*.timer; do
   fi
 done
 
-install -m 644 "$SRC"/macro-refresh-*.service "$SRC"/macro-refresh-*.timer "$DEST/"
+# Every macro-* unit the repo carries, not only the refresh ones: the forecast
+# reminder joined on 9 September 2026 and a glob that named the refresh would
+# have left it uninstalled while the watchdog, which reads the same directory,
+# reported it missing.
+install -m 644 "$SRC"/macro-*.service "$SRC"/macro-*.timer "$DEST/"
 systemctl --user daemon-reload
 
 # Enabled by name from the repo's own unit files, so adding one is adding a file.
-for f in "$SRC"/macro-refresh-*.timer; do
+for f in "$SRC"/macro-*.timer; do
   systemctl --user enable --now "$(basename "$f")"
 done
 
-systemctl --user list-timers 'macro-refresh-*' --all
+systemctl --user list-timers 'macro-*' --all

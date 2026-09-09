@@ -1,0 +1,11 @@
+[Unit]
+Description=Remind, the morning before a release, if its forecast is not yet recorded
+
+[Timer]
+# 08:00 UK is the morning of the day before a US 08:30 ET release. The script
+# looks 36 hours ahead, so this firing catches it and the previous one does not.
+OnCalendar=*-*-* 08:00:00 Europe/London
+Persistent=true
+
+[Install]
+WantedBy=timers.target

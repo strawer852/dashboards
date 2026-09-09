@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "release": "bls.cpi",
+  "author": "Claude Fable 5.1",
+  "_readme": "One record per release, appended before it. `made` must precede `release_at` (tools/keycheck.py refuses otherwise). Each item names the bundle series and transform it is a call on; the page scores it against the figure as first printed. Never edit a record after its release. See CLAUDE.md, Forecasts.",
+  "forecasts": [
+    {
+      "for": "2026-08-01",
+      "made": "2026-09-09",
+      "release_at": "2026-09-11T12:30:00Z",
+      "items": [
+        { "key": "cpi_mom", "label": "All items", "note": "month on month, s.a.",
+          "series": "CPIAUCSL", "transform": "yoy", "periods": 1, "format": "spct",
+          "value": 0.4, "consensus": 0.4, "range": [0.3, 0.5] },
+        { "key": "core_mom", "label": "Less food and energy", "note": "month on month, s.a.",
+          "series": "CPILFESL", "transform": "yoy", "periods": 1, "format": "spct",
+          "value": 0.2, "consensus": 0.2, "range": [0.2, 0.3] },
+        { "key": "cpi_yoy", "label": "All items", "note": "year over year, n.s.a., as the release prints it",
+          "series": "CPIAUCNS", "transform": "yoy", "periods": 12, "format": "pct",
+          "value": 3.4, "consensus": 3.4, "range": [3.3, 3.5] },
+        { "key": "core_yoy", "label": "Less food and energy", "note": "year over year, s.a. basis",
+          "series": "CPILFESL", "transform": "yoy", "periods": 12, "format": "pct",
+          "value": 2.4, "consensus": 2.4, "range": [2.3, 2.5] }
+      ],
+      "reasons": [
+        "<b>Energy does the headline.</b> The CPI prices gasoline across the month, so it is the monthly average that matters: regular retail averaged $3.93 in July and $4.06 in August, +3.2%. Over 2015&ndash;2026 the seasonally adjusted CPI gasoline index has moved 0.78&times; the retail monthly change (r 0.90), and August&rsquo;s seasonal factor adds about 1.4 points on top because pump prices normally ease in late summer and this year rose, so gasoline is put near <b>+3.9% s.a.</b> With electricity and utility gas modestly up, energy (7.3% of the basket) is about <b>+2.2%</b>, worth +0.16 points.",
+        "<b>Shelter</b> (35.3%) is the core. Owners&rsquo; equivalent rent ran +0.26% and rent +0.26% in July after a soft June; the headline shelter line printed only +0.12% and +0.14% those two months because lodging away from home fell. Assumed <b>+0.22%</b>, worth +0.08 points.",
+        "<b>Airfares</b> jumped 2.2% in July and jet fuel rose through August with crude, so another +3 to +4% is likely (Goldman has +4.0%); with motor-vehicle insurance flat, transportation services (6.4%) is put at +0.8%, +0.05 points. Medical care services and the rest of core services are assumed at their recent +0.25% to +0.3% run, +0.05 points together. That makes <b>core services about +0.3%</b>.",
+        "<b>Core goods</b> (18.9%) stay close to flat. Wholesale used-vehicle prices fell 1.2% in the first half of August on the Manheim index and reach the CPI with a one- to two-month lag, so used cars are put at &minus;0.3% after July&rsquo;s +0.4%; new vehicles and apparel are assumed near +0.1% to +0.2%; the Section 301 duties that replaced the Section 122 tariffs on 24 July are at similar rates, so no fresh step in tariff pass-through is assumed. <b>Core goods +0.1%</b>, +0.02 points.",
+        "<b>Food</b> (13.5%) slowed to +0.08% in July; assumed <b>+0.2%</b>, +0.03 points.",
+        "<b>Adding up:</b> core services +0.19 and core goods +0.02 make <b>+0.21 points over 79% of the basket, +0.27% unrounded</b>, which rounds to <b>+0.2%</b> only just; a 0.3 print needs shelter at +0.28% or a larger airfare jump, and that is the risk. Energy +0.16 and food +0.03 on top give <b>+0.40 points, +0.4%</b> for all items. Consensus is +0.4% and +0.2%; Goldman has +0.39% and +0.23%.",
+        "<b>Year over year:</b> August 2025 rose 0.29% n.s.a. and drops out of the window; +0.3% n.s.a. this August (the seasonal factor takes about 0.07 off the +0.4% s.a.) gives <b>3.4%</b> on the unadjusted series the release prints, from 3.4% in July. Core: August 2025 rose 0.31% s.a. and is replaced by about +0.24%, taking the s.a. twelve-month rate from 2.5% to <b>2.4%</b>.",
+        "<b>What would make this wrong:</b> the headline&rsquo;s monthly standard deviation over the last three years is 0.21 points and core&rsquo;s 0.09, so the headline call is within one sigma of a 0.2 or a 0.6 and the core call sits on a rounding edge. Used cars are the most uncertain single line, and any lodging swing moves shelter by a tenth."
+      ],
+      "inputs": [
+        { "label": "Retail gasoline, monthly average", "value": "$3.93 → $4.06, +3.2%" },
+        { "label": "WTI, monthly average", "value": "$80.5 → $83.9" },
+        { "label": "Manheim used vehicles, 1-15 Aug", "value": "-1.2% m/m" },
+        { "label": "ISM services prices, Aug", "value": "72.6" },
+        { "label": "July CPI", "value": "+0.1% m/m, 3.4% y/y; core +0.2%, 2.5%" },
+        { "label": "Consensus", "value": "+0.4% / 3.4%; core +0.2% / 2.4%" },
+        { "label": "Goldman", "value": "+0.39%; core +0.23%, 2.40%" },
+        { "label": "Nowflation nowcast", "value": "+0.38%, 3.36%; core +0.20%, 2.39%" }
+      ],
+      "sources": [
+        { "label": "BLS, July 2026 CPI release", "url": "https://www.bls.gov/news.release/archives/cpi_08122026.htm" },
+        { "label": "FRED retail gasoline", "url": "https://fred.stlouisfed.org/series/GASREGW" },
+        { "label": "Cox Automotive, Manheim mid-August", "url": "https://www.coxautoinc.com/insights/manheim-used-vehicle-value-index-mid-august-2026-trends/" },
+        { "label": "Goldman preview, via The Dark Side of the Boom", "url": "https://thedarksideoftheboom.substack.com/p/august-cpi-preview-goldman-sees-a" },
+        { "label": "Nowflation, August 2026", "url": "https://nowflation.com/cpi/august-2026" },
+        { "label": "ISM services, Aug 2026", "url": "https://www.prnewswire.com/news-releases/services-pmi-at-55-4-august-2026-ism-services-pmi-report-302868046.html" }
+      ]
+    }
+  ]
+}

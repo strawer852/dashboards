@@ -1,0 +1,9 @@
+[Unit]
+Description=Forecast reminder: a release tomorrow with no call recorded
+Documentation=file:/home/strawer/dashboards/CLAUDE.md
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/dashboards
+EnvironmentFile=%h/dashboards/.env
+ExecStart=%h/dashboards/venv/bin/python %h/dashboards/tools/forecast_reminder.py
