@@ -172,7 +172,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-figs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 10px; }
 .fc-fig { padding: 8px 18px 6px 0; border-right: 1px solid var(--rule); min-width: 0; }
 .fc-fig:last-child { border-right: none; }
-.fc-fig .lb { font-size: 10px; font-weight: 600; letter-spacing: .085em; text-transform: uppercase; min-height: 2.6em;
+.fc-fig .lb { font-size: 10px; font-weight: 600; letter-spacing: .085em; text-transform: uppercase; min-height: 3.2em; line-height: 1.5;
               color: var(--muted); margin-bottom: 5px; }
 .fc-fig .lb i { font-style: normal; font-weight: 400; color: var(--faint); text-transform: none;
                 letter-spacing: 0; }
