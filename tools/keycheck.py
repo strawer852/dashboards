@@ -86,6 +86,58 @@ def check(page: Path) -> list[str]:
     for t in sorted(ids, key=lambda x: int(x[1:])):
         if t not in hrefs:
             out.append(f"{name}: {t} is not in the contents list")
+
+    # 7. a forecast record beside the page is well formed, and every call in
+    #    it was made BEFORE the release it calls. A record dated after its
+    #    release is not a forecast, and nothing in the browser would say so
+    #    beyond a red word in the header.
+    fc = page.parent / "forecasts.json"
+    if fc.exists():
+        out += check_forecasts(name, fc, s)
+    return out
+
+
+def check_forecasts(name: str, fc: Path, page_html: str) -> list[str]:
+    import json
+    from datetime import date
+    out = []
+    try:
+        doc = json.loads(fc.read_text(encoding="utf-8"))
+    except ValueError as e:
+        return [f"{name}: forecasts.json does not parse: {e}"]
+    if doc.get("schema") != 1:
+        out.append(f"{name}: forecasts.json schema {doc.get('schema')!r} is not 1")
+    if "forecasts.json" not in page_html:
+        out.append(f"{name}: forecasts.json exists but the page does not load it")
+    seen = set()
+    for i, rec in enumerate(doc.get("forecasts", [])):
+        tag = f"{name}: forecast[{i}]"
+        try:
+            made = date.fromisoformat(rec["made"])
+            due = date.fromisoformat(rec["release_at"][:10])
+            ref = date.fromisoformat(rec["for"])
+        except (KeyError, ValueError) as e:
+            out.append(f"{tag}: made/for/release_at missing or malformed ({e})")
+            continue
+        if made >= due:
+            out.append(f"{tag}: made {made} is not before its release {due}")
+        if ref >= due:
+            out.append(f"{tag}: reference period {ref} is not before its release {due}")
+        if rec["for"] in seen:
+            out.append(f"{tag}: a second record for {rec['for']}")
+        seen.add(rec["for"])
+        keys = set()
+        for it in rec.get("items", []):
+            for f in ("key", "label", "series", "value"):
+                if f not in it:
+                    out.append(f"{tag}: item missing {f!r}")
+            if it.get("key") in keys:
+                out.append(f"{tag}: item key {it.get('key')!r} repeated")
+            keys.add(it.get("key"))
+            if not isinstance(it.get("value"), (int, float)):
+                out.append(f"{tag}: item {it.get('key')!r} value is not a number")
+        if not rec.get("reasons"):
+            out.append(f"{tag}: no reasons given")
     return out
 
 

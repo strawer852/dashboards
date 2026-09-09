@@ -1131,6 +1131,65 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     collision, because two monospace labels that touch read as one word.
     **A check that runs at one width certifies one width.**
 
+## Forecasts
+
+Since 9 September 2026 a dashboard may carry a **forecast record**: calls
+made before a release, dated, scored on the page against what the release
+printed. PPI is the first (`site/us/inflation/ppi/forecasts.json`). The
+mechanism is generic and lives in three places:
+
+- **The record** is `forecasts.json` beside the page, in git, authored. One
+  entry per release: `for` (reference period), `made`, `release_at`, the
+  `items` called (each names the bundle `series`, `transform`, `periods` and
+  `format`, plus `value`, `consensus`, `range`), `reasons` (HTML fragments,
+  mechanism first, every figure dated), `inputs` and `sources`. **A record is
+  never edited after its release** -- it is a vintage of what was believed.
+- **The exporter** ships `first_reported_pct` and `first_reported_yoy` for
+  series the spec names under those keys: the percent change with both
+  levels read at the vintage of the later one's first print, the same
+  discipline as `first_reported_diff` (trap 2). The page scores against
+  these. A series without vintage history is refused, because scoring a call
+  against the latest revision grades it against a number the release never
+  printed.
+- **The engine** (`scoreForecasts`, `forecastBlock`, `PANELS.forecast`)
+  renders the latest call under the masthead, a table of every call with
+  its print and error, a running score (mean absolute error, hits within
+  ±0.1), and an error-by-release chart. Comparison is at the precision the
+  release prints, one decimal. Nothing in it knows what a PPI is; a second
+  dashboard needs only its own `forecasts.json` and `forecast:` in its
+  `BRB.render` call.
+
+`tools/keycheck.py` refuses a record whose `made` is not before its
+`release_at`, a duplicate period, an item without a series or numeric
+value, or a record with no reasons.
+
+**The monthly routine, the day before each release** (the calendar is in the
+bundle's `next_at`; PPI is 08:30 ET, typically the second week):
+
+1. Pull the inputs. For PPI: energy at the **pricing date** -- the Tuesday of
+   the week containing the 13th, not the monthly average -- from FRED
+   (`GASREGW`, `GASDESW`, `DCOILWTICO`, `DCOILBRENTEU`, `DHHNGSP`); the ISM
+   prices indexes; the S&P 500 month (portfolio management); the prior
+   release's component table; the drifted weights from the bundle
+   (`PPI.w_*`); the base month dropping out of the twelve-month window; and
+   whatever consensus is published. The pass-throughs measured 2015--2026
+   are in the first record's reasons and can be re-estimated from the
+   `/tmp/ppifc` script in the 9 September session, or by regression on the
+   catalogue.
+2. Build the call bottom-up by contribution -- weight times assumed change,
+   summed -- and state each assumption, so the record can be read against
+   the outcome part by part.
+3. Append the record with `made` = today, run `python3 tools/keycheck.py`,
+   commit and push. The page renders it at once; nothing else changes.
+4. After the release, **do nothing**: the `--due` refresh exports the first
+   print and the page scores itself. Read the score before making the next
+   call, and if a component was wrong by a lot, say so in the next record.
+
+Trade services -- distributor margins, 19.8% of final demand -- have a monthly
+standard deviation of 0.88 points and no autocorrelation. They are the part
+of a PPI call that cannot be forecast, and the record should keep saying so
+rather than pretending a number for them is knowledge.
+
 ## How it runs
 
 ```

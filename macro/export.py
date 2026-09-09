@@ -82,10 +82,39 @@ SELECT f.observation_dt,
            AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1)
 FROM firsts f ORDER BY 1
 """
+# The same figure as a PERCENT change, for the releases that print one -- the
+# CPI and PPI headline is "final demand rose 0.4 percent", never an index-point
+# difference. Same vintage discipline as above: both levels are read as of the
+# later period's first print. `step` is one publication interval for the
+# month-on-month figure and a year for the twelve-month one, which is how the
+# forecast record on a page scores a prediction against what was actually
+# printed rather than against a level three revisions later.
+FIRST_REPORTED_PCT_SQL = """
+WITH firsts AS (
+  SELECT observation_dt, min(vintage_dt) AS v
+  FROM macro_observations WHERE series_id = %(sid)s GROUP BY 1
+), pair AS (
+  SELECT f.observation_dt,
+       (SELECT o.value FROM macro_observations o
+         WHERE o.series_id = %(sid)s AND o.observation_dt = f.observation_dt
+           AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1) AS cur,
+       (SELECT o.value FROM macro_observations o
+         WHERE o.series_id = %(sid)s
+           AND o.observation_dt = (f.observation_dt - %(step)s::interval)::date
+           AND o.vintage_dt <= f.v ORDER BY o.vintage_dt DESC LIMIT 1) AS prev
+  FROM firsts f
+)
+SELECT observation_dt,
+       CASE WHEN prev IS NULL OR prev = 0 OR cur IS NULL THEN NULL
+            ELSE round(100 * (cur / prev - 1), 3) END
+FROM pair ORDER BY 1
+"""
 SITE = Path(__file__).resolve().parent.parent / "site"
 
 STEP_INTERVAL = {"M": "1 month", "Q": "3 months", "A": "1 year",
                  "W": "7 days", "D": "1 day"}
+YEAR_INTERVAL = {"M": "12 months", "Q": "12 months", "A": "1 year",
+                 "W": "364 days", "D": "1 year"}
 
 
 def regular_step(dates: list[date], freq: str):
@@ -324,6 +353,22 @@ def main() -> int:
                                 {"sid": sid, "step": STEP_INTERVAL[freq]})
                     frd = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}
                     entry["first_reported_diff"] = [frd.get(d) for d in dates]
+                # Percent changes as first printed: one period and one year.
+                # A forecast record on the page scores itself against these,
+                # so a series named here that has no vintage history is the
+                # same fault as above -- the score would be against whatever
+                # the latest revision says, silently.
+                for key, interval in (("first_reported_pct", STEP_INTERVAL),
+                                      ("first_reported_yoy", YEAR_INTERVAL)):
+                    if sid in spec.get(key, []):
+                        if vintage_mode == "fetch_date":
+                            print(f"!! {spec['id']}: {key} asks for {sid}, whose "
+                                  f"source has no vintage history", file=sys.stderr)
+                            return 1
+                        cur.execute(FIRST_REPORTED_PCT_SQL,
+                                    {"sid": sid, "step": interval[freq]})
+                        frp = {d: (None if v is None else float(v)) for d, v in cur.fetchall()}
+                        entry[key] = [frp.get(d) for d in dates]
                 series_out[sid] = entry
 
             # Derived measures enter as ordinary series so the page renders them

@@ -655,6 +655,8 @@
   function fmtFor(p) {
     const f = (p && p.format) || "num";
     if (f === "pct") return v => v.toFixed(1) + "%";
+    // A signed rate, as a release prints a monthly change: "+0.4%".
+    if (f === "spct") return v => sgn(v, 1) + "%";
     if (f === "pct2") return v => v.toFixed(2) + "%";
     if (f === "pt") return v => sgn(v, 1);
     // Index points, where the whole quantity is a hundredth or two: one
@@ -748,6 +750,153 @@
   }
   const lastNonNull = v => { for (let i = v.length - 1; i >= 0; i--) if (v[i] != null) return v[i]; return null; };
 
+  /* ---------- forecast record ---------------------------------------------
+   * A page may carry a forecasts.json beside it: calls made BEFORE a release,
+   * each dated, each naming the series and transform it is a call on. The
+   * engine scores every call against the bundle and renders the latest one
+   * with its reasons under the masthead. Generic: nothing here knows what a
+   * PPI is. The record is authored; the score never is.
+   *
+   * The actual is the figure AS FIRST PRINTED wherever the bundle carries it
+   * (first_reported_pct / first_reported_yoy, exported for series the spec
+   * names), because a call made the day before a release is a call on what
+   * that release printed, not on the level after three revisions. Where the
+   * bundle has no first print the latest vintage is used and the basis says
+   * so. Compared at the precision the release prints, one decimal, since a
+   * call of +0.4 against a print of +0.4 is a hit whatever the third decimal
+   * of the index did.
+   */
+  function scoreForecasts(ctx, doc) {
+    const recs = (doc.forecasts || []).slice().sort((a, b) => a.for < b.for ? -1 : 1);
+    return recs.map(rec => {
+      const items = (rec.items || []).map(it => {
+        let s = null;
+        try { s = ctx.series(it.series); } catch (e) { s = null; }
+        let actual = null, basis = null;
+        if (s) {
+          const i = axis(s).indexOf(rec.for);
+          const per = it.periods || 1;
+          const key = per === 1 ? "first_reported_pct" : "first_reported_yoy";
+          if (i >= 0) {
+            if (s[key] && s[key][i] != null) { actual = s[key][i]; basis = "first print"; }
+            else {
+              const v = derive(s, { transform: it.transform || "yoy", periods: per });
+              if (v[i] != null) { actual = v[i]; basis = "latest vintage"; }
+            }
+          }
+        }
+        const printed = actual == null ? null : Math.round(actual * 10) / 10;
+        return { it, actual, printed, basis,
+                 err: printed == null ? null : +(printed - it.value).toFixed(2) };
+      });
+      return { rec, items };
+    });
+  }
+
+  function forecastBlock(host, ctx, scored, doc) {
+    if (!host) return;
+    if (!scored.length) { host.innerHTML = `<p class="fc-empty">No forecast recorded.</p>`; return; }
+    const MFULL = ["January","February","March","April","May","June","July",
+                   "August","September","October","November","December"];
+    const period = iso => { const [y, m] = iso.split("-"); return `${MFULL[+m - 1]} ${y}`; };
+    const cur = scored[scored.length - 1], rec = cur.rec;
+    const made = new Date(rec.made + "T00:00:00Z");
+    const due = new Date(rec.release_at.length === 10 ? rec.release_at + "T00:00:00Z" : rec.release_at);
+    const lead = Math.round((Date.UTC(due.getUTCFullYear(), due.getUTCMonth(), due.getUTCDate()) - made.getTime()) / 86400000);
+    const leadText = lead > 0 ? `${lead} day${lead === 1 ? "" : "s"} before release`
+                   : `<span class="late">made ${-lead} day${lead === -1 ? "" : "s"} AFTER release</span>`;
+    const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    let h = `<div class="fc-h"><span><b>Forecast</b> &middot; ${period(rec.for)} release, ${fmtDate(rec.release_at)}</span>` +
+            `<span>Made ${fmtDate(rec.made)} &middot; ${leadText}</span>` +
+            `<span class="who">${esc(doc.author || "")}</span></div>`;
+    h += `<div class="fc-figs">` + cur.items.map(x => {
+      const it = x.it, fmt = fmtFor({ format: it.format || "spct" });
+      const cons = it.consensus == null ? "no consensus" : `consensus <b>${fmt(it.consensus)}</b>`;
+      let act;
+      if (x.printed == null) act = `actual pending`;
+      else {
+        const cls = Math.abs(x.err) <= 0.1 ? "hit" : "miss";
+        act = `actual <b>${fmt(x.printed)}</b> &middot; <span class="${cls}">error ${sgn(x.err, 1)}</span>` +
+              (x.basis === "latest vintage" ? ` &middot; latest vintage` : "");
+      }
+      return `<div class="fc-fig"><div class="lb">${esc(it.label)}${it.note ? ` <i>${esc(it.note)}</i>` : ""}</div>` +
+             `<div class="vl">${fmt(it.value)}</div><div class="dl">${cons}<br>${act}</div></div>`;
+    }).join("") + `</div>`;
+    if (rec.reasons && rec.reasons.length)
+      h += `<ol class="fc-why">` + rec.reasons.map(r => `<li>${r}</li>`).join("") + `</ol>`;
+    if (rec.inputs && rec.inputs.length)
+      h += `<p class="fc-inputs">` + rec.inputs.map(i => `<span>${esc(i.label)} <b>${esc(i.value)}</b></span>`).join("") + `</p>`;
+    if (rec.sources && rec.sources.length)
+      h += `<p class="fc-inputs">Sources: ` + rec.sources.map(s_ => `<a href="${esc(s_.url)}">${esc(s_.label)}</a>`).join("") + `</p>`;
+    // The record: every call so far, newest first, and the running score.
+    const keys = [];
+    scored.forEach(r => r.items.forEach(x => { if (!keys.includes(x.it.key)) keys.push(x.it.key); }));
+    const labelOf = k => { for (const r of scored) for (const x of r.items) if (x.it.key === k) return x.it.label; return k; };
+    h += `<div class="fc-rec" style="overflow-x:auto"><table><thead><tr><th>Release</th><th>Made</th>` +
+         keys.map(k => `<th>${esc(labelOf(k))}<br>call &rarr; print (error)</th>`).join("") + `</tr></thead><tbody>`;
+    scored.slice().reverse().forEach(r => {
+      h += `<tr><td>${period(r.rec.for)}</td><td>${fmtDate(r.rec.made)}</td>` + keys.map(k => {
+        const x = r.items.find(z => z.it.key === k);
+        if (!x) return `<td class="pend">&mdash;</td>`;
+        const fmt = fmtFor({ format: x.it.format || "spct" });
+        if (x.printed == null) return `<td class="pend">${fmt(x.it.value)} &rarr; pending</td>`;
+        return `<td${Math.abs(x.err) > 0.1 ? ' class="err"' : ""}>${fmt(x.it.value)} &rarr; ${fmt(x.printed)} (${sgn(x.err, 1)})</td>`;
+      }).join("") + `</tr>`;
+    });
+    h += `</tbody></table>`;
+    const score = keys.map(k => {
+      const errs = scored.map(r => r.items.find(z => z.it.key === k)).filter(x => x && x.err != null).map(x => x.err);
+      if (!errs.length) return null;
+      const mae = errs.reduce((a, b) => a + Math.abs(b), 0) / errs.length;
+      const hits = errs.filter(e => Math.abs(e) <= 0.1).length;
+      return `${esc(labelOf(k))}: ${errs.length} scored, mean absolute error ${mae.toFixed(2)}, within &plusmn;0.1 in ${hits} of ${errs.length}`;
+    }).filter(Boolean);
+    h += `<p class="score">${score.length ? score.join(" &middot; ") : `${scored.length} call${scored.length === 1 ? "" : "s"} recorded, none scored yet`}</p></div>`;
+    host.innerHTML = h;
+  }
+
+  /* Forecast error by release, in the units of the call. Bars carry
+     identity colours -- two measures, not two signs -- and the sign is read
+     against the zero line, which is forced onto the axis. */
+  PANELS.forecast = (el, ctx, p) => {
+    const P = ctx.P, fmt = fmtFor(p);
+    const keys = p.items.map(i => i.key);
+    const recs = (ctx.forecasts || []).filter(r => r.items.some(x => keys.includes(x.it.key) && x.printed != null));
+    if (!recs.length) {
+      const pend = (ctx.forecasts || []).find(r => r.items.some(x => x.printed == null));
+      el.innerHTML = `<p class="fc-empty">No release scored yet` +
+        (pend ? `. The first call is graded when the ${fmtDate(pend.rec.release_at)} release lands and the bundle refreshes.` : ".") + `</p>`;
+      return;
+    }
+    const cats = recs.map(r => r.rec.for);
+    let maxAbs = 0.1;
+    const series = p.items.map((pi, i) => {
+      const data = recs.map(r => { const x = r.items.find(z => z.it.key === pi.key);
+                                   return x && x.printed != null ? x.err : null; });
+      data.forEach(v => { if (v != null) maxAbs = Math.max(maxAbs, Math.abs(v)); });
+      return { name: pi.label, type: "bar", data, barMaxWidth: 16,
+               itemStyle: { color: P[pi.color || ["s1", "s2", "s3", "s4", "s5", "s6"][i]] },
+               markLine: i === 0 ? { silent: true, symbol: "none",
+                 lineStyle: { color: P.ink, width: 1 }, label: { show: false },
+                 data: [{ yAxis: 0 }] } : undefined };
+    });
+    const lim = Math.ceil(maxAbs * 10) / 10;
+    const opt = Object.assign(base(P), {
+      grid: { left: p.left || 46, right: p.right || 14, top: 12, bottom: 24 },
+      tooltip: Object.assign(base(P).tooltip, { trigger: "axis",
+        formatter: ps => "<b>" + label(ps[0].axisValue, "M") + "</b>" +
+          ps.map(x => "<br>" + x.seriesName + " " + (x.data == null ? "not scored" : fmt(x.data))).join("") }),
+      xAxis: { type: "category", data: cats,
+        axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
+                     interval: labelInterval(el, cats, "M", p.tick, (p.left || 46) + 14, 9.5, P.mono),
+                     formatter: v => label(v, "M") },
+        axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
+      yAxis: Object.assign(yAxis(P, fmt), { scale: false, min: -lim, max: lim }),
+      series,
+    });
+    mount(el, opt);
+  };
+
   /* ---------- boot -------------------------------------------------------- */
   async function render(cfg) {
     const status = document.getElementById("status");
@@ -800,6 +949,23 @@
     }
 
     if (cfg.summary) summary(document.getElementById("summary"), ctx, cfg.summary);
+
+    // The forecast record, if the page has one. Loaded before the panels so
+    // the error panel can read the scored calls from ctx; a record that
+    // fails to load leaves its block saying so rather than blank.
+    if (cfg.forecast) {
+      const host = document.getElementById(cfg.forecast.el || "fcBlock");
+      try {
+        const r = await fetch(cfg.forecast.url, { credentials: "same-origin", cache: "no-cache" });
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        const doc = await r.json();
+        ctx.forecasts = scoreForecasts(ctx, doc);
+        forecastBlock(host, ctx, ctx.forecasts, doc);
+      } catch (e) {
+        console.error("forecast record failed:", e);
+        if (host) host.innerHTML = `<p class="fc-empty">Forecast record could not be loaded (${e.message}).</p>`;
+      }
+    }
 
     // Measure with the font that will be drawn. ECharts sizes axis labels
     // when it lays out, and hideOverlap trusts those sizes; before the

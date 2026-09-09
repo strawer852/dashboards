@@ -26,6 +26,19 @@ include_releases:
 exclude_series:
   - WPS3012
 
+# The forecast record on the page (site/us/inflation/ppi/forecasts.json)
+# scores each call against the figure AS FIRST PRINTED, which the exporter
+# reads from the vintages -- the percent change of two levels both taken at
+# the vintage of the later one's first print. Scoring against the current
+# vintage would grade a call made before the release against a number the
+# release itself never printed. See CLAUDE.md, "Forecasts".
+first_reported_pct:
+  - PPIFIS
+  - PPIFES
+  - WPSFD49116
+first_reported_yoy:
+  - PPIFIS
+
 # Contributions ARE possible here, and the derived block at the bottom builds
 # them. An earlier version of this comment said the opposite -- that the PPI
 # news release carried no relative-importance column the way CPI Table 1 does.

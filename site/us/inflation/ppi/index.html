@@ -34,6 +34,7 @@
 
       <div class="inpage">
         <div class="h">In this report</div>
+        <a href="#forecast"><span>&rarr;</span>Forecast</a>
         <a href="#t1"><span>1</span>Final demand</a>
         <a href="#t2"><span>2</span>Month and year</a>
         <a href="#t3"><span>3</span>Goods, services, building</a>
@@ -70,6 +71,16 @@
     </div>
 
     <div id="status" hidden></div>
+
+    <!-- The forecast record. The block is rendered by the engine from
+         forecasts.json beside this page: the latest call with its reasons,
+         then the running score of every call against the figure as first
+         printed. One record is appended per release, the day before it. -->
+    <div class="fc" id="forecast">
+      <div id="fcBlock"></div>
+      <p class="key"><i class="k4">Final demand, month on month</i><i class="ks1">Less foods, energy and trade, month on month</i></p>
+      <div class="chart" id="cFcErr" style="height:150px"></div>
+    </div>
 
     <p class="lede">Producer prices, and how a cost shock travels from the raw end of
     the economy to the finished one &mdash; which turns out to be a story about how
@@ -327,6 +338,10 @@ const mom = specs => specs.map(s => Object.assign({ transform: "yoy", periods: 1
 
 BRB.render({
   bundle: "/data/v1/dashboards/us-inflation-ppi.json",
+  // The forecast record beside this page. The engine renders the latest
+  // call into #fcBlock and scores every call against the bundle's
+  // as-first-printed changes; the error panel below draws the record.
+  forecast: { url: "/us/inflation/ppi/forecasts.json", el: "fcBlock" },
   summary: [
     { label: "Final demand", series: "PPIFIS", transform: "yoy", format: "pct",
       source: "PPI", note1: "year over year" },
@@ -340,6 +355,12 @@ BRB.render({
       source: "PPI", note1: "rawest input" },
   ],
   panels: [
+    // Forecast error by release: actual as first printed minus the call,
+    // in percentage points. Identity colours, since the two bars are two
+    // measures rather than two signs; the sign is read off the zero line.
+    { el: "cFcErr", type: "forecast", format: "pt", tick: 1, left: 42,
+      items: [{ key: "fd_mom", label: "Final demand", color: "ink" },
+              { key: "core_mom", label: "Less foods, energy, trade", color: "s1" }] },
     { el: "cFd3m", type: "heatmap", months: 48, transform: "yoy",
       periods: 3, cap: 5, format: "pct", left: 214, tick: 5,
       capText: ["\u2265 +5%", "\u2264 \u22125%"],

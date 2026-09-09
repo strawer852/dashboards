@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "release": "bls.ppi",
+  "author": "Claude Fable 5.1",
+  "_readme": "One record per release, appended the day before it. `made` must precede `release_at` (tools/keycheck.py refuses otherwise). Each item names the bundle series and transform it is a call on; the page scores it against the figure as first printed. Never edit a record after its release. See CLAUDE.md, Forecasts.",
+  "forecasts": [
+    {
+      "for": "2026-08-01",
+      "made": "2026-09-09",
+      "release_at": "2026-09-10T12:30:00Z",
+      "items": [
+        { "key": "fd_mom", "label": "Final demand", "note": "month on month, s.a.",
+          "series": "PPIFIS", "transform": "yoy", "periods": 1, "format": "spct",
+          "value": 0.4, "consensus": 0.3, "range": [0.2, 0.6] },
+        { "key": "exfe_mom", "label": "Less foods and energy", "note": "month on month, s.a.",
+          "series": "PPIFES", "transform": "yoy", "periods": 1, "format": "spct",
+          "value": 0.3, "consensus": 0.3, "range": [0.1, 0.5] },
+        { "key": "core_mom", "label": "Less foods, energy and trade", "note": "month on month, s.a.",
+          "series": "WPSFD49116", "transform": "yoy", "periods": 1, "format": "spct",
+          "value": 0.3, "consensus": null, "range": [0.2, 0.5] },
+        { "key": "fd_yoy", "label": "Final demand", "note": "year over year, s.a. basis",
+          "series": "PPIFIS", "transform": "yoy", "periods": 12, "format": "pct",
+          "value": 5.3, "consensus": 5.3, "range": [5.1, 5.5] }
+      ],
+      "reasons": [
+        "<b>Energy turns from drag to push.</b> The PPI is priced on the Tuesday of the week containing the 13th, so August against July is 11 August against 14 July: retail gasoline +3.9%, diesel +9.6%, WTI +4.1%, Brent +11.6%, Henry Hub flat. Over 2015&ndash;2026 the PPI gasoline index has moved 1.06&times; the retail move at those dates and final demand energy 0.35&times; PPI gasoline, so energy is put at about <b>+2.5% s.a.</b> after &minus;6.5% in June and &minus;3.1% in July. At its drifted weight of 5.7% that is roughly +0.14 points of the headline, and diesel&rsquo;s outsized move is the upside risk to it.",
+        "<b>Services less trade, transport and warehousing</b> (about 44% of final demand) rose 0.6% in July on portfolio management +6.5%. The S&amp;P 500 gained 2.7% in August, so that line stays positive but smaller, and the ISM services prices index at 72.6 was its highest since August 2022. Assumed <b>+0.3%</b>, worth +0.13 points.",
+        "<b>Transport and warehousing</b> fell 1.8% in July and 0.5% in June with fuel; with diesel and jet fuel up it is put at +1.0%, about +0.05 points. <b>Core goods</b> slowed to +0.13% in July from +0.7% and +0.8% in April and May as the Section 122 tariff pass-through peaked; the Section 301 duties that replaced them on 24 July are at similar rates and the ISM manufacturing prices index held at 71.1, so <b>+0.3%</b>, about +0.06 points.",
+        "<b>Trade services are the swing factor and cannot be forecast.</b> Margins run 19.8% of final demand, move with a monthly standard deviation of 0.88 points and an autocorrelation of &minus;0.12, and they compressed when energy spiked (May &minus;3.1%) and rebuilt when it fell (June +1.4%). A small +0.1% is assumed, worth +0.02 points; that one line puts about &plusmn;0.17 points on the headline by itself.",
+        "<b>Foods</b> fell 0.9% in July and are assumed to add back +0.2% (+0.01 points); <b>construction</b> jumped 2.2% in July on lumber and is assumed +0.2% (+0.01 points).",
+        "<b>Adding up:</b> about +0.41 points, so <b>+0.4%</b> for final demand. Without foods and energy the same parts sum to +0.27 points over 89% of the basket, <b>+0.3%</b>. Without trade services as well, +0.25 points over 69.7% is +0.35%, which rounds either way; it is called <b>+0.3%</b> on the services reversion rather than +0.4%, and this is the least certain of the four.",
+        "<b>Year over year:</b> August 2025 fell 0.18% s.a. (&minus;0.29% n.s.a.) and drops out of the window, so the twelve-month rate rises by more than the month adds, from 4.7% to about <b>5.3%</b> on the seasonally adjusted series this page draws; on the unadjusted basis the release prints, +0.4% for the month gives 5.4% and +0.3% gives 5.3%. Trader-implied odds were 73% on 5.1% or higher.",
+        "<b>What would make this wrong:</b> July&rsquo;s 0.0% is itself revisable (PPI has revised 120 of the 139 months since 2015, median 0.13 index points); the headline&rsquo;s monthly standard deviation over the last three years is 0.32 points, so &plusmn;0.3 is one sigma, and nearly all of it is trade margins and energy."
+      ],
+      "inputs": [
+        { "label": "Retail gasoline, 14 Jul to 11 Aug", "value": "+3.9%" },
+        { "label": "Retail diesel", "value": "+9.6%" },
+        { "label": "WTI", "value": "+4.1%" },
+        { "label": "Brent", "value": "+11.6%" },
+        { "label": "Henry Hub", "value": "-0.2%" },
+        { "label": "ISM manufacturing prices, Aug", "value": "71.1" },
+        { "label": "ISM services prices, Aug", "value": "72.6" },
+        { "label": "S&P 500, Aug", "value": "+2.7%" },
+        { "label": "July final demand", "value": "0.0% m/m, 4.7% y/y" },
+        { "label": "Consensus headline m/m", "value": "+0.3% (TE), +0.4% (TradingKey)" },
+        { "label": "Consensus ex foods & energy m/m", "value": "+0.3%" }
+      ],
+      "sources": [
+        { "label": "BLS, July 2026 release", "url": "https://www.bls.gov/news.release/archives/ppi_08132026.htm" },
+        { "label": "FRED energy series", "url": "https://fred.stlouisfed.org/series/GASREGW" },
+        { "label": "ISM manufacturing, Aug 2026", "url": "https://www.prnewswire.com/news-releases/manufacturing-pmi-at-54-6-august-2026-ism-manufacturing-pmi-report-302865127.html" },
+        { "label": "ISM services, Aug 2026", "url": "https://www.prnewswire.com/news-releases/services-pmi-at-55-4-august-2026-ism-services-pmi-report-302868046.html" },
+        { "label": "TradingKey preview", "url": "https://www.tradingkey.com/analysis/economic/indicators/262157794-us-august-ppi-outlook-production-side-inflation-may-accelerate-us-stocks-dollar-gold-reaction-tradingkey" },
+        { "label": "Trading Economics calendar", "url": "https://tradingeconomics.com/united-states/producer-price-inflation-mom" },
+        { "label": "Polymarket, PPI y/y Aug 2026", "url": "https://polymarket.com/event/ppi-yoy-august-2026" }
+      ]
+    }
+  ]
+}

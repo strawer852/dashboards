@@ -155,6 +155,59 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
   font-size: 13.5px; color: var(--ink-2);
 }
 
+/* ---------- forecast record ----------
+   A call made before a release, and the running score of every call made
+   so far. Sits under the masthead because it is the one thing on the page
+   that is about tomorrow rather than last month. Same grammar as the summary
+   figures -- serif figure, small-caps label, mono detail -- so it reads as
+   part of the report and not as a widget bolted onto it. */
+.fc { border-top: 1px solid var(--rule-hi); border-bottom: 1px solid var(--rule-hi);
+      margin-top: 22px; padding: 12px 0 14px; }
+.fc-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 22px;
+        font-family: var(--mono), monospace; font-size: 10px; letter-spacing: .1em;
+        text-transform: uppercase; color: var(--muted); }
+.fc-h b { font-weight: 500; color: var(--ink-2); }
+.fc-h .who { margin-left: auto; }
+.fc-h .late { color: var(--neg); }
+.fc-figs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 10px; }
+.fc-fig { padding: 8px 18px 6px 0; border-right: 1px solid var(--rule); min-width: 0; }
+.fc-fig:last-child { border-right: none; }
+.fc-fig .lb { font-size: 10px; font-weight: 600; letter-spacing: .085em; text-transform: uppercase;
+              color: var(--muted); margin-bottom: 5px; }
+.fc-fig .lb i { font-style: normal; font-weight: 400; color: var(--faint); text-transform: none;
+                letter-spacing: 0; }
+.fc-fig .vl { font-family: var(--serif), Georgia, serif; font-weight: 600; font-size: 27px;
+              line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.022em;
+              white-space: nowrap; }
+.fc-fig .dl { font-family: var(--mono), monospace; font-size: 10px; color: var(--muted);
+              margin-top: 7px; font-variant-numeric: tabular-nums; line-height: 1.7; }
+.fc-fig .dl b { font-weight: 500; color: var(--ink-2); }
+.fc-fig .dl .hit { color: var(--pos); } .fc-fig .dl .miss { color: var(--neg); }
+.fc-why { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+          line-height: 1.45; max-width: 76ch; margin: 12px 0 0; padding-left: 1.4em; }
+.fc-why li { margin: 3px 0; }
+.fc-why b { color: var(--ink-2); font-weight: 600; }
+.fc-inputs { font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .04em;
+             color: var(--muted); margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px;
+             font-variant-numeric: tabular-nums; }
+.fc-inputs b { font-weight: 500; color: var(--ink-2); }
+.fc-rec { margin-top: 14px; }
+.fc-rec table { border-collapse: collapse; font-family: var(--mono), monospace; font-size: 10.5px;
+                font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.fc-rec th { font-weight: 500; text-align: right; color: var(--muted); letter-spacing: .06em;
+             text-transform: uppercase; font-size: 9px; padding: 3px 14px 5px 0;
+             border-bottom: 1px solid var(--rule-hi); }
+.fc-rec th:first-child, .fc-rec td:first-child { text-align: left; }
+.fc-rec td { text-align: right; padding: 4px 14px 4px 0; border-bottom: 1px solid var(--rule); }
+.fc-rec td.err { color: var(--neg); }
+.fc-rec td.pend { color: var(--faint); }
+.fc-rec .score { font-family: var(--mono), monospace; font-size: 10px; color: var(--muted);
+                 margin: 8px 0 0; letter-spacing: .04em; }
+.fc-empty { font-family: var(--mono), monospace; font-size: 10.5px; color: var(--faint);
+            border: 1px dashed var(--rule-hi); padding: 14px; margin: 0; }
+@media (max-width:860px){ .fc-figs { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .fc-fig:nth-child(2) { border-right: none; } }
+
 /* ---------- summary figures ---------- */
 .summary {
   display: grid; grid-template-columns: repeat(6, minmax(0,1fr));
