@@ -1,264 +1,205 @@
-# Handoff — 9 September 2026
+# Handoff — 9 September 2026, end of the audit's second half
 
-**Read `CLAUDE.md` first.** It is the authority: 63 traps, the settled
+**Read `CLAUDE.md` first.** It is the authority: 64 traps, the settled
 decisions, the running state, the guardrails. This file is only the part that
 would be stale by the time you read it. Where they disagree, CLAUDE.md is right
-and this file is old.
+and this file is old. The audit's full record is `AUDIT_FINDINGS_2026-09-09.md`
+(section 4 is the VPS half); its terms of reference are `AUDIT.md`.
 
-Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
-`~/dashboards`. Nothing of substance is on the laptop. **Run Claude Code on
-the VPS, in tmux** (`tmux new -s audit`, then `claude` inside it; detach with
-Ctrl-B D): a session started from a plain SSH shell dies at logout, and the
-web version can reach neither the VPS, nor the site, nor BLS, BEA or FRED.
-The audit is in `AUDIT_FINDINGS_2026-09-09.md`, both halves.
+## Where to run
 
----
+Everything of substance lives on the VPS: `ssh strawer@bigricebowl.cloud`,
+then `cd ~/dashboards`. The database, the timers, the docker network the
+screenshot tools use, and the FRED/BLS/BEA keys are all there. The laptop clone
+(`C:\Bigricebowl\dashboards`) can read and edit code and documents, and can
+run `tools/keycheck.py` (static, no data), but it cannot run validate, export,
+coverage, clipcheck, shoot, reconcile, or anything that touches Postgres.
 
-## 9 September, second half: the audit on the VPS
+**Run Claude Code on the VPS inside tmux.** A session started from a plain
+SSH shell dies at logout; the 9 September session lost two attempts to that
+before getting it right. The recipe:
 
-The web session's branch was merged and proven -- validate 37/37 then
-38/38, forced re-export, coverage 100%, keycheck 0, clipcheck clean, every
-page and `/us/` screenshotted and looked at. Then areas A and B of
-`AUDIT.md`, which needed the database and the agencies:
+```bash
+tmux new -s audit            # or: tmux attach -t audit
+cd ~/dashboards && claude --continue
+# detach: Ctrl-B then D; log out freely; come back with tmux attach -t audit
+```
 
-- **Every release reconciles to its news release by value, zero
-  disagreements**: CPI 513 rows, PPI 897, ECI 385, Productivity 132
-  columns, PCE 210 weights and levels. The method is `tools/reconcile.py`
-  and it is repeatable at any release; bls.gov blocks the VPS, so the tables
-  come from the Wayback Machine (trap 62).
-- **Claims spanned two FRED releases** and the stamp was a day late every
-  week. The 106 state series are now `eta.state_claims` (trap 61); the
-  page draws both; the calendar has Thursdays for the national report and
-  Fridays for the state one.
-- **The by-date fix was not a no-op.** The CPI median moved in 30 months
-  and the breadth in 164, because three inputs end early; an independent
-  computation confirms the new values, and two sparse inputs are now their
-  Table 2 parents (trap 60).
-- **Every table was looked at**, at 1280px and 430px. Axis labels collided
-  on the weekly axes and on nearly every panel at phone width; the engine
-  now sizes the label interval from measured widths and waits for the
-  webfonts, and `clipcheck.py` tests label collision at both widths
-  (trap 64). A quarterly stamp read "April 2026"; it reads "2026 Q2".
-- **359 FRED series marked `fetch_date` had ALFRED histories** the backfill
-  had skipped, because its "no history" test could not tell a never-revised
-  series from a vintage-less one (trap 63). Test fixed, all 359 backfilled
-  and on `from_row` the same afternoon; only `WPUID621` had revisions, the
-  rest gained publication dates. No FRED series is on `fetch_date` now.
+Verify from inside the session that `pstree -s -p $$` shows `tmux: server`
+above `claude`. If it shows `sshd-session`, you are not in tmux.
 
-## 9 September, first half
+The commits are pushed nightly at 23:30 local by `dashboards-push`; until
+then `git log --oneline origin/master..HEAD` lists what the laptop cannot see
+yet. Nothing here needs pushing by hand.
 
-Done from the repository alone, on the web, on branch
-`claude/data-bigricebowl-audit-a7bbms`, merged to master on the VPS the
-same day.
+## What this session did, in order
 
-What it found and fixed (traps 56-60 carry the detail): this file itself was
-15 MB of one section repeated; 24 legends drew the ink series in grey; every
-heatmap not hand-reversed read bottom-up; fourteen captions quoted the July
-or August print undated; the CPI and PCE medians and the state breadth
-aligned their inputs by position and were right only because truncation
-lined them up; JOLTS Tables 1, 2 and 5 were titled for series they do not
-draw; claims Table 6 sat after Table 10; the CPI and PPI footers had tables
-beneath them and PCE and Labour Costs had none; the CPI median caption said
-137 items where the spec lists 135. Every table's caption was read against
-its panel spec, and every page was rendered against synthetic bundles at
-1400px and 430px. A **region page** (`/us/`) is now generated from the specs
-by `build_nav.py`, and the map and breadcrumbs link to it.
+1. **Merged and proved the web session's branch.** Validate 37/37 before and
+   38/38 after (the extra check is the new release's freshness), forced
+   re-export, coverage 100% on all seven, keycheck 0, build_nav nothing to
+   change, clipcheck clean, every page and `/us/` rendered and looked at.
+2. **The by-date alignment fix was not a no-op.** The CPI median changed in
+   30 of 180 months and the breadth measure in 164, because three of the 135
+   inputs end early (April, May, June 2026). An independent computation
+   agreed with the new values in every month. Two sparse inputs were swapped
+   for their monthly Table 2 parents (same weights). Trap 60 carries it.
+3. **Area A, reconciliation by value.** `tools/reconcile.py` reproduces the
+   CPI, PPI, ECI and Productivity news release tables from the database as
+   of the vintage that published them: CPI 513 rows, PPI 897, ECI 385,
+   Productivity 132 columns, PCE 210 weights and levels — **zero value
+   disagreements**. bls.gov blocks this VPS on every route; the tables come
+   from the Wayback Machine (trap 62).
+4. **Claims were one release spanning two FRED releases.** The page stamp
+   read Friday's date for Thursday's report every week and the calendar was
+   filling with Fridays. The 106 state and territory series are now
+   `eta.state_claims` (FRED 469); the national nine stay `eta.claims` (FRED
+   180). Both are drawn on the same page; the stamp comes from the national
+   one. `release_dates.py` probes two series per release and shouts if they
+   map to different FRED releases (trap 61).
+5. **359 FRED series marked `fetch_date` had ALFRED histories.** The
+   backfill's "one row per observation means no history" test cannot tell
+   a never-revised series (unadjusted CPI, ECI) from a vintage-less one.
+   Test fixed, all 359 backfilled (89,994 rows) and on `from_row`. No FRED
+   series is on `fetch_date` now; the 666 that are, are BLS and BEA, which
+   genuinely serve none (trap 63).
+6. **Every table looked at, at 1280px and 430px.** Axis labels collided on
+   the weekly claims axes at desktop width and on nearly every panel at
+   phone width. The engine now drops overlapping labels, sizes the label
+   interval from measured label widths, sets value-axis steps the same way,
+   and waits for the webfonts before drawing; `clipcheck.py` tests label
+   collision at both widths and counts touching labels as colliding
+   (trap 64). A quarterly stamp read "April 2026"; it reads "2026 Q2".
+7. **Every number in every caption recomputed.** 45 measured claims, 39
+   exact, six wrong and fixed (findings 4.6): the JOLTS separations peak is
+   March 2020 at 16.3m; the 2022 saving-rate low is not a record; shelter is
+   nine times gasoline, not thirteen; portfolio management swings −14% to
+   +33%; the PPI persistence statistics; the teen-rate ratio "in normal
+   times". Two month counts that drift now carry end dates.
+8. Small fixes along the way: PCE Table 14's CPI excluded-from-core share
+   (20.953), two state labels that carried "the", the "137 inputs" and "14
+   residuals" spec comments (135 and 10).
 
-All of that was then proven on the VPS the same day (section 4 of the
-findings). What is left is the release watch below and the backfill above.
-
----
+Commits, in order: 2f75988 (split, reconcile, median inputs), d160b72
+(docs), 08e921a (backfill), ccde9eb (axis labels, quarterly stamps),
+b685260 (captions), and the one carrying this file.
 
 ## Where it stands
 
-**3,126 series across 10 releases and three sources, 3,442,990 vintage rows over
-1,367,052 observations spanning 1913 to August 2026, 38/38 validations, 100%
-coverage on all seven dashboards, and no label overflowing its chart.**
+**3,126 series across 10 releases and three sources, 3,443,273 vintage rows
+over 1,367,052 observations spanning 1913 to August 2026, 38/38 validations,
+100% coverage, no label overflowing or colliding at either width.**
 
-| Release | Published | Held | Bundle |
+| Release | Published | Held | Note |
 |---|---|---|---|
-| `bls.employment_situation` | 138 | 297 | 964 KB |
-| `bls.cpi` | 176 | 469 | 1,052 KB |
-| `eta.claims` | 6 | 9 | 792 KB (shared) |
-| `eta.state_claims` | 53 | 106 | 792 KB (shared) |
-| `bea.personal_income` | 232 | 235 | 586 KB |
-| `bls.ppi` | 61 | 639 | 222 KB |
-| `bls.jolts` | 44 | 684 | 171 KB |
-| `bls.eci` | 2 | 404 | 90 KB (shared) |
-| `bls.productivity` | 2 | 282 | 90 KB (shared) |
-| `frb.wage_tracker` | 1 | 1 | — |
+| `bls.employment_situation` | 138 | 297 | |
+| `bls.cpi` | 176 | 469 | 87 items backfilled today |
+| `eta.claims` | 6 | 9 | FRED 180, Thursdays |
+| `eta.state_claims` | 53 | 106 | FRED 469, Fridays; new today |
+| `bea.personal_income` | 232 | 235 | |
+| `bls.ppi` | 61 | 639 | |
+| `bls.jolts` | 44 | 684 | |
+| `bls.eci` | 2 | 404 | 271 series backfilled today |
+| `bls.productivity` | 2 | 282 | |
+| `frb.wage_tracker` | 1 | 1 | no calendar, correctly |
 
-Every release is complete at the level its news release publishes. **666
-series carry `vintage_mode='fetch_date'`** — 456 BLS-sourced and 210
-BEA-sourced, the sources that genuinely serve no vintages. Every FRED series
-is on `from_row` since the 9 September backfill (trap 63). A `fetch_date`
-series may never be offered a revision overlay; check the column rather than
-assuming.
+`vintage_mode`: 2,460 FRED series `from_row`; 456 BLS and 210 BEA
+`fetch_date`. None of the latter may ever be offered a revision overlay.
 
-**PCE shipped as dashboard #6**, 15 tables, including a median built from BEA's
-210 underlying-detail lines and a `compare` panel showing why the two indexes
-disagree: shelter is 35% of the CPI and 16% of PCE, health care the reverse.
+## The release watch — the thing still open
 
----
+**Thursday 10 September**: PPI and the national claims report, 08:30 ET.
+**Friday 11 September**: CPI and the state claims report. First releases
+through everything above. What good looks like in `logs/refresh.log`:
 
-## The one thing to watch
+- The 01:40 ET sweep on the 10th logs `release dates rc=0` listing both
+  `eta.claims` and `eta.state_claims`, with no `!! spans` line, and the
+  ingest inserts 0 rows.
+- Thursday from 08:35 ET: `refresh start (--due)` naming `bls.ppi` and
+  `eta.claims` (a simulation of the query says exactly those two), BLS
+  series fetched from a recent year rather than 1939, `validate rc=0`,
+  `export`, an ntfy push, and later windows saying nothing outstanding.
+- Friday: the same for `bls.cpi` and `eta.state_claims`. The 87 backfilled
+  CPI items are on `from_row` for the first time, so expect the ALFRED
+  refetch to run for them and their new vintages to be dated
+  `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
+  expected and right: FRED updates those series on the Friday.
 
-**Thursday 10 and Friday 11 September.** PPI and claims land together, then CPI.
-This is the first release since a great deal changed and it exercises all of it
-at once: BLS series reaching ingest on a release day at all (trap 35), the
-year-window change across 456 BLS series (trap 39), `truncate_history` in a real
-export, and six derived measures.
+Then look, not just read: `tools/shoot.py --path us/inflation/ppi` (and
+cpi, weekly-claims), the stamp dates in each bundle's `releases` block
+(claims must read the 10th, state claims the 11th), the newest heatmap
+column, CPI Table 1, PPI Table 6's weights. Run validate, coverage,
+keycheck, clipcheck. When the Wayback Machine has the new tables (usually
+within days), run `tools/reconcile.py` against them to prove the method
+repeats at a release. Record it as findings section 4.7.
 
-What good looks like in `logs/refresh.log`: `refresh start (bls.ppi,eta.claims)`
-after 08:35 ET Thursday, `BLS: ... series from <a recent year>` rather than
-1939, `validate rc=0`, `export`, an ntfy push — and the following windows
-saying nothing outstanding rather than refetching. Friday the same for
-`bls.cpi,eta.state_claims`: the state series are a separate release since the
-9th and FRED updates them on the Friday, so that poll is expected.
+The session that wrote this was watching on hourly wake-ups. If you are a
+new session, nothing was recorded past the 9th unless section 4.7 exists.
 
-Then **look at the pages**. `tools/shoot.py` screenshots from inside the docker
-network, where Authelia is not in the way, and reports what each chart actually
-drew; `tools/clipcheck.py` asks whether any label overflows and whether every
-in-page link resolves. Both found real defects on their first run. Four green
-checks have passed over an empty chart before.
+## Recorded, not changed — decisions for William
 
-**30 September is the first BEA release through the pipeline**, and the one to
-watch after that. PCE is fed by two sources — the headline from FRED, the 210
-detail lines from BEA — so it can be half updated with every check green. That
-is what `source_split` in `tools/staleness.py` now watches for.
-
----
-
-## October 2025 is permanently empty, and that is settled
-
-The federal shutdown that began 1 October 2025 stopped field collection, and BLS
-has said the October reference period will not be collected retroactively. The
-data shows exactly the shape that implies, and it will never fill:
-
-- **All 59 household-survey series lost October** — unemployment rate,
-  participation, U-6 — in a series continuous since January 1948.
-- **439 of 469 monthly CPI series lost it**; 20 were priced from administrative
-  sources that needed no field visit.
-- **201 of 202 establishment series kept it.** `PAYEMS` reads 158,408, because
-  employer records were filed electronically and BLS merged October into
-  November's report.
-
-The rule worth carrying: **a survey that had to be taken during the month is
-gone; a record that could be collected later survived.** It even explains the
-one establishment casualty, real average hourly earnings, which is deflated by a
-CPI that does not exist for October.
-
-Nothing needs fixing — the transforms return null when either endpoint is null,
-and the bundle's dense `start`/`step` encoding keeps the hole as a null slot
-rather than a dropped month. Two things follow anyway: never treat that month as
-late, and expect the gap again in **October 2026**, next month, when the hole
-becomes the *base* of the twelve-month change rather than the current value.
-Traps 4 and 22 carry the detail.
-
----
-
-## Built on the 6th: the landing page
-
-Rebuilt around a **coverage map** — a real Natural Earth basemap where a
-covered country is filled, carries its dashboard count, and links to its own
-section. The rail is gone from this page only; the map is its navigation.
-
-Everything on it that could go stale is generated from the specs by
-`tools/build_nav.py`: the index, the map, and the scope line. Adding a country
-colours it in. See trap 55 before editing that page by hand — three of its four
-blocks are written, not typed.
-
-## Built on the 6th: Labour Costs
-
-The seventh dashboard, 15 tables, and the first to need **no ingestion at all**.
-Its spine is an identity that holds to a tenth of a point in every quarter
-measured: **unit labour costs are hourly compensation less productivity**.
-
-The finding worth knowing, from Table 5 and Table 6: in the nonfinancial
-corporate sector, **unit labour costs ran +0.4% in 2026 Q2 while unit profits
-ran +17.8% and the price deflator +4.3%.** The mirror of 2023, when labour costs
-were at 4.6%. That decomposition exists for no other sector, because
-nonfinancial corporations is the only one where profits can be measured against
-output — and it is the one thing the site could discuss but not show until now.
-
-## The open decision
-
-**Nothing is blocking, and `planned.yml` is empty.** What is left is design: 2,308
-series sit at `publish=false`, drawn by nothing. The rule for promoting one has
-not changed — large by weight, persistently volatile, or a direct input to
-something that matters.
-
----
+- **CPI and PPI Table 1 draw the twelve-month change from the seasonally
+  adjusted index**, and say so. BLS's headline is unadjusted: July 2026
+  reads 3.3 on the page where the release prints 3.4. Switching CPI to
+  `CPIAUCNS`/`CUUR0000SA0L1E` (both held) would match the release; PPI
+  would need `PPIFID`, not catalogued.
+- **Nine SA rows of ECI Tables 1–3 and the ten unadjusted PPI headline
+  groupings are not held**; none is drawn. Adding them is an ingest.
+- Labour Costs draws 24–25 years with no window in its headers; Table 4
+  leads with the quarterly ECI on purpose.
+- Claims Table 9 lists states in postal-code order.
+- Payroll Table 21's grey line is deliberate; Table 28's title wraps.
+- The three lagging CPI items (`SS53031`, `SSFV031A`, `SEMC04`) are out of
+  every measure except `SEMC04`, which stays as the only representation of
+  its residual; gaps are handled by date.
 
 ## Loose ends, none blocking
 
-- **The audit branch is merged** and every 9 September change is on the
-  site. `stamp_assets.py` had run on the branch and no asset changed since.
-- **Commits sit unpushed until 23:30**, when `dashboards-push` runs and
-  verifies by hash. A count was written here twice and was stale within the
-  hour both times; `git log --oneline @{u}..HEAD` is the answer.
-- **74 series are dead at source** — 45 Productivity, 23 PPI, 4 CPI, 2 ECI —
-  confirmed against the BLS API, not just against FRED. Nothing to recover. The
-  4 CPI ones (household operations, legal services) stopped during 2024 and read
-  as current until the freshness check stopped counting null rows (trap 49).
-- **`frb.wage_tracker` has no calendar rows, and that is correct.** Checked
-  against FRED on 6 September: release 637, *Wage Growth Tracker*, publishes
-  **zero** forward dates, so there is nothing to sync and the stamp shows no
-  "Next" rather than a guess — which `release_dates.py` has said in its
-  docstring all along. `--due` cannot fire for it and does not need to: one
-  monthly series, picked up by the 01:40 sweep within a day. Not a gap.
-- **The flatness check in `tools/clipcheck.py` is quiet and calibrated.** Its
-  first cut flagged 15 panels; all 15 were looked at, 14 were fine, and the
-  metric was re-cut around what share of its axis a series occupies rather than
-  how it compares with its neighbours. Three panels are recorded as deliberate
-  with `data-span="intended: <why>"` on the chart div — JOLTS `cSep`,
-  payroll `cUnSex`, CPI `cVehM` — and nothing else is outstanding. Add the same
-  attribute when a new one turns out to be intended; it stays counted, just not
-  listed. Verified to still fire by restoring the four-line price panel.
-- **The dead-man's switch is proven end to end** (6 September): the `/fail`
-  path fired against the real hc-ping.com URL twice, once on a genuine fault
-  at 06:30 ET and once deliberately, and recovered both times. Re-test with
-  `MAX_AGE_HOURS=0 ops/dashboards-timer-check`, then run it again bare to
-  recover; it sends a real alarm, which is the point.
-- **`~/bigricebowl` still has an unpushed commit** (`5995cf5`, the EverOS pin)
-  plus older uncommitted deletions that are not mine.
-- **The one-off scripts are in `~/ingest_run/`** with their logs.
+- **74 series are dead at source** (45 Productivity, 23 PPI, 4 CPI, 2 ECI),
+  confirmed against BLS. Nothing to recover; none is drawn.
+- **`frb.wage_tracker` has no calendar rows, correctly**: FRED publishes no
+  forward dates for it; the sweep picks it up within a day.
+- **The flatness check is quiet and calibrated**: three panels carry
+  `data-span="intended: …"`.
+- **The dead-man's switch is proven end to end**; re-test with
+  `MAX_AGE_HOURS=0 ops/dashboards-timer-check`, then run it bare.
+- **`~/bigricebowl` still has an unpushed commit** (the EverOS pin) plus
+  older uncommitted deletions that are not mine.
+- Screenshots from the design review are in `logs/shots/review/` (175
+  files, gitignored); the raw reconciliation runs and Wayback tables are in
+  the session scratchpad only.
 
----
+## October 2025 is permanently empty, and that is settled
 
-## What the 5th and 6th did
+The shutdown stopped field collection and BLS will not collect the October
+reference period retroactively. All 59 household-survey series lost it, 439
+of 469 monthly CPI series lost it, 201 of 202 establishment series kept it.
+Nothing interpolates across it; the bundles keep the hole as a null slot.
+Expect it again in **October 2026**, when the hole becomes the base of the
+twelve-month change. Traps 4 and 22.
 
-Ingestion went from 183 series to 3,126, a third source was added, and every
-dashboard gained depth.
+## Commands
 
-- **The establishment survey completed** — all 174 Table B-1 industries plus
-  B-2 hours and B-3 earnings, each id verified against the published August
-  figure before ingestion.
-- **CPI, PPI, JOLTS, ECI and Productivity completed** — including all 338 CPI
-  Table 2 categories and 144 JOLTS series FRED does not carry at all.
-- **BEA became the third source** — a new client with the 100 MB/minute limit
-  enforced at the client layer, and 210 PCE underlying-detail lines whose
-  hierarchy had to be read from BEA's indented workbook because it is not
-  recoverable from the numbers (trap 44).
-- **PCE shipped**, and with it `PANELS.compare`, which exists because the engine
-  could draw a series and nothing else — a composition has no time axis
-  (trap 48).
-- **Six derived measures**: a weighted median and a breadth measure for CPI, a
-  counted breadth for PPI, state breadth and distance-off-the-low for claims,
-  and the arity and weighting machinery to express them.
-- **`refresh.py` had never refreshed a BLS series** — `series_for()` filtered
-  `WHERE source='fred'` in both branches, so 37 series were scheduled and
-  silently skipped. That is the single most consequential fix of the two days.
-- **The `publish` column** separated what the database holds from what a page
-  draws, which is what lets 2,308 series be kept for analysis without any of
-  them reaching a bundle.
+```bash
+cd ~/dashboards && set -a && . .env && set +a
+./venv/bin/python -m macro.validate                 # 38/38
+./venv/bin/python macro/export.py                   # re-export without ingesting
+./venv/bin/python tools/coverage.py                 # 100% on all seven
+python3 tools/keycheck.py                           # static, runs anywhere
+~/.venvs/shot/bin/python tools/clipcheck.py         # overflow + collision, both widths
+~/.venvs/shot/bin/python tools/shoot.py --path us/inflation/cpi [--element cHead]
+./venv/bin/python tools/staleness.py                # 74 overdue, 0 actionable
+./venv/bin/python tools/reconcile.py cpi --asof 2026-09-12 --items cu.item cpi.t01.htm cpi.t02.htm
+tail -f logs/refresh.log
+systemctl --user list-timers 'macro-refresh-*'
+```
 
-The recurring shape, and the reason so much of this file is about verification:
-**every defect across these two days was found by comparing the thing against
-its source, or by looking at it.** Validation passed 36/36 while 28 series had
-no revision history, six ECI series were eight years stale, a breadth line lost
-eight of its ten years, and a chart's numbers were wrong by a factor of a
-thousand. None of those moved a single check. The last one of the two days fits
-the pattern exactly: a freshness check that read the last *row* instead of the
-last *value* reported twelve dead series as current, and reported four live ones
-as fixable against a date that was itself an empty row.
+Fetching a BLS table for `reconcile.py` (bls.gov refuses the VPS):
+
+```bash
+curl -sL --compressed -o cpi.t02.htm \
+  "https://web.archive.org/web/2026id_/https://www.bls.gov/news.release/cpi.t02.htm"
+```
+
+Before committing any document, read `git diff --stat` (trap 56). This file
+was written whole and is about 12 KB; if it is ever 15 MB, that is the trap,
+not a handoff.
