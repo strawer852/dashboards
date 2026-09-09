@@ -38,6 +38,10 @@ first_reported_pct:
   - WPSFD49116
 first_reported_yoy:
   - PPIFIS
+  # The unadjusted index, catalogued 9 September 2026 so the twelve-month
+  # call can be scored on the basis the release prints. Drawn by no panel;
+  # the page's forecast config names it so coverage counts it as consumed.
+  - PPIFID
 
 # Contributions ARE possible here, and the derived block at the bottom builds
 # them. An earlier version of this comment said the opposite -- that the PPI
