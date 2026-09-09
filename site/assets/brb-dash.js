@@ -828,5 +828,7 @@
     return `${d.getUTCDate()} ${MN[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
   };
 
-  global.BRB = { render, axis, label, derive, resolve, T, PANELS, palette, spark };
+  // fmtFor is exported for the landing page's card, so a headline figure there
+  // is formatted by the same code as the figure on the dashboard it links to.
+  global.BRB = { render, axis, label, derive, resolve, T, PANELS, palette, spark, fmtFor };
 })(window);

@@ -9,6 +9,9 @@ index_title: 'Personal Consumption Expenditures'
 agency: BEA · Personal Income and Outlays
 blurb: >-
   The index the Federal Reserve targets, its underlying detail, and what its basket holds that the CPI’s does not.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: PCE, series: PCEPI, transform: yoy, format: pct }
 # The stamp under the title comes from this release, and only this one.
 release: bea.personal_income
 include_releases:

@@ -9,6 +9,9 @@ index_title: 'Job Openings & Labor Turnover'
 agency: BLS · JOLTS
 blurb: >-
   Openings, hires, quits and layoffs, vacancies per jobseeker, and the flow identity checked against the payroll count.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: Job openings, series: JTSJOL, format: millions }
 release: bls.jolts
 include_releases:
   - bls.jolts

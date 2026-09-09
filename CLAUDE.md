@@ -899,12 +899,20 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     no DDL rights -- `POSTGRES_USER` is `strawer`, the table's owner, and is the
     role for a schema change.
 
-55. **The landing page is generated three ways over, and carries no rail.**
-    Rebuilt 6 September around a coverage map. Three blocks on it are written by
+55. **The landing page is generated three ways over, and carries no rail and
+    no index.** Rebuilt 6 September around a coverage map; on 9 September the
+    index under the map was removed so the page is one screen with no
+    scrolling, and a covered region's dashboards moved onto a card shown while
+    the pointer is on the region. Three blocks are written by
     `tools/build_nav.py` from the specs and must never be hand-edited: the
-    dashboard index (`<!-- idx:start -->`), the map (`<!-- map:start -->`), and
+    region cards (`<!-- card:start -->`), the map (`<!-- map:start -->`), and
     the scope line (`<div id="scope">`). A fourth, the masthead figures, comes
-    from `status.json` at runtime. The hand-written version of the index is why
+    from `status.json` at runtime. Each card row's figure is the spec's
+    `headline:` -- the first of that page's own summary figures -- resolved
+    from the bundle at load with the engine's own `resolve` and `fmtFor`, so
+    the card cannot disagree with the page it links to. Two things cost time
+    building it: an author `display` on an SVG beats the UA `[hidden]` rule,
+    and SVG elements have no `.hidden` property, only the attribute. The hand-written version of the index is why
     the front page offered Consumer Prices as "next to be built" three days
     after CPI shipped, with PPI, PCE and Labour Costs missing entirely.
 

@@ -9,6 +9,9 @@ index_title: 'Consumer Prices'
 agency: BLS · Consumer Price Index
 blurb: >-
   All 338 published expenditure categories, contributions to the headline, and a weighted median item.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: CPI, series: CPIAUCSL, transform: yoy, format: pct }
 # The stamp under the title comes from this release, and only this one.
 release: bls.cpi
 include_releases:

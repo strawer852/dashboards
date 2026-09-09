@@ -8,6 +8,9 @@ title: Weekly Claims
 agency: ETA · UI Weekly Claims
 blurb: >-
   Initial and continuing claims and the insured rate — the highest-frequency read, three to four weeks ahead of the payroll report.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: Initial claims, series: ICSA, format: k_units }
 release: eta.claims
 # Two FRED releases feed this page. The national report (FRED 180) publishes
 # on Thursday and dates the stamp; the 106 state and territory series are the

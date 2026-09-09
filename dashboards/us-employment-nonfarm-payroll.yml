@@ -8,6 +8,9 @@ title: Nonfarm Payroll
 agency: BLS · Employment Situation
 blurb: >-
   Payrolls, unemployment, participation, wages and hours, with all 174 published industries and the first-print revision overlay.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: Payrolls, series: PAYEMS, transform: diff, format: signed, signed: true }
 # The stamp under the title comes from this release, and only this one.
 release: bls.employment_situation
 include_releases:

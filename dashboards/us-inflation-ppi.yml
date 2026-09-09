@@ -9,6 +9,9 @@ index_title: 'Producer Prices'
 agency: BLS · Producer Price Index
 blurb: >-
   The whole Final Demand–Intermediate Demand system, stage by stage, with the producer prices that feed PCE.
+# The one figure the landing page's card shows for this dashboard: the first
+# of the page's own summary figures, resolved from the bundle at load.
+headline: { label: Final demand, series: PPIFIS, transform: yoy, format: pct }
 # The stamp under the title comes from this release, and only this one.
 release: bls.ppi
 include_releases:

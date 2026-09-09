@@ -17,6 +17,10 @@ The in-report contents list sits AFTER `<!-- nav:end -->` but still inside
 region/topic tree between the markers is rewritten. Removing that distinction
 once deleted every contents list on the site.
 
+The landing page carries no rail and no index: the map is its navigation,
+and each covered region's dashboards are listed on a card shown while the
+pointer is on the region (`card_html`), generated from the same specs.
+
 Planned dashboards live in `planned.yml` at the repo root — deliberately
 not in `dashboards/`, which is for specs the exporter reads. They are not specs — they
 have no series and nothing to export — but they belong in the rail, because a
@@ -55,6 +59,7 @@ def catalog() -> list[dict]:
                     "order": d.get("nav_order", 99), "planned": False,
                     "agency": d.get("agency", ""), "blurb": d.get("blurb", ""),
                     "index_title": d.get("index_title", d["title"]),
+                    "headline": d.get("headline"),
                     "bundle": d["path"].replace("/", "-"),
                     "prefix": "/" + d["path"].strip("/").split("/")[0] + "/"})
     planned = ROOT / "planned.yml"
@@ -70,77 +75,72 @@ def catalog() -> list[dict]:
 
 
 
-IDX_START, IDX_END = "<!-- idx:start -->", "<!-- idx:end -->"
+CARD_START, CARD_END = "<!-- card:start -->", "<!-- card:end -->"
 
 
-def index_html(items: list[dict]) -> str:
-    """The landing page's index of dashboards, grouped by region.
+def card_html(items: list[dict]) -> str:
+    """The landing page's cards: one per covered region, listing its dashboards
+    by topic. A card is shown while the pointer is on its territory, so it is
+    the index the page no longer carries, produced on demand from the map.
 
-    Hand-written, this list went stale the day a dashboard shipped: it was
-    still offering Consumer Prices as "next to be built" with CPI, PPI, PCE and
-    Labour Costs all live. Same source as the rail, so it cannot drift again.
+    The index this replaced went stale the day a dashboard shipped, which is
+    why it was generated; the card is generated for the same reason. The
+    figure on each row is NOT written here: the row carries the spec's
+    `headline` (series, transform, format) as data attributes and the page
+    resolves it from the bundle at load, with the engine's own `resolve` and
+    `fmtFor`, so the card shows the figure the dashboard shows, from the same
+    data, on the same clock.
 
-    Grouped by region even while there is only one, because the heading is what
-    makes a second country an addition rather than a redesign -- and because a
-    flat list silently asserts that everything here describes one place.
+    Paired with the map by URL prefix: the card's `data-prefix` is the href
+    of the territory's link, and nothing else has to agree.
     """
     tree: dict = {}
     for it in items:
-        tree.setdefault(it["region"], []).append(it)
-    for group in tree.values():
-        group.sort(key=lambda i: (i["topic"], i["order"], i["title"]))
-
-    rows = []
-    for region, group in sorted(
-            tree.items(),
-            key=lambda kv: (all(i["planned"] for i in kv[1]), kv[0])):
-        # Always emitted, and always with the id: the coverage map links to
-        # this anchor, so suppressing it on a one-region site would leave the
-        # map pointing at nothing.
-        # The heading links to the region's own page, which exists as soon
-        # as the region has a live dashboard (write_region_pages).
+        if not it["planned"]:
+            tree.setdefault(it["region"], []).append(it)
+    out = []
+    for region, group in sorted(tree.items()):
         pre = region_prefix(group)
-        name = ('<a href="%s">%s</a>' % (html.escape(pre), html.escape(region))
-                if pre else html.escape(region))
-        rows.append('      <h2 class="reg" id="%s"><span>%s</span>'
-                    '<span class="n">%d dashboard%s</span></h2>'
-                    % (slug(region), name, len(group),
-                       "" if len(group) == 1 else "s"))
-        for it in group:
-            nm = html.escape(it.get("index_title") or it["title"])
-            ag = html.escape(it["agency"])
-            bl = html.escape(it["blurb"])
-            if it["planned"]:
-                rows.append(
-                    '      <div class="row coming">\n'
-                    '        <span class="nm">%s</span>\n'
-                    '        <span class="agency">%s</span>\n'
-                    '        <span class="desc">%s</span>\n'
-                    '        <span class="meta">&mdash;</span>\n'
-                    '      </div>' % (nm, ag, bl))
-            else:
-                rows.append(
-                    '      <a class="row" href="%s">\n'
-                    '        <span class="nm">%s</span>\n'
-                    '        <span class="agency">%s</span>\n'
-                    '        <span class="desc">%s</span>\n'
-                    '        <span class="meta" data-bundle="%s">&hellip;</span>\n'
-                    '      </a>' % (html.escape(it["path"]), nm, ag, bl,
-                                    html.escape(it["bundle"])))
-    return "\n".join(rows)
+        topics: dict = {}
+        for it in sorted(group, key=lambda i: (i["topic"], i["order"], i["title"])):
+            topics.setdefault(it["topic"], []).append(it)
+        n = len(group)
+        out.append('      <div class="card" id="card-%s" data-prefix="%s" role="dialog" '
+                   'aria-label="%s dashboards">'
+                   % (slug(region), html.escape(pre), html.escape(region)))
+        out.append('        <div class="h"><a href="%s"><b>%s</b></a>'
+                   '<span class="n">%d dashboard%s &middot; open &rarr;</span></div>'
+                   % (html.escape(pre), html.escape(region), n, "" if n == 1 else "s"))
+        for topic, its in topics.items():
+            out.append('        <div class="tp">%s</div>' % html.escape(topic))
+            for it in its:
+                h = it.get("headline") or {}
+                attrs = ' data-bundle="%s"' % html.escape(it["bundle"])
+                for k in ("series", "transform", "format", "label"):
+                    if h.get(k):
+                        attrs += ' data-%s="%s"' % (k, html.escape(str(h[k])))
+                if h.get("signed"):
+                    attrs += ' data-signed="1"'
+                out.append('        <a class="d" href="%s"%s><span class="nm">%s</span>'
+                           '<span class="per">&hellip;</span><span class="vl">&mdash;</span></a>'
+                           % (html.escape(it["path"]), attrs,
+                              html.escape(it.get("index_title") or it["title"])))
+        out.append('        <div class="f">&hellip;</div>')
+        out.append('      </div>')
+    return "\n".join(out)
 
 
-def write_index(items: list[dict]) -> bool:
-    """Rewrite the landing page's index block. True if it changed."""
+def write_card(items: list[dict]) -> bool:
+    """Rewrite the landing page's card block. True if it changed."""
     page = SITE / "index.html"
     s = page.read_text(encoding="utf-8")
-    if IDX_START not in s or IDX_END not in s:
-        print("  !! landing page has no idx markers; index not written",
+    if CARD_START not in s or CARD_END not in s:
+        print("  !! landing page has no card markers; cards not written",
               file=sys.stderr)
         return False
-    a = s.index(IDX_START) + len(IDX_START)
-    b = s.index(IDX_END)
-    body = "\n" + index_html(items) + "\n      "
+    a = s.index(CARD_START) + len(CARD_START)
+    b = s.index(CARD_END)
+    body = "\n" + card_html(items) + "\n      "
     if s[a:b] == body:
         return False
     page.write_text(s[:a] + body + s[b:], encoding="utf-8")
@@ -523,8 +523,8 @@ def main() -> int:
     n_regions = len(tree)
     n_live = sum(1 for r in tree.values() for t in r.values() for i in t if not i["planned"])
     print(f"{n_regions} region(s), {n_live} live dashboard(s)")
-    if not args.check and write_index(items):
-        print('  updated  site/index.html (dashboard index)')
+    if not args.check and write_card(items):
+        print('  updated  site/index.html (region cards)')
     if not args.check and write_map(items):
         print('  updated  site/index.html (coverage map)')
     if not args.check and write_scope(items, tree):
