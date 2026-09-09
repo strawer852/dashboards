@@ -1075,24 +1075,31 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     ones, and the page's basket shares are the same month's `DHSGRC`,
     `DHLCRC`, `DNRGRC` and `DPCCRC` lines.
 
-63. **A vintage flag inferred from what the database held describes the
-    pipeline's history, not the source's.** 359 FRED series carried
-    `vintage_mode='fetch_date'`, and every document here said ALFRED had no
-    history for them. Asked directly on 9 September, ALFRED has between 46
-    and 184 vintage dates for **every one of the 359**: 87 CPI items back to
-    April 2011, 271 ECI series back to October 2014, and `WPUID621`. What
-    the database holds for them is one provisional `fred_csv` row per
-    observation, because `backfill.py` was never run on them -- and the
-    5 September bulk correction set the flag on exactly the series that
-    "still held only provisional rows after a backfill", which is what a
-    series the backfill skipped also looks like. The 456 BLS and 210 BEA
-    series are genuinely vintage-less; the 359 are merely unbackfilled, and
-    ALFRED keeps everything, so nothing is lost until the day a revision
-    lands and is recorded under a fetch time rather than its publication
-    date. Not fixed during the audit, which ingests nothing: run
-    `backfill.py --series` over the 359 (listed with their vintage counts in
-    `tools/research/unbackfilled_fred_2026-09-09.txt`), then set `from_row`. **Ask the source
-    whether it has vintages; do not infer it from whether we fetched them.**
+63. **"One row per observation" is not "no vintages", and the backfill could
+    not tell them apart.** 359 FRED series carried `vintage_mode='fetch_date'`
+    and every document here said ALFRED held nothing for them. Asked
+    directly on 9 September, ALFRED lists 46 to 184 vintage dates for every
+    one: 87 CPI items back to April 2011, 271 ECI series back to October
+    2014, and `WPUID621`. The database held one provisional `fred_csv` row
+    per observation, dated by the fetch, because `backfill.py` had judged
+    them "no ALFRED history" and kept the anchor -- its test was *one row
+    per observation*, and that is exactly what a series that is **never
+    revised** looks like. The unadjusted CPI and ECI do not move after
+    first print (trap 25), so each observation has a single ALFRED row whose
+    `realtime_start` is its own publication date. That date is the history:
+    it is what the stamp reads (trap 19) and what every as-of query reads
+    (trap 18); on fetch-time rows an "as of 12 August" query for those 87
+    CPI items returned nothing at all, since they were fetched on 5
+    September. The 5 September bulk flag change then set `fetch_date` on
+    exactly the series the backfill had skipped.
+
+    Fixed 9 September: `backfill.py` now calls a series vintage-less only
+    when every row in its ALFRED response shares one `realtime_start`, and
+    the 359 were backfilled and moved to `from_row`. Only `WPUID621` has
+    revisions (depth 1.30); the rest gain publication dates and nothing
+    else, which is the point. The 456 BLS and 210 BEA series are the ones
+    genuinely without vintages. **Ask the source whether it has vintages;
+    do not infer it from the shape of what was fetched.**
 
 ## How it runs
 
@@ -1254,9 +1261,10 @@ and Productivity news release tables from the database by value (trap 62)
 and found no value disagreement; the CPI median and breadth changed when
 the by-date alignment landed, and two sparse inputs were replaced by their
 Table 2 parents (trap 60); and the 359 FRED series marked `fetch_date` all
-have ALFRED histories that were never backfilled (trap 63). Validation is
-38/38 with the new release's freshness check. The 6 September counts are
-otherwise unchanged.
+had ALFRED histories the backfill had skipped, and are now backfilled and
+on `from_row` (trap 63), so **666 series carry `fetch_date`, all BLS or
+BEA**. Validation is 38/38 with the new release's freshness check;
+3,443,273 vintage rows. The 6 September counts are otherwise unchanged.
 
 ## State as of 6 September 2026, end of day (second pass)
 

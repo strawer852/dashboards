@@ -34,10 +34,11 @@ page and `/us/` screenshotted and looked at. Then areas A and B of
   and the breadth in 164, because three inputs end early; an independent
   computation confirms the new values, and two sparse inputs are now their
   Table 2 parents (trap 60).
-- **359 FRED series marked `fetch_date` have full ALFRED histories** that
-  were never backfilled (trap 63). Not touched: the audit ingests nothing.
-  First job after the release watch: `backfill.py --series` over
-  `tools/research/unbackfilled_fred_2026-09-09.txt`, then set `from_row`.
+- **359 FRED series marked `fetch_date` had ALFRED histories** the backfill
+  had skipped, because its "no history" test could not tell a never-revised
+  series from a vintage-less one (trap 63). Test fixed, all 359 backfilled
+  and on `from_row` the same afternoon; only `WPUID621` had revisions, the
+  rest gained publication dates. No FRED series is on `fetch_date` now.
 
 ## 9 September, first half
 
@@ -82,12 +83,12 @@ coverage on all seven dashboards, and no label overflowing its chart.**
 | `bls.productivity` | 2 | 282 | 90 KB (shared) |
 | `frb.wage_tracker` | 1 | 1 | — |
 
-Every release is complete at the level its news release publishes. **1,025
+Every release is complete at the level its news release publishes. **666
 series carry `vintage_mode='fetch_date'`** — 456 BLS-sourced and 210
-BEA-sourced with genuinely no revision history, and **359 FRED series that
-ALFRED does hold vintages for and that were simply never backfilled**
-(trap 63). None may be offered a revision overlay until that backfill runs;
-check the column rather than assuming.
+BEA-sourced, the sources that genuinely serve no vintages. Every FRED series
+is on `from_row` since the 9 September backfill (trap 63). A `fetch_date`
+series may never be offered a revision overlay; check the column rather than
+assuming.
 
 **PCE shipped as dashboard #6**, 15 tables, including a median built from BEA's
 210 underlying-detail lines and a `compare` panel showing why the two indexes

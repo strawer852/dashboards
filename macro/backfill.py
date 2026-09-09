@@ -13,9 +13,15 @@ every series and reports the observed vintage depth, so a series whose
 ALFRED-eligibility has since changed shows up rather than silently keeping the
 wrong mode.
 
-A series whose ALFRED response carries exactly one vintage per observation has
-no revision history to store; its provisional rows are kept as the anchor and it
-is reported as such.
+A series has no ALFRED history only when every row in its response carries the
+SAME realtime_start -- ALFRED knows a single vintage date for it. Its provisional
+rows are then kept as the anchor and it is reported as such. Until 9 September
+2026 the test was "one row per observation", which cannot tell that case from a
+series that is never revised: the unadjusted CPI and ECI never move after first
+print (CLAUDE.md trap 25), so each observation has exactly one row, whose
+realtime_start is its own publication date. That test filed 358 such series as
+vintage-less and left them on fetch-time rows (trap 63). A publication date per
+observation is history -- it is what the stamp and every as-of query read.
 
 Usage:  venv/bin/python backfill.py [--series ID ...] [--dry-run]
 """
@@ -90,13 +96,15 @@ def main() -> int:
             n_rows = len(rows)
             depth = (n_rows / n_obs) if n_obs else 0.0
 
-            # One vintage per observation means ALFRED holds no revision history
-            # for this series — keep the provisional anchor rather than replacing
-            # real data with a flat restatement.
-            if n_obs and n_rows == n_obs:
+            # ALFRED holds no history for this series only if it knows a single
+            # vintage date: every row then shares one realtime_start. One row per
+            # observation is NOT that -- a series that is never revised looks the
+            # same, with each row dated by its own publication (trap 63).
+            starts = {r["realtime_start"] for r in rows}
+            if n_obs and len(starts) <= 1:
                 anchored.append(sid)
                 print(f"{sid:<22} {n_obs:>6} {n_rows:>9} {depth:>6.2f} {'anchor':>8}  "
-                      f"{mode} -> no ALFRED history")
+                      f"{mode} -> no ALFRED history (single vintage date)")
                 continue
 
             if args.dry_run:

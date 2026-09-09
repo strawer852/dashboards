@@ -296,10 +296,21 @@ is Table 2's figure. Three DB titles differ cosmetically from BEA's
 - `from_row` series on a single vintage: **0**.
 - `PAYEMS` July 2026: 158,858 at vintage 2026-08-07, 158,913 at 2026-09-04.
 - **All 359 FRED `fetch_date` series have ALFRED histories** (trap 63):
-  87 CPI (145-184 vintages, from April 2011), 271 ECI (46-48, from October
-  2014), `WPUID621` (138). Each holds exactly one provisional `fred_csv`
-  row per observation. Not backfilled here; the list is in
-  `tools/research/unbackfilled_fred_2026-09-09.txt`.
+  87 CPI (145-184 vintage dates, from April 2011), 271 ECI (46-48, from
+  October 2014), `WPUID621` (138). Each held exactly one provisional
+  `fred_csv` row per observation, because `backfill.py` had called them
+  vintage-less on a test -- one row per observation -- that a never-revised
+  series also passes. **Backfilled the same afternoon** at William's
+  request: 89,711 observations replaced by 89,994 ALFRED rows (the 283
+  extra are `WPUID621`'s revisions; the other 358 never revise and gained
+  publication dates only), 4 rate-limited and re-run, 0 still provisional,
+  all 359 set to `from_row`. Proof the dates matter: `reconcile.py cpi
+  --asof 2026-08-12` now reproduces the 185 FRED-held rows of Tables 1-2,
+  and `--asof 2026-08-11`, the day before publication, reproduces none.
+  Validate 38/38; every bundle's values and stamps unchanged; the CPI
+  bundle grew 23 KB as 27 series gained revision metadata no panel draws.
+  The list stays in `tools/research/unbackfilled_fred_2026-09-09.txt` as
+  the record.
 
 ### 4.4 Fixed
 
@@ -320,6 +331,9 @@ is Table 2's figure. Three DB titles differ cosmetically from BEA's
 4. Claims Table 9 labels "the District of Columbia" and "the U.S. Virgin
    Islands" lose their article.
 5. `tools/reconcile.py` added and documented in `CLAUDE.md`.
+6. `backfill.py` classifies a series as vintage-less only when its ALFRED
+   response carries a single distinct `realtime_start`, and the 359 series
+   it had skipped are backfilled and on `from_row` (4.3).
 
 ### 4.5 Recorded, not changed
 
