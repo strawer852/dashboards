@@ -42,6 +42,7 @@ no local build step.
 | `tools/shoot.py` | Screenshots a dashboard as it renders, from inside the docker network so Authelia is not in the way. The answer to trap 13 |
 | `tools/staleness.py` | Every catalogued series against its own frequency — and against BLS before calling one dead. Covers the ~2,350 that reach no bundle, which `coverage.py` cannot see |
 | `tools/build_nav.py` | Generates the rail, the landing index, map and scope line, and the region pages (`site/<region>/index.html`) from the specs. **Run after adding a dashboard** |
+| `tools/reconcile.py` | Reproduces a news release table from the database by value, as of the vintage that published it. The audit's area A, repeatable at any release. Trap 62 |
 | `tools/keycheck.py` | Static page checks: legend classes defined, tables numbered in order, footer last, divs balanced, chart divs and panels one to one, contents complete. No browser, no data. Trap 57 |
 | `AUDIT.md`, `AUDIT_FINDINGS_2026-09-09.md` | The pre-ingestion audit: terms of reference, and what the 9 September pass found, fixed and left |
 | `ops/dashboards-timer-check` | Alarms when the refresh timers stop firing. Daily, 06:30 ET |
@@ -1001,6 +1002,98 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     handle weekly and daily series and give explicit and generated date
     arrays the same shape, which they never had.
 
+    **It was not a no-op, and the prediction that it would be was wrong.**
+    The 9 September handoff expected the re-export to change nothing,
+    because truncation lined every input's end up. It changed the CPI
+    median in 30 of 180 months and the CPI breadth measure in 164 -- August
+    2016's median read 2.529 and is 2.787; April 2023's breadth read 76.0
+    and is 73.9 -- and an independent by-date computation agreed with the
+    new values in all 168 months. Three of the 135 inputs end early:
+    intracity mass transit stopped at April 2026, food at elementary and
+    secondary schools is priced only some months, and services by other
+    medical professionals has gaps. Cut to their last 180 observations they
+    ended one to three months before the rest, so by position they were a
+    different month. **A series priced only some months, truncated by
+    count, ends on a different date from its neighbours**, and the first two
+    were sparse children of monthly Table 2 rows carrying the same weight;
+    they are now the parents. The PCE median and the state breadth did not
+    move, because every input there ends on the same period -- which is the
+    only case in which position and date agree.
+
+61. **A FRED release id discovered from one series is that series' release,
+    not ours.** `release_dates.py` found each release's FRED calendar by
+    asking `min(series_id)`, and on 5 September the 106 state claims series
+    joined `eta.claims`: `min` moved from `CC4WSA` (FRED 180, the national
+    report, Thursdays) to `AKCCLAIMS` (FRED 469, the *state* report,
+    Fridays). Two symptoms, one cause. The calendar filled with Fridays and
+    would have carried no Thursday after the rows stored before the change
+    ran out on 31 December -- a claims dashboard polled the day after its
+    release, quietly, from January. And the stamp, which reads the newest
+    midnight vintage across the release, showed "released 4 Sep" for the
+    3 September report every week, because the state series update on the
+    Friday. Verified rather than assumed: all 115 claims series were asked
+    which FRED release they belong to, and the split is exactly the id
+    shape -- 106 `..ICLAIMS`/`..CCLAIMS` in 469, 9 national in 180.
+
+    **A release here must map to exactly one FRED release.** The state
+    series are now their own release, `eta.state_claims`, drawn on the same
+    page through `include_releases`; the stamp still comes from
+    `eta.claims`. `release_dates.py` now asks two series per release, the
+    first and last id, and if they disagree it says so loudly and stores
+    dates for both, so polling stays right until the catalogue is fixed.
+    The Friday poll is not waste: FRED updates the state series on Friday
+    morning, and the state heatmap now refreshes that day instead of at
+    the Saturday sweep.
+
+62. **bls.gov refuses this VPS outright, and the news release tables are
+    reachable through the Wayback Machine.** Every route 403s -- curl, a
+    full browser header set, headless Chromium -- on `www.bls.gov` and
+    `download.bls.gov` alike, so the reconciliation the audit called for
+    could not read the tables from the source. `web.archive.org/web/2026id_/
+    <bls url>` serves the raw HTML (gzipped; `--compressed`), with snapshots
+    within days of each release, and `cu.item` and `wp.item` the same way.
+    Check the caption's month is the release you mean.
+
+    The method itself is `tools/reconcile.py`, and it is the payroll method
+    (trap 36) generalised: parse the published table, read every catalogued
+    series in the release *as of* the vintage that published it, and match
+    each row to the series that reproduce every figure it prints. The
+    agency's own code gives the expected id -- `cu.item` for CPI, the group
+    and item codes printed in PPI Table 1 -- so a row that is reproduced by
+    a different series than its code names is an id filed under the wrong
+    row, and one whose expected series is held but does not reproduce it is
+    a value disagreement. Run 9 September against the July 2026 releases:
+    **CPI 513 rows, PPI 897, ECI 385, Productivity 132 columns, zero value
+    disagreements**, and the only "absent" rows were FRED mnemonic aliases
+    (`CPIAUCSL` for `CUSR0000SA0`, `PPIFIS` for `WPSFD4`) or aggregates
+    deliberately not held. Productivity and Costs is preformatted text in a
+    `<pre>` block rather than a table, and its Tables 1-5 were the 6 August
+    preliminary while Table 6 was the 3 September revision, which the
+    `--asof` date handles per table. PCE was reconciled against the BEA API
+    directly: all 210 median weights are July 2026 nominal shares to five
+    decimals, five of them under BEA's `LA` codes rather than the `RC`
+    ones, and the page's basket shares are the same month's `DHSGRC`,
+    `DHLCRC`, `DNRGRC` and `DPCCRC` lines.
+
+63. **A vintage flag inferred from what the database held describes the
+    pipeline's history, not the source's.** 359 FRED series carried
+    `vintage_mode='fetch_date'`, and every document here said ALFRED had no
+    history for them. Asked directly on 9 September, ALFRED has between 46
+    and 184 vintage dates for **every one of the 359**: 87 CPI items back to
+    April 2011, 271 ECI series back to October 2014, and `WPUID621`. What
+    the database holds for them is one provisional `fred_csv` row per
+    observation, because `backfill.py` was never run on them -- and the
+    5 September bulk correction set the flag on exactly the series that
+    "still held only provisional rows after a backfill", which is what a
+    series the backfill skipped also looks like. The 456 BLS and 210 BEA
+    series are genuinely vintage-less; the 359 are merely unbackfilled, and
+    ALFRED keeps everything, so nothing is lost until the day a revision
+    lands and is recorded under a fetch time rather than its publication
+    date. Not fixed during the audit, which ingests nothing: run
+    `backfill.py --series` over the 359 (listed with their vintage counts in
+    `tools/research/unbackfilled_fred_2026-09-09.txt`), then set `from_row`. **Ask the source
+    whether it has vintages; do not infer it from whether we fetched them.**
+
 ## How it runs
 
 ```
@@ -1102,6 +1195,7 @@ external. If ntfy is self-hosted for other reasons, keep the ops alerts
 cd ~/dashboards/macro && set -a && . ../.env && set +a
 ../venv/bin/python validate.py            # 37 assertions against the releases
 python3 ../tools/keycheck.py              # static page checks, no browser
+../venv/bin/python ../tools/reconcile.py cpi --asof 2026-09-08 --items cu.item cpi.t01.htm cpi.t02.htm   # trap 62
 ../venv/bin/python refresh.py --force     # re-export without waiting for data
 ../venv/bin/python add_series.py --release bls.employment_situation \
     --category employment --importance 6 SERIESID
@@ -1150,6 +1244,20 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
+## State as of 9 September 2026, end of day
+
+Second half of the audit, run on the VPS: `AUDIT_FINDINGS_2026-09-09.md`
+section 4 is the record. Since the 6 September block below was written:
+**a tenth release**, `eta.state_claims`, holds the 106 state and territory
+claims series (trap 61); `tools/reconcile.py` reproduces the CPI, PPI, ECI
+and Productivity news release tables from the database by value (trap 62)
+and found no value disagreement; the CPI median and breadth changed when
+the by-date alignment landed, and two sparse inputs were replaced by their
+Table 2 parents (trap 60); and the 359 FRED series marked `fetch_date` all
+have ALFRED histories that were never backfilled (trap 63). Validation is
+38/38 with the new release's freshness check. The 6 September counts are
+otherwise unchanged.
+
 ## State as of 6 September 2026, end of day (second pass)
 
 **3,126 series across 9 releases and three sources, 3,442,990 vintage rows
@@ -1172,7 +1280,8 @@ split between what is held and what is drawn is explicit:
 | `bls.employment_situation` | 138 | 159 | 297 |
 | `bls.productivity` | 2 | 280 | 282 |
 | `bea.personal_income` | 232 | 3 | 235 |
-| `eta.claims` | 59 | 56 | 115 |
+| `eta.claims` | 6 | 3 | 9 |
+| `eta.state_claims` | 53 | 53 | 106 |
 | `frb.wage_tracker` | 1 | 0 | 1 |
 
 **Labour Costs is the seventh dashboard**, built 6 September and the first to

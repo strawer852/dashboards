@@ -206,3 +206,136 @@ Then, in the order `AUDIT.md` gives:
   ntfy; CPI Friday. Then look at the pages. Note the CPI page's Table 11 and
   the PPI page's notes no longer describe July, so nothing in prose needs
   retyping.
+
+---
+
+## 4. Second half, on the VPS, 9 September
+
+Run as Claude Code on the VPS with the merged branch on master. Nothing was
+ingested. Every figure below was read from the database or the agency's
+own table; the raw runs are in `tools/reconcile.py`'s output and the
+scripts under `tools/research/`.
+
+### 4.1 The merge proved (section 1 of `NEXT_SESSION_2026-09-09.md`)
+
+| Check | Result |
+|---|---|
+| `validate.py` before and after the re-export | 37/37, then 38/38 once `eta.state_claims` existed |
+| `refresh.py --force` | ingest 1,203,129 observations, 0 inserted; validate rc=0; export rc=0 |
+| `coverage.py` | 100% on all seven |
+| `keycheck.py` | 7 pages, 0 findings |
+| `build_nav.py --check` | 0 pages would change |
+| `clipcheck.py` on the real bundles | no label overflows, every in-page link resolves, 3 deliberate flat panels |
+| `shoot.py`, all seven pages and `/us/` | 176 charts, 0 suspicious |
+| `staleness.py` | 74 overdue, 0 actionable, 74 dead at source |
+
+Looked at, not just counted: PPI Tables 21 and 22 read top-down from
+consumer foods to construction; payroll Table 6 runs mining to government;
+claims Table 9 starts at Alaska; the PCE Table 3 and Labour Costs keys draw
+the ink series in ink; `/us/` renders with the rail open on United States
+and the map's United States links to it.
+
+**The derived comparison was not zero, and the handoff's prediction was
+wrong.** Against the bundles from the 6th:
+
+| Series | Months changed | Example |
+|---|---|---|
+| `CPI.median` | 30 of 180 | Aug 2016: 2.529 → 2.787 |
+| `CPI.share_above3` | 164 of 180 | Apr 2023: 76.024 → 73.875 |
+| `PCE.median`, `PCE.share_above3`, `STATE.ic_breadth`, everything else | 0 | |
+
+Three of the 135 CPI inputs end early -- `CUUR0000SS53031` intracity mass
+transit at April 2026, `CUUR0000SSFV031A` food at elementary and secondary
+schools at May with April missing, `CUUR0000SEMC04` other medical
+professionals at June with gaps -- confirmed against the BLS API directly.
+Truncated to their last 180 observations they ended one to three months
+before the other 132, so by position they were a different month. An
+independent by-date computation from `macro_observations_current` agrees
+with the **new** bundle in all 168 months. The first two are sparse
+children of monthly Table 2 rows that carry the same weight (0.355 and
+0.064), and the spec now uses the parents, `CUUR0000SETG03` and
+`CUUR0000SEFV03`; that moved the median in 3 months (max 0.17) and the
+breadth in 57 (max 0.39), and the independent computation agrees again in
+all 168. Trap 60 carries it. The 10 inputs with no published relative
+importance are all exact residuals: nine single unpriced children carrying
+their parent's weight, and other medical professionals = professional
+services 3.408 − (1.660 + 0.917 + 0.317) = 0.514.
+
+### 4.2 Area A -- reconciled against the news releases, by value
+
+bls.gov refuses the VPS on every route (trap 62), so the tables came from
+the Wayback Machine at full fidelity, snapshots of 19 August to 8 September.
+Method: `tools/reconcile.py`, which reads every series in the release as of
+the vintage that published the table and matches each printed row to the
+series that reproduce every one of its figures (percent changes recomputed
+from stored indexes, tolerance 0.051; index levels to three decimals). The
+expected id comes from the agency's own code (`cu.item`; the group and
+item codes PPI prints), so a held series that does not reproduce its row
+is reported as `VALUE!`.
+
+| Release, table(s) | Rows reproduced | VALUE! | Not held |
+|---|---|---|---|
+| CPI Tables 1, 2 (338 categories), 3 | 513 | 0 | 39, all FRED-mnemonic aliases (`CPIAUCSL` = `CUSR0000SA0`, …) or Table 3 special aggregates never catalogued |
+| PPI Tables 1 and 3 (323 groupings each) | 897 | 0 | 30: the 10 headline groupings SA are held as `PPIFIS`, `PPIDGS`, … and reproduce; their 10 NSA counterparts (`WPUFD4`…, on FRED as `PPIFID`) are not held |
+| ECI Tables 1-13 | 385 | 0 | 9 SA rows of Tables 1-3 (civilian service occupations, civilian construction, state and local W&S and benefits totals, …) exist on FRED only under the 13 `ECI…` mnemonic aliases, none catalogued; 17 MULTI are civilian = private identities and `ECIALLCIV` = `CIS1010000000000I` |
+| Productivity Tables 1-6 | 132 columns, every one to a unique series | 0 | none; Tables 1-5 as of 2 September (the 6 August preliminary), Table 6 as of 8 September (the 3 September revision) |
+
+PCE against the BEA API: the 210 July 2026 price levels in the database
+equal the API's; all 210 median weights are July 2026 nominal shares of
+`DPCERC` to five decimals, 205 under `…RC` codes and five (`IA001081`,
+`IA001083`, `IA000630`, `IA000233`, `IA000232`) under BEA's `LA…` lines;
+the page's Table 14 BEA-side shares are `DHSGRC` 15.572, `DHLCRC` 17.217,
+`DFXARC`+`DFSARC` 14.104, `DNRGRC` 3.822, `DRCARC` 3.945, `DCLORC` 2.695,
+`DPCCRC` 89.119, all July 2026. CPI spec weights: 246 checked against the
+published relative importances, 0 mismatches; "Recreation services 3.154"
+is Table 2's figure. Three DB titles differ cosmetically from BEA's
+(`DNPHRG`, `DNPNRG` apostrophes; `DCHCRG` "Market-based PCE child care").
+
+### 4.3 Area B -- vintages
+
+- `from_row` series on a single vintage: **0**.
+- `PAYEMS` July 2026: 158,858 at vintage 2026-08-07, 158,913 at 2026-09-04.
+- **All 359 FRED `fetch_date` series have ALFRED histories** (trap 63):
+  87 CPI (145-184 vintages, from April 2011), 271 ECI (46-48, from October
+  2014), `WPUID621` (138). Each holds exactly one provisional `fred_csv`
+  row per observation. Not backfilled here; the list is in
+  `tools/research/unbackfilled_fred_2026-09-09.txt`.
+
+### 4.4 Fixed
+
+1. **Claims were one release spanning two FRED releases** (trap 61). The
+   stamp read "released 4 Sep" for the 3 September report, and the calendar
+   was filling with Fridays from `AKCCLAIMS`. All 115 series were asked
+   their FRED release: 106 in 469, 9 in 180. `eta.state_claims` created;
+   the 106 moved; the spec draws both; the 33 stale future rows deleted and
+   re-synced (16 Thursdays plus the 25 November Wednesday for national, 16
+   Fridays for state). `release_dates.py` now probes two series per
+   release and stores both calendars, loudly, if they disagree. Simulated
+   `--due`: Thursday polls `bls.ppi` and `eta.claims`; Friday `bls.cpi` and
+   `eta.state_claims`.
+2. The two sparse CPI median inputs replaced by their Table 2 parents
+   (4.1); `publish` flipped accordingly; the "137 inputs" and "14 residuals"
+   comments corrected to 135 and 10.
+3. PCE Table 14 "Excluded from core" CPI side 20.955 → 20.953 (100 − 79.047).
+4. Claims Table 9 labels "the District of Columbia" and "the U.S. Virgin
+   Islands" lose their article.
+5. `tools/reconcile.py` added and documented in `CLAUDE.md`.
+
+### 4.5 Recorded, not changed
+
+- **CPI Table 1 and PPI Table 1 draw the twelve-month change from the
+  seasonally adjusted index** (`CPIAUCSL`, `PPIFIS`), and their headers say
+  s.a. BLS's headline twelve-month figure is unadjusted: July 2026 CPI reads
+  3.30 from `CPIAUCSL` where the release prints 3.4 from `CPIAUCNS`
+  (3.36); PPI 4.66 against 4.7. A reader comparing the page with the news
+  will see a different number about one month in three. Arguable: the
+  caption is honest and FRED's own charts do the same. Switching Table 1 to
+  `CPIAUCNS`/`CUUR0000SA0L1E` (both held) would match the release; PPI
+  would need `PPIFID`, not catalogued.
+- **Nine SA rows of ECI Tables 1-3 and the ten NSA PPI headline groupings
+  are not held**; none is drawn. Adding them is an ingest.
+- The three lagging CPI items stay `publish=false` and out of every
+  measure; `SEMC04` stays in the median as the only representation of its
+  residual, with gaps handled by date.
+- Everything in section 1's "Recorded, not changed" stands.
+

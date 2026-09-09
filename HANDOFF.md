@@ -1,32 +1,49 @@
 # Handoff — 9 September 2026
 
-**Read `CLAUDE.md` first.** It is the authority: 60 traps, the settled
+**Read `CLAUDE.md` first.** It is the authority: 63 traps, the settled
 decisions, the running state, the guardrails. This file is only the part that
 would be stale by the time you read it. Where they disagree, CLAUDE.md is right
 and this file is old.
 
 Everything lives on the VPS: `ssh strawer@bigricebowl.cloud`, then
 `~/dashboards`. Nothing of substance is on the laptop. **Run Claude Code on
-the VPS, not on the web**: the 9 September session ran as Claude Code on the
-web and could reach neither the VPS, nor the site, nor BLS, BEA or FRED, so
-half of `AUDIT.md` is still to do. See `AUDIT_FINDINGS_2026-09-09.md`.
+the VPS, in tmux** (`tmux new -s audit`, then `claude` inside it; detach with
+Ctrl-B D): a session started from a plain SSH shell dies at logout, and the
+web version can reach neither the VPS, nor the site, nor BLS, BEA or FRED.
+The audit is in `AUDIT_FINDINGS_2026-09-09.md`, both halves.
 
 ---
 
-## 9 September: the audit, first half
+## 9 September, second half: the audit on the VPS
 
-Done from the repository alone, on branch
-`claude/data-bigricebowl-audit-a7bbms` -- **not merged to master**, so that
-the nightly `dashboards-push` from the VPS could not collide. First thing on
-the VPS:
+The web session's branch was merged and proven -- validate 37/37 then
+38/38, forced re-export, coverage 100%, keycheck 0, clipcheck clean, every
+page and `/us/` screenshotted and looked at. Then areas A and B of
+`AUDIT.md`, which needed the database and the agencies:
 
-```bash
-cd ~/dashboards && git fetch origin && git checkout claude/data-bigricebowl-audit-a7bbms
-# review, merge to master, then:
-./venv/bin/python macro/refresh.py --force      # derived.py changed; re-export
-python3 tools/keycheck.py                       # new static page checks
-~/.venvs/shot/bin/python tools/clipcheck.py     # real render, real bundles
-```
+- **Every release reconciles to its news release by value, zero
+  disagreements**: CPI 513 rows, PPI 897, ECI 385, Productivity 132
+  columns, PCE 210 weights and levels. The method is `tools/reconcile.py`
+  and it is repeatable at any release; bls.gov blocks the VPS, so the tables
+  come from the Wayback Machine (trap 62).
+- **Claims spanned two FRED releases** and the stamp was a day late every
+  week. The 106 state series are now `eta.state_claims` (trap 61); the
+  page draws both; the calendar has Thursdays for the national report and
+  Fridays for the state one.
+- **The by-date fix was not a no-op.** The CPI median moved in 30 months
+  and the breadth in 164, because three inputs end early; an independent
+  computation confirms the new values, and two sparse inputs are now their
+  Table 2 parents (trap 60).
+- **359 FRED series marked `fetch_date` have full ALFRED histories** that
+  were never backfilled (trap 63). Not touched: the audit ingests nothing.
+  First job after the release watch: `backfill.py --series` over
+  `tools/research/unbackfilled_fred_2026-09-09.txt`, then set `from_row`.
+
+## 9 September, first half
+
+Done from the repository alone, on the web, on branch
+`claude/data-bigricebowl-audit-a7bbms`, merged to master on the VPS the
+same day.
 
 What it found and fixed (traps 56-60 carry the detail): this file itself was
 15 MB of one section repeated; 24 legends drew the ink series in grey; every
@@ -41,24 +58,23 @@ its panel spec, and every page was rendered against synthetic bundles at
 1400px and 430px. A **region page** (`/us/`) is now generated from the specs
 by `build_nav.py`, and the map and breadcrumbs link to it.
 
-**Still to do, on the VPS, in `AUDIT.md`'s order:** A (reconcile CPI, PPI,
-PCE, Productivity and ECI against their news releases, by value), B (the
-1,025 `fetch_date` series, the `from_row` regression check, a revision
-spot-check), the real-bundle render, and the release watch below.
+All of that was then proven on the VPS the same day (section 4 of the
+findings). What is left is the release watch below and the backfill above.
 
 ---
 
 ## Where it stands
 
-**3,126 series across 9 releases and three sources, 3,442,990 vintage rows over
-1,367,052 observations spanning 1913 to August 2026, 37/37 validations, 100%
+**3,126 series across 10 releases and three sources, 3,442,990 vintage rows over
+1,367,052 observations spanning 1913 to August 2026, 38/38 validations, 100%
 coverage on all seven dashboards, and no label overflowing its chart.**
 
 | Release | Published | Held | Bundle |
 |---|---|---|---|
 | `bls.employment_situation` | 138 | 297 | 964 KB |
 | `bls.cpi` | 176 | 469 | 1,052 KB |
-| `eta.claims` | 59 | 115 | 791 KB |
+| `eta.claims` | 6 | 9 | 792 KB (shared) |
+| `eta.state_claims` | 53 | 106 | 792 KB (shared) |
 | `bea.personal_income` | 232 | 235 | 586 KB |
 | `bls.ppi` | 61 | 639 | 222 KB |
 | `bls.jolts` | 44 | 684 | 171 KB |
@@ -67,10 +83,11 @@ coverage on all seven dashboards, and no label overflowing its chart.**
 | `frb.wage_tracker` | 1 | 1 | — |
 
 Every release is complete at the level its news release publishes. **1,025
-series carry `vintage_mode='fetch_date'`** and have no revision history — 456
-BLS-sourced, 210 BEA-sourced, and 359 FRED series ALFRED holds no vintages for.
-None of them may ever be offered a revision overlay; check the column rather
-than assuming.
+series carry `vintage_mode='fetch_date'`** — 456 BLS-sourced and 210
+BEA-sourced with genuinely no revision history, and **359 FRED series that
+ALFRED does hold vintages for and that were simply never backfilled**
+(trap 63). None may be offered a revision overlay until that backfill runs;
+check the column rather than assuming.
 
 **PCE shipped as dashboard #6**, 15 tables, including a median built from BEA's
 210 underlying-detail lines and a `compare` panel showing why the two indexes
@@ -87,9 +104,11 @@ year-window change across 456 BLS series (trap 39), `truncate_history` in a real
 export, and six derived measures.
 
 What good looks like in `logs/refresh.log`: `refresh start (bls.ppi,eta.claims)`
-after 08:35 ET, `BLS: ... series from <a recent year>` rather than 1939,
-`validate rc=0`, `export`, an ntfy push — and the following windows saying
-nothing outstanding rather than refetching.
+after 08:35 ET Thursday, `BLS: ... series from <a recent year>` rather than
+1939, `validate rc=0`, `export`, an ntfy push — and the following windows
+saying nothing outstanding rather than refetching. Friday the same for
+`bls.cpi,eta.state_claims`: the state series are a separate release since the
+9th and FRED updates them on the Friday, so that poll is expected.
 
 Then **look at the pages**. `tools/shoot.py` screenshots from inside the docker
 network, where Authelia is not in the way, and reports what each chart actually
@@ -167,9 +186,8 @@ something that matters.
 
 ## Loose ends, none blocking
 
-- **The audit branch is unmerged** and carries every 9 September change; the
-  region page and the engine fixes reach the site only when it is merged and
-  `stamp_assets.py` has run (it has, on the branch).
+- **The audit branch is merged** and every 9 September change is on the
+  site. `stamp_assets.py` had run on the branch and no asset changed since.
 - **Commits sit unpushed until 23:30**, when `dashboards-push` runs and
   verifies by hash. A count was written here twice and was stale within the
   hour both times; `git log --oneline @{u}..HEAD` is the answer.
