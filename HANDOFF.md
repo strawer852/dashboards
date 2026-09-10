@@ -133,6 +133,13 @@ through everything above. What good looks like in `logs/refresh.log`:
   `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
   expected and right: FRED updates those series on the Friday.
 
+**Open from William, 10 September**: date axes do not label their newest
+period, which makes current charts look months stale; 159 of 164 charts.
+The fix, right-anchored label spacing in the engine plus a clipcheck test,
+is proposed in findings 4.7 and waits for his go-ahead. Also recorded
+there, not changed: a single transient FRED 404 fails a poll and pushes a
+failure alert that the next poll clears.
+
 The release timer now polls every ten minutes from 08:35 to 14:55 ET and
 every thirty from 15:25 to 20:55 ET, extended on 10 September when FRED had
 posted neither PPI nor claims by mid-morning. If FRED is late, look again in

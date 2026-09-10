@@ -471,4 +471,31 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   (0dd3406): 324 of 324 drawn FRED series mapped to BLS ids by value, 11 of
   them not what their name suggested, and eighteen scenarios passed in
   rolled-back transactions. Not deployed; the handoff has the order.
+- **One transient FRED error failed a whole poll and sent a failure push.**
+  At 11:55 ET FRED's CSV endpoint answered HTTP 404, an HTML page, for
+  `WPUFD4232` on all four attempts `fred.get_observations_csv` makes over
+  about fifteen seconds. `ingest.py` exited 1 on that one series of 640,
+  `refresh.py` stopped before validation and pushed "Dashboard refresh
+  failed". The 12:05 ET poll fetched the same series normally and finished
+  rc=0, so nothing was lost. **Recorded, not changed**: failing loudly is the
+  rule here (trap 38), but a push for a fault the next poll clears on its own
+  trains the reader to ignore the channel. The middle course is to keep the
+  exit code and `status.json` as they are and push only when the same series
+  fails on two consecutive polls. Not done mid-release.
+- **Reported by William: Tables 7, 8 and 9 on Weekly Claims looked stale.**
+  They are current. Tables 2, 3 and 7 end at 29 August because the Labor
+  Department publishes continuing claims a week behind initial claims; 8 and
+  9 end at 29 August because the 53 state series come in Friday's separate
+  state report. What made them look stale is real and site-wide: the engine
+  counts date labels from the LEFT edge, so the newest period is almost never
+  labelled. Measured in the browser, 159 of the 164 date-axis charts at
+  1280px leave their last period unlabelled; on Weekly Claims the last label
+  on Tables 2, 3 and 7 is 4 October 2025 for a line ending 29 August 2026,
+  and Table 9's newest column is 29 August with its last label 22 August, or
+  18 July on a phone. The label-spacing change of 9 September stopped the
+  collisions and kept the left anchor, and clipcheck passed because it tests
+  collisions, not the end label. **Proposed, not applied until asked**: count
+  the label spacing back from the right-hand end in the engine, extend
+  `clipcheck.py` to fail any date axis without its last period labelled, and
+  optionally say in those headers that they run a week behind initial claims.
 
