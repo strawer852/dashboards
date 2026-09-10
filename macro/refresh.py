@@ -86,6 +86,20 @@ def series_for(releases: list[str] | None) -> list[str]:
         return [r[0] for r in cur.fetchall()]
 
 
+def releases_of(series: list[str]) -> list[str]:
+    """The releases these series belong to.
+
+    The success alert named the releases POLLED, so on 10 September 2026 the
+    push read "New data: bls.ppi,eta.claims" when only claims had landed and
+    FRED still had July's PPI. On a day two releases share, that says the
+    wrong one arrived.
+    """
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute("SELECT DISTINCT release_id FROM macro_series_meta "
+                    "WHERE series_id = ANY(%s) ORDER BY 1", (series,))
+        return [r[0] for r in cur.fetchall()]
+
+
 def changed_since(ts: datetime) -> list[str]:
     """Series that gained rows during this run."""
     with psycopg.connect(DSN) as c, c.cursor() as cur:
@@ -363,7 +377,7 @@ def main() -> int:
     if changed:
         status["last_change"] = status["last_run"]
         shown = ", ".join(changed[:14]) + ("..." if len(changed) > 14 else "")
-        notify(f"New data: {label}",
+        notify(f"New data: {', '.join(releases_of(changed)) or label}",
                f"{len(changed)} series updated and published.{NL}{shown}",
                "default", "chart_with_upwards_trend")
     write_status(status)

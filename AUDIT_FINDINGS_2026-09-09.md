@@ -447,4 +447,28 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   backfill clearing BLS provisional rows too, a gate that does not count a
   provisional row as landed, and a stamp that can date a release before
   ALFRED does. Claims cannot use it: they are the Labor Department's.
+- **Claims landed on FRED at 11:16 ET**, two hours and 46 minutes after the
+  Labor Department, and the 11:25 ET poll took them all the way: 16 rows
+  across the nine national series, backfill rc=0 with 16 dated vintages,
+  validate 38/38, export, push. The claims bundle reads released
+  10 September for the week to 5 September, next 17 September; state claims
+  correctly still read 4 September, next 11 September.
+- **FRED reproduces the Labor Department exactly**, as stored and as drawn:
+  initial claims 206,000, four-week average 206,000, unadjusted 176,567,
+  continuing claims 1,774,000, insured rate 1.2%, each on a
+  `2026-09-10 00:00` publication vintage. The prior week's revision is
+  history, not an overwrite: 206,000 as first printed, 207,000 now.
+- **The rewritten gate stood down for claims**: once claims landed it listed
+  only `bls.ppi` as outstanding. Clipcheck at both widths, coverage and
+  keycheck were clean on the new bundles, and the claims page drew all ten
+  charts with the fixed labels.
+- **The success alert named the wrong releases.** It read "New data:
+  bls.ppi,eta.claims" because it printed the releases polled, not those that
+  changed. It now names the releases of the changed series, deployed by
+  atomic rename. The PPI bundle's extra series that same export was
+  `PPIFID`, added by the forecast work of 9 September, not by the release.
+- **The BLS provisional layer is built on branch `bls-provisional`**
+  (0dd3406): 324 of 324 drawn FRED series mapped to BLS ids by value, 11 of
+  them not what their name suggested, and eighteen scenarios passed in
+  rolled-back transactions. Not deployed; the handoff has the order.
 

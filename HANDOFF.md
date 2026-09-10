@@ -138,11 +138,38 @@ every thirty from 15:25 to 20:55 ET, extended on 10 September when FRED had
 posted neither PPI nor claims by mid-morning. If FRED is late, look again in
 the evening before concluding anything is wrong.
 
-**Next piece of work, after Friday's CPI has run cleanly**: the BLS API as a
-provisional early source for FRED series in BLS releases, replaced by
-ALFRED's dated vintages later. The design and its four parts are at the end
-of findings section 4.7. Do not start it before CPI has proven trap 65's
-gate, because it changes the same gate.
+**Built, tested, not deployed: branch `bls-provisional`**, in the worktree
+`~/dashboards-bls-provisional`. On release mornings the BLS API's figure
+stands in for FRED's until FRED catches up, then FRED's replaces it; trap 66
+on the branch's `CLAUDE.md` has the rules. Deploy only after Friday's CPI has
+landed cleanly on trap 65's gate, because this changes the same gate.
+
+Deploy, **in this order** -- the branch's ingest reads `bls_id`, so merging
+before the column exists fails every refresh:
+
+```bash
+cd ~/dashboards && set -a && . .env && set +a
+# 1. the column. Run this SQL as the table's owner, the role trap 54 names:
+#    macro_app, which MACRO_DSN connects as, has no DDL rights.
+#      ALTER TABLE macro_series_meta ADD COLUMN bls_id TEXT;
+# 2. re-verify every BLS id by value against the data as it stands that day,
+#    then store the map. --apply refuses unless all of them verify.
+./venv/bin/python ../dashboards-bls-provisional/tools/bls_map.py --apply \
+    ../dashboards-bls-provisional/tools/research/bls_map_$(date +%F).csv
+# 3. merge and restamp
+git merge bls-provisional && python3 tools/stamp_assets.py
+# 4. prove it
+./venv/bin/python -m macro.validate && ./venv/bin/python macro/export.py
+./venv/bin/python tools/coverage.py && python3 tools/keycheck.py
+~/.venvs/shot/bin/python tools/clipcheck.py
+git worktree remove ../dashboards-bls-provisional
+```
+
+The first release that exercises it is JOLTS on 29 September. Good looks
+like `provisional from the BLS API, pending FRED:` in the log on the first
+poll, "Early figures from the BLS API, pending FRED" in the stamp, polls
+continuing, and then `changed:` and `backfill rc=0` for the same series once
+FRED posts.
 
 Then look, not just read: `tools/shoot.py --path us/inflation/ppi` (and
 cpi, weekly-claims), the stamp dates in each bundle's `releases` block
