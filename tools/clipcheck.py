@@ -35,7 +35,10 @@ JS = """() => {
     let worst = 0, worstText = '';
     el.querySelectorAll('text').forEach(t => {
       const b = t.getBoundingClientRect();
-      const over = cb.left - b.left;          // >0 means it starts outside
+      if (!b.width) return;
+      // >0 means it starts outside on the left or ends outside on the right.
+      // The right edge matters since the newest period's label sits there.
+      const over = Math.max(cb.left - b.left, b.right - cb.right);
       if (over > worst) { worst = over; worstText = t.textContent; }
     });
     if (worst > 0.5) out.push({id: el.id, over: Math.round(worst), text: worstText});
@@ -69,6 +72,33 @@ OVERLAP = """() => {
       if (b.l < a.r + 4 && Math.abs(b.t - a.t) < 3) { n++; if (!eg) eg = a.s + ' | ' + b.s; }
     }
     if (n) out.push({id: el.id, n: n, eg: eg});
+  });
+  return out;
+}"""
+
+
+# The newest period must carry a label. The engine spaced date labels from the
+# LEFT edge, so on 10 September 2026 159 of 164 charts left their last period
+# unlabelled: Weekly Claims Table 7 ended at 29 August 2026 under a last label
+# of 4 October 2025, and William reported the table as not updating. The data
+# was current; the axis said otherwise. The overflow and collision tests above
+# were green throughout, because an absent label overflows nothing.
+END_LABEL = """() => {
+  const iso = /^\\d{4}-\\d{2}-\\d{2}$/;
+  const out = [];
+  document.querySelectorAll('.chart').forEach(el => {
+    const inst = window.echarts && echarts.getInstanceByDom(el);
+    if (!inst) return;
+    const xa = (inst.getOption().xAxis || [])[0];
+    if (!xa || xa.type !== 'category' || !xa.data || xa.data.length < 8) return;
+    const cats = xa.data.map(d => (d && d.value !== undefined) ? d.value : d);
+    const last = String(cats[cats.length - 1]);
+    if (!iso.test(last)) return;
+    const fmt = xa.axisLabel && xa.axisLabel.formatter;
+    const want = typeof fmt === 'function' ? fmt(last) : last;
+    const shown = [...el.querySelectorAll('text')]
+      .some(t => t.textContent === want && t.getBoundingClientRect().width > 0);
+    if (!shown) out.push({id: el.id, want: want});
   });
   return out;
 }"""
@@ -181,6 +211,10 @@ with sync_playwright() as pw:
                 bad += 1
                 print("OVERLAP  %-26s %-12s @%-4d %d colliding label pair(s), e.g. %r"
                       % (path.split("/")[-1], r["id"], width, r["n"], r["eg"]))
+            for r in page.evaluate(END_LABEL):
+                bad += 1
+                print("UNDATED  %-26s %-12s @%-4d newest period %r has no label"
+                      % (path.split("/")[-1], r["id"], width, r["want"]))
         for r in pg.evaluate(SPANS):
             if r["ok"]:
                 acked += 1
@@ -207,6 +241,6 @@ if acked:
     print("%d further panel(s) have a dominant series recorded as deliberate."
           % acked)
 
-print("\n%s" % ("no label overflows its chart or collides with its neighbour, and every in-page link resolves"
+print("\n%s" % ("no label overflows its chart or collides with its neighbour, every date axis labels its newest period, and every in-page link resolves"
                 if not bad else "%d problem(s)" % bad))
 sys.exit(1 if bad else 0)

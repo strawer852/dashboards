@@ -55,17 +55,43 @@
   // width guessed once is what trap 13 is about. hideOverlap on the axis
   // stays as the backstop.
   const labelInterval = (el, cats, freq, tick, gutter, size, font) => {
-    if (tick == null) return "auto";
+    // Counted back from the NEWEST period, not forward from the oldest. The
+    // first version kept ECharts' left anchor, so the last label could sit up
+    // to a spacing short of the end: on 10 September 2026 159 of 164 charts
+    // left their newest period unlabelled, Weekly Claims Table 7 ran to
+    // 29 August 2026 under a last label of 4 October 2025, and a current
+    // table was reported as not updating. The newest period is the one a
+    // reader looks for. Returned as ECharts' function form of `interval`.
+    const n = cats.length;
+    const base = tick == null ? 1 : tick + 1;   // categories from one label to the next
     const plot = el.clientWidth - gutter;
-    if (!(plot > 0) || !cats.length) return tick;
+    let step = base;
+    if (plot > 0 && n) {
+      const c = labelInterval.ctx ||
+        (labelInterval.ctx = document.createElement("canvas").getContext("2d"));
+      c.font = `${size}px ${font}`;
+      let w = 0;
+      for (const v of cats) w = Math.max(w, c.measureText(label(v, freq)).width);
+      // One and a half label widths, not one: the newest label is right-
+      // aligned (alignMaxLabel), which moves it half a width towards its
+      // neighbour, and where the two touched hideOverlap dropped the LATER
+      // label -- the newest, the one this spacing exists to keep. It did on a
+      // phone on Weekly Claims Table 9 and the PPI heatmap.
+      const fit = Math.max(1, Math.floor(plot / (1.5 * w + 8)));
+      const need = Math.ceil(n / fit);
+      step = Math.max(base, Math.ceil(need / base) * base);
+    } else if (tick == null) {
+      return "auto";
+    }
+    return i => (n - 1 - i) % step === 0;
+  };
+  // Rendered width of a label in the axis font. The right-hand labels below
+  // are placed from it rather than from a margin typed once.
+  const textWidth = (text, size, font) => {
     const c = labelInterval.ctx ||
       (labelInterval.ctx = document.createElement("canvas").getContext("2d"));
     c.font = `${size}px ${font}`;
-    let w = 0;
-    for (const v of cats) w = Math.max(w, c.measureText(label(v, freq)).width);
-    const fit = Math.max(1, Math.floor(plot / (w + 8)));
-    const need = Math.ceil(cats.length / fit);
-    return Math.max(tick, Math.ceil(need / tick) * tick);
+    return c.measureText(String(text)).width;
   };
   // The same question for a value axis, answered as an explicit tick step:
   // ECharts treats splitNumber as a hint and kept six labels on a phone
@@ -211,7 +237,13 @@
     const first = ctx.series(p.series[0].id);
     const cats = tail(axis(first), p.window);
     const opt = Object.assign(base(P), {
-      grid: { left: p.left || 46, right: p.right || 14, top: 12, bottom: 24 },
+      // The hline label sits past the line's end; a 14px margin left "50" 1px
+      // over the edge on every breadth chart once clipcheck looked at the
+      // right side. Room is measured from the label itself.
+      grid: { left: p.left || 46, top: 12, bottom: 24,
+              right: p.right || (p.hline != null
+                ? Math.max(14, Math.ceil(textWidth(p.hlineLabel || String(p.hline), 9, P.mono)) + 12)
+                : 14) },
       tooltip: Object.assign(base(P).tooltip, {
         trigger: "axis",
         formatter: ps => {
@@ -229,7 +261,7 @@
         // Every weekly and every ten-year axis collided on a phone before this;
         // clipcheck.py measures label overlap at both widths (9 September 2026).
         axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
-                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
+                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, first.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -337,7 +369,7 @@
       xAxis: {
         type: "category", data: cats,
         axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
-                     interval: labelInterval(el, cats, s.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
+                     interval: labelInterval(el, cats, s.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, s.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -475,7 +507,7 @@
       xAxis: {
         type: "category", data: cats,
         axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
-                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono),
+                     interval: labelInterval(el, cats, first.frequency, p.tick, (p.left || 46) + 14, 9.5, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, first.frequency) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false },
       },
@@ -560,7 +592,7 @@
         // into unreadable overlap the moment a heatmap was put in a half-width
         // cell rather than across the page.
         axisLabel: { color: P.muted, fontSize: 9, hideOverlap: true,
-                     interval: labelInterval(el, cats, freq, p.tick == null ? 2 : p.tick, (p.left || 132) + 20, 9, P.mono),
+                     interval: labelInterval(el, cats, freq, p.tick == null ? 2 : p.tick, (p.left || 132) + 20, 9, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, freq) },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       // Rows read top-down in the order the page lists them, the same order
@@ -570,8 +602,12 @@
       yAxis: { type: "category", data: names, inverse: true, splitArea: { show: false },
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
+      // The scale starts under the row labels, but not so far right that its
+      // end text leaves the chart: on a phone "≥ +15%" was cut by 3px.
       visualMap: { min: -cap, max: cap, calculable: false, orient: "horizontal",
-        left: p.left || 132, bottom: 2, itemWidth: 11, itemHeight: 96,
+        left: Math.max(4, Math.min(p.left || 132, el.clientWidth - 8 - (96 + 2 * 10 + 10
+          + (p.capText || [`≥ +${cap}k`, `≤ −${cap}k`]).reduce((w, t) => w + textWidth(t, 9, P.mono), 0)))),
+        bottom: 2, itemWidth: 11, itemHeight: 96,
         textStyle: { color: P.muted, fontFamily: P.mono, fontSize: 9 },
         text: p.capText || [`≥ +${cap}k`, `≤ −${cap}k`], inRange: { color: P.hm } },
       series: [{ type: "heatmap", data,
@@ -901,7 +937,7 @@
         } }),
       xAxis: { type: "category", data: cats,
         axisLabel: { color: P.muted, fontSize: 9.5, hideOverlap: true,
-                     interval: labelInterval(el, cats, "M", p.tick, (p.left || 46) + 14, 9.5, P.mono),
+                     interval: labelInterval(el, cats, "M", p.tick, (p.left || 46) + 14, 9.5, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, "M") },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       yAxis: Object.assign(yAxis(P, fmt), { scale: false, min: -lim, max: lim }),

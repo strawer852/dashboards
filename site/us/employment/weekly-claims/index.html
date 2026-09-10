@@ -75,12 +75,12 @@
     <div class="row">
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Continuing claims</span><span class="u">Persons, s.a.</span></div>
-        <p class="note">People still claiming after the first week. Rising continuing claims against flat initial claims means the newly unemployed are taking longer to find work.</p>
+        <p class="note">People still claiming after the first week. Rising continuing claims against flat initial claims means the newly unemployed are taking longer to find work. Continuing claims are published a week behind initial claims in the same Thursday report, so this table always ends a week before Table 1.</p>
         <div class="chart" id="cCC" style="height:215px"></div>
       </div>
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Insured unemployment rate</span><span class="u">Percent, s.a.</span></div>
-        <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation. Against the household survey&rsquo;s own rate, the gap is the share of unemployed people <b>drawing no benefit</b>: not covered, exhausted, or never having claimed. That gap is why claims can sit at historic lows while payroll growth stalls.</p>
+        <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation. Against the household survey&rsquo;s own rate, the gap is the share of unemployed people <b>drawing no benefit</b>: not covered, exhausted, or never having claimed. That gap is why claims can sit at historic lows while payroll growth stalls. The insured rate is published with continuing claims, a week behind initial claims, so this table ends a week before Table 1.</p>
         <p class="key"><i class="ks1">Insured unemployment rate</i><i class="k4">Unemployment rate, U-3</i></p>
         <div class="chart" id="cIUR" style="height:215px"></div>
       </div>
@@ -114,7 +114,7 @@
     <div class="row one">
       <div class="t" id="t7">
         <div class="th"><span class="n">Table 7</span><span class="ti">How many of the unemployed actually draw benefits</span><span class="u">Continuing claims as a share of total unemployment</span></div>
-        <p class="note">Continuing claims divided by the unemployment level &mdash; the recipiency rate. It is the number that decides how much of the labour market this dashboard can see at all: when it falls, claims describe a shrinking share of the unemployed and every reading here becomes a narrower measure. Five years rather than ten: in 2020 and 2021 the emergency programmes pushed insured unemployment <em>above</em> the measured unemployment level, and on a longer axis that peak flattens everything else into the floor. The numerator is weekly and the denominator monthly, so the monthly value is carried forward across the weeks that follow it rather than matched exactly. The break in late 2025 is real: the household survey published no unemployment level for <b>October 2025</b>, and a missing denominator is left as a gap rather than bridged. <b>Analyst-derived.</b></p>
+        <p class="note">Continuing claims divided by the unemployment level &mdash; the recipiency rate. It is the number that decides how much of the labour market this dashboard can see at all: when it falls, claims describe a shrinking share of the unemployed and every reading here becomes a narrower measure. Five years rather than ten: in 2020 and 2021 the emergency programmes pushed insured unemployment <em>above</em> the measured unemployment level, and on a longer axis that peak flattens everything else into the floor. The numerator is weekly and the denominator monthly, so the monthly value is carried forward across the weeks that follow it rather than matched exactly. The break in late 2025 is real: the household survey published no unemployment level for <b>October 2025</b>, and a missing denominator is left as a gap rather than bridged. Continuing claims are published a week behind initial claims, so this table ends a week before Table 1. <b>Analyst-derived.</b></p>
         <div class="chart" id="cRecip" style="height:250px"></div>
       </div>
     </div>
@@ -122,7 +122,7 @@
     <div class="row one">
       <div class="t" id="t8">
         <div class="th"><span class="n">Table 8</span><span class="ti">How broad is the rise in claims?</span><span class="u">Share of 53 states and territories, %</span></div>
-        <p class="note">Every state compared with <b>itself a year earlier</b>, and the chart is the share standing higher. This answers what the national total cannot: whether a rise is general or the work of two large states. One state doubling moves the national figure and leaves this untouched; forty states drifting up moves this and may barely show nationally. Above 50 more states are rising than falling. States publish claims <b>unadjusted only</b>, which is exactly why the comparison is with the same week a year before &mdash; that carries the same seasonal position, so no adjustment is needed.</p>
+        <p class="note">Every state compared with <b>itself a year earlier</b>, and the chart is the share standing higher. This answers what the national total cannot: whether a rise is general or the work of two large states. One state doubling moves the national figure and leaves this untouched; forty states drifting up moves this and may barely show nationally. Above 50 more states are rising than falling. States publish claims <b>unadjusted only</b>, which is exactly why the comparison is with the same week a year before &mdash; that carries the same seasonal position, so no adjustment is needed. The state figures come in the Labor Department&rsquo;s separate state report the day after the national one, so from Thursday&rsquo;s release until Friday&rsquo;s this table ends a week before Table 1.</p>
         <div class="chart" id="cBreadth" style="height:230px"></div>
       </div>
     </div>
@@ -130,7 +130,7 @@
     <div class="row one">
       <div class="t" id="t9">
         <div class="th"><span class="n">Table 9</span><span class="ti">Initial claims by state</span><span class="u">Change on a year earlier, %, last 52 weeks</span></div>
-        <p class="note">The breadth measure above, shown as where. Each row is a state against its own level a year before, so the seasonality that dominates unadjusted claims is differenced out. Read it for <b>columns rather than cells</b>: a single dark row is one state&rsquo;s plant closure or storm, while a column darkening across many rows is the thing the national figure is about to show.</p>
+        <p class="note">The breadth measure above, shown as where. Each row is a state against its own level a year before, so the seasonality that dominates unadjusted claims is differenced out. Read it for <b>columns rather than cells</b>: a single dark row is one state&rsquo;s plant closure or storm, while a column darkening across many rows is the thing the national figure is about to show. Like Table 8, it waits for the Friday state report, so between Thursday&rsquo;s national release and Friday&rsquo;s its newest column is a week behind Table 1.</p>
         <div class="chart" id="cStates" style="height:820px"></div>
       </div>
     </div>
@@ -152,7 +152,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=06a53cd81b"></script>
+<script src="/assets/brb-dash.js?v=b5c13c8d70"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";

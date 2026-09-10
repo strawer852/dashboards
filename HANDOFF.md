@@ -133,12 +133,14 @@ through everything above. What good looks like in `logs/refresh.log`:
   `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
   expected and right: FRED updates those series on the Friday.
 
-**Open from William, 10 September**: date axes do not label their newest
-period, which makes current charts look months stale; 159 of 164 charts.
-The fix, right-anchored label spacing in the engine plus a clipcheck test,
-is proposed in findings 4.7 and waits for his go-ahead. Also recorded
-there, not changed: a single transient FRED 404 fails a poll and pushes a
-failure alert that the next poll clears.
+**Fixed 10 September at William's request**: every date axis now labels
+its newest period, where 5 of 164 did, and `clipcheck.py` enforces it at
+both widths. Weekly Claims Tables 2, 3, 7, 8 and 9 say in their notes why
+they end a week before Table 1. When `bls-provisional` is merged, the pages'
+`?v=` stamps will conflict because both sides changed the engine: take either
+side and rerun `tools/stamp_assets.py`. Recorded, not changed: a single
+transient FRED 404 fails a poll and pushes a failure alert that the next
+poll clears.
 
 The release timer now polls every ten minutes from 08:35 to 14:55 ET and
 every thirty from 15:25 to 20:55 ET, extended on 10 September when FRED had

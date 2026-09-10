@@ -1131,6 +1131,24 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     collision, because two monospace labels that touch read as one word.
     **A check that runs at one width certifies one width.**
 
+    **And spacing counted from the left leaves the newest period unlabelled.**
+    On 10 September William reported Weekly Claims Tables 7 to 9 as not
+    updating. The data was current to 29 August; the last date label read
+    4 October 2025. ECharts spaces a category axis from index 0, so the
+    newest period got a label only when the count happened to land on it:
+    5 of 164 charts. Fixed by counting the spacing back from the newest
+    period (the function form of `interval`), right-aligning that label
+    (`alignMaxLabel`), and spacing for one and a half label widths. The first
+    attempt spaced for one, and `hideOverlap` then dropped the newest label
+    wherever the right-aligned label touched its neighbour -- on a phone, on
+    nine of the ten claims charts. `clipcheck.py` now fails any date axis
+    whose newest period has no label, at both widths, and tests the right
+    edge as well as the left, which surfaced six 1-3px clips (the breadth
+    charts' "50" marker, the PPI heatmap scale on a phone), fixed by measuring
+    the label rather than raising the threshold. 341 problems on the unfixed
+    engine, 0 after. **Test for the label a reader looks for, not only for
+    labels that misbehave.**
+
 ## Forecasts
 
 Since 9 September 2026 a dashboard may carry a **forecast record**: calls

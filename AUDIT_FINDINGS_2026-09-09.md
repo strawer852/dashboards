@@ -498,4 +498,18 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   the label spacing back from the right-hand end in the engine, extend
   `clipcheck.py` to fail any date axis without its last period labelled, and
   optionally say in those headers that they run a week behind initial claims.
+- **Fixed at William's request, the same afternoon.** Date labels are now
+  spaced back from the newest period, which is right-aligned and always
+  labelled; the spacing allows one and a half label widths, because the
+  first version allowed one and the overlap rule then dropped the newest
+  label on a phone. `clipcheck.py` gained the newest-period test and a
+  right-edge overflow test, and was proven on the unfixed engine: 159 charts
+  flagged at 1280px, 162 at 430px, 341 problems in all. The right-edge test
+  also found six small clips, the breadth charts' "50" marker and the PPI
+  heatmap's scale on a phone, fixed by measured placement. The final engine
+  passes with 0 problems at both widths. Weekly Claims Tables 2, 3 and 7 now
+  say continuing claims are published a week behind initial claims, and
+  Tables 8 and 9 that the state report comes the day after the national one,
+  so from Thursday to Friday they end a week before Table 1 -- the lags
+  measured from first-publication vintages, not assumed.
 
