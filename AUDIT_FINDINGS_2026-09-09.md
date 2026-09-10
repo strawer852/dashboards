@@ -413,3 +413,19 @@ fixed:
 Two counts that drift by one every month -- "66 months since 2021" (CPI 31)
 and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
 
+### 4.7 The release watch, 10 September: PPI and national claims
+
+- **The 01:40 ET sweep** logged `release dates rc=0` and inserted 0 rows.
+- **From 08:35 ET every window named exactly `bls.ppi,eta.claims`**, the
+  pair the simulation predicted; `eta.state_claims` correctly waited for
+  Friday. Each fetched 217,373 observations and inserted none, because FRED
+  had not published: at 09:50 ET `PPIFIS` still ended at July and `ICSA` at
+  29 August. The BLS API already had August final demand (`WPSFD4`
+  157.411) at 09:46 ET.
+- **That lag exposed a defect due to fire on Friday** (trap 65): the gate
+  would have called CPI landed from its BLS-API rows alone and stopped
+  polling before FRED published the headline. Fixed and deployed at
+  09:55 ET, with an atomic rename so no running window could load a partial
+  file, and verified against the live module: `releases_due_now()` still
+  returned `bls.ppi, eta.claims`.
+

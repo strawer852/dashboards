@@ -106,27 +106,47 @@ WHERE release_id = ANY(%s)
   AND (release_at AT TIME ZONE 'America/New_York')::date
     = (now() AT TIME ZONE 'America/New_York')::date
 """
-# Which releases are outstanding RIGHT NOW: dated today, past their embargo,
-# and with nothing yet stored under today's vintage. Resolved per release, and
-# that is the point. The windowed timers each carried a typed list and judged it
-# as a group, so on a day when two releases in one list both fell due, the
-# moment the first landed `_ALREADY_LANDED` answered yes for the pair and the
-# second was not polled again until the small hours. No day in the current
-# calendar triggers it -- 10 September 2026 carries two releases but they sit in
-# different lists -- which is exactly the kind of bug that waits.
-_DUE_NOW = """
-SELECT DISTINCT d.release_id
-FROM macro_release_dates d
-WHERE (d.release_at AT TIME ZONE 'America/New_York')::date
-    = (now() AT TIME ZONE 'America/New_York')::date
-  AND d.release_at <= now()
-  AND NOT EXISTS (
-    SELECT 1 FROM macro_observations o
-    JOIN macro_series_meta m USING (series_id)
-    WHERE m.release_id = d.release_id
-      AND (o.vintage_dt AT TIME ZONE 'UTC')::date
-        = (now() AT TIME ZONE 'America/New_York')::date)
-ORDER BY 1
+# Which (release, source) pairs dated today have not landed yet. A release has
+# landed only when EVERY source feeding it has written something since its
+# embargo -- judged per source, not per release. ingest.py stamps each new row
+# with the fetch time; the ALFRED backfill then replaces a FRED row's stamp with
+# its publication date (00:00 UTC), while a BLS or BEA row keeps its fetch time
+# for ever. The first version asked "is there any row dated today", so on a CPI
+# morning the 270 BLS-API items -- published at 08:30, fetched at 08:35 -- would
+# have answered yes for the whole release while the FRED headline was still an
+# hour away, and every later window would have stood down until the 01:40
+# sweep. Six of ten releases mix sources; CPI on 11 September 2026 was the first
+# to meet --due since trap 35 let BLS series reach ingest. CLAUDE.md trap 65.
+#
+# "Landed" is the distinction export.py already draws: a publication vintage
+# (00:00 UTC) on the release date, or a fetch-time vintage at or after the
+# embargo. A fetch before the embargo -- the 01:40 ET sweep catching something
+# unrelated -- is not the release.
+#
+# Still resolved per release, which is trap 33: two releases sharing a day are
+# judged separately, so the first to land cannot silence the second.
+_OUTSTANDING = """
+WITH today AS (
+  SELECT DISTINCT d.release_id, d.release_at
+  FROM macro_release_dates d
+  WHERE (d.release_at AT TIME ZONE 'America/New_York')::date
+      = (now() AT TIME ZONE 'America/New_York')::date
+), pairs AS (
+  SELECT DISTINCT t.release_id, t.release_at, m.source
+  FROM today t JOIN macro_series_meta m ON m.release_id = t.release_id
+)
+SELECT p.release_id, p.source, p.release_at <= now() AS past_embargo
+FROM pairs p
+WHERE NOT EXISTS (
+  SELECT 1 FROM macro_observations o
+  JOIN macro_series_meta m USING (series_id)
+  WHERE m.release_id = p.release_id
+    AND m.source = p.source
+    AND o.vintage_dt >= ((p.release_at AT TIME ZONE 'America/New_York')::date)::timestamp
+                        AT TIME ZONE 'UTC'
+    AND (o.vintage_dt >= p.release_at
+         OR (o.vintage_dt AT TIME ZONE 'UTC')::time = '00:00'))
+ORDER BY 1, 2
 """
 
 # A forward calendar with nothing in it is not a quiet day, it is a broken
@@ -136,25 +156,18 @@ _CAL_FORWARD = """
 SELECT count(*) FROM macro_release_dates WHERE release_at >= now() - interval '1 day'
 """
 
-# The vintage side is UTC and the calendar side is Eastern, which looks wrong
-# and is not. An ALFRED vintage is stored at MIDNIGHT of its realtime date, so
-# `2026-09-04 00:00+00` is the 4 September vintage -- but read in
-# America/New_York that timestamp is the 3rd, and the guard never matched.
-# It never fired once: on 4 September the release landed at 13:35Z and the
-# windows at 13:45Z and 13:55Z each fetched all 64,220 observations again.
-# Read on the UTC calendar the date is the one ALFRED meant. export.py already
-# identifies these rows the same way, by their 00:00:00 UTC time.
-_ALREADY_LANDED = """
-SELECT count(*) FROM macro_observations o
-JOIN macro_series_meta m USING (series_id)
-WHERE m.release_id = ANY(%s)
-  AND (o.vintage_dt AT TIME ZONE 'UTC')::date
-    = (now() AT TIME ZONE 'America/New_York')::date
-"""
+# The vintage side is read in UTC and the calendar side in Eastern, which looks
+# wrong and is not. An ALFRED vintage is stored at MIDNIGHT UTC of its realtime
+# date, so `2026-09-04 00:00+00` is the 4 September vintage -- but read in
+# America/New_York that timestamp is the 3rd, and the first guard never matched:
+# on 4 September the release landed at 13:35Z and the windows at 13:45Z and
+# 13:55Z each fetched all 64,220 observations again (trap 34). _OUTSTANDING
+# bounds the vintage by midnight UTC of the release's Eastern date for the same
+# reason. export.py identifies these rows the same way, by their 00:00:00 UTC.
 
 
 def nothing_to_poll_for(releases: list[str]) -> str | None:
-    """Why this windowed run can stop now, or None to carry on.
+    """Why this run can stop now, or None to carry on.
 
     Fails open on purpose: with no usable calendar rows this returns None and
     the run proceeds. A gate that can silence the pipeline when its own inputs
@@ -167,20 +180,24 @@ def nothing_to_poll_for(releases: list[str]) -> str | None:
         cur.execute(_CAL_DUE_TODAY, (releases,))
         if cur.fetchone()[0] == 0:
             return "nothing scheduled today; not polling"
-        cur.execute(_ALREADY_LANDED, (releases,))
-        if cur.fetchone()[0]:
-            return "today's release has already landed; not polling again"
+        cur.execute(_OUTSTANDING)
+        if not [r for r in cur.fetchall() if r[0] in releases]:
+            return "today's release has landed from every source; not polling again"
     return None
 
 
 def releases_due_now() -> list[str] | None:
-    """Releases the calendar says are outstanding, or None if it cannot say."""
+    """Releases the calendar says are outstanding, or None if it cannot say.
+
+    Outstanding: dated today, past its embargo, and not yet landed from every
+    source that feeds it.
+    """
     with psycopg.connect(DSN) as c, c.cursor() as cur:
         cur.execute(_CAL_FORWARD)
         if cur.fetchone()[0] == 0:
             return None
-        cur.execute(_DUE_NOW)
-        return [r[0] for r in cur.fetchall()]
+        cur.execute(_OUTSTANDING)
+        return sorted({r[0] for r in cur.fetchall() if r[2]})
 
 
 def catalogue_size() -> dict:

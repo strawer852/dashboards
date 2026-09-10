@@ -1214,6 +1214,37 @@ standard deviation of 0.88 points and no autocorrelation. They are the part
 of a PPI call that cannot be forecast, and the record should keep saying so
 rather than pretending a number for them is knowledge.
 
+65. **A release has landed when every source has, not when any row is dated
+    today.** The `--due` gate called a release landed as soon as any of its
+    series held a row with today's date. That was a one-source question asked
+    of a system with three: `ingest.py` stamps every new row with the fetch
+    time, the ALFRED backfill replaces a FRED row's stamp with its
+    publication date, and a BLS or BEA row keeps its fetch time for good. On
+    a CPI morning the 270 BLS-API items -- published at 08:30, fetched at
+    08:35 -- would have answered "landed" for the whole release while FRED,
+    which runs an hour or more behind (August PPI was on the BLS API and not
+    on FRED at 09:46 ET on 10 September), still had July. Every later window
+    would have stood down, and the FRED headline, core and stamp would have
+    waited for the 01:40 sweep. A BLS row from that overnight sweep, before
+    the embargo, satisfied the old test just as well.
+
+    It had never fired because no release that mixes sources had met `--due`
+    since trap 35 let BLS series reach ingest on 5 September -- and six of the
+    ten do: CPI (270 BLS, 199 FRED), JOLTS (144, 540), PCE (210 BEA, 25
+    FRED), the Employment Situation (36, 261), ECI (6, 398). Found on
+    10 September while watching PPI, the day before CPI. Trap 35's fix in
+    the caller created this one in the gate: **a change that lets a new
+    source through has to be followed to every place that assumed one.**
+
+    Fixed: `_OUTSTANDING` returns the (release, source) pairs dated today that
+    have not landed, and a pair has landed on a publication vintage (00:00
+    UTC) on the release date or a fetch-time vintage at or after the embargo
+    -- the distinction `export.py` already draws. Proven with six scenarios
+    in a rolled-back transaction: the old gate was wrong in the two that
+    matter (BLS in before FRED; a pre-embargo sweep row), the new one right
+    in all six, including trap 33's two releases on one day, and it runs in
+    6 ms against 65.
+
 ## How it runs
 
 ```

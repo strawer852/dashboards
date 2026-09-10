@@ -1,6 +1,6 @@
 # Handoff — 9 September 2026, end of the audit's second half
 
-**Read `CLAUDE.md` first.** It is the authority: 64 traps, the settled
+**Read `CLAUDE.md` first.** It is the authority: 65 traps, the settled
 decisions, the running state, the guardrails. This file is only the part that
 would be stale by the time you read it. Where they disagree, CLAUDE.md is right
 and this file is old. The audit's full record is `AUDIT_FINDINGS_2026-09-09.md`
@@ -75,7 +75,12 @@ yet. Nothing here needs pushing by hand.
    nine times gasoline, not thirteen; portfolio management swings −14% to
    +33%; the PPI persistence statistics; the teen-rate ratio "in normal
    times". Two month counts that drift now carry end dates.
-8. Small fixes along the way: PCE Table 14's CPI excluded-from-core share
+8. **10 September, watching PPI: the `--due` gate would have silenced
+   Friday's CPI.** It called a release landed on any row dated today, and
+   the BLS-API items land an hour before FRED. It now requires every source
+   feeding a release to have landed since the embargo (trap 65). Fixed and
+   deployed the day before CPI.
+9. Small fixes along the way: PCE Table 14's CPI excluded-from-core share
    (20.953), two state labels that carried "the", the "137 inputs" and "14
    residuals" spec comments (135 and 10).
 
@@ -118,7 +123,11 @@ through everything above. What good looks like in `logs/refresh.log`:
   `eta.claims` (a simulation of the query says exactly those two), BLS
   series fetched from a recent year rather than 1939, `validate rc=0`,
   `export`, an ntfy push, and later windows saying nothing outstanding.
-- Friday: the same for `bls.cpi` and `eta.state_claims`. The 87 backfilled
+- Friday: the same for `bls.cpi` and `eta.state_claims`. **New since the
+  trap 65 fix:** the first window will insert the BLS-API CPI items, and the
+  windows after it must keep naming `bls.cpi` until FRED publishes the
+  headline, about an hour later. A window saying "nothing outstanding"
+  before `CPIAUCSL` has an August value is the defect back. The 87 backfilled
   CPI items are on `from_row` for the first time, so expect the ALFRED
   refetch to run for them and their new vintages to be dated
   `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
