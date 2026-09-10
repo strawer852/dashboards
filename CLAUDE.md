@@ -499,7 +499,7 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     unit file — and twice nobody did. `refresh.py --due` asks
     `macro_release_dates` which releases are dated today, are past their
     embargo, and have nothing stored under today's vintage, then fetches
-    exactly those. One timer, `macro-refresh-due`, 08:35–14:55 ET on weekdays;
+    exactly those. One timer, `macro-refresh-due`, every ten minutes 08:35–14:55 ET and every thirty to 20:55 ET on weekdays;
     a new release needs a calendar row and nothing else. Two properties are
     load-bearing: it resolves **per release**, where the old grouped gate asked
     `_ALREADY_LANDED` for a whole list and would have gone quiet on the second
@@ -1547,7 +1547,7 @@ Scheduling is systemd **user** timers, wall-clock in `America/New_York`, all wit
 
 | Timer | Fires | Runs |
 |---|---|---|
-| `macro-refresh-due` | 08:35–14:55 ET, weekdays | whatever the calendar says is outstanding |
+| `macro-refresh-due` | 08:35–14:55 ET every 10 min, then to 20:55 ET every 30, weekdays | whatever the calendar says is outstanding |
 | `macro-refresh-sweep` | 01:40 ET daily | everything, catch-all |
 | `dashboards-push` | 23:30 local daily | push to GitHub, then verify by hash |
 

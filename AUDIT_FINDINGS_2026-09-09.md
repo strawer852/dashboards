@@ -428,4 +428,23 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   09:55 ET, with an atomic rename so no running window could load a partial
   file, and verified against the live module: `releases_due_now()` still
   returned `bls.ppi, eta.claims`.
+- **FRED missed the morning entirely.** At 10:34 ET it had updated 17
+  series all day, none of them PPI or claims, though the Labor Department's
+  claims report was posted at 08:29:59 ET and the BLS API had August PPI.
+  The Labor Department's own figures were saved for the cross-check: initial
+  claims 206,000 for the week to 5 September, the prior week revised to
+  207,000, four-week average 206,000, unadjusted 176,567, continuing claims
+  1,774,000 for the week to 29 August, insured rate 1.2%.
+- **The release window was extended** to poll every thirty minutes from
+  15:25 to 20:55 ET, so a release FRED posts in the afternoon lands the same
+  day rather than at the 01:40 sweep. Thirty minutes rather than ten keeps a
+  CPI day on which FRED never publishes at 316 BLS API calls of the key's
+  500, measured from the archive manifest.
+- **Recorded for after Friday's CPI**: use the BLS API as a provisional early
+  value for FRED-sourced series in BLS releases, replaced by ALFRED's dated
+  vintages exactly as the FRED CSV rows are now. It needs a value-verified
+  FRED-to-BLS id map (this audit's reconciliation supplies most of it), the
+  backfill clearing BLS provisional rows too, a gate that does not count a
+  provisional row as landed, and a stamp that can date a release before
+  ALFRED does. Claims cannot use it: they are the Labor Department's.
 

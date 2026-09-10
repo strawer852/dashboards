@@ -10,11 +10,25 @@ Description=Release-day poll, driven by the calendar rather than by a typed list
 #
 # The window is wide because the run is cheap: refresh.py --due asks the
 # calendar first and stops at a single database query when nothing is past its
-# embargo. It starts at 08:35 ET for the 08:30 releases -- FRED published about
-# an hour after the embargo on both the July and August Employment Situation --
-# and runs to 14:55 ET so JOLTS, embargoed at 10:00 ET, has the same margin.
+# embargo, and stands down once every source of a release has landed. It
+# starts at 08:35 ET for the 08:30 releases -- FRED published about an hour
+# after the embargo on both the July and August Employment Situation -- and
+# polls every ten minutes to 14:55 ET so JOLTS, embargoed at 10:00 ET, has the
+# same margin.
+#
+# Then every thirty minutes to 20:55 ET. On 10 September 2026 the BLS and the
+# Labor Department both published on time and FRED had neither PPI nor claims
+# past 10:30 ET; a release FRED posts after 14:55 ET would otherwise wait for
+# the 01:40 sweep, the next day. Thirty minutes, not ten, because of the BLS
+# key's 500 calls a day, measured from the archive manifest: the sweep uses
+# 10, and each CPI poll 6 (270 BLS-sourced series at 50 a call), JOLTS 3, the
+# Employment Situation 1, PPI and claims none. A CPI day on which FRED never
+# publishes is 51 polls, 316 calls with the sweep; ten-minute evenings would
+# have made it 75 polls and 460, too near the cap -- and a cap breach fails
+# ingest, which alerts (trap 39).
 OnCalendar=Mon..Fri *-*-* 08:35/10:00 America/New_York
 OnCalendar=Mon..Fri *-*-* 09..14:05/10:00 America/New_York
+OnCalendar=Mon..Fri *-*-* 15..20:25/30:00 America/New_York
 
 # Catch up on one missed window rather than waiting for tomorrow. Cron cannot,
 # which is what let the 3 September 2026 claims release sit unread.

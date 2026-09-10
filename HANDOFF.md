@@ -133,6 +133,17 @@ through everything above. What good looks like in `logs/refresh.log`:
   `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
   expected and right: FRED updates those series on the Friday.
 
+The release timer now polls every ten minutes from 08:35 to 14:55 ET and
+every thirty from 15:25 to 20:55 ET, extended on 10 September when FRED had
+posted neither PPI nor claims by mid-morning. If FRED is late, look again in
+the evening before concluding anything is wrong.
+
+**Next piece of work, after Friday's CPI has run cleanly**: the BLS API as a
+provisional early source for FRED series in BLS releases, replaced by
+ALFRED's dated vintages later. The design and its four parts are at the end
+of findings section 4.7. Do not start it before CPI has proven trap 65's
+gate, because it changes the same gate.
+
 Then look, not just read: `tools/shoot.py --path us/inflation/ppi` (and
 cpi, weekly-claims), the stamp dates in each bundle's `releases` block
 (claims must read the 10th, state claims the 11th), the newest heatmap
