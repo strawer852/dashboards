@@ -24,6 +24,9 @@ import logging
 import os
 from datetime import date, datetime, timezone
 
+import time
+from collections import deque
+
 import httpx
 import archive
 from tenacity import (
@@ -64,10 +67,41 @@ def api_key() -> str:
         ) from None
 
 
+class RateLimited(FredError):
+    """FRED answered 429 Too Many Requests."""
+
+
+# FRED allows 120 requests a minute per API key. The ALFRED backfill made its
+# calls as fast as the network allowed, and on 10 September 2026 the PPI
+# release -- 614 series revised at once -- ran into the limit at WPUID632.
+# The retry policy then waited one, two and four seconds, while FRED's window
+# is a minute, so all four attempts landed inside it and the refresh failed
+# with the release half written. Paced here to stay under the limit, and a
+# 429 that still arrives waits the window out. CLAUDE.md trap 67.
+_RATE_PER_MINUTE = 110
+_calls: deque = deque()
+
+
+def _pace() -> None:
+    now = time.monotonic()
+    while _calls and now - _calls[0] >= 60:
+        _calls.popleft()
+    if len(_calls) >= _RATE_PER_MINUTE:
+        time.sleep(60 - (now - _calls[0]) + 0.05)
+    _calls.append(time.monotonic())
+
+
+def _wait(retry_state) -> float:
+    exc = retry_state.outcome.exception() if retry_state.outcome else None
+    if isinstance(exc, RateLimited):
+        return 65.0
+    return min(10.0, 2.0 ** (retry_state.attempt_number - 1))
+
+
 def _retry():
     return Retrying(
-        stop=stop_after_attempt(4),
-        wait=wait_exponential(multiplier=1, min=1, max=10),
+        stop=stop_after_attempt(6),
+        wait=_wait,
         retry=retry_if_exception_type((httpx.HTTPError, FredError)),
         reraise=True,
     )
@@ -77,7 +111,10 @@ def _get(client: httpx.Client, path: str, params: dict) -> dict:
     params = {**params, "api_key": api_key(), "file_type": "json"}
     for attempt in _retry():
         with attempt:
+            _pace()
             r = client.get(f"{FRED_BASE}{path}", params=params)
+            if r.status_code == 429:
+                raise RateLimited(f"FRED {path} returned 429: {r.text[:200]}")
             if r.status_code != 200:
                 raise FredError(f"FRED {path} returned {r.status_code}: {r.text[:200]}")
             return r.json()
@@ -91,6 +128,8 @@ def get_observations_csv(series_id: str) -> list[tuple[date, float | None]]:
         with attempt:
             with httpx.Client(timeout=HTTP_TIMEOUT, follow_redirects=True) as client:
                 r = client.get(FRED_CSV, params={"id": series_id})
+                if r.status_code == 429:
+                    raise RateLimited(f"FRED csv {series_id} returned 429: {r.text[:160]}")
                 if r.status_code != 200:
                     raise FredError(
                         f"FRED csv {series_id} returned {r.status_code}: {r.text[:160]}"

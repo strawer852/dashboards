@@ -1,6 +1,6 @@
 # Handoff — 9 September 2026, end of the audit's second half
 
-**Read `CLAUDE.md` first.** It is the authority: 65 traps, the settled
+**Read `CLAUDE.md` first.** It is the authority: 67 traps, the settled
 decisions, the running state, the guardrails. This file is only the part that
 would be stale by the time you read it. Where they disagree, CLAUDE.md is right
 and this file is old. The audit's full record is `AUDIT_FINDINGS_2026-09-09.md`
@@ -132,6 +132,18 @@ through everything above. What good looks like in `logs/refresh.log`:
   refetch to run for them and their new vintages to be dated
   `2026-09-11 00:00`, not a fetch time. The state poll on Friday is
   expected and right: FRED updates those series on the Friday.
+
+**PPI, 10 September: landed, failed halfway, restored, fixed** (trap 67).
+FRED's rate limit stopped the backfill and the gate called the release
+landed, so the page kept July until a forced run at 13:19 ET. The pipeline
+now paces FRED, polls a release until it has **settled** (a later poll found
+nothing new), and retries a failed backfill or export on the next poll.
+Friday's CPI is the first release through it: good looks like the polls
+continuing past the first landing, one quiet poll logging `settled: bls.cpi`,
+and then "nothing outstanding". **Merging `bls-provisional` will conflict in
+`macro/refresh.py`**: both change `_OUTSTANDING` and the main loop. Keep all
+three rules -- the branch's `o.source <> 'bls_provisional'` exclusion and
+per-source fetching, and master's settle state and leftover-work retry.
 
 **Fixed 10 September at William's request**: every date axis now labels
 its newest period, where 5 of 164 did, and `clipcheck.py` enforces it at

@@ -1263,6 +1263,39 @@ rather than pretending a number for them is knowledge.
     in all six, including trap 33's two releases on one day, and it runs in
     6 ms against 65.
 
+67. **A release is not done when it lands, and a refresh that failed after
+    ingest was never retried.** Two faults in one PPI afternoon, 10 September
+    2026. FRED posted PPI at 12:53 ET; the 12:55 ET poll ingested 2,987 rows
+    across 614 series, and the ALFRED backfill then ran into FRED's limit of
+    120 requests a minute at `WPUID632`. `fred.py` retried after 1, 2 and 4
+    seconds, all inside a sixty-second window, so the refresh failed before
+    validation and export and the page kept July. The next poll said
+    "nothing outstanding": the gate saw post-embargo rows and called PPI
+    landed. Nothing would have finished the job anyway -- the rows were
+    written, so the next poll inserted nothing, and "nothing new" meant
+    "nothing to do", the 01:40 sweep included. And that first poll had caught
+    614 series but not `PPIFIS` itself, whose CSV still read July three
+    minutes after FRED's API listed August: **FRED does not update a release
+    atomically.**
+
+    Fixed three ways. `fred.py` paces keyed calls at 110 a minute and waits
+    65 seconds on a 429, up to six attempts. `refresh.py` treats a release as
+    done only once **settled** -- a poll after it landed found nothing new and
+    had no work left -- recorded in `macro_release_dates.status`, and polls
+    only unsettled releases. And a poll that inserts nothing still backfills
+    FRED series holding provisional rows written in the last two days, and
+    re-validates and re-exports if the previous run failed. Tested against a
+    simulated server (two 429s then success, server errors, six 429s, 115
+    rapid calls) and in a rolled-back transaction (landed but unsettled,
+    settling one of two releases, an unlanded release never settling, recent
+    against stale provisional rows). The page was restored at 13:19 ET with
+    the pipeline's own `backfill.py` and `refresh.sh --force`, which picked
+    up `PPIFIS` and `PPIFES`. Deployed at 13:21 ET and proven on the next
+    poll: at 13:25 ET it fetched claims and PPI, inserted nothing, and logged
+    `settled: bls.ppi, eta.claims`; at 13:35 it said "nothing outstanding".
+    **Landed is an observation; settled is a conclusion, and only a later
+    poll can reach it.**
+
 ## How it runs
 
 ```

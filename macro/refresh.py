@@ -139,27 +139,37 @@ WHERE release_id = ANY(%s)
 #
 # Still resolved per release, which is trap 33: two releases sharing a day are
 # judged separately, so the first to land cannot silence the second.
+#
+# Landed is not finished. FRED does not update a release atomically: on
+# 10 September 2026 the 12:55 ET poll caught 614 PPI series but not PPIFIS
+# itself, whose CSV still read July, and the gate -- seeing post-embargo rows
+# -- stood down, so the headline would have waited for the 01:40 sweep. A
+# release is now done only when it is SETTLED: a poll after it landed found
+# nothing new and had no work left over. `settle()` records that in
+# macro_release_dates.status, and only unsettled releases are polled.
+# CLAUDE.md trap 67.
 _OUTSTANDING = """
 WITH today AS (
-  SELECT DISTINCT d.release_id, d.release_at
+  SELECT DISTINCT d.release_id, d.release_at, d.status
   FROM macro_release_dates d
   WHERE (d.release_at AT TIME ZONE 'America/New_York')::date
       = (now() AT TIME ZONE 'America/New_York')::date
+    AND d.status IS DISTINCT FROM 'settled'
 ), pairs AS (
   SELECT DISTINCT t.release_id, t.release_at, m.source
   FROM today t JOIN macro_series_meta m ON m.release_id = t.release_id
 )
-SELECT p.release_id, p.source, p.release_at <= now() AS past_embargo
+SELECT p.release_id, p.source, p.release_at <= now() AS past_embargo,
+       NOT EXISTS (
+         SELECT 1 FROM macro_observations o
+         JOIN macro_series_meta m USING (series_id)
+         WHERE m.release_id = p.release_id
+           AND m.source = p.source
+           AND o.vintage_dt >= ((p.release_at AT TIME ZONE 'America/New_York')::date)::timestamp
+                               AT TIME ZONE 'UTC'
+           AND (o.vintage_dt >= p.release_at
+                OR (o.vintage_dt AT TIME ZONE 'UTC')::time = '00:00')) AS unlanded
 FROM pairs p
-WHERE NOT EXISTS (
-  SELECT 1 FROM macro_observations o
-  JOIN macro_series_meta m USING (series_id)
-  WHERE m.release_id = p.release_id
-    AND m.source = p.source
-    AND o.vintage_dt >= ((p.release_at AT TIME ZONE 'America/New_York')::date)::timestamp
-                        AT TIME ZONE 'UTC'
-    AND (o.vintage_dt >= p.release_at
-         OR (o.vintage_dt AT TIME ZONE 'UTC')::time = '00:00'))
 ORDER BY 1, 2
 """
 
@@ -196,7 +206,7 @@ def nothing_to_poll_for(releases: list[str]) -> str | None:
             return "nothing scheduled today; not polling"
         cur.execute(_OUTSTANDING)
         if not [r for r in cur.fetchall() if r[0] in releases]:
-            return "today's release has landed from every source; not polling again"
+            return "today's release has settled; not polling again"
     return None
 
 
@@ -212,6 +222,50 @@ def releases_due_now() -> list[str] | None:
             return None
         cur.execute(_OUTSTANDING)
         return sorted({r[0] for r in cur.fetchall() if r[2]})
+
+
+def landed_unsettled(releases: list[str]) -> list[str]:
+    """Of these releases, those landed from every source but not yet settled:
+    the ones a poll that finds nothing new, and has no work left, may settle."""
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute(_OUTSTANDING)
+        rows = [r for r in cur.fetchall() if r[0] in releases]
+    by_rel: dict[str, list[bool]] = {}
+    for rel, _src, past, unlanded in rows:
+        by_rel.setdefault(rel, []).append(past and not unlanded)
+    return sorted(r for r, ok in by_rel.items() if all(ok))
+
+
+def settle(releases: list[str]) -> None:
+    """Mark today's calendar row for each release settled."""
+    if not releases:
+        return
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute("""
+            UPDATE macro_release_dates SET status = 'settled'
+            WHERE release_id = ANY(%s)
+              AND (release_at AT TIME ZONE 'America/New_York')::date
+                = (now() AT TIME ZONE 'America/New_York')::date
+        """, (releases,))
+        c.commit()
+
+
+def pending_backfill(series: list[str]) -> list[str]:
+    """FRED series among these still holding provisional CSV rows written in
+    the last two days: a backfill that failed or never ran. Two days, so a
+    failed release morning is retried by every poll until it succeeds, while
+    anchor rows kept on purpose for series ALFRED has no history for are not
+    re-sent for ever."""
+    if not series:
+        return []
+    with psycopg.connect(DSN) as c, c.cursor() as cur:
+        cur.execute("""
+            SELECT DISTINCT series_id FROM macro_observations
+            WHERE series_id = ANY(%s) AND source = 'fred_csv'
+              AND vintage_dt > now() - interval '2 days'
+            ORDER BY 1
+        """, (series,))
+        return [r[0] for r in cur.fetchall()]
 
 
 def catalogue_size() -> dict:
@@ -323,6 +377,10 @@ def main() -> int:
                     "Dashboard refresh misconfigured",
                     f"No catalogued series for {label}.", "", "warning")
 
+    # Releases already landed from every source before this poll: if it finds
+    # nothing new and nothing is left over, they are settled (trap 67).
+    settling = landed_unsettled(args.releases) if (args.due and args.releases) else []
+
     rc, out = run("ingest.py", "--series", *sids)
     tail = [l for l in out.strip().splitlines() if l.strip()][-1:]
     log(f"ingest rc={rc} {tail[0] if tail else ''}")
@@ -332,23 +390,38 @@ def main() -> int:
 
     changed = changed_since(started)
     status["changed"] = changed
+    # Work a failed run left behind. A refresh that fails after ingest leaves
+    # its rows written, so the next poll inserts nothing -- and until 10
+    # September 2026 "nothing new" meant "nothing to do", so the backfill and
+    # the export the failure skipped were never retried (trap 67).
+    pending = sorted(set(pending_backfill(sids)) - set(changed))
+    prior_failed = prior.get("ok") is False
 
-    if not changed and not args.force:
+    if not changed and not pending and not prior_failed and not args.force:
         log("no new observations; nothing to do")
+        if settling:
+            settle(settling)
+            log(f"settled: {', '.join(settling)}")
         write_status(status)
         return 0
 
+    if pending:
+        log(f"backfill left over from an earlier run: {', '.join(pending)}")
+    if prior_failed and not changed and not pending:
+        log("previous run failed; validating and exporting again")
+    to_backfill = sorted(set(changed) | set(pending))
     if changed:
         log(f"changed: {', '.join(changed)}")
+    if to_backfill:
         # ALFRED is authoritative. The rows just written carry a fetch-time
         # vintage as a placeholder; this replaces them with real realtime_start
         # vintages, for the affected series only.
-        rc, out = run("backfill.py", "--series", *changed)
+        rc, out = run("backfill.py", "--series", *to_backfill)
         last = out.strip().splitlines()[-1] if out.strip() else ""
         log(f"backfill rc={rc} {last}")
         if rc != 0:
             return fail("backfill failed", "Dashboard refresh failed",
-                        f"ALFRED backfill failed for {', '.join(changed)}."
+                        f"ALFRED backfill failed for {', '.join(to_backfill)}."
                         f"{NL}{NL}{out[-600:]}", out, "warning")
 
     rc, out = run("validate.py")

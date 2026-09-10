@@ -512,4 +512,26 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   Tables 8 and 9 that the state report comes the day after the national one,
   so from Thursday to Friday they end a week before Table 1 -- the lags
   measured from first-publication vintages, not assumed.
+- **PPI landed on FRED at 12:53 ET and the release failed halfway** (trap
+  67). The 12:55 ET poll inserted 2,987 rows and changed 614 series; the
+  ALFRED backfill hit FRED's rate limit at `WPUID632` and exited 1, so no
+  validation, no export, and a failure push. The 13:10 ET poll stood down,
+  calling PPI landed. That poll had also missed `PPIFIS` and `PPIFES`, whose
+  CSV still read July. Restored at 13:19 ET: `backfill.py --series
+  WPUID632`, then `tools/refresh.sh --releases bls.ppi --force`, which
+  inserted the 10 missing rows, backfilled them, validated 38/38, exported,
+  and pushed "New data: bls.ppi" -- the alert fix of 31278bc on its first
+  real release.
+- **FRED reproduces BLS exactly for PPI**: final demand 157.411 for August
+  and 156.784 for revised July, unadjusted 157.604 and 157.155, identical on
+  the BLS API. The bundle reads released 10 September for August; Tables 1
+  and 2 draw and label August; Table 6's weights have re-drifted to August
+  prices. Coverage 100%, keycheck 0, clipcheck clean at both widths.
+- **Fixed before Friday's CPI**, which changes several hundred series and
+  would have hit both faults: FRED calls paced under the limit with 429s
+  waited out; releases polled until settled; leftover backfill and a failed
+  export retried by the next poll. Deployed at 13:21 ET under the refresh
+  lock and proven live: the 13:25 ET poll fetched claims and PPI, inserted
+  nothing and logged `settled: bls.ppi, eta.claims`; both calendar rows read
+  `settled`; the 13:35 ET poll said "nothing outstanding; not polling".
 
