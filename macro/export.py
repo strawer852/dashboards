@@ -382,12 +382,23 @@ def main() -> int:
             # stored at midnight. A fetch-date vintage is just when we asked,
             # and carries a time of day -- so it can date nothing. Taking the
             # max over both reported a daily re-fetch as a release.
+            #
+            # The period comes from the same rows as the date. It was the
+            # newest observation of ANY row, so on 11 September 2026 the BLS
+            # API's August CPI items landed at 08:30 while FRED still held
+            # July, and the page read "August 2026, released 12 Aug" -- the
+            # date of July's release against August's period. A period with
+            # no published vintage behind it falls back to the newest row,
+            # and then the stamp carries no date at all. CLAUDE.md trap 68.
             cur.execute(
                 "SELECT r.release_id, r.name, r.agency, r.cadence, "
                 "       max(o.vintage_dt) FILTER (WHERE "
                 "         (o.vintage_dt AT TIME ZONE 'UTC')::time "
                 "         = '00:00:00'), "
-                "       max(o.observation_dt) "
+                "       coalesce(max(o.observation_dt) FILTER (WHERE "
+                "         (o.vintage_dt AT TIME ZONE 'UTC')::time "
+                "         = '00:00:00' AND o.value IS NOT NULL), "
+                "         max(o.observation_dt)) "
                 "FROM macro_releases r "
                 "JOIN macro_series_meta m ON m.release_id = r.release_id "
                 "JOIN macro_observations o ON o.series_id = m.series_id "

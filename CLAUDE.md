@@ -1296,6 +1296,49 @@ rather than pretending a number for them is knowledge.
     **Landed is an observation; settled is a conclusion, and only a later
     poll can reach it.**
 
+68. **The hour between the BLS API and FRED exposed two more faults, on the
+    first CPI morning through the new gate, 11 September 2026.** BLS-API
+    CPI items publish at the 08:30 ET embargo; FRED's headline series follow
+    an hour or more later. Both faults live in that hour.
+
+    **The stamp took its period from one source and its date from the
+    other.** `export.py` read `released_at` from publication vintages only
+    (trap 19) and `ref_period` from the newest observation of any row. From
+    08:37 ET the CPI page read "Consumer Price Index · August 2026 ·
+    Released 12 Aug 2026": the date July was published, against August's
+    period, over a headline still on July. Every check was green and the
+    screenshot showed it. The period now comes from the same rows as the
+    date, the newest non-null observation carried by a publication vintage,
+    falling back to the newest row only for a release with no publication
+    vintage at all, which then shows no date. Exported into a scratch
+    directory first: across all seven bundles the only difference was
+    `bls.cpi`'s `ref_period`, August to July, on the CPI and PCE pages.
+    **Every part of a stamp must come from the same rows, or the parts
+    describe different releases.**
+
+    **The keyless CSV path was never paced, and FRED's edge blocked the
+    VPS.** Trap 67 paced the keyed API. The CSV downloads every poll starts
+    with still ran as fast as the network allowed. The 08:55 ET poll made
+    305 in 24 seconds, the first minute above the 134-157 that runs had
+    peaked at for days. The 09:05 ET poll got 148 in and then `403 You don't
+    have permission to access` on every request for ten minutes, the first
+    403 this log has ever recorded. The 09:25 poll got 140 in and was
+    blocked again, and a single curl from the box got 403 at 09:28. Each
+    failed poll pushed "Dashboard refresh failed" over data that was fine,
+    and the retry backoff of one to ten seconds spent itself inside the
+    block. Now paced by spacing, 0.6 seconds between downloads, because a
+    count per minute still allows 110 downloads in eight seconds. Proven
+    offline with a fake client, gaps of 0.600 seconds, so the test sent FRED
+    nothing while it was refusing us. **A limit nobody documented is still a
+    limit: pace every path to a host, not only the one with published
+    terms.**
+
+    Both installed at 09:35:42 ET under the refresh lock. The poll that
+    started that second made 198 downloads in 2 minutes 12 seconds, at most
+    3 in any second and 18 in any ten, drew no 403, and re-exported through
+    trap 67's retry: both bundles carrying `bls.cpi` then read July,
+    released 12 August.
+
 ## How it runs
 
 ```

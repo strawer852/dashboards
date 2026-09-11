@@ -535,3 +535,59 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   nothing and logged `settled: bls.ppi, eta.claims`; both calendar rows read
   `settled`; the 13:35 ET poll said "nothing outstanding; not polling".
 
+### 4.8 The release watch, 11 September: CPI and the state claims report
+
+- **State claims landed and settled on the timers alone.** The 08:35 ET
+  poll's 262 changed series held no state series. The 08:45 ET poll inserted
+  106 rows at 08:48, backfilled 106 vintage rows, validated 38/38, exported
+  and pushed "New data: eta.state_claims". The 08:55 ET poll inserted
+  nothing and logged `settled: eta.state_claims`. `AKICLAIMS` now ends
+  2026-09-05, so Weekly Claims Tables 8 and 9 reach the same week as
+  Table 1.
+- **The BLS-API CPI detail landed at the embargo; FRED's headline did not.**
+  The 08:35 ET poll inserted 262 rows (`CUUR0000SA0`, `CUUR0000SA0L1E`,
+  `CUSR0000SETE` and the other BLS-sourced items, all at August), stored no
+  vintage rows in the backfill, validated 38/38, exported at 08:37, and
+  pushed "New data: bls.cpi". At 09:22 ET FRED's CSV for `CPIAUCSL` still
+  ended `2026-07-01,332.813`. The gate kept polling, as trap 65 intends:
+  the calendar row stayed `scheduled` because the FRED source had not
+  landed.
+- **Fixed: the CPI stamp read "August 2026, Released 12 Aug 2026"** from
+  08:37 ET, confirmed by screenshot. `ref_period` came from the newest row
+  of any source and `released_at` from publication vintages only, so the
+  period was August's (BLS API) and the date July's (ALFRED). Per release,
+  at 09:21 ET:
+
+  | release | newest row, any source | newest with a publication vintage | released_at |
+  |---|---|---|---|
+  | `bls.cpi` | 2026-08-01 | 2026-07-01 | 2026-08-12 |
+  | the other nine | equal to the next column | | |
+
+  The period now comes from publication vintages too (trap 68). A scratch
+  export changed exactly one field across all seven bundles: `bls.cpi`
+  `ref_period`, 2026-08-01 to 2026-07-01, carried by the CPI and PCE
+  bundles.
+- **Fixed: FRED's edge blocked the VPS for bursting the keyless CSV
+  endpoint.** Downloads per poll, measured from the archive manifest:
+
+  | poll (ET) | downloads | most in one second | most in ten seconds | outcome |
+  |---|---|---|---|---|
+  | 08:55 | 305 in 24 s | 23 | 189 | fine |
+  | 09:05 | 148, then 403s | 22 | 148 | `ingest rc=1`, 13 series 403, push "Dashboard refresh failed" |
+  | 09:15 | 227 | | | recovered: "previous run failed; validating and exporting again", 38/38, export |
+  | 09:25 | 140, then 403s | | | `ingest rc=1`, a second false failure push |
+  | 09:35, paced | 198 in 2 min 12 s | 3 | 18 | `ingest rc=0`, no 403; re-validated 38/38 and exported, `bls.cpi` `ref_period` 2026-07-01 |
+
+  The error body was FRED's edge page, `You don't have permission to access
+  "http://fred.stlouisfed.org/..."`, the first 403 in the log's history. A
+  single curl from the box returned 200 at 09:20 ET and 403 at 09:28. The
+  CSV path now spaces downloads 0.6 seconds apart (trap 68), proven offline
+  with a fake client before install so no test request reached FRED during
+  the block. Both files were installed at 09:35:42 ET under the refresh
+  lock, the moment the failing 09:25 poll released it.
+- **Recorded, not changed: a 403 is retried on the short backoff.** Five
+  retries over about 25 seconds cannot outlast a ten-minute block, so each
+  blocked series fails and the next poll retries. Treating a 403 like a 429,
+  with a 65-second wait, would stretch one blocked run past an hour while
+  holding the lock. With the trigger removed and the trap 67 retry
+  recovering on the next poll, failing fast is the better trade.

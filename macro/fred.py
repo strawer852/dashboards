@@ -91,6 +91,27 @@ def _pace() -> None:
     _calls.append(time.monotonic())
 
 
+# The keyless CSV endpoint is paced by SPACING, not by a count per minute. It
+# has no documented limit and ran unpaced at about thirteen downloads a
+# second: on 11 September 2026 the 08:55 ET poll fetched every CPI series in
+# 24 seconds, the 09:05 and 09:25 polls each got about 140 in their first
+# minute, and FRED's edge then answered 403 "You don't have permission to
+# access" for minutes at a time. Runs had peaked at 134-157 a minute for days
+# without one; the first minute ever above that (305) was followed by the
+# first 403s ever logged. A per-minute cap like _pace() would still allow 110
+# requests in eight seconds, so this spaces them instead. CLAUDE.md trap 68.
+_CSV_SPACING = 0.6
+_csv_last = 0.0
+
+
+def _pace_csv() -> None:
+    global _csv_last
+    wait = _csv_last + _CSV_SPACING - time.monotonic()
+    if wait > 0:
+        time.sleep(wait)
+    _csv_last = time.monotonic()
+
+
 def _wait(retry_state) -> float:
     exc = retry_state.outcome.exception() if retry_state.outcome else None
     if isinstance(exc, RateLimited):
@@ -127,6 +148,7 @@ def get_observations_csv(series_id: str) -> list[tuple[date, float | None]]:
     for attempt in _retry():
         with attempt:
             with httpx.Client(timeout=HTTP_TIMEOUT, follow_redirects=True) as client:
+                _pace_csv()
                 r = client.get(FRED_CSV, params={"id": series_id})
                 if r.status_code == 429:
                     raise RateLimited(f"FRED csv {series_id} returned 429: {r.text[:160]}")
