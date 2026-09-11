@@ -1,11 +1,11 @@
 # Handoff — 10 September 2026, evening
 
-**Read `CLAUDE.md` first.** It is the authority: 67 traps on master (trap 66
-lives on the `bls-provisional` branch until it is merged), the settled
+**Read `CLAUDE.md` first.** It is the authority: traps 1-65, 67 and 68 on master
+(trap 66 lives on the `bls-provisional` branch until it is merged), the settled
 decisions, the running state, the guardrails. This file is only the part that
 would be stale by the time you read it; where the two disagree, CLAUDE.md is
-right. The audit's record is `AUDIT_FINDINGS_2026-09-09.md`, and section 4.7
-covers the 10 September releases.
+right. The audit's record is `AUDIT_FINDINGS_2026-09-09.md`, section 4.7
+covers the 10 September releases and 4.8 the 11 September CPI morning.
 
 **Nobody is watching.** The session that wrote this stopped its wake-ups once
 PPI and claims settled. Friday's CPI runs on the timers alone; the checklist
@@ -84,10 +84,14 @@ cd ~/dashboards/macro && set -a && . ../.env && set +a
 ```
 
 The release timer polls every ten minutes from 08:35 to 14:55 ET and every
-thirty from 15:25 to 20:55 ET. A late FRED is normal; look again in the
+thirty from 15:25 to 20:55 ET. Since 11 September FRED's CSV downloads are
+spaced 0.6 seconds apart (trap 68), so a CPI poll takes about two and a half
+minutes and the 01:40 sweep about twenty-five. A `403 You don't have
+permission to access` from FRED is its edge refusing a burst: the poll
+fails, alerts, and the next one retries. A late FRED is normal; look again in the
 evening before calling anything broken.
 
-## What changed on 9 and 10 September
+## What changed on 9, 10 and 11 September
 
 **9 September, the audit's second half** (2f75988, d160b72, 08e921a,
 ccde9eb, b685260, b9b8c86):
@@ -135,6 +139,19 @@ before touching the forecast panels.
   Restored at 13:19 ET by hand, fixed, and proven live when the 13:25 ET
   poll logged `settled: bls.ppi, eta.claims`. FRED matches BLS exactly:
   final demand 157.411 for August.
+
+**11 September, the CPI morning** (a0d3ebe, trap 68, findings 4.8):
+
+- **FRED's CSV downloads are spaced 0.6 seconds apart.** They had been
+  unpaced, up to 23 a second. FRED's edge answered 403 to the 09:05 and
+  09:25 ET polls, each failing with a false "Dashboard refresh failed" push.
+  The next poll recovered each time through trap 67's retry. The first
+  paced poll made 198 downloads, at most 3 a second, with no 403.
+- **The stamp's period comes from the rows that date it.** From 08:37 ET the
+  BLS-API items put CPI's `ref_period` at August while `released_at` stayed
+  on July's 12 August, so the page read "August 2026, Released 12 Aug 2026".
+  It now reads July until FRED's August lands, confirmed by screenshot.
+- **State claims landed at 08:48 ET and settled at 08:55**, 106 rows.
 
 ## Where it stands
 
@@ -196,7 +213,8 @@ python3 tools/stamp_assets.py
 git worktree remove ../dashboards-bls-provisional
 ```
 
-**The merge will conflict in three places:**
+**The merge will conflict in three places, and needs one change that will
+not show as a conflict:**
 
 - **`macro/refresh.py`**: both sides rewrote `_OUTSTANDING` and the main
   loop after the branch was cut. Keep all of it: the branch's
@@ -208,8 +226,17 @@ git worktree remove ../dashboards-bls-provisional
   rolled-back transaction.
 - **The eight pages' `?v=` stamps**, because both sides changed the engine:
   take either side and rerun `tools/stamp_assets.py`.
-- **`CLAUDE.md`**: both insert a trap before "## How it runs"; keep trap 66
-  from the branch and trap 67 from master, in that order.
+- **`CLAUDE.md`**: both insert traps before "## How it runs"; keep trap 66
+  from the branch, then 67 and 68 from master, in that order.
+- **`macro/export.py`, no textual conflict, a real one in meaning.** Master
+  now takes a release's `ref_period` from publication vintages only (trap
+  68), so the stamp's period and date come from the same rows. The branch
+  dates a provisional release from the calendar. Merged as they stand, a
+  morning with early BLS figures would read "July 2026 · Released 11 Sep":
+  July's period against August's release. Where the branch sets
+  `released_at` from `provisional_releases`, set `ref_period` from the
+  newest `bls_provisional` observation too (add `max(o.observation_dt)` to
+  `PROVISIONAL_SQL`), and add that case to the scenarios before merging.
 
 The first release that exercises it is JOLTS on 29 September: look for
 `provisional from the BLS API, pending FRED:` on the first poll, "Early
