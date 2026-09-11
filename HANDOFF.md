@@ -1,4 +1,4 @@
-# Handoff — 10 September 2026, evening
+# Handoff — 11 September 2026, after CPI
 
 **Read `CLAUDE.md` first.** It is the authority: traps 1-65, 67 and 68 on master
 (trap 66 lives on the `bls-provisional` branch until it is merged), the settled
@@ -7,9 +7,11 @@ would be stale by the time you read it; where the two disagree, CLAUDE.md is
 right. The audit's record is `AUDIT_FINDINGS_2026-09-09.md`, section 4.7
 covers the 10 September releases and 4.8 the 11 September CPI morning.
 
-**Nobody is watching.** The session that wrote this stopped its wake-ups once
-PPI and claims settled. Friday's CPI runs on the timers alone; the checklist
-below is what to look at afterwards.
+**Nobody is watching.** Friday's CPI and state claims both settled on the
+timers, after two faults were fixed mid-morning (trap 68). Next up: national
+claims on Thursday 17 September, state claims on Friday 18 September, JOLTS
+on 29 September. The checklist below is what a good release morning looks
+like.
 
 ## Where to run
 
@@ -32,11 +34,16 @@ From inside the session, `pstree -s -p $$` must show `tmux: server` above
 `claude`. Commits push nightly at 23:30 via `dashboards-push`;
 `git log --oneline origin/master..HEAD` lists what the laptop cannot see yet.
 
-## First: Friday 11 September, CPI and the state claims report
+## A release morning, as checked on Friday 11 September
 
 Both at 08:30 ET. The first CPI through three changes made on the 10th: the
 per-source gate (trap 65), the settle rule (trap 67), and FRED pacing (trap
 67). What good looks like in `logs/refresh.log`:
+
+**On the 11th it went this way:** BLS-API items exported at 08:37 ET, state
+claims at 08:49 and settled at 08:55, FRED's CPI in two waves exported at
+09:48 and 09:58, and `settled: bls.cpi` at 10:07. Two polls failed on FRED's
+403 block before the 09:35 fix. Findings 4.8 has the figures.
 
 1. **01:40 ET sweep**: `release dates rc=0`; ingest inserts nothing or
    little.
@@ -155,14 +162,14 @@ before touching the forecast panels.
 
 ## Where it stands
 
-**3,127 series across 10 releases and three sources; 3,446,789 vintage rows
-over 1,367,879 observations, 1913 to 5 September 2026; 38/38 validations;
+**3,127 series across 10 releases and three sources; 3,447,358 vintage rows
+over 1,368,446 observations, 1913 to 5 September 2026; 38/38 validations;
 100% coverage; clipcheck clean at both widths.**
 
 | Release | Sources | Publishes | Next | Status |
 |---|---|---|---|---|
-| `bls.cpi` | 270 BLS, 199 FRED | 08:30 ET | 11 Sep | scheduled |
-| `eta.state_claims` | 106 FRED | Fridays | 11 Sep | scheduled |
+| `bls.cpi` | 270 BLS, 199 FRED | 08:30 ET | 14 Oct | settled 11 Sep |
+| `eta.state_claims` | 106 FRED | Fridays | 18 Sep | settled 11 Sep |
 | `eta.claims` | 9 FRED | Thursdays | 17 Sep | settled 10 Sep |
 | `bls.ppi` | 640 FRED | 08:30 ET | 15 Oct | settled 10 Sep |
 | `bls.jolts` | 144 BLS, 540 FRED | 10:00 ET | 29 Sep | |
@@ -251,8 +258,24 @@ figures from the BLS API, pending FRED" in the stamp, polls continuing, then
   `CUUR0000SA0L1E` are held, and `PPIFID` now is too, so switching is a page
   change, not an ingest.
 - **A single transient FRED error fails a poll and pushes an alert** that the
-  next poll clears, as a 404 on `WPUFD4232` did at 11:55 ET on the 10th.
-  Proposed: push only when the same series fails on two consecutive polls.
+  next poll clears, as a 404 on `WPUFD4232` did at 11:55 ET on the 10th and
+  FRED's 403 block did twice on the 11th, at 09:05 and 09:25 ET. Proposed:
+  push only when the same series fails on two consecutive polls.
+- **The settle rule assumes FRED posts a release in one go, and it does
+  not.** On the 11th FRED posted CPI in two waves ten minutes apart; a
+  longer pause would have settled CPI with 129 series, core among them, on
+  July, with nothing polling again until the 01:40 sweep. A stricter rule
+  settles only when no published FRED series in the release is behind the
+  newest period its FRED series have reached. It needs a careful definition
+  of "behind", because sparse and dead series exist. Findings 4.8. Decide
+  before the Employment Situation on 2 October.
+- **`bls-provisional` replaces a disagreeing BLS figure silently.** Proposed
+  before deploying: count those replacements and push an alert naming the
+  series and both values, since FRED copies BLS exactly (64 of 64 drawn CPI
+  series identical for August) and a disagreement means a wrong id mapping.
+- **A FRED 403 is retried on the short backoff** and fails the poll; the next
+  poll retries. Waiting a minute per retry would hold the lock past an hour
+  during a block. Findings 4.8.
 - **Nine SA rows of ECI Tables 1–3 and the unadjusted PPI headline
   groupings other than `PPIFID` are not held**; none is drawn.
 - Labour Costs draws 24–25 years with no window in its headers; claims
@@ -261,6 +284,11 @@ figures from the BLS API, pending FRED" in the stamp, polls continuing, then
 
 ## Loose ends, none blocking
 
+- **August CPI is not yet reconciled against the news release tables.** The
+  Wayback Machine's newest `cpi.t01.htm` and `cpi.t02.htm` snapshots were
+  from 3 and 8 September at 10:00 ET on the 11th, the July release. When an
+  11 September snapshot exists, run `tools/reconcile.py` (command in
+  CLAUDE.md) and add the result to findings 4.8.
 - **74 series are dead at source** (45 Productivity, 23 PPI, 4 CPI, 2 ECI),
   confirmed against BLS; none is drawn.
 - **Two dead CPI series still hold provisional rows** from 5 September,

@@ -591,3 +591,42 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   with a 65-second wait, would stretch one blocked run past an hour while
   holding the lock. With the trigger removed and the trap 67 retry
   recovering on the next poll, failing fast is the better trade.
+- **FRED posted CPI in two waves, ten minutes apart.** `CPIAUCSL` read July
+  at 09:22 ET and August (334.131) at 09:45.
+
+  | poll (ET) | inserted | backfill vintage rows | validate | export and push | FRED CPI series on August |
+  |---|---|---|---|---|---|
+  | 09:45 | 70 (`CPIAUCSL`, `CPIAUCNS`, energy, food, ...) | 70 | 38/38 | 09:48, "New data: bls.cpi" | 69 of 199; 30 drawn still July, core `CPILFESL` among them |
+  | 09:55 | 131 (`CPILFESL`, apparel, shelter, medical, ...) | 131 | 38/38 | 09:58, "New data: bls.cpi" | 199 of 199 |
+
+  Between the two exports the page showed headline CPI for August and core
+  for July. The stamp read "August 2026, Released 11 Sep 2026" from 09:48,
+  confirmed by screenshot.
+- **BLS and FRED agree exactly.** For the 64 drawn FRED CPI series that
+  `tools/bls_map.py` verified by value on 10 September, the BLS API's August
+  figure fetched this morning equals FRED's to three decimals in all 64:
+  `CPIAUCSL` 334.131, `CPILFESL` 337.765, `CUSR0000SAH1` 430.227. The
+  BLS API had all 64 at August by 08:30 ET.
+- **Checks after the second wave:** coverage 100% on all seven dashboards,
+  keycheck 0 findings across 7 pages, and clipcheck clean at 1280px and
+  430px: no label overflows or collides, and every date axis labels its
+  newest period, August on the CPI page. Weekly Claims' `eta.state_claims`
+  period is 2026-09-05.
+- **Settled.** The 10:05 ET poll inserted nothing and logged `settled:
+  bls.cpi` at 10:07. Both of Friday's calendar rows read `settled`.
+- **Not done: reconciliation against the August news release tables.** The
+  Wayback Machine's newest snapshots of `cpi.t01.htm` and `cpi.t02.htm` are
+  3 and 8 September, which is the July release. Run `tools/reconcile.py`
+  once it archives the 11 September tables.
+- **Recorded, not changed: the settle rule held today only because FRED's
+  second wave came within one poll interval.** A poll settles a release once
+  its FRED source has landed and the poll finds nothing new. Had FRED paused
+  more than ten minutes between waves, the 09:55 ET poll would have inserted
+  nothing and settled CPI with 129 series, core among them, on July, and
+  nothing would have polled again before the 01:40 sweep. PPI showed the
+  same shape on 10 September, when `PPIFIS` trailed the rest of its release.
+  A stricter rule would settle only when no published FRED series in the
+  release is behind the newest period its FRED series have reached. That
+  is a design choice rather than a clear bug: sparse items are priced only
+  some months, and a few series are dead, so "behind" needs defining with
+  care. It matters most for the Employment Situation on 2 October.
