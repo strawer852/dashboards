@@ -1077,7 +1077,16 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     deliberately not held. Productivity and Costs is preformatted text in a
     `<pre>` block rather than a table, and its Tables 1-5 were the 6 August
     preliminary while Table 6 was the 3 September revision, which the
-    `--asof` date handles per table. PCE was reconciled against the BEA API
+    `--asof` date handles per table.
+
+    **When the Wayback Machine has no snapshot yet**, ask for one:
+    `https://web.archive.org/save/<bls url>`. On 11 September 2026 all three
+    CPI table requests timed out at our end after 150 seconds and all three
+    captures still landed within ten minutes, so check for the snapshot
+    rather than trusting the request's exit. Claude Code's WebFetch also
+    reaches bls.gov, because it fetches from Anthropic's side; its
+    transcription of the three August tables matched the captured HTML in
+    all 2,709 cells. It is a cross-check, not the record. PCE was reconciled against the BEA API
     directly: all 210 median weights are July 2026 nominal shares to five
     decimals, five of them under BEA's `LA` codes rather than the `RC`
     ones, and the page's basket shares are the same month's `DHSGRC`,

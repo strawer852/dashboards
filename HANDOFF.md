@@ -159,6 +159,10 @@ before touching the forecast panels.
   on July's 12 August, so the page read "August 2026, Released 12 Aug 2026".
   It now reads July until FRED's August lands, confirmed by screenshot.
 - **State claims landed at 08:48 ET and settled at 08:55**, 106 rows.
+- **August CPI reconciled against the news release**: 511 rows reproduced,
+  0 value disagreements, against a July control that repeated 9 September's
+  513 exactly. The tables came from Wayback captures requested that
+  morning (trap 62 now says how). Findings 4.8.
 
 ## Where it stands
 
@@ -284,11 +288,6 @@ figures from the BLS API, pending FRED" in the stamp, polls continuing, then
 
 ## Loose ends, none blocking
 
-- **August CPI is not yet reconciled against the news release tables.** The
-  Wayback Machine's newest `cpi.t01.htm` and `cpi.t02.htm` snapshots were
-  from 3 and 8 September at 10:00 ET on the 11th, the July release. When an
-  11 September snapshot exists, run `tools/reconcile.py` (command in
-  CLAUDE.md) and add the result to findings 4.8.
 - **74 series are dead at source** (45 Productivity, 23 PPI, 4 CPI, 2 ECI),
   confirmed against BLS; none is drawn.
 - **Two dead CPI series still hold provisional rows** from 5 September,

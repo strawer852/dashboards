@@ -614,10 +614,35 @@ and "139 months since 2015" (PPI 20) -- now name their end dates (trap 59).
   period is 2026-09-05.
 - **Settled.** The 10:05 ET poll inserted nothing and logged `settled:
   bls.cpi` at 10:07. Both of Friday's calendar rows read `settled`.
-- **Not done: reconciliation against the August news release tables.** The
-  Wayback Machine's newest snapshots of `cpi.t01.htm` and `cpi.t02.htm` are
-  3 and 8 September, which is the July release. Run `tools/reconcile.py`
-  once it archives the 11 September tables.
+- **August CPI reconciled against the news release, zero value
+  disagreements.** The Wayback Machine held only the July tables at 10:15
+  ET, so its Save Page Now was asked for Tables 1 to 3. Each request timed
+  out at our end after 150 seconds, but the captures landed anyway, at
+  10:21, 10:23 and 10:24 ET, each captioned August 2026. `cu.item` came from
+  its Wayback copy. July's tables were rerun first as a control.
+
+  | run | tables | rows reproduced | VALUE! | not held | NONE | MULTI |
+  |---|---|---|---|---|---|---|
+  | July control, `--asof 2026-09-08` | 1, 2, 3 | 513 | 0 | 39 | 0 | 0 |
+  | August, `--asof 2026-09-11` | 1, 2, 3 | 511 | 0 | 38 | 0 | 0 |
+
+  The control equals 9 September's result exactly. The August counts differ
+  for two reasons, both in what BLS printed rather than in the data. Two
+  Table 2 rows printed figures in July and only dashes in August:
+  "Inpatient hospital services" (twelve-month 5.2) and "Motor vehicle body
+  work" (3.6). And the not-held list includes a seasonally adjusted row
+  whose own series is not held only when another SA series happens to
+  reproduce its three one-decimal changes: July had two such coincidences
+  ("Other goods" by `CUSR0000SETA02`, "Transportation commodities less
+  motor fuel" by `CUSR0000SACL1E`), August one ("Tenants' and household
+  insurance" by `CUSR0000SAF11`). Every other not-held row is the same as
+  July's: FRED mnemonic aliases and special aggregates never catalogued.
+- **WebFetch reads bls.gov exactly.** Before the captures appeared, the
+  three tables were read through Claude Code's WebFetch, which fetches from
+  Anthropic's side rather than this VPS, rebuilt as HTML with BLS's column
+  layout, and reconciled with the same result. Compared with the captured
+  HTML afterwards: 411 rows and 2,709 cells, none different. It is a usable
+  fallback and cross-check; the captured HTML stays the record.
 - **Recorded, not changed: the settle rule held today only because FRED's
   second wave came within one poll interval.** A poll settles a release once
   its FRED source has landed and the poll finds nothing new. Had FRED paused
