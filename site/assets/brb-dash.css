@@ -301,6 +301,13 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
   margin: 7px 0 3px; max-width: 66ch; line-height: 1.45;
 }
 .note b { color: var(--ink-2); font-weight: 600; }
+/* A full-width table's note runs in two columns, with the gap of a two-chart
+   row so its columns line up with the pair of tables below. At 66ch in a
+   1100px table it filled the left half and left the right half empty. The
+   engine sets .cols only on a note long enough to fill both (trap: a two-line
+   note split in two breaks a sentence down the middle). */
+.row.one .note.cols { column-count: 2; column-gap: 44px; max-width: none; orphans: 2; widows: 2; }
+@media (max-width:860px){ .row.one .note.cols { column-count: 1; max-width: 66ch; } }
 .key {
   font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .06em;
   text-transform: uppercase; color: var(--muted); margin: 5px 0 0;

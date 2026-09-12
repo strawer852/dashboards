@@ -1040,6 +1040,13 @@
       stamp.innerHTML = bits.join("");
     }
 
+    // A full-width table's note runs in two columns when there is enough of
+    // it to fill both; under ~300 characters it is two lines at that width,
+    // and splitting it would break a sentence in half. Set before the panels
+    // mount, so each chart measures its cell with the note at its final height.
+    document.querySelectorAll(".row.one > .t > .note").forEach(n =>
+      n.classList.toggle("cols", n.textContent.trim().length > 300));
+
     if (cfg.summary) summary(document.getElementById("summary"), ctx, cfg.summary);
 
     // The forecast record, if the page has one. Loaded before the panels so
