@@ -180,34 +180,73 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-fig .vl { font-family: var(--serif), Georgia, serif; font-weight: 600; font-size: 27px;
               line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.022em;
               white-space: nowrap; }
-.fc-fig .dl { font-family: var(--mono), monospace; font-size: 10px; color: var(--muted);
-              margin-top: 7px; font-variant-numeric: tabular-nums; line-height: 1.7; }
-.fc-fig .dl b { font-weight: 500; color: var(--ink-2); }
-.fc-fig .dl .hit { color: var(--pos); } .fc-fig .dl .miss { color: var(--neg); }
+/* Consensus, print, error: a label column and a value column, one fact per
+   line, so the unrounded print and the error never wrap into each other. */
+.fc-fig .dl { display: grid; grid-template-columns: max-content minmax(0,1fr); gap: 1px 10px;
+              margin: 9px 0 0; font-family: var(--mono), monospace; font-size: 10.5px;
+              line-height: 1.6; font-variant-numeric: tabular-nums; }
+.fc-fig .dl dt { color: var(--faint); }
+.fc-fig .dl dd { margin: 0; color: var(--ink-2); white-space: nowrap; }
+.fc-fig .dl .raw { margin-left: 7px; }
+.fc .na { color: var(--faint); }
+.fc .hit { color: var(--ink-2); } .fc .miss { color: var(--neg); }
 .fc-why { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
           line-height: 1.45; max-width: 76ch; margin: 12px 0 0; padding-left: 1.4em; }
 .fc-why li { margin: 3px 0; }
 .fc-why b { color: var(--ink-2); font-weight: 600; }
-.fc-inputs { font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .04em;
-             color: var(--muted); margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px;
-             font-variant-numeric: tabular-nums; }
-.fc-inputs b { font-weight: 500; color: var(--ink-2); }
-.fc-rec { margin-top: 14px; }
-.fc-rec table { border-collapse: collapse; font-family: var(--mono), monospace; font-size: 10.5px;
-                font-variant-numeric: tabular-nums; color: var(--ink-2); }
-.fc-rec th { font-weight: 500; text-align: right; color: var(--muted); letter-spacing: .06em;
-             text-transform: uppercase; font-size: 9px; padding: 3px 14px 5px 0;
-             border-bottom: 1px solid var(--rule-hi); }
-.fc-rec th:first-child, .fc-rec td:first-child { text-align: left; }
-.fc-rec td { text-align: right; padding: 4px 14px 4px 0; border-bottom: 1px solid var(--rule); }
-.fc-rec td.err { color: var(--neg); }
+/* Section heads inside the block: the same small-caps register as the stamp. */
+.fc h4 { font-family: var(--mono), monospace; font-size: 9.5px; font-weight: 400; letter-spacing: .14em;
+         text-transform: uppercase; color: var(--faint); margin: 0 0 6px; }
+.fc-notes { display: grid; grid-template-columns: minmax(0,3fr) minmax(0,2fr); gap: 0 40px;
+            margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.fc-in table { border-collapse: collapse; width: 100%; }
+.fc-in th, .fc-in td { padding: 4px 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+.fc-in th { text-align: left; font-weight: 400; font-size: 12.5px; color: var(--muted); padding-right: 18px; }
+.fc-in td { text-align: right; font-family: var(--mono), monospace; font-size: 11px; color: var(--ink);
+            font-variant-numeric: tabular-nums; }
+.fc-src ol { list-style: none; margin: 0; padding: 0; }
+.fc-src li { padding: 4px 0; border-bottom: 1px solid var(--rule); font-size: 12.5px; line-height: 1.4; }
+.fc-src a { color: var(--ink-2); text-decoration: none; }
+.fc-src a::after { content: "\2009\2197"; color: var(--faint); }
+.fc-src a:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule-hi);
+                  text-underline-offset: 3px; }
+.fc-rec { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.fc-rec .tw { overflow-x: auto; }
+.fc-rec table { border-collapse: collapse; font-family: var(--mono), monospace; font-size: 11.5px;
+                font-variant-numeric: tabular-nums; color: var(--ink); }
+.fc-rec th { font-weight: 400; white-space: nowrap; }
+.fc-rec th.l { text-align: left; vertical-align: bottom; padding: 0 20px 5px 0;
+               font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--faint);
+               border-bottom: 1px solid var(--rule-hi); }
+.fc-rec th.grp { text-align: left; padding: 0 0 4px 14px; font-family: var(--sans), sans-serif;
+                 font-size: 9.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+                 color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+.fc-rec th.m { text-align: left; padding: 6px 12px 2px 14px; font-family: var(--sans), sans-serif;
+               font-size: 11.5px; color: var(--ink-2); }
+.fc-rec th.m i { display: block; font-style: normal; font-size: 10px; color: var(--faint); }
+/* Not `.s`: that class is the summary figure, and brings its right border. */
+.fc-rec th.sub { text-align: right; padding: 0 0 5px 14px; font-size: 9px; letter-spacing: .08em;
+               text-transform: uppercase; color: var(--faint); border-bottom: 1px solid var(--rule-hi); }
+.fc-rec td { text-align: right; vertical-align: top; white-space: nowrap; padding: 7px 0 6px 14px;
+             border-bottom: 1px solid var(--rule); }
+.fc-rec td.l { text-align: left; padding-left: 0; padding-right: 20px; font-family: var(--sans), sans-serif; font-size: 12.5px; }
+.fc-rec td.l + td.l { font-family: var(--mono), monospace; font-size: 11px; color: var(--muted); }
+.fc-rec .b { border-left: 1px solid var(--rule); }
+.fc-rec th.sub.b, .fc-rec td.b { padding-left: 16px; }
+.fc-rec td:last-child, .fc-rec th.sub:last-child { padding-right: 12px; }
+.fc-rec td .raw { display: block; font-size: 9.5px; color: var(--faint); line-height: 1.3; }
+.fc-rec td.miss { color: var(--neg); }
 .fc-rec td.pend { color: var(--faint); }
-.fc-rec .score { font-family: var(--mono), monospace; font-size: 10px; color: var(--muted);
-                 margin: 8px 0 0; letter-spacing: .04em; }
+.fc-rec tfoot td { border-bottom: none; padding-top: 5px; padding-bottom: 2px; color: var(--ink-2); }
+.fc-rec tfoot tr:first-child td { border-top: 1px solid var(--rule-hi); padding-top: 7px; }
+.fc-rec tfoot td.l { font-size: 11.5px; color: var(--muted); }
+.fc-rec .note { font-size: 11.5px; color: var(--faint); margin: 8px 0 16px; max-width: 80ch; }
 .fc-empty { font-family: var(--mono), monospace; font-size: 10.5px; color: var(--faint);
             border: 1px dashed var(--rule-hi); padding: 14px; margin: 0; }
 @media (max-width:860px){ .fc-figs { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .fc-fig:nth-child(2) { border-right: none; } }
+  .fc-fig:nth-child(2) { border-right: none; }
+  .fc-notes { grid-template-columns: minmax(0,1fr); }
+  .fc-src { margin-top: 16px; } }
 
 /* ---------- summary figures ---------- */
 .summary {

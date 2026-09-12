@@ -846,54 +846,94 @@
     const leadText = lead > 0 ? `${lead} day${lead === 1 ? "" : "s"} before release`
                    : `<span class="late">made ${-lead} day${lead === -1 ? "" : "s"} AFTER release</span>`;
     const esc = t => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    // The unrounded print carries a sign only where the call does: +0.29 for
+    // a monthly change, 3.40 for a twelve-month rate.
+    const rawOf = x => (x.it.format || "spct") === "spct" ? sgn(x.actual, 2) : x.actual.toFixed(2);
     let h = `<div class="fc-h"><span><b>Forecast</b> &middot; ${period(rec.for)} release, ${fmtDate(rec.release_at)}</span>` +
             `<span>Made ${fmtDate(rec.made)} &middot; ${leadText}</span>` +
             `<span class="who">${esc(doc.author || "")}</span></div>`;
+    // Each figure's detail is a short list, one fact to a line, rather than a
+    // sentence: consensus, the print with its unrounded figure, the error.
     h += `<div class="fc-figs">` + cur.items.map(x => {
       const it = x.it, fmt = fmtFor({ format: it.format || "spct" });
-      const cons = it.consensus == null ? "no consensus" : `consensus <b>${fmt(it.consensus)}</b>`;
-      let act;
-      if (x.printed == null) act = `actual pending`;
+      const dl = [["Consensus", it.consensus == null ? `<span class="na">none</span>` : fmt(it.consensus)]];
+      if (x.printed == null) dl.push(["Printed", `<span class="na">pending</span>`]);
       else {
-        const cls = Math.abs(x.err) <= 0.1 ? "hit" : "miss";
-        act = `actual <b>${fmt(x.printed)}</b> &middot; <span class="${cls}">error ${sgn(x.err, 1)}</span>` +
-              ` <span class="raw">(${sgn(x.actual, 2)} unrounded)</span>` +
-              (x.basis === "latest vintage" ? ` &middot; latest vintage` : "");
+        dl.push(["Printed", `${fmt(x.printed)}<span class="raw">${rawOf(x)}</span>`]);
+        dl.push(["Error", `<span class="${Math.abs(x.err) <= 0.1 ? "hit" : "miss"}">${sgn(x.err, 1)}</span>` +
+                          (x.basis === "latest vintage" ? `<span class="raw">latest vintage</span>` : "")]);
       }
       return `<div class="fc-fig"><div class="lb">${esc(it.label)}${it.note ? ` <i>${esc(it.note)}</i>` : ""}</div>` +
-             `<div class="vl">${fmt(it.value)}</div><div class="dl">${cons}<br>${act}</div></div>`;
+             `<div class="vl">${fmt(it.value)}</div>` +
+             `<dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></div>`;
     }).join("") + `</div>`;
     if (rec.reasons && rec.reasons.length)
       h += `<ol class="fc-why">` + rec.reasons.map(r => `<li>${r}</li>`).join("") + `</ol>`;
+    // Inputs as a two-column table and sources as a list, side by side: a
+    // run-on line of label-value pairs gave the eye nothing to hold on to.
+    const notes = [];
     if (rec.inputs && rec.inputs.length)
-      h += `<p class="fc-inputs">` + rec.inputs.map(i => `<span>${esc(i.label)} <b>${esc(i.value)}</b></span>`).join("") + `</p>`;
+      notes.push(`<div class="fc-in"><h4>Inputs</h4><table>` +
+        rec.inputs.map(i => `<tr><th>${esc(i.label)}</th><td>${esc(i.value)}</td></tr>`).join("") + `</table></div>`);
     if (rec.sources && rec.sources.length)
-      h += `<p class="fc-inputs">Sources: ` + rec.sources.map(s_ => `<a href="${esc(s_.url)}">${esc(s_.label)}</a>`).join("") + `</p>`;
-    // The record: every call so far, newest first, and the running score.
-    const keys = [];
-    scored.forEach(r => r.items.forEach(x => { if (!keys.includes(x.it.key)) keys.push(x.it.key); }));
-    const labelOf = k => { for (const r of scored) for (const x of r.items) if (x.it.key === k) return x.it.label; return k; };
-    h += `<div class="fc-rec" style="overflow-x:auto"><table><thead><tr><th>Release</th><th>Made</th>` +
-         keys.map(k => `<th>${esc(labelOf(k))}<br>call &rarr; print (error)</th>`).join("") + `</tr></thead><tbody>`;
+      notes.push(`<div class="fc-src"><h4>Sources</h4><ol>` +
+        rec.sources.map(s_ => `<li><a href="${esc(s_.url)}">${esc(s_.label)}</a></li>`).join("") + `</ol></div>`);
+    if (notes.length) h += `<div class="fc-notes">${notes.join("")}</div>`;
+    // The record: every call so far, newest first. Measures are grouped by
+    // horizon, because a label alone ("All items") names two different calls;
+    // each measure gets call, print and error columns, and the running score
+    // sits in the footer under the error it summarises.
+    const keys = [], itemOf = {};
+    scored.forEach(r => r.items.forEach(x => { if (!keys.includes(x.it.key)) { keys.push(x.it.key); itemOf[x.it.key] = x.it; } }));
+    const horizon = p => p === 1 ? "Month on month" : p === 12 ? "Year over year" : `${p}-month change`;
+    const groups = [];
+    keys.forEach(k => {
+      const p = itemOf[k].periods || 1, g = groups[groups.length - 1];
+      if (g && g.p === p) g.n++; else groups.push({ p, n: 1 });
+    });
+    // Two calls on one measure at one horizon (PPI's s.a. and n.s.a. twelve-
+    // month rates) differ only in their note, so the header takes the note,
+    // less the horizon the group row already states.
+    const headOf = k => {
+      const it = itemOf[k], p = it.periods || 1;
+      const twin = keys.some(j => j !== k && itemOf[j].label === it.label && (itemOf[j].periods || 1) === p);
+      const rest = (it.note || "").replace(/^(month on month|year over year)[,;]?\s*/i, "");
+      return esc(it.label) + (twin && rest ? `<i>${esc(rest)}</i>` : "");
+    };
+    h += `<div class="fc-rec"><h4>Record</h4><div class="tw"><table><thead>` +
+         `<tr><th class="l" rowspan="3">Release</th><th class="l" rowspan="3">Made</th>` +
+         groups.map(g => `<th class="grp b" colspan="${g.n * 3}">${horizon(g.p)}</th>`).join("") + `</tr>` +
+         `<tr>` + keys.map(k => `<th class="m b" colspan="3">${headOf(k)}</th>`).join("") + `</tr>` +
+         `<tr>` + keys.map(() => `<th class="sub b">Call</th><th class="sub">Print</th><th class="sub">Error</th>`).join("") +
+         `</tr></thead><tbody>`;
     scored.slice().reverse().forEach(r => {
-      h += `<tr><td>${period(r.rec.for)}</td><td>${fmtDate(r.rec.made)}</td>` + keys.map(k => {
+      h += `<tr><td class="l">${period(r.rec.for)}</td><td class="l">${fmtDate(r.rec.made)}</td>` + keys.map(k => {
         const x = r.items.find(z => z.it.key === k);
-        if (!x) return `<td class="pend">&mdash;</td>`;
+        if (!x) return `<td class="b pend" colspan="3">&mdash;</td>`;
         const fmt = fmtFor({ format: x.it.format || "spct" });
-        if (x.printed == null) return `<td class="pend">${fmt(x.it.value)} &rarr; pending</td>`;
-        return `<td${Math.abs(x.err) > 0.1 ? ' class="err"' : ""} title="printed ${sgn(x.actual, 3)} unrounded, error ${sgn(x.errRaw, 2)}">` +
-               `${fmt(x.it.value)} &rarr; ${fmt(x.printed)} (${sgn(x.err, 1)}) <span class="raw">${sgn(x.actual, 2)}</span></td>`;
+        if (x.printed == null) return `<td class="b">${fmt(x.it.value)}</td><td class="pend" colspan="2">pending</td>`;
+        return `<td class="b">${fmt(x.it.value)}</td>` +
+               `<td title="printed ${sgn(x.actual, 3)} unrounded, error ${sgn(x.errRaw, 2)}">${fmt(x.printed)}<span class="raw">${rawOf(x)}</span></td>` +
+               `<td${Math.abs(x.err) > 0.1 ? ' class="miss"' : ""}>${sgn(x.err, 1)}</td>`;
       }).join("") + `</tr>`;
     });
-    h += `</tbody></table>`;
-    const score = keys.map(k => {
+    const tally = keys.map(k => {
       const errs = scored.map(r => r.items.find(z => z.it.key === k)).filter(x => x && x.err != null).map(x => x.err);
       if (!errs.length) return null;
-      const mae = errs.reduce((a, b) => a + Math.abs(b), 0) / errs.length;
-      const hits = errs.filter(e => Math.abs(e) <= 0.1).length;
-      return `${esc(labelOf(k))}: ${errs.length} scored, mean absolute error ${mae.toFixed(2)}, within &plusmn;0.1 in ${hits} of ${errs.length}`;
-    }).filter(Boolean);
-    h += `<p class="score">${score.length ? score.join(" &middot; ") : `${scored.length} call${scored.length === 1 ? "" : "s"} recorded, none scored yet`}</p></div>`;
+      return { mae: errs.reduce((a, b) => a + Math.abs(b), 0) / errs.length,
+               hits: errs.filter(e => Math.abs(e) <= 0.1).length, n: errs.length };
+    });
+    h += `</tbody>`;
+    if (tally.some(Boolean)) {
+      const foot = (name, cell) => `<tr><td class="l" colspan="2">${name}</td>` + tally.map(t =>
+        t ? `<td class="b" colspan="2"></td><td>${cell(t)}</td>` : `<td class="b pend" colspan="3">&mdash;</td>`).join("") + `</tr>`;
+      h += `<tfoot>` + foot("Mean absolute error", t => t.mae.toFixed(2)) +
+           foot("Within &plusmn;0.1", t => `${t.hits} of ${t.n}`) + `</tfoot>`;
+    }
+    h += `</table></div><p class="note">` +
+         (tally.some(Boolean) ? "Print is the figure as first released, its unrounded value beneath. Error is in points, scored at the one decimal the release prints."
+                              : `${scored.length} call${scored.length === 1 ? "" : "s"} recorded, none scored yet.`) +
+         `</p></div>`;
     host.innerHTML = h;
   }
 
@@ -922,7 +962,10 @@
                  lineStyle: { color: P.ink, width: 1 }, label: { show: false },
                  data: [{ yAxis: 0 }] } : undefined };
     });
-    const lim = Math.ceil(maxAbs * 10) / 10;
+    // Ticks on whole tenths. Left to ECharts, a ±0.1 axis ticked at 0.05 and
+    // the one-decimal format printed +0.1 twice.
+    const step = Math.max(0.1, Math.ceil(maxAbs / 3 * 10) / 10);
+    const lim = Math.ceil(maxAbs / step - 1e-9) * step;
     const opt = Object.assign(base(P), {
       grid: { left: p.left || 46, right: p.right || 14, top: 12, bottom: 24 },
       tooltip: Object.assign(base(P).tooltip, { trigger: "axis",
@@ -940,7 +983,7 @@
                      interval: labelInterval(el, cats, "M", p.tick, (p.left || 46) + 14, 9.5, P.mono), alignMaxLabel: "right",
                      formatter: v => label(v, "M") },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
-      yAxis: Object.assign(yAxis(P, fmt), { scale: false, min: -lim, max: lim }),
+      yAxis: Object.assign(yAxis(P, fmt), { scale: false, min: -lim, max: lim, interval: step }),
       series,
     });
     mount(el, opt);
