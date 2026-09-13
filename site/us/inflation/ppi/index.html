@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PPI — BigRiceBowl Data</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/assets/brb-dash.css?v=bd1dc67408">
+<link rel="stylesheet" href="/assets/brb-dash.css?v=1e77eca9e3">
 </head>
 <body>
 <div class="app">
@@ -106,7 +106,7 @@
 
     <div class="row one">
       <div class="t" id="t1">
-        <div class="th"><span class="n">Table 1</span><span class="ti">Final demand, and what is left after stripping</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 1</span><span class="ti">Final demand, and what is left after stripping</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Final demand, then two core measures.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Less foods and energy</i><i class="ks2">Less foods, energy and trade</i></p>
         <div class="chart" id="cFD" style="height:250px"></div>
@@ -123,7 +123,7 @@
         <p class="note">Bars are the monthly change, the ink line the twelve-month change on the same axis. Producer prices are far noisier month to month than consumer prices &mdash; there is no retail smoothing between the shock and the print &mdash; so single months here deserve even less weight than they do on the CPI page.</p>
       </div>
       <div class="t" id="t3">
-        <div class="th"><span class="n">Table 3</span><span class="ti">Goods, services and building</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 3</span><span class="ti">Goods, services, building</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Final demand in its three parts.</p>
         <p class="key"><i class="k4">Goods</i><i class="ks1">Services</i><i class="ks2">Construction</i></p>
         <div class="chart" id="cFDType" style="height:235px"></div>
@@ -133,14 +133,14 @@
 
     <div class="row">
       <div class="t" id="t4">
-        <div class="th"><span class="n">Table 4</span><span class="ti">What final demand is made of, year</span><span class="u">Percentage points, 12-month change</span></div>
+        <div class="th"><span class="n">Table 4</span><span class="ti">What final demand is made of, year</span><span class="u">Points</span></div>
         <p class="gist">Five parts that add up to the annual rate.</p>
         <p class="key"><i class="k4">Final demand (line)</i><i class="ks1">Services</i><i class="ks2">Goods less foods and energy</i><i class="ks3">Foods</i><i class="ks4">Energy</i><i class="ks5">Construction</i></p>
         <div class="chart" id="cStackY" style="height:265px"></div>
         <p class="note">Not rates &mdash; <b>contributions</b>: each part&rsquo;s own change multiplied by its share of final demand, so the five add up to the headline instead of merely sitting beside it. A complete partition, weights summing to <b>100.000%</b>: services 68.338, goods less foods and energy 18.515, foods 5.452, energy 5.061, construction 2.634. The ink line is final demand itself, so any daylight above the stack is the residual, shown rather than claimed away. <b>Services carry roughly two-thirds of the weight</b>, which is why a large move in goods often barely shifts the headline.</p>
       </div>
       <div class="t" id="t5">
-        <div class="th"><span class="n">Table 5</span><span class="ti">And what the month is made of</span><span class="u">Percentage points, 1-month change</span></div>
+        <div class="th"><span class="n">Table 5</span><span class="ti">And what the month is made of</span><span class="u">Points</span></div>
         <p class="gist">The same five parts, monthly.</p>
         <p class="key"><i class="k4">Final demand (line)</i><i class="ks1">Services</i><i class="ks2">Goods less foods and energy</i><i class="ks3">Foods</i><i class="ks4">Energy</i><i class="ks5">Construction</i></p>
         <div class="chart" id="cStackM" style="height:265px"></div>
@@ -159,14 +159,14 @@
 
     <div class="row">
       <div class="t" id="t7">
-        <div class="th"><span class="n">Table 7</span><span class="ti">The chain, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 7</span><span class="ti">The chain, year</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Four production stages leading to final demand.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Stage 1</i><i class="ks2">Stage 2</i><i class="ks3">Stage 3</i><i class="ks4">Stage 4</i></p>
         <div class="chart" id="cChainY" style="height:260px"></div>
         <p class="note">The production-flow system, which exists to answer exactly this question. Output from <b>stage 1</b> is an input to stage 2, and so on to <b>stage 4</b>, whose output is an input to final demand. Read it as one wave passing through four filters. The stages move <em>together</em>, and the thing that changes as you go down is the size of the swing, not its timing &mdash; see Table 9.</p>
       </div>
       <div class="t" id="t8">
-        <div class="th"><span class="n">Table 8</span><span class="ti">The chain, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <div class="th"><span class="n">Table 8</span><span class="ti">The chain, month</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">The stages move in the same month.</p>
         <p class="key"><i class="k4">Final demand</i><i class="ks1">Stage 1</i><i class="ks2">Stage 2</i><i class="ks3">Stage 3</i><i class="ks4">Stage 4</i></p>
         <div class="chart" id="cChainM" style="height:260px"></div>
@@ -204,14 +204,14 @@
 
     <div class="row">
       <div class="t" id="t11">
-        <div class="th"><span class="n">Table 11</span><span class="ti">The volatile three</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 11</span><span class="ti">The volatile three</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Foods, energy and trade margins.</p>
         <p class="key"><i class="k4">Foods</i><i class="ks1">Energy</i><i class="ks2">Trade services</i></p>
         <div class="chart" id="cVol" style="height:235px"></div>
         <p class="note">The components the PPI&rsquo;s core strips out, and the reason it strips them. Foods and energy behave as they do in the CPI, only more so, because there is no retail margin absorbing the move. Trade services are the odd one: a margin, not a price, so it rises when distributors widen their spread and falls when they compress it &mdash; which tends to happen at the turn of a cycle rather than with costs.</p>
       </div>
       <div class="t" id="t12">
-        <div class="th"><span class="n">Table 12</span><span class="ti">Services, with and without margins</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 12</span><span class="ti">Services and margins</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Services with margins and freight taken out.</p>
         <p class="key"><i class="k4">Services</i><i class="ks1">Services less trade and transport</i><i class="ks2">Trade services</i><i class="ks3">Transport and warehousing</i></p>
         <div class="chart" id="cSrv" style="height:235px"></div>
@@ -221,14 +221,14 @@
 
     <div class="row">
       <div class="t" id="t13">
-        <div class="th"><span class="n">Table 13</span><span class="ti">Intermediate demand, by commodity type</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 13</span><span class="ti">Intermediate demand by type</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Unprocessed, processed and service inputs.</p>
         <p class="key"><i class="k4">Unprocessed goods</i><i class="ks1">Processed goods</i><i class="ks2">Services</i></p>
         <div class="chart" id="cIDType" style="height:235px"></div>
         <p class="note">The other cut of intermediate demand: instead of asking <em>how far along</em> a good is, this asks <em>what kind</em> it is. Unprocessed goods are the rawest thing the index measures and swing hardest; processed goods are damped; services for intermediate demand barely move by comparison. Same underlying prices as Tables 7 and 8, sorted a different way.</p>
       </div>
       <div class="t" id="t14">
-        <div class="th"><span class="n">Table 14</span><span class="ti">The long run</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 14</span><span class="ti">The long run</span><span class="u">Percent, 12-month, s.a.</span></div>
         <p class="gist">Raw against processed goods over twenty years.</p>
         <p class="key"><i class="k4">Unprocessed goods</i><i class="ks1">Processed goods</i></p>
         <div class="chart" id="cLong" style="height:235px"></div>
@@ -238,14 +238,14 @@
 
     <div class="row">
       <div class="t" id="t15">
-        <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 15</span><span class="ti">Fuel and materials, year</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Gasoline, diesel and lumber.</p>
         <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
         <div class="chart" id="cFuel" style="height:250px"></div>
         <p class="note">The three commodity inputs that most often decide what final demand goods did. <b>Gasoline is the recurring one</b>: a single month of it routinely accounts for most of the move in final demand goods. Diesel is separated from it deliberately: it is the <em>freight</em> cost, moving with distillate rather than motor spirit, so the two diverge exactly when transport costs matter most. Lumber is the housing input, and the only one here with sixty years of history. These are commodity indexes: they sit <em>inside</em> final demand rather than summing to it, so they are drawn as rates and never stacked.</p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Fuel and materials, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Fuel and materials, month</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Gasoline, diesel and lumber, monthly.</p>
         <p class="key"><i class="k4">Gasoline</i><i class="ks1">No. 2 diesel</i><i class="ks2">Lumber</i></p>
         <div class="chart" id="cFuelM" style="height:250px"></div>
@@ -255,14 +255,14 @@
 
     <div class="row">
       <div class="t" id="t16">
-        <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 16</span><span class="ti">Freight and travel, year</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Freight against airline fares.</p>
         <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
         <div class="chart" id="cFreight" style="height:250px"></div>
         <p class="note">Two services that turn with the cycle rather than with costs. <b>Transportation of freight and mail is the cleanest cyclical signal the release carries</b> &mdash; haulage and delivery are priced on spot capacity, so they react before almost anything else. Airline passenger services is the most volatile services line in the index, and unlike most of the PPI it is something households buy directly. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Freight and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Freight and travel, month</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Freight and airline fares, monthly.</p>
         <p class="key"><i class="k4">Transportation of freight and mail</i><i class="ks1">Airline passenger services</i></p>
         <div class="chart" id="cFreightM" style="height:250px"></div>
@@ -272,14 +272,14 @@
 
     <div class="row">
       <div class="t" id="t17">
-        <div class="th"><span class="n">Table 17</span><span class="ti">What the PCE deflator takes from here, year</span><span class="u">Percent, year over year, s.a.</span></div>
+        <div class="th"><span class="n">Table 17</span><span class="ti">PCE inputs from PPI, year</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Health care prices that feed PCE.</p>
         <p class="key"><i class="k4">Physician care</i><i class="ks1">Hospital inpatient care</i></p>
         <div class="chart" id="cPCE" style="height:250px"></div>
         <p class="note">The reason to read PPI detail at all. <b>These feed the PCE price index directly</b> &mdash; the measure the Federal Reserve actually targets &mdash; because the national accounts source much of health care from producer prices rather than from the CPI. That is why a PPI print can move the PCE forecast on the day even when the CPI has already landed: the CPI measures what households pay at the counter, the PCE picks up what insurers pay, and this is where the second number comes from. Both are seasonally adjusted, so they read against each other and against everything else on this page.</p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">What the PCE deflator takes from here, month</span><span class="u">Percent, month on month, s.a.</span></div>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">PCE inputs from PPI, month</span><span class="u">Percent, s.a.</span></div>
         <p class="gist">Health care prices that feed PCE, monthly.</p>
         <p class="key"><i class="k4">Physician care</i><i class="ks1">Hospital inpatient care</i></p>
         <div class="chart" id="cPCEM" style="height:250px"></div>
@@ -289,14 +289,14 @@
 
     <div class="row">
       <div class="t" id="t18">
-        <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management, year</span><span class="u">Percent, year over year, <b>not</b> adjusted</span></div>
+        <div class="th"><span class="n">Table 18</span><span class="ti">Portfolio management, year</span><span class="u">Percent, <b>not</b> s.a.</span></div>
         <p class="gist">Fees set by asset values, unadjusted.</p>
         <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
         <div class="chart" id="cPortfolio" style="height:250px"></div>
         <p class="note">Given its own axis for two reasons, not one. It is <b>published unadjusted only</b> &mdash; there is no seasonally adjusted version at all, unlike the health care series above &mdash; so it sits on a different basis and must not be read against them month to month. And it swings between roughly &minus;15% and +35%, which on a shared axis flattens everything else into a line.<br><br>It matters anyway: it is the other large PCE input taken from producer prices, it is routinely the largest single mover of final demand services, and because it is driven by asset values rather than by costs it can pull measured inflation around for reasons that have nothing to do with the price of anything.</p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Portfolio management, month</span><span class="u">Percent, month on month, <b>not</b> adjusted</span></div>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Portfolio management, month</span><span class="u">Percent, <b>not</b> s.a.</span></div>
         <p class="gist">Portfolio fees, monthly and unadjusted.</p>
         <p class="key"><i class="ks3">Portfolio management (NSA)</i></p>
         <div class="chart" id="cPortfolioM" style="height:250px"></div>
@@ -658,7 +658,7 @@
 </div>
 
 <script src="/assets/echarts-5.6.0.min.js"></script>
-<script src="/assets/brb-dash.js?v=3d7e9af9a3"></script>
+<script src="/assets/brb-dash.js?v=8fea56f6b0"></script>
 <script>
 document.querySelectorAll(".rail .topic, .rail .region").forEach(b => b.addEventListener("click", () => {
   const open = b.getAttribute("aria-expanded") === "true";
