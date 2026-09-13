@@ -666,10 +666,23 @@ BRB.render({
 
     // The same twelve on the one-month change, same row order. Capped at a
     // quarter of the year's cap: monthly contributions are that much smaller.
+    // Ids written out rather than mapped from ITEMS: tools/coverage.py reads
+    // literal ids, and a derived list dropped CPI to 95.4% drawn.
     { el: "cItemsHM", type: "heatmap", transform: "none", format: "pp",
       months: 48, cap: 0.3, left: 138,
       capText: ["≥ +0.3 pp", "≤ −0.3 pp"],
-      series: ITEMS.map(s => ({ ...s, id: s.id.replace("CPI.i_", "CPI.im_") })) },
+      series: [{ id: "CPI.im_shelter",     label: "Shelter" },
+               { id: "CPI.im_gasoline",    label: "Gasoline" },
+               { id: "CPI.im_foodhome",    label: "Food at home" },
+               { id: "CPI.im_transserv",   label: "Transport services" },
+               { id: "CPI.im_medserv",     label: "Medical services" },
+               { id: "CPI.im_foodaway",    label: "Food away" },
+               { id: "CPI.im_electricity", label: "Electricity" },
+               { id: "CPI.im_apparel",     label: "Apparel" },
+               { id: "CPI.im_utilgas",     label: "Utility gas" },
+               { id: "CPI.im_newveh",      label: "New vehicles" },
+               { id: "CPI.im_medcomm",     label: "Medical goods" },
+               { id: "CPI.im_usedveh",     label: "Used cars" }] },
 
     { el: "cGroups", type: "heatmap", transform: "yoy", format: "pct",
       months: 48, cap: 6, left: 138,
