@@ -170,10 +170,19 @@
 
     <div class="row one">
       <div class="t" id="t10">
-        <div class="th"><span class="n">Table 10</span><span class="ti">The chain over four years</span><span class="u">Percent, year over year, 48 months</span></div>
-        <p class="gist">The stages month by month over four years.</p>
+        <div class="th"><span class="n">Table 10</span><span class="ti">The chain over four years</span><span class="u">Percent, 12-month change, 48 months</span></div>
+        <p class="gist">Each stage&rsquo;s yearly change over four years.</p>
         <div class="chart" id="cChainHeat" style="height:230px"></div>
         <p class="note">The chain as a grid, reading downward: <b>stage 1 at the top, final demand at the bottom</b>. A vertical band of colour is a shock hitting every stage in the same month, which is what the correlations say happens; a diagonal would be the lagged pass-through people expect and that this data does not show. Two things are worth staring at. Late 2022 is dark across every row at once. Then through 2023 <b>the top three rows turn red while the bottom two never do</b> &mdash; the raw end of the economy went through outright deflation that the finished end simply did not experience, which is the same asymmetry the ranges in Table 9 measure. The scale saturates beyond &plusmn;12%, which stages 1 to 3 spend much of 2021&ndash;22 outside.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">The chain, month by month</span><span class="u">Percent, 1-month change, 48 months</span></div>
+        <p class="gist">Each stage&rsquo;s monthly change over four years.</p>
+        <div class="chart" id="cChainHeatM" style="height:230px"></div>
+        <p class="note">The same five stages and row order as Table 10, on the <b>one-month</b> change instead of the twelve-month one. This is where timing shows: a shock that reaches every stage in the same month is a single dark column here, and a lagged pass-through would be a diagonal. <b>Stage 2 swings hardest month to month</b>, as it does over the year, and final demand least. The scale is &plusmn;2%, a sixth of Table 10&rsquo;s, and more than nine readings in ten sit inside it.</p>
       </div>
     </div>
 
@@ -301,18 +310,26 @@
 
     <div class="row one">
       <div class="t" id="t21">
-        <div class="th"><span class="n">Table 21</span><span class="ti">Where final demand inflation sits</span><span class="u">Twelve-month change, %, 48 months</span></div>
+        <div class="th"><span class="n">Table 21</span><span class="ti">Where final demand inflation sits</span><span class="u">Percent, 12-month change, 48 months</span></div>
         <p class="gist">33 components against a year earlier.</p>
         <div class="chart" id="cFdHeat" style="height:760px"></div>
         <p class="note">The 33 components that partition final demand, each against its own level a year earlier. The chain above says how a shock travels; this says <b>what is moving now</b>. Capped at &plusmn;15%, which covers about nine readings in ten. Read it for columns rather than cells. <b>ex TTW</b> is the source&rsquo;s own &ldquo;less trade, transportation, and warehousing&rdquo;.</p>
       </div>
     </div>
     <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">The same components, month by month</span><span class="u">Percent, 1-month change, 48 months</span></div>
+        <p class="gist">The same components, month to month.</p>
+        <div class="chart" id="cFdHeatM" style="height:760px"></div>
+        <p class="note">The same 33 components and row order as Table 21, on the <b>one-month</b> change. This is the newest reading of each component, and also the noisiest: a component&rsquo;s monthly sign matches the previous month&rsquo;s only 63% of the time, so read it for columns and runs rather than single cells, and use Table 22 below for direction. Capped at &plusmn;3%, which about nine readings in ten sit inside.</p>
+      </div>
+    </div>
+    <div class="row one">
       <div class="t" id="t22">
-        <div class="th"><span class="n">Table 22</span><span class="ti">The same components, three months</span><span class="u">Three-month change, %, 48 months</span></div>
+        <div class="th"><span class="n">Table 22</span><span class="ti">The same components, three months</span><span class="u">Percent, 3-month change, 48 months</span></div>
         <p class="gist">The same components over three months.</p>
         <div class="chart" id="cFd3m" style="height:760px"></div>
-        <p class="note">The panel above carries eleven months of history and turns late; this one turns four times faster. <b>Not month on month</b>, which at this granularity is noise: a component&rsquo;s monthly sign agrees with the previous month&rsquo;s only 63% of the time and its autocorrelation is 0.09, so every cell would be independent of the one beside it. At three months that is 83% and 0.67, measured over 2010&ndash;2026. Capped at &plusmn;5% because the moves are a quarter the size. Not annualised.</p>
+        <p class="note">Table 21 carries eleven months of history and turns late; this one turns four times faster. It is also far steadier than the month-by-month panel above, which at this granularity is mostly noise: a component&rsquo;s monthly sign agrees with the previous month&rsquo;s only 63% of the time and its autocorrelation is 0.09, so each monthly cell is nearly independent of the one beside it. At three months that is 83% and 0.67, measured over 2010&ndash;2026. Capped at &plusmn;5% because the moves are a quarter the size. Not annualised.</p>
       </div>
     </div>
 
@@ -464,6 +481,45 @@ BRB.render({
                { id: "WPSFD4213", label: "Export services ex TTW" },
                { id: "WPSFD431", label: "Construction, private" },
                { id: "WPSFD432", label: "Construction, government" }] },
+    // The same 33 on the one-month change, under Table 21. All seasonally
+    // adjusted, so a monthly change is not the season. Capped at ±3%: about
+    // nine monthly readings in ten, 2022-26, sit inside it.
+    { el: "cFdHeatM", type: "heatmap", months: 48, transform: "yoy",
+      periods: 1, cap: 3, format: "pct", left: 214, tick: 5,
+      capText: ["≥ +3%", "≤ −3%"],
+      series: [{ id: "WPSFD41113", label: "Consumer foods, crude" },
+               { id: "WPSFD41112", label: "Consumer foods, processed" },
+               { id: "WPSFD4112", label: "Gov. foods" },
+               { id: "WPSFD4113", label: "Foods, export" },
+               { id: "WPSFD4121", label: "Consumer energy goods" },
+               { id: "WPSFD4122", label: "Gov. energy" },
+               { id: "WPSFD4123", label: "Energy, export" },
+               { id: "WPSFD413111", label: "Nondurable goods ex food/enrg" },
+               { id: "WPSFD413112", label: "Durable consumer goods" },
+               { id: "WPSFD413121", label: "Capital equipment, mfg" },
+               { id: "WPSFD413122", label: "Capital equipment, non-mfg" },
+               { id: "WPSFD41321", label: "Gov. goods, core" },
+               { id: "WPSFD41322", label: "Gov. capital equipment" },
+               { id: "WPSFD4133", label: "Goods, export, ex food/enrg" },
+               { id: "WPSFD42311", label: "Trade: consumer goods" },
+               { id: "WPSFD42312", label: "Trade: capital equipment" },
+               { id: "WPSFD42321", label: "Trade: gov. goods" },
+               { id: "WPSFD42322", label: "Trade: gov. capital equip." },
+               { id: "WPSFD4233", label: "Trade: exports" },
+               { id: "WPSFD42211", label: "Passengers: private" },
+               { id: "WPSFD42212", label: "Passengers: government" },
+               { id: "WPSFD42213", label: "Passengers: export" },
+               { id: "WPSFD422211", label: "Freight: consumer goods" },
+               { id: "WPSFD422212", label: "Freight: capital equipment" },
+               { id: "WPSFD42222", label: "Freight: gov. goods" },
+               { id: "WPSFD42223", label: "Freight: exports" },
+               { id: "WPSFD42111", label: "Consumer services ex TTW" },
+               { id: "WPSFD42112", label: "Capital inv. services ex TTW" },
+               { id: "WPSFD42121", label: "Gov. services ex TTW" },
+               { id: "WPSFD42122", label: "Gov. capital inv. svcs ex TTW" },
+               { id: "WPSFD4213", label: "Export services ex TTW" },
+               { id: "WPSFD431", label: "Construction, private" },
+               { id: "WPSFD432", label: "Construction, government" }] },
     { el: "cFdBreadth", type: "line", format: "pct", tick: 11, left: 48,
       window: 120, hline: 50, hlineLabel: "50",
       series: [{ id: "PPI.fd_breadth", label: "Components above 3%",
@@ -501,6 +557,17 @@ BRB.render({
       capText: ["≥ +12%", "≤ −12%"],
       // Reading order: rows render top-down as listed, so stage 1 leads and
       // final demand closes, the way the prose describes the chain.
+      series: [{ id: "WPSID51", label: "Stage 1" },
+               { id: "WPSID52", label: "Stage 2" },
+               { id: "WPSID53", label: "Stage 3" },
+               { id: "WPSID54", label: "Stage 4" },
+               { id: "PPIFIS",  label: "Final demand" }] },
+
+    // The same five stages on the one-month change, under Table 10. Capped
+    // at ±2%: more than nine monthly readings in ten, 2022-26, sit inside it.
+    { el: "cChainHeatM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 2, left: 96,
+      capText: ["≥ +2%", "≤ −2%"],
       series: [{ id: "WPSID51", label: "Stage 1" },
                { id: "WPSID52", label: "Stage 2" },
                { id: "WPSID53", label: "Stage 3" },

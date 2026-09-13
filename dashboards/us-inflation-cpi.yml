@@ -805,6 +805,117 @@ derived:
     title: Contribution of medical care commodities to the CPI, over 12 months
     unit: Percentage points
     importance: 3
+  # The same twelve items on the one-month change, for the month-by-month
+  # heatmap under Table 20. Same components, weights and weight dates as the
+  # CPI.i_ series above; only periods differs.
+  - id: CPI.im_foodhome
+    kind: contribution
+    of: [CUSR0000SAF11, CPIAUCSL]
+    weight: 8.231
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of food at home to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_foodaway
+    kind: contribution
+    of: [CUSR0000SEFV, CPIAUCSL]
+    weight: 5.290
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of food away from home to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_gasoline
+    kind: contribution
+    of: [CUSR0000SETB01, CPIAUCSL]
+    weight: 3.852
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of gasoline to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_electricity
+    kind: contribution
+    of: [CUSR0000SEHF01, CPIAUCSL]
+    weight: 2.552
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of electricity to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_utilgas
+    kind: contribution
+    of: [CUSR0000SEHF02, CPIAUCSL]
+    weight: 0.748
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of utility gas service to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_shelter
+    kind: contribution
+    of: [CUSR0000SAH1, CPIAUCSL]
+    weight: 35.304
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of shelter to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_medserv
+    kind: contribution
+    of: [CUSR0000SAM2, CPIAUCSL]
+    weight: 6.840
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of medical care services to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_transserv
+    kind: contribution
+    of: [CUSR0000SAS4, CPIAUCSL]
+    weight: 6.352
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of transportation services to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_newveh
+    kind: contribution
+    of: [CUSR0000SETA01, CPIAUCSL]
+    weight: 3.751
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of new vehicles to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_usedveh
+    kind: contribution
+    of: [CUSR0000SETA02, CPIAUCSL]
+    weight: 2.679
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of used cars and trucks to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_apparel
+    kind: contribution
+    of: [CPIAPPSL, CPIAUCSL]
+    weight: 2.437
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of apparel to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.im_medcomm
+    kind: contribution
+    of: [CUSR0000SAM1, CPIAUCSL]
+    weight: 1.412
+    weight_date: "2026-06"
+    periods: 1
+    title: Contribution of medical care commodities to the CPI, over 1 month
+    unit: Percentage points
+    importance: 3
 
   # ---- what each part is WORTH, as opposed to what it contributed.
   # Same drift rule as the contributions above and the same published

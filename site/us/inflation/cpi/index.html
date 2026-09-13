@@ -258,10 +258,19 @@
 
     <div class="row one">
       <div class="t" id="t20">
-        <div class="th"><span class="n">Table 20</span><span class="ti">The same items, over four years</span><span class="u">Percentage points, 48 months</span></div>
+        <div class="th"><span class="n">Table 20</span><span class="ti">The same items, over four years</span><span class="u">Percentage points, 12-month change, 48 months</span></div>
         <p class="gist">Item contributions over four years.</p>
         <div class="chart" id="cItemsH" style="height:400px"></div>
         <p class="note">The ranking in Table 17 is one column of this. Contributions rather than rates, so cells are directly comparable across items: a dark cell is a large push on the index, not merely a large price move on something small. Four years reaches back into the 2022 peak, where gasoline and used cars ran dark and shelter had not yet taken over. <b>October 2025 is the blank column.</b> Only a few items were priced that month from administrative sources &mdash; new vehicles, used cars and gasoline among them &mdash; so only those rows carry a contribution through it. A near-white cell anywhere else is a <em>small</em> contribution, not a missing one: the hole is the column blank in every other row.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">The same items, month by month</span><span class="u">Percentage points, 1-month change, 48 months</span></div>
+        <p class="gist">Each item&rsquo;s push on the monthly change.</p>
+        <div class="chart" id="cItemsHM" style="height:400px"></div>
+        <p class="note">The same twelve items and the same row order as Table 20, on the <b>one-month</b> change instead of the twelve-month one: each cell is the item&rsquo;s monthly change times its share of the basket. The year above is roughly twelve of these columns added together, so a run of dark cells here is what darkens a row above over the following months, and a single dark cell barely shows there. The scale is &plusmn;0.3 points, a quarter of the year&rsquo;s, because monthly contributions are that much smaller. <b>October and November 2025 are blank in most rows:</b> October was barely collected, so there is no one-month change into it or out of it. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
@@ -386,7 +395,7 @@
 
     <div class="row one">
       <div class="t" id="t28">
-        <div class="th"><span class="n">Table 28</span><span class="ti">The eight major groups</span><span class="u">Percent, year over year, 48 months</span></div>
+        <div class="th"><span class="n">Table 28</span><span class="ti">The eight major groups</span><span class="u">Percent, 12-month change, 48 months</span></div>
         <p class="gist">Inflation in the eight major groups.</p>
         <div class="chart" id="cGroups" style="height:290px"></div>
         <p class="note">The CPI&rsquo;s own top-level taxonomy, a different cut from the goods/services split above, covering the basket exactly once. Rates here, not contributions, so a dark cell means a fast-moving group rather than an influential one &mdash; housing at 3% moves the index far more than recreation at 6%. The scale saturates beyond &plusmn;6%: transportation runs outside it whenever fuel does.</p>
@@ -654,6 +663,13 @@ BRB.render({
     { el: "cItemsH", type: "heatmap", transform: "none", format: "pp",
       months: 48, cap: 1.2, left: 138,
       capText: ["≥ +1.2 pp", "≤ −1.2 pp"], series: ITEMS },
+
+    // The same twelve on the one-month change, same row order. Capped at a
+    // quarter of the year's cap: monthly contributions are that much smaller.
+    { el: "cItemsHM", type: "heatmap", transform: "none", format: "pp",
+      months: 48, cap: 0.3, left: 138,
+      capText: ["≥ +0.3 pp", "≤ −0.3 pp"],
+      series: ITEMS.map(s => ({ ...s, id: s.id.replace("CPI.i_", "CPI.im_") })) },
 
     { el: "cGroups", type: "heatmap", transform: "yoy", format: "pct",
       months: 48, cap: 6, left: 138,
