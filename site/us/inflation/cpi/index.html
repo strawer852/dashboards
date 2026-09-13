@@ -87,7 +87,7 @@
          score of every call against the figure as first printed. -->
     <div class="fc" id="forecast">
       <div id="fcBlock"></div>
-      <p class="key"><i class="k4">All items, month on month</i><i class="ks1">Less food and energy, month on month</i></p>
+      <p class="key"><i class="k4">All items, month on month</i><i class="ks2">Less food and energy, month on month</i></p>
       <div class="chart" id="cFcErr" style="height:150px"></div>
     </div>
 
@@ -563,7 +563,7 @@ BRB.render({
     // Forecast error by release, actual as first printed minus the call.
     { el: "cFcErr", type: "forecast", format: "pt", tick: 1, left: 42,
       items: [{ key: "cpi_mom", label: "All items", color: "ink" },
-              { key: "core_mom", label: "Less food and energy", color: "s1" }] },
+              { key: "core_mom", label: "Less food and energy", color: "s2" }] },
     { el: "cMedian", type: "line", format: "pct", tick: 11, left: 42,
       window: 120,
       series: [{ id: "CPI.median", label: "Median item", color: "ink", width: 1.9 },

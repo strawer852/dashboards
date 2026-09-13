@@ -78,7 +78,7 @@
          printed. One record is appended per release, the day before it. -->
     <div class="fc" id="forecast">
       <div id="fcBlock"></div>
-      <p class="key"><i class="k4">Final demand, month on month</i><i class="ks1">Less foods, energy and trade, month on month</i></p>
+      <p class="key"><i class="k4">Final demand, month on month</i><i class="ks2">Less foods, energy and trade, month on month</i></p>
       <div class="chart" id="cFcErr" style="height:150px"></div>
     </div>
 
@@ -408,7 +408,7 @@ BRB.render({
     // measures rather than two signs; the sign is read off the zero line.
     { el: "cFcErr", type: "forecast", format: "pt", tick: 1, left: 42,
       items: [{ key: "fd_mom", label: "Final demand", color: "ink" },
-              { key: "core_mom", label: "Less foods, energy, trade", color: "s1" }] },
+              { key: "core_mom", label: "Less foods, energy, trade", color: "s2" }] },
     { el: "cFd3m", type: "heatmap", months: 48, transform: "yoy",
       periods: 3, cap: 5, format: "pct", left: 214, tick: 5,
       capText: ["\u2265 +5%", "\u2264 \u22125%"],
