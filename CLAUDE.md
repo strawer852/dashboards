@@ -1257,24 +1257,26 @@ and `comment` -- what the release itself says. Each is `{ "dated", "text":
 mirror of the `made` rule.
 
 **Layout of the forecast block (William, 13 September 2026)**, one colour
-system from top to bottom: **ink is the call, blue (`--s1`) is the released
-data, red (`--neg`) is grading.**
+system from top to bottom: **blue (`--s1`) is the call and its review, red
+(`--neg`) is the released data and the comment on it.** The call note keeps
+an ink rule; an error beyond ±0.1 is also red. (Revised the same day: the
+first version had ink for the call, blue for the data, red for grading.)
 
 - The header states the data period once and the two dates the comparison
   rests on: "Called 9 Sep 2026 · 2 days before release" and "Actual released
   11 Sep 2026 · first print" (or "Actual due"). The author is not in the
   header; it closes the call note's date line ("made ... by ...").
 - Each figure shows the call and the actual side by side, each with a
-  dated label (`Call · 9 Sep` in ink, `Actual · 11 Sep` in blue), then
-  consensus, the unrounded print (blue) and the error (red when beyond
+  dated label (`Call · 9 Sep` in blue, `Actual · 11 Sep` in red), then
+  consensus, the unrounded print (red) and the error (red when beyond
   ±0.1). Before the release the actual is a faint dash labelled `Due · 15
   Oct` -- not "Actual · due", which overran a five-figure PPI row.
 - Below, **the call and its review side by side** (`.fc-pair`): the reasons
-  left under an ink rule, the review right under a red rule, top-aligned
+  left under an ink rule, the review right under a blue rule, top-aligned
   rather than matched point by point. Before the review is written the
-  right column is a dashed red placeholder naming when it is due.
+  right column is a dashed blue placeholder naming when it is due.
 - **The comment on the release** sits apart underneath (`.fc-post`), full
-  width, blue, its points flowing across two columns without breaking.
+  width, red, its points flowing across two columns without breaking.
 
 Colour rules need their container in the selector: the review lives in
 `.fc-pair`, and moving it there from `.fc-post` first rendered a black rule
