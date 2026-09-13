@@ -1211,6 +1211,16 @@ two-column note it replaced split sentences across columns.
   distance to violet (11.2) and the `--pos` bars (17.2) stays within 2 of
   before. The forecast call colour and the bold blue heatmap labels read
   the same token, so they brightened with it.
+- **Headings fit on one line at full width** (13 September 2026; PPI, CPI
+  and payroll). In a 1440px window a half-width heading is 534px: the
+  number, title, unit and date plus 33px of gaps, so title and unit together
+  stay under about 395px (343 when the date shows two frequencies). Units
+  say "12-month" or "1-month", never "year over year"; they drop the period
+  when the title already names it ("Fuel and materials, year" / "Percent,
+  s.a."); percentage points are "Points". Titles are cut only where the unit
+  alone is not enough. `alignGists` copies a wrapped heading's height to
+  its neighbour, so clear `min-height` before measuring which one actually
+  wraps. Narrower than about 1400px, some headings still wrap.
 
 ## Forecasts
 
