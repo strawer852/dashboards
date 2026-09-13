@@ -55,19 +55,24 @@
         <a href="#t18"><span>18</span>Item weight in CPI</a>
         <a href="#t19"><span>19</span>Item weight in core</a>
         <a href="#t20"><span>20</span>Items over 4 years</a>
-        <a href="#t21"><span>21</span>Food</a>
-        <a href="#t22"><span>22</span>Energy</a>
-        <a href="#t23"><span>23</span>Shelter</a>
-        <a href="#t24"><span>24</span>Medical care</a>
-        <a href="#t25"><span>25</span>Vehicles and travel</a>
-        <a href="#t26"><span>26</span>Other core items</a>
-        <a href="#t27"><span>27</span>Energy, two kinds</a>
-        <a href="#t28"><span>28</span>Major groups</a>
-        <a href="#t29"><span>29</span>Levels</a>
-        <a href="#t30"><span>30</span>Seasonal adjustment</a>
-        <a href="#t31"><span>31</span>What revises</a>
-        <a href="#t32"><span>32</span>Median</a>
-        <a href="#t33"><span>33</span>Breadth</a>
+        <a href="#t21"><span>21</span>Food by category</a>
+        <a href="#t22"><span>22</span>Energy by category</a>
+        <a href="#t23"><span>23</span>Core by category</a>
+        <a href="#t24"><span>24</span>Food</a>
+        <a href="#t25"><span>25</span>Energy</a>
+        <a href="#t26"><span>26</span>Core</a>
+        <a href="#t27"><span>27</span>Food at home</a>
+        <a href="#t28"><span>28</span>Food away from home</a>
+        <a href="#t29"><span>29</span>Energy goods</a>
+        <a href="#t30"><span>30</span>Energy services</a>
+        <a href="#t31"><span>31</span>Core goods</a>
+        <a href="#t32"><span>32</span>Core services</a>
+        <a href="#t33"><span>33</span>Major groups</a>
+        <a href="#t34"><span>34</span>Levels</a>
+        <a href="#t35"><span>35</span>Seasonal adjustment</a>
+        <a href="#t36"><span>36</span>What revises</a>
+        <a href="#t37"><span>37</span>Median</a>
+        <a href="#t38"><span>38</span>Breadth</a>
       </div>
 
     </nav>
@@ -274,128 +279,216 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row one">
       <div class="t" id="t21">
-        <div class="th"><span class="n">Table 21</span><span class="ti">Food, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="gist">Groceries against restaurants.</p>
-        <p class="key"><i class="k4">Food (line)</i><i class="ks1">At home</i><i class="ks2">Away from home</i></p>
-        <div class="chart" id="cFoodY" style="height:250px"></div>
-        <p class="note">Groceries and restaurants behave differently: food at home is a commodity price and turns quickly, food away from home is mostly labour and turns slowly. Weighted against <em>food</em> rather than the basket &mdash; at home is 8.2% of the CPI but <b>60.9% of food</b> &mdash; so the two bars close on the food line.</p>
-      </div>
-      <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food, month</span><span class="u">Percentage points, 1-month</span></div>
-        <p class="gist">Groceries and restaurants, monthly.</p>
-        <p class="key"><i class="k4">Food (line)</i><i class="ks1">At home</i><i class="ks2">Away from home</i></p>
-        <div class="chart" id="cFoodM" style="height:250px"></div>
-        <p class="note">The same split on the monthly change. At this scale the grocery series does almost all the moving; restaurant prices step up in small, near-identical increments month after month.</p>
+        <div class="th"><span class="n">Table 21</span><span class="ti">Food by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="CPI.r6_saf1" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">Every part of food, against a year earlier.</p>
+        <div class="chart" id="cCatsaf1Y" style="height:358px"></div>
+        <p class="note">The figure beside each name is its share of food, and food is <span data-latest="CPI.r6_saf1" data-format="pct">&nbsp;</span> of CPI, so a row&rsquo;s share of the whole CPI is the two multiplied. Shares are BLS&rsquo;s July 2026 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year. The top row is food itself; each dot marks one level further down, so a row sits inside the nearest row above it with fewer dots.</p>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="CPI.r6_saf1" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">The same parts of food, month on month.</p>
+        <div class="chart" id="cCatsaf1M" style="height:358px"></div>
+        <p class="note">The same rows seasonally adjusted, one month on the last. Limited service meals and Vending and mobile food are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 6 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
       <div class="t" id="t22">
-        <div class="th"><span class="n">Table 22</span><span class="ti">Energy, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="gist">Motor fuel drives the swings in energy.</p>
-        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Motor fuel</i><i class="ks2">Fuel oil & other</i><i class="ks3">Electricity</i><i class="ks4">Utility gas</i></p>
-        <div class="chart" id="cEnY" style="height:250px"></div>
-        <p class="note">The four fuels that make up energy, weighted against <em>energy</em>. They close on it exactly: motor fuel 53.4%, electricity 34.3%, utility gas 10.1%, fuel oil and other 2.2%. Motor fuel dominates the swings; the two utility series move in regulated steps and rarely fall.</p>
-      </div>
-      <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, month</span><span class="u">Percentage points, 1-month</span></div>
-        <p class="gist">The four fuels, monthly.</p>
-        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Motor fuel</i><i class="ks2">Fuel oil & other</i><i class="ks3">Electricity</i><i class="ks4">Utility gas</i></p>
-        <div class="chart" id="cEnM" style="height:250px"></div>
-        <p class="note">Monthly, the same four. This is where the headline&rsquo;s worst months come from &mdash; a single motor-fuel bar here is routinely larger than the whole of core services in the chart above.</p>
+        <div class="th"><span class="n">Table 22</span><span class="ti">Energy by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="CPI.r6_sa0e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">Every part of energy, against a year earlier.</p>
+        <div class="chart" id="cCatsa0eY" style="height:204px"></div>
+        <p class="note">The figure beside each name is its share of energy, and energy is <span data-latest="CPI.r6_sa0e" data-format="pct">&nbsp;</span> of CPI, so a row&rsquo;s share of the whole CPI is the two multiplied. Shares are BLS&rsquo;s July 2026 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year. The top row is energy itself; each dot marks one level further down, so a row sits inside the nearest row above it with fewer dots.</p>
       </div>
     </div>
 
-    <div class="row">
-      <div class="t" id="t23">
-        <div class="th"><span class="n">Table 23</span><span class="ti">Shelter, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="gist">Owners’ equivalent rent is most of shelter.</p>
-        <p class="key"><i class="k4">Shelter (line)</i><i class="ks1">Rent of primary residence</i><i class="ks2">Owners' equivalent rent</i></p>
-        <div class="chart" id="cShY" style="height:250px"></div>
-        <p class="note">Rent and owners&rsquo; equivalent rent, weighted against <em>shelter</em>: 21.9% and 73.2%. <b>They are 95.1% of shelter, not all of it</b> &mdash; the rest is lodging away from home and tenants&rsquo; insurance, and the latter is not published on FRED, so no weight is invented for it. That missing 4.9% is the visible daylight between the ink line and the top of the bars, which is the honest way to draw it.</p>
-      </div>
+    <div class="row one">
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Shelter, month</span><span class="u">Percentage points, 1-month</span></div>
-        <p class="gist">Rent and owners’ equivalent rent, monthly.</p>
-        <p class="key"><i class="k4">Shelter (line)</i><i class="ks1">Rent of primary residence</i><i class="ks2">Owners' equivalent rent</i></p>
-        <div class="chart" id="cShM" style="height:250px"></div>
-        <p class="note">Monthly. OER is measured from a rolling rent sample, so its bars are the smoothest on the page &mdash; this month is the best available guess at next month, which is exactly why shelter turns so slowly.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="CPI.r6_sa0e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">The same parts of energy, month on month.</p>
+        <div class="chart" id="cCatsa0eM" style="height:204px"></div>
+        <p class="note">The same rows seasonally adjusted, one month on the last.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t23">
+        <div class="th"><span class="n">Table 23</span><span class="ti">Core by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="CPI.r6_sa0l1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">Every part of core, against a year earlier.</p>
+        <div class="chart" id="cCatsa0l1eY" style="height:556px"></div>
+        <p class="note">The figure beside each name is its share of core, and core is <span data-latest="CPI.r6_sa0l1e" data-format="pct">&nbsp;</span> of CPI, so a row&rsquo;s share of the whole CPI is the two multiplied. Shares are BLS&rsquo;s July 2026 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year. The top row is core itself; each dot marks one level further down, so a row sits inside the nearest row above it with fewer dots.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="CPI.r6_sa0l1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">The same parts of core, month on month.</p>
+        <div class="chart" id="cCatsa0l1eM" style="height:556px"></div>
+        <p class="note">The same rows seasonally adjusted, one month on the last. Tenants' insurance and Other personal services are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 6 prints it.</p>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t24">
-        <div class="th"><span class="n">Table 24</span><span class="ti">Medical care, year</span><span class="u">Percentage points, 12-month</span></div>
-        <p class="gist">Medical goods against medical services.</p>
-        <p class="key"><i class="k4">Medical care (line)</i><i class="ks1">Commodities</i><i class="ks2">Services</i></p>
-        <div class="chart" id="cMdY" style="height:250px"></div>
-        <p class="note">Commodities are drugs and equipment, services are physicians, hospitals and insurance. Weighted against <em>medical care</em>: 17.1% and 82.9%, closing on it to within rounding. The two diverge persistently, and services carry five-sixths of the weight.</p>
+        <div class="th"><span class="n">Table 24</span><span class="ti">Food, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_saf1" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food over the year.</p>
+        <p class="key"><i class="k4">Food (line)</i><i class="ks1">Food at home</i><i class="ks2">Food away from home</i></p>
+        <div class="chart" id="cStsaf1Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of food at the start of the period, so the bars add up to the food line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Medical care, month</span><span class="u">Percentage points, 1-month</span></div>
-        <p class="gist">Medical goods and services, monthly.</p>
-        <p class="key"><i class="k4">Medical care (line)</i><i class="ks1">Commodities</i><i class="ks2">Services</i></p>
-        <div class="chart" id="cMdM" style="height:250px"></div>
-        <p class="note">Monthly. Medical services are surveyed on a slower cycle than most of the basket, so a flat month here is often collection timing rather than price stability.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_saf1" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food over the month.</p>
+        <p class="key"><i class="k4">Food (line)</i><i class="ks1">Food at home</i><i class="ks2">Food away from home</i></p>
+        <div class="chart" id="cStsaf1M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of food at the start of the period, so the bars add up to the food line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t25">
-        <div class="th"><span class="n">Table 25</span><span class="ti">Vehicles and travel, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="gist">Cars, airfares and insurance.</p>
-        <p class="key"><i class="k4">Motor vehicle insurance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i><i class="ks4">Maintenance</i></p>
-        <div class="chart" id="cVehY" style="height:250px"></div>
-        <p class="note">Lines, not a stack. These five are a <b>selection, not a decomposition</b> &mdash; stacking them would draw a total that does not exist, and two of them sit inside transportation services rather than beside it, which is exactly why they are absent from the single-item contribution charts above. <b>Motor vehicle insurance is the one to watch</b>: 2.6% of the basket, it ran at double-digit rates through 2022&ndash;24 before turning negative. It is published by BLS but not carried by FRED seasonally adjusted, so it arrives through the BLS adapter with no revision history. New and used vehicles were among the few items priced in October 2025, so those two lines run through the gap that breaks the others.</p>
+        <div class="th"><span class="n">Table 25</span><span class="ti">Energy, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sa0e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy over the year.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Energy goods</i><i class="ks2">Energy services</i></p>
+        <div class="chart" id="cStsa0eY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of energy at the start of the period, so the bars add up to the energy line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Vehicles and travel, month</span><span class="u">Percent, month on month, s.a.</span></div>
-        <p class="gist">Cars, airfares and insurance, monthly.</p>
-        <p class="key"><i class="k4">Motor vehicle insurance</i><i class="ks2">Used cars</i><i class="ks1">New vehicles</i><i class="ks3">Airline fares (dashed)</i><i class="ks4">Maintenance</i></p>
-        <div class="chart" id="cVehM" data-span="intended: airline fares are an order of magnitude more volatile than the rest of transport, which is why they are dashed; the other four stay inside a readable band" style="height:250px"></div>
-        <p class="note">The same five monthly. Used cars and airline fares are the two most volatile large items in the whole index; at this scale maintenance is nearly flat by comparison, which is the point of showing them together. Insurance moves in steps rather than continuously &mdash; it is repriced at renewal, not daily, so a flat month is the normal state and a large one is a repricing round.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sa0e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy over the month.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Energy goods</i><i class="ks2">Energy services</i></p>
+        <div class="chart" id="cStsa0eM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of energy at the start of the period, so the bars add up to the energy line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t26">
-        <div class="th"><span class="n">Table 26</span><span class="ti">Other core items, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="gist">Three core items that follow their own path.</p>
-        <p class="key"><i class="k4">Household furnishings</i><i class="ks2">Tuition and school fees</i><i class="ks1">Video and audio</i></p>
-        <div class="chart" id="cOthY" style="height:250px"></div>
-        <p class="note">Lines again, and for the same reason &mdash; three unrelated items with no common parent. <b>Video and audio runs persistently negative</b>: quality adjustment on electronics means the index falls while the shelf price does not, and that is a large part of why core goods inflation sits near zero. Tuition is the opposite &mdash; slow, one-way, almost never negative.</p>
+        <div class="th"><span class="n">Table 26</span><span class="ti">Core, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sa0l1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core over the year.</p>
+        <p class="key"><i class="k4">Core (line)</i><i class="ks1">Core goods</i><i class="ks2">Core services</i></p>
+        <div class="chart" id="cStsa0l1eY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of core at the start of the period, so the bars add up to the core line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Other core items, month</span><span class="u">Percent, month on month, s.a.</span></div>
-        <p class="gist">The same three items, monthly.</p>
-        <p class="key"><i class="k4">Household furnishings</i><i class="ks2">Tuition and school fees</i><i class="ks1">Video and audio</i></p>
-        <div class="chart" id="cOthM" style="height:250px"></div>
-        <p class="note">Monthly. Tuition is the clearest seasonal artefact on the page even after adjustment &mdash; fees move once a year and the adjustment spreads that step across months it did not happen in.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sa0l1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core over the month.</p>
+        <p class="key"><i class="k4">Core (line)</i><i class="ks1">Core goods</i><i class="ks2">Core services</i></p>
+        <div class="chart" id="cStsa0l1eM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of core at the start of the period, so the bars add up to the core line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t27">
-        <div class="th"><span class="n">Table 27</span><span class="ti">Energy, goods against services, year</span><span class="u">Percent, year over year, s.a.</span></div>
-        <p class="gist">Fuel prices against utility tariffs.</p>
-        <p class="key"><i class="k4">Energy commodities</i><i class="ks2">Energy services</i></p>
-        <div class="chart" id="cEnSplitY" style="height:250px"></div>
-        <p class="note">The same energy, cut the other way &mdash; the goods/services split that runs through the whole page. <b>Energy commodities</b> (petrol and fuel oil, 4.1% of the basket) are a world price and move violently. <b>Energy services</b> (electricity and piped gas, 3.3%) are regulated tariffs and move in steps, months behind. Table 22 stacks the four fuels; this shows why two of them behave nothing like the other two.</p>
+        <div class="th"><span class="n">Table 27</span><span class="ti">Food at home, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_saf11" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food at home over the year.</p>
+        <p class="key"><i class="k4">Food at home (line)</i><i class="ks1">Cereals and bakery</i><i class="ks2">Meats, poultry, fish, eggs</i><i class="ks3">Dairy and related products</i><i class="ks4">Fruits and vegetables</i><i class="ks5">Nonalcoholic beverages</i><i class="ks6">Other food at home</i></p>
+        <div class="chart" id="cStsaf11Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of food at home at the start of the period, so the bars add up to the food at home line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, goods against services, month</span><span class="u">Percent, month on month, s.a.</span></div>
-        <p class="gist">Fuels against utilities, monthly.</p>
-        <p class="key"><i class="k4">Energy commodities</i><i class="ks2">Energy services</i></p>
-        <div class="chart" id="cEnSplitM" style="height:250px"></div>
-        <p class="note">Monthly the contrast is starker still: the commodities line is the noisiest series anywhere on this page, while the services line barely leaves a narrow band. Averaging the two into &ldquo;energy&rdquo; hides that they are not the same kind of number.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food at home, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_saf11" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food at home over the month.</p>
+        <p class="key"><i class="k4">Food at home (line)</i><i class="ks1">Cereals and bakery</i><i class="ks2">Meats, poultry, fish, eggs</i><i class="ks3">Dairy and related products</i><i class="ks4">Fruits and vegetables</i><i class="ks5">Nonalcoholic beverages</i><i class="ks6">Other food at home</i></p>
+        <div class="chart" id="cStsaf11M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of food at home at the start of the period, so the bars add up to the food at home line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t28">
+        <div class="th"><span class="n">Table 28</span><span class="ti">Food away from home, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sefv" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food away from home over the year.</p>
+        <p class="key"><i class="k4">Food away from home (line)</i><i class="ks1">Full service meals</i><i class="ks2">Limited service meals</i><i class="ks3">Food at work and school</i><i class="ks4">Vending and mobile food</i><i class="ks5">Other food away from home</i></p>
+        <div class="chart" id="cStsefvY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of food away from home at the start of the period, so the bars add up to the food away from home line; what is left over is rounding and the parts being seasonally adjusted on their own. Limited service meals and Vending and mobile food are not seasonally adjusted by BLS, so the unadjusted change is used. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Food away from home, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sefv" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved food away from home over the month.</p>
+        <p class="key"><i class="k4">Food away from home (line)</i><i class="ks1">Full service meals</i><i class="ks2">Limited service meals</i><i class="ks3">Food at work and school</i><i class="ks4">Vending and mobile food</i><i class="ks5">Other food away from home</i></p>
+        <div class="chart" id="cStsefvM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of food away from home at the start of the period, so the bars add up to the food away from home line; what is left over is rounding and the parts being seasonally adjusted on their own. Limited service meals and Vending and mobile food are not seasonally adjusted by BLS, so the unadjusted change is used. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t29">
+        <div class="th"><span class="n">Table 29</span><span class="ti">Energy goods, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sace" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy goods over the year.</p>
+        <p class="key"><i class="k4">Energy goods (line)</i><i class="ks1">Fuel oil and other fuels</i><i class="ks2">Motor fuel</i></p>
+        <div class="chart" id="cStsaceY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of energy goods at the start of the period, so the bars add up to the energy goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy goods, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sace" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy goods over the month.</p>
+        <p class="key"><i class="k4">Energy goods (line)</i><i class="ks1">Fuel oil and other fuels</i><i class="ks2">Motor fuel</i></p>
+        <div class="chart" id="cStsaceM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of energy goods at the start of the period, so the bars add up to the energy goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t30">
+        <div class="th"><span class="n">Table 30</span><span class="ti">Energy services, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sehf" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy services over the year.</p>
+        <p class="key"><i class="k4">Energy services (line)</i><i class="ks1">Electricity</i><i class="ks2">Utility gas</i></p>
+        <div class="chart" id="cStsehfY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of energy services at the start of the period, so the bars add up to the energy services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy services, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sehf" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved energy services over the month.</p>
+        <p class="key"><i class="k4">Energy services (line)</i><i class="ks1">Electricity</i><i class="ks2">Utility gas</i></p>
+        <div class="chart" id="cStsehfM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of energy services at the start of the period, so the bars add up to the energy services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t31">
+        <div class="th"><span class="n">Table 31</span><span class="ti">Core goods, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sacl1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core goods over the year.</p>
+        <p class="key"><i class="k4">Core goods (line)</i><i class="ks1">Household furnishings</i><i class="ks2">Apparel</i><i class="ks3">Transport goods ex fuel</i><i class="ks4">Medical care commodities</i><i class="ks5">Recreation commodities</i><i class="ks6">Other</i></p>
+        <div class="chart" id="cStsacl1eY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of core goods at the start of the period, so the bars add up to the core goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Other is the change less the five largest parts: other goods, alcoholic beverages, education and comms goods, with that rounding. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core goods, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sacl1e" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core goods over the month.</p>
+        <p class="key"><i class="k4">Core goods (line)</i><i class="ks1">Household furnishings</i><i class="ks2">Apparel</i><i class="ks3">Transport goods ex fuel</i><i class="ks4">Medical care commodities</i><i class="ks5">Recreation commodities</i><i class="ks6">Other</i></p>
+        <div class="chart" id="cStsacl1eM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of core goods at the start of the period, so the bars add up to the core goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Other is the change less the five largest parts: other goods, alcoholic beverages, education and comms goods, with that rounding. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t32">
+        <div class="th"><span class="n">Table 32</span><span class="ti">Core services, year</span><span class="u">Points, 12-month &middot; <span data-latest="CPI.r6_sasle" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core services over the year.</p>
+        <p class="key"><i class="k4">Core services (line)</i><i class="ks1">Shelter</i><i class="ks2">Medical care services</i><i class="ks3">Transportation services</i><i class="ks4">Recreation services</i><i class="ks5">Education and comms services</i><i class="ks6">Other</i></p>
+        <div class="chart" id="cStsasleY" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of core services at the start of the period, so the bars add up to the core services line; what is left over is rounding and the parts being seasonally adjusted on their own. Other is the change less the five largest parts: other personal services, water, sewer and trash, with that rounding. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core services, month</span><span class="u">Points, 1-month &middot; <span data-latest="CPI.r6_sasle" data-format="pct">&nbsp;</span> of CPI</span></div>
+        <p class="gist">What moved core services over the month.</p>
+        <p class="key"><i class="k4">Core services (line)</i><i class="ks1">Shelter</i><i class="ks2">Medical care services</i><i class="ks3">Transportation services</i><i class="ks4">Recreation services</i><i class="ks5">Education and comms services</i><i class="ks6">Other</i></p>
+        <div class="chart" id="cStsasleM" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of core services at the start of the period, so the bars add up to the core services line; what is left over is rounding and the parts being seasonally adjusted on their own. Other is the change less the five largest parts: other personal services, water, sewer and trash, with that rounding. Shares are anchored on BLS&rsquo;s July 2026 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
     <div class="row one">
-      <div class="t" id="t28">
-        <div class="th"><span class="n">Table 28</span><span class="ti">The eight major groups</span><span class="u">Percent, 12-month change, 48 months</span></div>
+      <div class="t" id="t33">
+        <div class="th"><span class="n">Table 33</span><span class="ti">The eight major groups</span><span class="u">Percent, 12-month change, 48 months</span></div>
         <p class="gist">Inflation in the eight major groups.</p>
         <div class="chart" id="cGroups" style="height:290px"></div>
         <p class="note">The CPI&rsquo;s own top-level taxonomy, a different cut from the goods/services split above, covering the basket exactly once. Rates here, not contributions, so a dark cell means a fast-moving group rather than an influential one &mdash; housing at 3% moves the index far more than recreation at 6%. The scale saturates beyond &plusmn;6%: transportation runs outside it whenever fuel does.</p>
@@ -403,15 +496,15 @@
     </div>
 
     <div class="row">
-      <div class="t" id="t29">
-        <div class="th"><span class="n">Table 29</span><span class="ti">Where the level actually went</span><span class="u">Index, 5 years ago = 100</span></div>
+      <div class="t" id="t34">
+        <div class="th"><span class="n">Table 34</span><span class="ti">Where the level actually went</span><span class="u">Index, 5 years ago = 100</span></div>
         <p class="gist">Price levels, rebased five years back.</p>
         <p class="key"><i class="k4">All items</i><i class="ks2">Core</i><i class="ks1">Core goods</i><i class="ks3">Core services (dashed)</i></p>
         <div class="chart" id="cLevels" style="height:250px"></div>
         <p class="note">Rates answer &ldquo;how fast&rdquo;; this answers &ldquo;how far&rdquo;, which is the question people are actually asking when they say prices are high. Rebased inside the window, so every line starts at 100 five years ago rather than at its own base year &mdash; the published indexes sit on four different bases and are not comparable as levels. Inflation falling does not bring these lines down; it only flattens them.</p>
       </div>
-      <div class="t" id="t30">
-        <div class="th"><span class="n">Table 30</span><span class="ti">What seasonal adjustment removes</span><span class="u">Percent, month on month</span></div>
+      <div class="t" id="t35">
+        <div class="th"><span class="n">Table 35</span><span class="ti">What seasonal adjustment removes</span><span class="u">Percent, month on month</span></div>
         <p class="gist">Monthly CPI with and without adjustment.</p>
         <p class="key"><i class="k4">Seasonally adjusted</i><i class="ks2">Unadjusted</i></p>
         <div class="chart" id="cSA" style="height:250px"></div>
@@ -420,8 +513,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t31">
-        <div class="th"><span class="n">Table 31</span><span class="ti">What revises, and what does not</span><span class="u">Index points, first published to latest</span></div>
+      <div class="t" id="t36">
+        <div class="th"><span class="n">Table 36</span><span class="ti">What revises, and what does not</span><span class="u">Index points, first published to latest</span></div>
         <p class="gist">Only the seasonally adjusted CPI revises.</p>
         <p class="key"><i class="k1">Seasonally adjusted</i><i class="k4">Unadjusted</i></p>
         <div class="chart" id="cRevSA" style="height:230px"></div>
@@ -430,8 +523,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t32">
-        <div class="th"><span class="n">Table 32</span><span class="ti">What the typical price is doing</span><span class="u">Twelve-month change, %, unadjusted</span></div>
+      <div class="t" id="t37">
+        <div class="th"><span class="n">Table 37</span><span class="ti">What the typical price is doing</span><span class="u">Twelve-month change, %, unadjusted</span></div>
         <p class="gist">The median price change against the mean.</p>
         <p class="key"><i class="kink">Median item</i><i class="ks1">Headline</i><i class="ks2">Core</i></p>
         <div class="chart" id="cMedian" style="height:250px"></div>
@@ -440,8 +533,8 @@
     </div>
 
     <div class="row one">
-      <div class="t" id="t33">
-        <div class="th"><span class="n">Table 33</span><span class="ti">How much of the basket is running hot</span><span class="u">Share of expenditure weight above 3%, %</span></div>
+      <div class="t" id="t38">
+        <div class="th"><span class="n">Table 38</span><span class="ti">How much of the basket is running hot</span><span class="u">Share of expenditure weight above 3%, %</span></div>
         <p class="gist">Share of the basket rising faster than 3%.</p>
         <div class="chart" id="cBroad" style="height:230px"></div>
         <p class="note">Breadth rather than level. A headline held down by one large falling item and one held up by a general rise read the same on the mean and differently here. Above 50 more than half the basket, by what people spend, is rising faster than 3 per cent a year.</p>
@@ -711,104 +804,279 @@ BRB.render({
                  periods: 1, ...C1 },
                { id: "CPIAUCNS", label: "Unadjusted", transform: "yoy",
                  periods: 1, ...C2 }] },
-    { el: "cFoodY", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIUFDSL", label: "Total", transform: "yoy" },
+    { el: "cCatsaf1Y", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 12, left: 262, tick: 5,
+      capText: ["≥ +12%", "≤ −12%"],
       series: [
-               { id: "CPI.f_home_y", label: "At home" },
-               { id: "CPI.f_away_y", label: "Away from home" }] },
+               { id: "CUUR0000SAF1", label: "FOOD", em: "top" },
+               { id: "CUUR0000SAF11", label: "Food at home", share: "CPI.r7_saf11", em: "sub" },
+               { id: "CUUR0000SAF111", label: "· Cereals and bakery", share: "CPI.r7_saf111" },
+               { id: "CUUR0000SAF112", label: "· Meats, poultry, fish, eggs", share: "CPI.r7_saf112" },
+               { id: "CUUR0000SEFJ", label: "· Dairy and related products", share: "CPI.r7_sefj" },
+               { id: "CUUR0000SAF113", label: "· Fruits and vegetables", share: "CPI.r7_saf113" },
+               { id: "CUUR0000SAF114", label: "· Nonalcoholic beverages", share: "CPI.r7_saf114" },
+               { id: "CUUR0000SAF115", label: "· Other food at home", share: "CPI.r7_saf115" },
+               { id: "CUUR0000SEFV", label: "Food away from home", share: "CPI.r7_sefv", em: "sub" },
+               { id: "CUUR0000SEFV01", label: "· Full service meals", share: "CPI.r7_sefv01" },
+               { id: "CUUR0000SEFV02", label: "· Limited service meals", share: "CPI.r7_sefv02" },
+               { id: "CUUR0000SEFV03", label: "· Food at work and school", share: "CPI.r7_sefv03" },
+               { id: "CUUR0000SEFV04", label: "· Vending and mobile food", share: "CPI.r7_sefv04" },
+               { id: "CUUR0000SEFV05", label: "· Other food away from home", share: "CPI.r7_sefv05" }] },
 
-    { el: "cFoodM", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIUFDSL", label: "Total", transform: "yoy", periods: 1 },
+    { el: "cCatsaf1M", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 1, left: 262, tick: 5,
+      capText: ["≥ +1%", "≤ −1%"],
       series: [
-               { id: "CPI.f_home_m", label: "At home" },
-               { id: "CPI.f_away_m", label: "Away from home" }] },
+               { id: "CPIUFDSL", label: "FOOD", em: "top" },
+               { id: "CUSR0000SAF11", label: "Food at home", share: "CPI.r7_saf11", em: "sub" },
+               { id: "CUSR0000SAF111", label: "· Cereals and bakery", share: "CPI.r7_saf111" },
+               { id: "CUSR0000SAF112", label: "· Meats, poultry, fish, eggs", share: "CPI.r7_saf112" },
+               { id: "CUSR0000SEFJ", label: "· Dairy and related products", share: "CPI.r7_sefj" },
+               { id: "CUSR0000SAF113", label: "· Fruits and vegetables", share: "CPI.r7_saf113" },
+               { id: "CUSR0000SAF114", label: "· Nonalcoholic beverages", share: "CPI.r7_saf114" },
+               { id: "CUSR0000SAF115", label: "· Other food at home", share: "CPI.r7_saf115" },
+               { id: "CUSR0000SEFV", label: "Food away from home", share: "CPI.r7_sefv", em: "sub" },
+               { id: "CUSR0000SEFV01", label: "· Full service meals", share: "CPI.r7_sefv01" },
+               { id: "CUUR0000SEFV02", label: "· Limited service meals", share: "CPI.r7_sefv02" },
+               { id: "CUSR0000SEFV03", label: "· Food at work and school", share: "CPI.r7_sefv03" },
+               { id: "CUUR0000SEFV04", label: "· Vending and mobile food", share: "CPI.r7_sefv04" },
+               { id: "CUSR0000SEFV05", label: "· Other food away from home", share: "CPI.r7_sefv05" }] },
 
-    { el: "cEnY", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIENGSL", label: "Total", transform: "yoy" },
+    { el: "cCatsa0eY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 20, left: 262, tick: 5,
+      capText: ["≥ +20%", "≤ −20%"],
       series: [
-               { id: "CPI.e_motor_y", label: "Motor fuel" },
-               { id: "CPI.e_fuel_y", label: "Fuel oil & other" },
-               { id: "CPI.e_elec_y", label: "Electricity" },
-               { id: "CPI.e_gas_y", label: "Utility gas" }] },
+               { id: "CUUR0000SA0E", label: "ENERGY", em: "top" },
+               { id: "CUUR0000SACE", label: "Energy goods", share: "CPI.r7_sace", em: "sub" },
+               { id: "CUUR0000SEHE", label: "· Fuel oil and other fuels", share: "CPI.r7_sehe" },
+               { id: "CUUR0000SETB", label: "· Motor fuel", share: "CPI.r7_setb" },
+               { id: "CUUR0000SEHF", label: "Energy services", share: "CPI.r7_sehf", em: "sub" },
+               { id: "CUUR0000SEHF01", label: "· Electricity", share: "CPI.r7_sehf01" },
+               { id: "CUUR0000SEHF02", label: "· Utility gas", share: "CPI.r7_sehf02" }] },
 
-    { el: "cEnM", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIENGSL", label: "Total", transform: "yoy", periods: 1 },
+    { el: "cCatsa0eM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 5, left: 262, tick: 5,
+      capText: ["≥ +5%", "≤ −5%"],
       series: [
-               { id: "CPI.e_motor_m", label: "Motor fuel" },
-               { id: "CPI.e_fuel_m", label: "Fuel oil & other" },
-               { id: "CPI.e_elec_m", label: "Electricity" },
-               { id: "CPI.e_gas_m", label: "Utility gas" }] },
+               { id: "CPIENGSL", label: "ENERGY", em: "top" },
+               { id: "CUSR0000SACE", label: "Energy goods", share: "CPI.r7_sace", em: "sub" },
+               { id: "CUSR0000SEHE", label: "· Fuel oil and other fuels", share: "CPI.r7_sehe" },
+               { id: "CUSR0000SETB", label: "· Motor fuel", share: "CPI.r7_setb" },
+               { id: "CUSR0000SEHF", label: "Energy services", share: "CPI.r7_sehf", em: "sub" },
+               { id: "CUSR0000SEHF01", label: "· Electricity", share: "CPI.r7_sehf01" },
+               { id: "CUSR0000SEHF02", label: "· Utility gas", share: "CPI.r7_sehf02" }] },
 
-    { el: "cShY", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CUSR0000SAH1", label: "Total", transform: "yoy" },
+    { el: "cCatsa0l1eY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 8, left: 262, tick: 5,
+      capText: ["≥ +8%", "≤ −8%"],
       series: [
-               { id: "CPI.sh_rent_y", label: "Rent" },
-               { id: "CPI.sh_oer_y", label: "Owners' equivalent rent" }] },
+               { id: "CUUR0000SA0L1E", label: "CORE", em: "top" },
+               { id: "CUUR0000SACL1E", label: "Core goods", share: "CPI.r7_sacl1e", em: "sub" },
+               { id: "CUUR0000SAH31", label: "· Household furnishings", share: "CPI.r7_sah31" },
+               { id: "CUUR0000SAA", label: "· Apparel", share: "CPI.r7_saa" },
+               { id: "CUUR0000SATCLTB", label: "· Transport goods ex fuel", share: "CPI.r7_satcltb" },
+               { id: "CUUR0000SAM1", label: "· Medical care commodities", share: "CPI.r7_sam1" },
+               { id: "CUUR0000SARC", label: "· Recreation commodities", share: "CPI.r7_sarc" },
+               { id: "CUUR0000SAEC", label: "· Education and comms goods", share: "CPI.r7_saec" },
+               { id: "CUUR0000SAF116", label: "· Alcoholic beverages", share: "CPI.r7_saf116" },
+               { id: "CUUR0000SAGC", label: "· Other goods", share: "CPI.r7_sagc" },
+               { id: "CUUR0000SASLE", label: "Core services", share: "CPI.r7_sasle", em: "sub" },
+               { id: "CUUR0000SAH1", label: "· Shelter", share: "CPI.r7_sah1" },
+               { id: "CUUR0000SAS2RS", label: "·· Rent of shelter", share: "CPI.r7_sas2rs" },
+               { id: "CUUR0000SEHA", label: "··· Rent of primary residence", share: "CPI.r7_seha" },
+               { id: "CUUR0000SEHB", label: "··· Lodging away from home", share: "CPI.r7_sehb" },
+               { id: "CUUR0000SEHC", label: "··· Owners' equivalent rent", share: "CPI.r7_sehc" },
+               { id: "CUUR0000SEHD", label: "·· Tenants' insurance", share: "CPI.r7_sehd" },
+               { id: "CUUR0000SEHG", label: "· Water, sewer and trash", share: "CPI.r7_sehg" },
+               { id: "CUUR0000SAM2", label: "· Medical care services", share: "CPI.r7_sam2" },
+               { id: "CUUR0000SAS4", label: "· Transportation services", share: "CPI.r7_sas4" },
+               { id: "CUUR0000SARS", label: "· Recreation services", share: "CPI.r7_sars" },
+               { id: "CUUR0000SAES", label: "· Education and comms services", share: "CPI.r7_saes" },
+               { id: "CUUR0000SAGS", label: "· Other personal services", share: "CPI.r7_sags" }] },
 
-    { el: "cShM", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CUSR0000SAH1", label: "Total", transform: "yoy", periods: 1 },
+    { el: "cCatsa0l1eM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 1, left: 262, tick: 5,
+      capText: ["≥ +1%", "≤ −1%"],
       series: [
-               { id: "CPI.sh_rent_m", label: "Rent" },
-               { id: "CPI.sh_oer_m", label: "Owners' equivalent rent" }] },
+               { id: "CPILFESL", label: "CORE", em: "top" },
+               { id: "CUSR0000SACL1E", label: "Core goods", share: "CPI.r7_sacl1e", em: "sub" },
+               { id: "CUSR0000SAH31", label: "· Household furnishings", share: "CPI.r7_sah31" },
+               { id: "CPIAPPSL", label: "· Apparel", share: "CPI.r7_saa" },
+               { id: "CUSR0000SATCLTB", label: "· Transport goods ex fuel", share: "CPI.r7_satcltb" },
+               { id: "CUSR0000SAM1", label: "· Medical care commodities", share: "CPI.r7_sam1" },
+               { id: "CUSR0000SARC", label: "· Recreation commodities", share: "CPI.r7_sarc" },
+               { id: "CUSR0000SAEC", label: "· Education and comms goods", share: "CPI.r7_saec" },
+               { id: "CUSR0000SAF116", label: "· Alcoholic beverages", share: "CPI.r7_saf116" },
+               { id: "CUSR0000SAGC", label: "· Other goods", share: "CPI.r7_sagc" },
+               { id: "CUSR0000SASLE", label: "Core services", share: "CPI.r7_sasle", em: "sub" },
+               { id: "CUSR0000SAH1", label: "· Shelter", share: "CPI.r7_sah1" },
+               { id: "CUSR0000SAS2RS", label: "·· Rent of shelter", share: "CPI.r7_sas2rs" },
+               { id: "CUSR0000SEHA", label: "··· Rent of primary residence", share: "CPI.r7_seha" },
+               { id: "CUSR0000SEHB", label: "··· Lodging away from home", share: "CPI.r7_sehb" },
+               { id: "CUSR0000SEHC", label: "··· Owners' equivalent rent", share: "CPI.r7_sehc" },
+               { id: "CUUR0000SEHD", label: "·· Tenants' insurance", share: "CPI.r7_sehd" },
+               { id: "CUSR0000SEHG", label: "· Water, sewer and trash", share: "CPI.r7_sehg" },
+               { id: "CUSR0000SAM2", label: "· Medical care services", share: "CPI.r7_sam2" },
+               { id: "CUSR0000SAS4", label: "· Transportation services", share: "CPI.r7_sas4" },
+               { id: "CUSR0000SARS", label: "· Recreation services", share: "CPI.r7_sars" },
+               { id: "CUSR0000SAES", label: "· Education and comms services", share: "CPI.r7_saes" },
+               { id: "CUUR0000SAGS", label: "· Other personal services", share: "CPI.r7_sags" }] },
 
-    { el: "cMdY", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIMEDSL", label: "Total", transform: "yoy" },
+    { el: "cStsaf1Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_saf1",
+      total: { id: "CPIUFDSL", label: "Food", transform: "yoy", periods: 12 },
       series: [
-               { id: "CPI.md_comm_y", label: "Commodities" },
-               { id: "CPI.md_serv_y", label: "Services" }] },
+               { id: "CPI.k6_saf11_y", label: "Food at home" },
+               { id: "CPI.k6_sefv_y", label: "Food away from home" }] },
 
-    { el: "cMdM", type: "stacked", format: "pp", axisFormat: "pt",
-      window: 60, tick: 11, left: 40, width: 6,
-      total: { id: "CPIMEDSL", label: "Total", transform: "yoy", periods: 1 },
+    { el: "cStsaf1M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_saf1",
+      total: { id: "CPIUFDSL", label: "Food", transform: "yoy", periods: 1 },
       series: [
-               { id: "CPI.md_comm_m", label: "Commodities" },
-               { id: "CPI.md_serv_m", label: "Services" }] },
+               { id: "CPI.k6_saf11_m", label: "Food at home" },
+               { id: "CPI.k6_sefv_m", label: "Food away from home" }] },
 
-    { el: "cVehY", type: "line", format: "pct", tick: 11, left: 48, window: 60,
+    { el: "cStsa0eY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sa0e",
+      total: { id: "CPIENGSL", label: "Energy", transform: "yoy", periods: 12 },
       series: [
-               // Insurance leads on ink: it is the largest mover of the five and
-               // the only one that has been falling outright.
-               { id: "CUSR0000SETE", label: "Motor vehicle insurance", transform: "yoy", ...C1 },
-               { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", ...C2 },
-               { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", ...C3 },
-               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", ...C4 },
-               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", ...C5 }] },
+               { id: "CPI.k6_sace_y", label: "Energy goods" },
+               { id: "CPI.k6_sehf_y", label: "Energy services" }] },
 
-    { el: "cVehM", type: "line", format: "pct", tick: 11, left: 48, window: 60,
+    { el: "cStsa0eM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sa0e",
+      total: { id: "CPIENGSL", label: "Energy", transform: "yoy", periods: 1 },
       series: [
-               { id: "CUSR0000SETE", label: "Motor vehicle insurance", transform: "yoy", periods: 1, ...C1 },
-               { id: "CUSR0000SETA02", label: "Used cars", transform: "yoy", periods: 1, ...C2 },
-               { id: "CUSR0000SETA01", label: "New vehicles", transform: "yoy", periods: 1, ...C3 },
-               { id: "CUSR0000SETG01", label: "Airline fares", transform: "yoy", periods: 1, ...C4 },
-               { id: "CUSR0000SETD", label: "Maintenance", transform: "yoy", periods: 1, ...C5 }] },
+               { id: "CPI.k6_sace_m", label: "Energy goods" },
+               { id: "CPI.k6_sehf_m", label: "Energy services" }] },
 
-    { el: "cOthY", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+    { el: "cStsa0l1eY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sa0l1e",
+      total: { id: "CPILFESL", label: "Core", transform: "yoy", periods: 12 },
       series: [
-               { id: "CUSR0000SAH3", label: "Household furnishings", transform: "yoy", ...C1 },
-               { id: "CUSR0000SEEB", label: "Tuition and school fees", transform: "yoy", ...C2 },
-               { id: "CUSR0000SERA", label: "Video and audio", transform: "yoy", ...C3 }] },
+               { id: "CPI.k6_sacl1e_y", label: "Core goods" },
+               { id: "CPI.k6_sasle_y", label: "Core services" }] },
 
-    { el: "cOthM", type: "line", format: "pct", tick: 11, left: 42, window: 60,
+    { el: "cStsa0l1eM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sa0l1e",
+      total: { id: "CPILFESL", label: "Core", transform: "yoy", periods: 1 },
       series: [
-               { id: "CUSR0000SAH3", label: "Household furnishings", transform: "yoy", periods: 1, ...C1 },
-               { id: "CUSR0000SEEB", label: "Tuition and school fees", transform: "yoy", periods: 1, ...C2 },
-               { id: "CUSR0000SERA", label: "Video and audio", transform: "yoy", periods: 1, ...C3 }] },
+               { id: "CPI.k6_sacl1e_m", label: "Core goods" },
+               { id: "CPI.k6_sasle_m", label: "Core services" }] },
 
-    { el: "cEnSplitY", type: "line", format: "pct", tick: 11, left: 44, window: 60,
-      series: [{ id: "CUSR0000SACE", label: "Energy commodities", transform: "yoy", ...C1 },
-               { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", ...C2 }] },
+    { el: "cStsaf11Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_saf11",
+      total: { id: "CUSR0000SAF11", label: "Food at home", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_saf111_y", label: "Cereals and bakery" },
+               { id: "CPI.k6_saf112_y", label: "Meats, poultry, fish, eggs" },
+               { id: "CPI.k6_sefj_y", label: "Dairy and related products" },
+               { id: "CPI.k6_saf113_y", label: "Fruits and vegetables" },
+               { id: "CPI.k6_saf114_y", label: "Nonalcoholic beverages" },
+               { id: "CPI.k6_saf115_y", label: "Other food at home" }] },
 
-    { el: "cEnSplitM", type: "line", format: "pct", tick: 11, left: 44, window: 60,
-      series: [{ id: "CUSR0000SACE", label: "Energy commodities", transform: "yoy", periods: 1, ...C1 },
-               { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", periods: 1, ...C2 }] },
+    { el: "cStsaf11M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_saf11",
+      total: { id: "CUSR0000SAF11", label: "Food at home", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_saf111_m", label: "Cereals and bakery" },
+               { id: "CPI.k6_saf112_m", label: "Meats, poultry, fish, eggs" },
+               { id: "CPI.k6_sefj_m", label: "Dairy and related products" },
+               { id: "CPI.k6_saf113_m", label: "Fruits and vegetables" },
+               { id: "CPI.k6_saf114_m", label: "Nonalcoholic beverages" },
+               { id: "CPI.k6_saf115_m", label: "Other food at home" }] },
 
+    { el: "cStsefvY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sefv",
+      total: { id: "CUSR0000SEFV", label: "Food away from home", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_sefv01_y", label: "Full service meals" },
+               { id: "CPI.k6_sefv02_y", label: "Limited service meals" },
+               { id: "CPI.k6_sefv03_y", label: "Food at work and school" },
+               { id: "CPI.k6_sefv04_y", label: "Vending and mobile food" },
+               { id: "CPI.k6_sefv05_y", label: "Other food away from home" }] },
+
+    { el: "cStsefvM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sefv",
+      total: { id: "CUSR0000SEFV", label: "Food away from home", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_sefv01_m", label: "Full service meals" },
+               { id: "CPI.k6_sefv02_m", label: "Limited service meals" },
+               { id: "CPI.k6_sefv03_m", label: "Food at work and school" },
+               { id: "CPI.k6_sefv04_m", label: "Vending and mobile food" },
+               { id: "CPI.k6_sefv05_m", label: "Other food away from home" }] },
+
+    { el: "cStsaceY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sace",
+      total: { id: "CUSR0000SACE", label: "Energy goods", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_sehe_y", label: "Fuel oil and other fuels" },
+               { id: "CPI.k6_setb_y", label: "Motor fuel" }] },
+
+    { el: "cStsaceM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sace",
+      total: { id: "CUSR0000SACE", label: "Energy goods", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_sehe_m", label: "Fuel oil and other fuels" },
+               { id: "CPI.k6_setb_m", label: "Motor fuel" }] },
+
+    { el: "cStsehfY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sehf",
+      total: { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_sehf01_y", label: "Electricity" },
+               { id: "CPI.k6_sehf02_y", label: "Utility gas" }] },
+
+    { el: "cStsehfM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sehf",
+      total: { id: "CUSR0000SEHF", label: "Energy services", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_sehf01_m", label: "Electricity" },
+               { id: "CPI.k6_sehf02_m", label: "Utility gas" }] },
+
+    { el: "cStsacl1eY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sacl1e",
+      total: { id: "CUSR0000SACL1E", label: "Core goods", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_sah31_y", label: "Household furnishings" },
+               { id: "CPI.k6_saa_y", label: "Apparel" },
+               { id: "CPI.k6_satcltb_y", label: "Transport goods ex fuel" },
+               { id: "CPI.k6_sam1_y", label: "Medical care commodities" },
+               { id: "CPI.k6_sarc_y", label: "Recreation commodities" },
+               { id: "CPI.o6_sacl1e_y", label: "Other" }] },
+
+    { el: "cStsacl1eM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sacl1e",
+      total: { id: "CUSR0000SACL1E", label: "Core goods", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_sah31_m", label: "Household furnishings" },
+               { id: "CPI.k6_saa_m", label: "Apparel" },
+               { id: "CPI.k6_satcltb_m", label: "Transport goods ex fuel" },
+               { id: "CPI.k6_sam1_m", label: "Medical care commodities" },
+               { id: "CPI.k6_sarc_m", label: "Recreation commodities" },
+               { id: "CPI.o6_sacl1e_m", label: "Other" }] },
+
+    { el: "cStsasleY", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sasle",
+      total: { id: "CUSR0000SASLE", label: "Core services", transform: "yoy", periods: 12 },
+      series: [
+               { id: "CPI.k6_sah1_y", label: "Shelter" },
+               { id: "CPI.k6_sam2_y", label: "Medical care services" },
+               { id: "CPI.k6_sas4_y", label: "Transportation services" },
+               { id: "CPI.k6_sars_y", label: "Recreation services" },
+               { id: "CPI.k6_saes_y", label: "Education and comms services" },
+               { id: "CPI.o6_sasle_y", label: "Other" }] },
+
+    { el: "cStsasleM", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "CPI.r6_sasle",
+      total: { id: "CUSR0000SASLE", label: "Core services", transform: "yoy", periods: 1 },
+      series: [
+               { id: "CPI.k6_sah1_m", label: "Shelter" },
+               { id: "CPI.k6_sam2_m", label: "Medical care services" },
+               { id: "CPI.k6_sas4_m", label: "Transportation services" },
+               { id: "CPI.k6_sars_m", label: "Recreation services" },
+               { id: "CPI.k6_saes_m", label: "Education and comms services" },
+               { id: "CPI.o6_sasle_m", label: "Other" }] },
     // Index points at two decimals: the quantity is hundredths, and "pt" would
     // round every bar to +0.0. The unadjusted overlay is flat on zero by
     // construction and is drawn precisely because it is flat.

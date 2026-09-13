@@ -16,6 +16,92 @@ headline: { label: CPI, series: CPIAUCSL, transform: yoy, format: pct }
 release: bls.cpi
 include_releases:
   - bls.cpi
+include_series:
+  # CPI by category (news release Table 6), drawn over 48 months.
+  - CPIAPPSL
+  - CPIENGSL
+  - CPILFESL
+  - CPIUFDSL
+  - CUSR0000SACE
+  - CUSR0000SACL1E
+  - CUSR0000SAEC
+  - CUSR0000SAES
+  - CUSR0000SAF11
+  - CUSR0000SAF111
+  - CUSR0000SAF112
+  - CUSR0000SAF113
+  - CUSR0000SAF114
+  - CUSR0000SAF115
+  - CUSR0000SAF116
+  - CUSR0000SAGC
+  - CUSR0000SAH1
+  - CUSR0000SAH31
+  - CUSR0000SAM1
+  - CUSR0000SAM2
+  - CUSR0000SARC
+  - CUSR0000SARS
+  - CUSR0000SAS2RS
+  - CUSR0000SAS4
+  - CUSR0000SASLE
+  - CUSR0000SATCLTB
+  - CUSR0000SEFJ
+  - CUSR0000SEFV
+  - CUSR0000SEFV01
+  - CUSR0000SEFV03
+  - CUSR0000SEFV05
+  - CUSR0000SEHA
+  - CUSR0000SEHB
+  - CUSR0000SEHC
+  - CUSR0000SEHE
+  - CUSR0000SEHF
+  - CUSR0000SEHF01
+  - CUSR0000SEHF02
+  - CUSR0000SEHG
+  - CUSR0000SETB
+  - CUUR0000SA0E
+  - CUUR0000SA0L1E
+  - CUUR0000SAA
+  - CUUR0000SACE
+  - CUUR0000SACL1E
+  - CUUR0000SAEC
+  - CUUR0000SAES
+  - CUUR0000SAF1
+  - CUUR0000SAF11
+  - CUUR0000SAF111
+  - CUUR0000SAF112
+  - CUUR0000SAF113
+  - CUUR0000SAF114
+  - CUUR0000SAF115
+  - CUUR0000SAF116
+  - CUUR0000SAGC
+  - CUUR0000SAGS
+  - CUUR0000SAH1
+  - CUUR0000SAH31
+  - CUUR0000SAM1
+  - CUUR0000SAM2
+  - CUUR0000SARC
+  - CUUR0000SARS
+  - CUUR0000SAS2RS
+  - CUUR0000SAS4
+  - CUUR0000SASLE
+  - CUUR0000SATCLTB
+  - CUUR0000SEFJ
+  - CUUR0000SEFV
+  - CUUR0000SEFV01
+  - CUUR0000SEFV02
+  - CUUR0000SEFV03
+  - CUUR0000SEFV04
+  - CUUR0000SEFV05
+  - CUUR0000SEHA
+  - CUUR0000SEHB
+  - CUUR0000SEHC
+  - CUUR0000SEHD
+  - CUUR0000SEHE
+  - CUUR0000SEHF
+  - CUUR0000SEHF01
+  - CUUR0000SEHF02
+  - CUUR0000SEHG
+  - CUUR0000SETB
 
 # The forecast record beside the page (site/us/inflation/cpi/forecasts.json)
 # scores each call against the change AS FIRST PRINTED, read from the
@@ -1181,186 +1267,6 @@ derived:
   # stack closes on that group rather than on a slice of the headline.
   # Two of each: 12 months and 1 month, the pair the page reads side by
   # side. See the module docstring in derived.py for the drift rule.
-  - id: CPI.f_home_y
-    kind: contribution
-    of: [CUSR0000SAF11, CPIUFDSL]
-    weight: 60.87
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of food at home to food, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.f_home_m
-    kind: contribution
-    of: [CUSR0000SAF11, CPIUFDSL]
-    weight: 60.87
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of food at home to food, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.f_away_y
-    kind: contribution
-    of: [CUSR0000SEFV, CPIUFDSL]
-    weight: 39.121
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of food away from home to food, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.f_away_m
-    kind: contribution
-    of: [CUSR0000SEFV, CPIUFDSL]
-    weight: 39.121
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of food away from home to food, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_motor_y
-    kind: contribution
-    of: [CUSR0000SETB, CPIENGSL]
-    weight: 53.431
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of motor fuel to energy, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_motor_m
-    kind: contribution
-    of: [CUSR0000SETB, CPIENGSL]
-    weight: 53.431
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of motor fuel to energy, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_fuel_y
-    kind: contribution
-    of: [CUSR0000SEHE, CPIENGSL]
-    weight: 2.166
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of fuel oil and other fuels to energy, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_fuel_m
-    kind: contribution
-    of: [CUSR0000SEHE, CPIENGSL]
-    weight: 2.166
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of fuel oil and other fuels to energy, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_elec_y
-    kind: contribution
-    of: [CUSR0000SEHF01, CPIENGSL]
-    weight: 34.338
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of electricity to energy, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_elec_m
-    kind: contribution
-    of: [CUSR0000SEHF01, CPIENGSL]
-    weight: 34.338
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of electricity to energy, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_gas_y
-    kind: contribution
-    of: [CUSR0000SEHF02, CPIENGSL]
-    weight: 10.065
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of utility gas service to energy, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.e_gas_m
-    kind: contribution
-    of: [CUSR0000SEHF02, CPIENGSL]
-    weight: 10.065
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of utility gas service to energy, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.md_comm_y
-    kind: contribution
-    of: [CUSR0000SAM1, CPIMEDSL]
-    weight: 17.111
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of medical care commodities to medical care, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.md_comm_m
-    kind: contribution
-    of: [CUSR0000SAM1, CPIMEDSL]
-    weight: 17.111
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of medical care commodities to medical care, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.md_serv_y
-    kind: contribution
-    of: [CUSR0000SAM2, CPIMEDSL]
-    weight: 82.889
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of medical care services to medical care, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.md_serv_m
-    kind: contribution
-    of: [CUSR0000SAM2, CPIMEDSL]
-    weight: 82.889
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of medical care services to medical care, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.sh_rent_y
-    kind: contribution
-    of: [CUSR0000SEHA, CUSR0000SAH1]
-    weight: 21.856
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of rent of primary residence to shelter, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.sh_rent_m
-    kind: contribution
-    of: [CUSR0000SEHA, CUSR0000SAH1]
-    weight: 21.856
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of rent of primary residence to shelter, over 1 month
-    unit: Percentage points
-    importance: 3
-  - id: CPI.sh_oer_y
-    kind: contribution
-    of: [CUSR0000SEHC, CUSR0000SAH1]
-    weight: 73.219
-    weight_date: "2026-06"
-    periods: 12
-    title: Contribution of owners' equivalent rent to shelter, over 12 months
-    unit: Percentage points
-    importance: 3
-  - id: CPI.sh_oer_m
-    kind: contribution
-    of: [CUSR0000SEHC, CUSR0000SAH1]
-    weight: 73.219
-    weight_date: "2026-06"
-    periods: 1
-    title: Contribution of owners' equivalent rent to shelter, over 1 month
-    unit: Percentage points
-    importance: 3
 
   # ---- what revises, and what does not.
   # The published CPI is final when printed: the NSA index has not moved on a
@@ -1391,7 +1297,1044 @@ derived:
 # measures above, over 120 months of a twelve-month change. The database
 # keeps their full history; export.py reads the requirement off the page,
 # follows the derived measures back to these inputs, and refuses too small.
+  # ---- CPI by category (news release Table 6), 13 September 2026. Shares of the
+  # whole CPI for every heatmap row, and the contributions behind the stacked
+  # charts beneath it. Anchors are the Table 6 relative importance, Jul. 2026,
+  # re-drifted monthly with prices like every weight above.
+  - id: CPI.r6_saf1
+    kind: relative_importance
+    of: [CUUR0000SAF1, CPIAUCNS]
+    weight: 13.54
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Food
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_saf11
+    kind: relative_importance
+    of: [CUUR0000SAF11, CPIAUCNS]
+    weight: 8.232
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Food at home
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sefv
+    kind: relative_importance
+    of: [CUUR0000SEFV, CPIAUCNS]
+    weight: 5.307
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Food away from home
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sa0e
+    kind: relative_importance
+    of: [CUUR0000SA0E, CPIAUCNS]
+    weight: 7.347
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Energy
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sace
+    kind: relative_importance
+    of: [CUUR0000SACE, CPIAUCNS]
+    weight: 4.044
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Energy commodities
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sehf
+    kind: relative_importance
+    of: [CUUR0000SEHF, CPIAUCNS]
+    weight: 3.303
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Energy services
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sa0l1e
+    kind: relative_importance
+    of: [CUUR0000SA0L1E, CPIAUCNS]
+    weight: 79.114
+    weight_date: "2026-07"
+    title: Share of the CPI taken by All items less food and energy
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sacl1e
+    kind: relative_importance
+    of: [CUUR0000SACL1E, CPIAUCNS]
+    weight: 18.842
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Commodities less food and energy commodities
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r6_sasle
+    kind: relative_importance
+    of: [CUUR0000SASLE, CPIAUCNS]
+    weight: 60.272
+    weight_date: "2026-07"
+    title: Share of the CPI taken by Services less energy services
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.k6_saf11_y
+    kind: contribution
+    of: [CUSR0000SAF11, CPIUFDSL]
+    weight: 60.798
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of food at home to food, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv_y
+    kind: contribution
+    of: [CUSR0000SEFV, CPIUFDSL]
+    weight: 39.195
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of food away from home to food, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf11_m
+    kind: contribution
+    of: [CUSR0000SAF11, CPIUFDSL]
+    weight: 60.798
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of food at home to food, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv_m
+    kind: contribution
+    of: [CUSR0000SEFV, CPIUFDSL]
+    weight: 39.195
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of food away from home to food, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sace_y
+    kind: contribution
+    of: [CUSR0000SACE, CPIENGSL]
+    weight: 55.043
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of energy commodities to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf_y
+    kind: contribution
+    of: [CUSR0000SEHF, CPIENGSL]
+    weight: 44.957
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of energy services to energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sace_m
+    kind: contribution
+    of: [CUSR0000SACE, CPIENGSL]
+    weight: 55.043
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of energy commodities to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf_m
+    kind: contribution
+    of: [CUSR0000SEHF, CPIENGSL]
+    weight: 44.957
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of energy services to energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sacl1e_y
+    kind: contribution
+    of: [CUSR0000SACL1E, CPILFESL]
+    weight: 23.816
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of commodities less food and energy commodities to all items less food and energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sasle_y
+    kind: contribution
+    of: [CUSR0000SASLE, CPILFESL]
+    weight: 76.184
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of services less energy services to all items less food and energy, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sacl1e_m
+    kind: contribution
+    of: [CUSR0000SACL1E, CPILFESL]
+    weight: 23.816
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of commodities less food and energy commodities to all items less food and energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sasle_m
+    kind: contribution
+    of: [CUSR0000SASLE, CPILFESL]
+    weight: 76.184
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of services less energy services to all items less food and energy, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf111_y
+    kind: contribution
+    of: [CUSR0000SAF111, CUSR0000SAF11]
+    weight: 12.464
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of cereals and bakery products to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf112_y
+    kind: contribution
+    of: [CUSR0000SAF112, CUSR0000SAF11]
+    weight: 23.785
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of meats, poultry, fish, and eggs to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefj_y
+    kind: contribution
+    of: [CUSR0000SEFJ, CUSR0000SAF11]
+    weight: 9.014
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of dairy and related products to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf113_y
+    kind: contribution
+    of: [CUSR0000SAF113, CUSR0000SAF11]
+    weight: 15.573
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of fruits and vegetables to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf114_y
+    kind: contribution
+    of: [CUSR0000SAF114, CUSR0000SAF11]
+    weight: 12.002
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of nonalcoholic beverages and beverage materials to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf115_y
+    kind: contribution
+    of: [CUSR0000SAF115, CUSR0000SAF11]
+    weight: 27.174
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of other food at home to food at home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf111_m
+    kind: contribution
+    of: [CUSR0000SAF111, CUSR0000SAF11]
+    weight: 12.464
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of cereals and bakery products to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf112_m
+    kind: contribution
+    of: [CUSR0000SAF112, CUSR0000SAF11]
+    weight: 23.785
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of meats, poultry, fish, and eggs to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefj_m
+    kind: contribution
+    of: [CUSR0000SEFJ, CUSR0000SAF11]
+    weight: 9.014
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of dairy and related products to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf113_m
+    kind: contribution
+    of: [CUSR0000SAF113, CUSR0000SAF11]
+    weight: 15.573
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of fruits and vegetables to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf114_m
+    kind: contribution
+    of: [CUSR0000SAF114, CUSR0000SAF11]
+    weight: 12.002
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of nonalcoholic beverages and beverage materials to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saf115_m
+    kind: contribution
+    of: [CUSR0000SAF115, CUSR0000SAF11]
+    weight: 27.174
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of other food at home to food at home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv01_y
+    kind: contribution
+    of: [CUSR0000SEFV01, CUSR0000SEFV]
+    weight: 44.319
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of full service meals and snacks to food away from home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv02_y
+    kind: contribution
+    of: [CUUR0000SEFV02, CUSR0000SEFV]
+    weight: 50.009
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of limited service meals and snacks to food away from home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv03_y
+    kind: contribution
+    of: [CUSR0000SEFV03, CUSR0000SEFV]
+    weight: 1.206
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of food at employee sites and schools to food away from home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv04_y
+    kind: contribution
+    of: [CUUR0000SEFV04, CUSR0000SEFV]
+    weight: 0.999
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of food from vending machines and mobile vendors to food away from home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv05_y
+    kind: contribution
+    of: [CUSR0000SEFV05, CUSR0000SEFV]
+    weight: 3.467
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of other food away from home to food away from home, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv01_m
+    kind: contribution
+    of: [CUSR0000SEFV01, CUSR0000SEFV]
+    weight: 44.319
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of full service meals and snacks to food away from home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv02_m
+    kind: contribution
+    of: [CUUR0000SEFV02, CUSR0000SEFV]
+    weight: 50.009
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of limited service meals and snacks to food away from home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv03_m
+    kind: contribution
+    of: [CUSR0000SEFV03, CUSR0000SEFV]
+    weight: 1.206
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of food at employee sites and schools to food away from home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv04_m
+    kind: contribution
+    of: [CUUR0000SEFV04, CUSR0000SEFV]
+    weight: 0.999
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of food from vending machines and mobile vendors to food away from home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sefv05_m
+    kind: contribution
+    of: [CUSR0000SEFV05, CUSR0000SEFV]
+    weight: 3.467
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of other food away from home to food away from home, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehe_y
+    kind: contribution
+    of: [CUSR0000SEHE, CUSR0000SACE]
+    weight: 4.006
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of fuel oil and other fuels to energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_setb_y
+    kind: contribution
+    of: [CUSR0000SETB, CUSR0000SACE]
+    weight: 95.994
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of motor fuel to energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehe_m
+    kind: contribution
+    of: [CUSR0000SEHE, CUSR0000SACE]
+    weight: 4.006
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of fuel oil and other fuels to energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_setb_m
+    kind: contribution
+    of: [CUSR0000SETB, CUSR0000SACE]
+    weight: 95.994
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of motor fuel to energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf01_y
+    kind: contribution
+    of: [CUSR0000SEHF01, CUSR0000SEHF]
+    weight: 77.233
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of electricity to energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf02_y
+    kind: contribution
+    of: [CUSR0000SEHF02, CUSR0000SEHF]
+    weight: 22.767
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of utility (piped) gas service to energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf01_m
+    kind: contribution
+    of: [CUSR0000SEHF01, CUSR0000SEHF]
+    weight: 77.233
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of electricity to energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sehf02_m
+    kind: contribution
+    of: [CUSR0000SEHF02, CUSR0000SEHF]
+    weight: 22.767
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of utility (piped) gas service to energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sah31_y
+    kind: contribution
+    of: [CUSR0000SAH31, CUSR0000SACL1E]
+    weight: 17.636
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of household furnishings and supplies to commodities less food and energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saa_y
+    kind: contribution
+    of: [CPIAPPSL, CUSR0000SACL1E]
+    weight: 12.769
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of apparel to commodities less food and energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_satcltb_y
+    kind: contribution
+    of: [CUSR0000SATCLTB, CUSR0000SACL1E]
+    weight: 36.45
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of transportation commodities less motor fuel to commodities less food and energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sam1_y
+    kind: contribution
+    of: [CUSR0000SAM1, CUSR0000SACL1E]
+    weight: 7.446
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of medical care commodities to commodities less food and energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sarc_y
+    kind: contribution
+    of: [CUSR0000SARC, CUSR0000SACL1E]
+    weight: 10.227
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of recreation commodities to commodities less food and energy commodities, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sacl1e_self_y
+    kind: contribution
+    of: [CUSR0000SACL1E, CUSR0000SACL1E]
+    weight: 100
+    weight_date: "2026-07"
+    periods: 12
+    title: Change in commodities less food and energy commodities over 12 months, in percentage points
+    unit: Percentage points
+    importance: 3
+  - id: CPI.o6_sacl1e_y
+    kind: residual
+    of: [CPI.k6_sacl1e_self_y, CPI.k6_sah31_y, CPI.k6_saa_y, CPI.k6_satcltb_y, CPI.k6_sam1_y, CPI.k6_sarc_y]
+    title: "Other parts of commodities less food and energy commodities: the change less its five largest contributions, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sah31_m
+    kind: contribution
+    of: [CUSR0000SAH31, CUSR0000SACL1E]
+    weight: 17.636
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of household furnishings and supplies to commodities less food and energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saa_m
+    kind: contribution
+    of: [CPIAPPSL, CUSR0000SACL1E]
+    weight: 12.769
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of apparel to commodities less food and energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_satcltb_m
+    kind: contribution
+    of: [CUSR0000SATCLTB, CUSR0000SACL1E]
+    weight: 36.45
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of transportation commodities less motor fuel to commodities less food and energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sam1_m
+    kind: contribution
+    of: [CUSR0000SAM1, CUSR0000SACL1E]
+    weight: 7.446
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of medical care commodities to commodities less food and energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sarc_m
+    kind: contribution
+    of: [CUSR0000SARC, CUSR0000SACL1E]
+    weight: 10.227
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of recreation commodities to commodities less food and energy commodities, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sacl1e_self_m
+    kind: contribution
+    of: [CUSR0000SACL1E, CUSR0000SACL1E]
+    weight: 100
+    weight_date: "2026-07"
+    periods: 1
+    title: Change in commodities less food and energy commodities over 1 month, in percentage points
+    unit: Percentage points
+    importance: 3
+  - id: CPI.o6_sacl1e_m
+    kind: residual
+    of: [CPI.k6_sacl1e_self_m, CPI.k6_sah31_m, CPI.k6_saa_m, CPI.k6_satcltb_m, CPI.k6_sam1_m, CPI.k6_sarc_m]
+    title: "Other parts of commodities less food and energy commodities: the change less its five largest contributions, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sah1_y
+    kind: contribution
+    of: [CUSR0000SAH1, CUSR0000SASLE]
+    weight: 58.639
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of shelter to services less energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sam2_y
+    kind: contribution
+    of: [CUSR0000SAM2, CUSR0000SASLE]
+    weight: 11.388
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of medical care services to services less energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sas4_y
+    kind: contribution
+    of: [CUSR0000SAS4, CUSR0000SASLE]
+    weight: 10.469
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of transportation services to services less energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sars_y
+    kind: contribution
+    of: [CUSR0000SARS, CUSR0000SASLE]
+    weight: 5.233
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of recreation services to services less energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saes_y
+    kind: contribution
+    of: [CUSR0000SAES, CUSR0000SASLE]
+    weight: 8.176
+    weight_date: "2026-07"
+    periods: 12
+    title: Contribution of education and communication services to services less energy services, over 12 months
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sasle_self_y
+    kind: contribution
+    of: [CUSR0000SASLE, CUSR0000SASLE]
+    weight: 100
+    weight_date: "2026-07"
+    periods: 12
+    title: Change in services less energy services over 12 months, in percentage points
+    unit: Percentage points
+    importance: 3
+  - id: CPI.o6_sasle_y
+    kind: residual
+    of: [CPI.k6_sasle_self_y, CPI.k6_sah1_y, CPI.k6_sam2_y, CPI.k6_sas4_y, CPI.k6_sars_y, CPI.k6_saes_y]
+    title: "Other parts of services less energy services: the change less its five largest contributions, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sah1_m
+    kind: contribution
+    of: [CUSR0000SAH1, CUSR0000SASLE]
+    weight: 58.639
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of shelter to services less energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sam2_m
+    kind: contribution
+    of: [CUSR0000SAM2, CUSR0000SASLE]
+    weight: 11.388
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of medical care services to services less energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sas4_m
+    kind: contribution
+    of: [CUSR0000SAS4, CUSR0000SASLE]
+    weight: 10.469
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of transportation services to services less energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sars_m
+    kind: contribution
+    of: [CUSR0000SARS, CUSR0000SASLE]
+    weight: 5.233
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of recreation services to services less energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_saes_m
+    kind: contribution
+    of: [CUSR0000SAES, CUSR0000SASLE]
+    weight: 8.176
+    weight_date: "2026-07"
+    periods: 1
+    title: Contribution of education and communication services to services less energy services, over 1 month
+    unit: Percentage points
+    importance: 3
+  - id: CPI.k6_sasle_self_m
+    kind: contribution
+    of: [CUSR0000SASLE, CUSR0000SASLE]
+    weight: 100
+    weight_date: "2026-07"
+    periods: 1
+    title: Change in services less energy services over 1 month, in percentage points
+    unit: Percentage points
+    importance: 3
+  - id: CPI.o6_sasle_m
+    kind: residual
+    of: [CPI.k6_sasle_self_m, CPI.k6_sah1_m, CPI.k6_sam2_m, CPI.k6_sas4_m, CPI.k6_sars_m, CPI.k6_saes_m]
+    title: "Other parts of services less energy services: the change less its five largest contributions, over 1 month"
+    unit: Percentage points
+    importance: 3
+
+  # ---- Shares of each main category (food, energy, core), for the per-category
+  # heatmaps' row labels. Anchored on Table 6 relative importance, Jul. 2026.
+  - id: CPI.r7_saf11
+    kind: relative_importance
+    of: [CUUR0000SAF11, CUUR0000SAF1]
+    weight: 60.798
+    weight_date: "2026-07"
+    title: "Share of food taken by food at home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf111
+    kind: relative_importance
+    of: [CUUR0000SAF111, CUUR0000SAF1]
+    weight: 7.578
+    weight_date: "2026-07"
+    title: "Share of food taken by cereals and bakery products"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf112
+    kind: relative_importance
+    of: [CUUR0000SAF112, CUUR0000SAF1]
+    weight: 14.461
+    weight_date: "2026-07"
+    title: "Share of food taken by meats, poultry, fish, and eggs"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefj
+    kind: relative_importance
+    of: [CUUR0000SEFJ, CUUR0000SAF1]
+    weight: 5.48
+    weight_date: "2026-07"
+    title: "Share of food taken by dairy and related products"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf113
+    kind: relative_importance
+    of: [CUUR0000SAF113, CUUR0000SAF1]
+    weight: 9.468
+    weight_date: "2026-07"
+    title: "Share of food taken by fruits and vegetables"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf114
+    kind: relative_importance
+    of: [CUUR0000SAF114, CUUR0000SAF1]
+    weight: 7.297
+    weight_date: "2026-07"
+    title: "Share of food taken by nonalcoholic beverages and beverage materials"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf115
+    kind: relative_importance
+    of: [CUUR0000SAF115, CUUR0000SAF1]
+    weight: 16.521
+    weight_date: "2026-07"
+    title: "Share of food taken by other food at home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv
+    kind: relative_importance
+    of: [CUUR0000SEFV, CUUR0000SAF1]
+    weight: 39.195
+    weight_date: "2026-07"
+    title: "Share of food taken by food away from home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv01
+    kind: relative_importance
+    of: [CUUR0000SEFV01, CUUR0000SAF1]
+    weight: 17.371
+    weight_date: "2026-07"
+    title: "Share of food taken by full service meals and snacks"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv02
+    kind: relative_importance
+    of: [CUUR0000SEFV02, CUUR0000SAF1]
+    weight: 19.601
+    weight_date: "2026-07"
+    title: "Share of food taken by limited service meals and snacks"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv03
+    kind: relative_importance
+    of: [CUUR0000SEFV03, CUUR0000SAF1]
+    weight: 0.473
+    weight_date: "2026-07"
+    title: "Share of food taken by food at employee sites and schools"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv04
+    kind: relative_importance
+    of: [CUUR0000SEFV04, CUUR0000SAF1]
+    weight: 0.391
+    weight_date: "2026-07"
+    title: "Share of food taken by food from vending machines and mobile vendors"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sefv05
+    kind: relative_importance
+    of: [CUUR0000SEFV05, CUUR0000SAF1]
+    weight: 1.359
+    weight_date: "2026-07"
+    title: "Share of food taken by other food away from home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sace
+    kind: relative_importance
+    of: [CUUR0000SACE, CUUR0000SA0E]
+    weight: 55.043
+    weight_date: "2026-07"
+    title: "Share of energy taken by energy commodities"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehe
+    kind: relative_importance
+    of: [CUUR0000SEHE, CUUR0000SA0E]
+    weight: 2.205
+    weight_date: "2026-07"
+    title: "Share of energy taken by fuel oil and other fuels"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_setb
+    kind: relative_importance
+    of: [CUUR0000SETB, CUUR0000SA0E]
+    weight: 52.838
+    weight_date: "2026-07"
+    title: "Share of energy taken by motor fuel"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehf
+    kind: relative_importance
+    of: [CUUR0000SEHF, CUUR0000SA0E]
+    weight: 44.957
+    weight_date: "2026-07"
+    title: "Share of energy taken by energy services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehf01
+    kind: relative_importance
+    of: [CUUR0000SEHF01, CUUR0000SA0E]
+    weight: 34.722
+    weight_date: "2026-07"
+    title: "Share of energy taken by electricity"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehf02
+    kind: relative_importance
+    of: [CUUR0000SEHF02, CUUR0000SA0E]
+    weight: 10.235
+    weight_date: "2026-07"
+    title: "Share of energy taken by utility (piped) gas service"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sacl1e
+    kind: relative_importance
+    of: [CUUR0000SACL1E, CUUR0000SA0L1E]
+    weight: 23.816
+    weight_date: "2026-07"
+    title: "Share of core taken by commodities less food and energy commodities"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sah31
+    kind: relative_importance
+    of: [CUUR0000SAH31, CUUR0000SA0L1E]
+    weight: 4.2
+    weight_date: "2026-07"
+    title: "Share of core taken by household furnishings and supplies"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saa
+    kind: relative_importance
+    of: [CUUR0000SAA, CUUR0000SA0L1E]
+    weight: 3.041
+    weight_date: "2026-07"
+    title: "Share of core taken by apparel"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_satcltb
+    kind: relative_importance
+    of: [CUUR0000SATCLTB, CUUR0000SA0L1E]
+    weight: 8.681
+    weight_date: "2026-07"
+    title: "Share of core taken by transportation commodities less motor fuel"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sam1
+    kind: relative_importance
+    of: [CUUR0000SAM1, CUUR0000SA0L1E]
+    weight: 1.773
+    weight_date: "2026-07"
+    title: "Share of core taken by medical care commodities"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sarc
+    kind: relative_importance
+    of: [CUUR0000SARC, CUUR0000SA0L1E]
+    weight: 2.436
+    weight_date: "2026-07"
+    title: "Share of core taken by recreation commodities"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saec
+    kind: relative_importance
+    of: [CUUR0000SAEC, CUUR0000SA0L1E]
+    weight: 0.996
+    weight_date: "2026-07"
+    title: "Share of core taken by education and communication commodities"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saf116
+    kind: relative_importance
+    of: [CUUR0000SAF116, CUUR0000SA0L1E]
+    weight: 1.043
+    weight_date: "2026-07"
+    title: "Share of core taken by alcoholic beverages"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sagc
+    kind: relative_importance
+    of: [CUUR0000SAGC, CUUR0000SA0L1E]
+    weight: 1.644
+    weight_date: "2026-07"
+    title: "Share of core taken by other goods"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sasle
+    kind: relative_importance
+    of: [CUUR0000SASLE, CUUR0000SA0L1E]
+    weight: 76.184
+    weight_date: "2026-07"
+    title: "Share of core taken by services less energy services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sah1
+    kind: relative_importance
+    of: [CUUR0000SAH1, CUUR0000SA0L1E]
+    weight: 44.674
+    weight_date: "2026-07"
+    title: "Share of core taken by shelter"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sas2rs
+    kind: relative_importance
+    of: [CUUR0000SAS2RS, CUUR0000SA0L1E]
+    weight: 44.309
+    weight_date: "2026-07"
+    title: "Share of core taken by rent of shelter"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_seha
+    kind: relative_importance
+    of: [CUUR0000SEHA, CUUR0000SA0L1E]
+    weight: 9.777
+    weight_date: "2026-07"
+    title: "Share of core taken by rent of primary residence"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehb
+    kind: relative_importance
+    of: [CUUR0000SEHB, CUUR0000SA0L1E]
+    weight: 1.772
+    weight_date: "2026-07"
+    title: "Share of core taken by lodging away from home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehc
+    kind: relative_importance
+    of: [CUUR0000SEHC, CUUR0000SA0L1E]
+    weight: 32.76
+    weight_date: "2026-07"
+    title: "Share of core taken by owners' equivalent rent of residences"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehd
+    kind: relative_importance
+    of: [CUUR0000SEHD, CUUR0000SA0L1E]
+    weight: 0.364
+    weight_date: "2026-07"
+    title: "Share of core taken by tenants' and household insurance"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sehg
+    kind: relative_importance
+    of: [CUUR0000SEHG, CUUR0000SA0L1E]
+    weight: 1.447
+    weight_date: "2026-07"
+    title: "Share of core taken by water and sewer and trash collection services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sam2
+    kind: relative_importance
+    of: [CUUR0000SAM2, CUUR0000SA0L1E]
+    weight: 8.676
+    weight_date: "2026-07"
+    title: "Share of core taken by medical care services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sas4
+    kind: relative_importance
+    of: [CUUR0000SAS4, CUUR0000SA0L1E]
+    weight: 7.976
+    weight_date: "2026-07"
+    title: "Share of core taken by transportation services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sars
+    kind: relative_importance
+    of: [CUUR0000SARS, CUUR0000SA0L1E]
+    weight: 3.987
+    weight_date: "2026-07"
+    title: "Share of core taken by recreation services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_saes
+    kind: relative_importance
+    of: [CUUR0000SAES, CUUR0000SA0L1E]
+    weight: 6.229
+    weight_date: "2026-07"
+    title: "Share of core taken by education and communication services"
+    unit: Percent
+    importance: 3
+  - id: CPI.r7_sags
+    kind: relative_importance
+    of: [CUUR0000SAGS, CUUR0000SA0L1E]
+    weight: 2.03
+    weight_date: "2026-07"
+    title: "Share of core taken by other personal services"
+    unit: Percent
+    importance: 3
+
 truncate_history:
+  - keep: 96
+    series:
+      - CUSR0000SAEC
+      - CUSR0000SAES
+      - CUSR0000SAGC
+      - CUSR0000SAH31
+      - CUSR0000SARC
+      - CUSR0000SARS
+      - CUSR0000SATCLTB
+      - CUSR0000SEFV01
+      - CUSR0000SEFV03
   - keep: 180
     series:
       - CUUR0000SEFA01

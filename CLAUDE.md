@@ -1583,6 +1583,52 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
+## CPI news release Table 6, filled (13 September 2026)
+
+At William's request the database now holds **every series behind CPI news
+release Table 6** (the one-month analysis table, 374 rows: expenditure
+categories and special aggregates, every level), seasonally adjusted and
+unadjusted. **289 were missing; FRED carries none of them, so all came from
+the BLS API** with his key: 235 added through `add_series.py --source bls
+--no-publish` (218 SA, 17 NSA), `vintage_mode='fetch_date'`, 107,807
+observations, histories from 1939-1997 to August 2026. The other **54 are
+SA ids that do not exist**: BLS does not seasonally adjust those items and
+Table 6 prints the unadjusted change in its SA column (newspapers and
+magazines, health insurance, rice, ...), so the NSA series already held is
+the right one. No catalog block from BLS was the first sign; the proof is by
+value.
+
+Verified against the August 2026 release, not assumed: every Table 6 SA
+one-month change and every Table 2 NSA 1- and 12-month change recomputed from
+stored indexes -- **1,030 figures reproduced, 0 disagree, 0 rows without a
+series**; `validate.py` 38/38. The 235 are `publish=false`, so no bundle and
+no coverage figure changed; a page that draws them names them in
+`include_series` or flips `publish`. The gap list, the checker and the saved
+tables were built in the session scratchpad from `cu.item` and
+`tools/reconcile.py`'s own parser and name normaliser.
+
+**On the CPI page (same day)** Tables 21-27 (food, energy, shelter, medical,
+vehicles, other core, energy two ways) were replaced by Table 6's own
+hierarchy, three layers under all items plus the shelter split:
+
+- **Tables 21-23** are heatmaps for food, energy and core, each a 12-month
+  (unadjusted, as the release prints the year) and a 1-month (s.a.; the four
+  items BLS does not adjust use NSA) grid. Row labels carry the row's share
+  **of its main category** (`CPI.r7_*`); each heading carries the main
+  category's share of the CPI (`CPI.r6_*`, filled by `data-latest`). The top
+  row renders bold ink and the second layer bold blue (`em: "top"/"sub"` on a
+  heatmap series). Caps are set per category from the 90th percentile.
+- **Tables 24-32** are stacked year/month pairs for food, energy, core and
+  the six second-layer groups (`CPI.k6_*` contributions to the parent). Core
+  goods and core services show their five largest parts plus `Other`
+  (`CPI.o6_*`, a residual that now takes any number of inputs). Energy's
+  yearly stack sits ~0.15pp off its total because its parts are adjusted
+  separately; the notes say so.
+- All shares are anchored on Table 6 relative importance, Jul. 2026, and
+  drift with prices. Old Tables 28-33 are now 33-38. Six series only the old
+  tables drew (`CUSR0000SAH3 SEEB SERA SETD SETE SETG01`) were set
+  `publish=false`.
+
 ## State as of 9 September 2026, end of day
 
 Second half of the audit, run on the VPS: `AUDIT_FINDINGS_2026-09-09.md`

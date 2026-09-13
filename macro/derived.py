@@ -508,8 +508,11 @@ KINDS = {
     "breakeven":         (breakeven, 2,
                           "trailing {window}-month mean change in the labour force, "
                           "January excluded as a population-control break, times (1 - u)"),
-    "residual":          (residual, 2,
-                          "first series minus the second, both seasonally adjusted "
+    # Any number of inputs: the function always took the first minus every
+    # other, and the CPI category stacks need a total less its five largest
+    # parts (13 September 2026). Two-input residuals are unchanged.
+    "residual":          (residual, None,
+                          "first series minus every other, each seasonally adjusted "
                           "independently so the difference is approximate"),
     "epop_participation_effect": (epop_participation_effect, 2,
                           "change in participation over {periods} months times (1 - u) at the start"),

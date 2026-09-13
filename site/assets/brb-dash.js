@@ -579,7 +579,16 @@
                                : derive(s, { transform: tf, periods: p.periods }))
                 .slice(-months);
       if (!cats) { cats = axis(s).slice(-months); freq = s.frequency || "M"; }
-      names.push(sp.label || shortName(s.title));
+      // `share`: a series whose latest value is the row's share of the whole
+      // (a relative importance), printed after the name in a fixed width so
+      // the figures line up down the right edge of the labels.
+      let nm = sp.label || shortName(s.title);
+      if (sp.share) {
+        let w = null;
+        try { w = lastNonNull(ctx.series(sp.share).values); } catch (e) { w = null; }
+        nm += "  " + (w == null ? "    –" : (w.toFixed(1) + "%").padStart(5));
+      }
+      names.push(nm);
       v.forEach((val, xi) => { if (val != null) data.push([xi, yi, val]); });
     });
     const cap = p.cap || 45;
@@ -599,8 +608,19 @@
       // as its key and its prose. ECharts puts category 0 at the BOTTOM, so
       // without `inverse` a 33-row table read upwards, and two panels had
       // been hand-reversed to compensate while the rest had not.
+      // `em` on a series row: "top" (bold ink) or "sub" (bold series blue),
+      // for the main-category rows of a hierarchy, so the structure reads
+      // before the detail does.
       yAxis: { type: "category", data: names, inverse: true, splitArea: { show: false },
-        axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono },
+        axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono,
+          formatter: (v, i) => {
+            const em = p.series[i] && p.series[i].em;
+            return em ? `{${em === "top" ? "top" : "sub"}|${v}}` : v;
+          },
+          rich: {
+            top: { color: P.ink, fontWeight: 700, fontSize: 10, fontFamily: P.mono },
+            sub: { color: P.s1, fontWeight: 700, fontSize: 10, fontFamily: P.mono },
+          } },
         axisLine: { lineStyle: { color: P.ruleHi } }, axisTick: { show: false } },
       // The scale starts under the row labels, but not so far right that its
       // end text leaves the chart: on a phone "≥ +15%" was cut by 3px.
@@ -1316,6 +1336,16 @@
       try { fn(el, ctx, p); }
       catch (e) { console.error("panel " + p.el + " failed:", e);
                   el.innerHTML = `<div class="panel-error">${p.el}: ${e.message}</div>`; }
+    });
+
+    // Any element marked data-latest shows its series' newest value: the
+    // share of the CPI in a stacked chart's heading, kept current by the
+    // drifted weight rather than typed into the page.
+    document.querySelectorAll("main [data-latest]").forEach(n => {
+      try {
+        const v = lastNonNull(ctx.series(n.dataset.latest).values);
+        n.textContent = v == null ? "–" : fmtFor({ format: n.dataset.format || "pct" })(v);
+      } catch (e) { n.textContent = "–"; }
     });
 
     try { tableStamps(ctx, cfg.panels); }
