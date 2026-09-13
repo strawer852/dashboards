@@ -1063,6 +1063,19 @@
     }).join("") + `</div>`;
     if (rec.reasons && rec.reasons.length)
       h += `<ol class="fc-why">` + rec.reasons.map(r => `<li>${r}</li>`).join("") + `</ol>`;
+    // After the release the record may carry two dated notes: a REVIEW of
+    // the call against what printed, part by part, and a COMMENT on the
+    // release itself. They sit side by side under the reasons, each in its
+    // own colour so a sentence grading yesterday's call is never read as a
+    // sentence about today's data, and each stamped with the data it is
+    // about (period and release date) and the day it was written.
+    const post = [["review", "Review of the call", rec.review], ["comment", "Comment on the release", rec.comment]]
+      .filter(([, , n]) => n && n.text && n.text.length)
+      .map(([cls, title, n]) =>
+        `<section class="fc-post-${cls}"><h4>${title}</h4>` +
+        `<div class="meta">${period(rec.for)} data &middot; released ${fmtDate(rec.release_at)} &middot; written ${fmtDate(n.dated)}</div>` +
+        `<ol>${n.text.map(t => `<li>${t}</li>`).join("")}</ol></section>`);
+    if (post.length) h += `<div class="fc-post">${post.join("")}</div>`;
     // Inputs as a two-column table and sources as a list, side by side: a
     // run-on line of label-value pairs gave the eye nothing to hold on to.
     const notes = [];

@@ -138,6 +138,23 @@ def check_forecasts(name: str, fc: Path, page_html: str) -> list[str]:
                 out.append(f"{tag}: item {it.get('key')!r} value is not a number")
         if not rec.get("reasons"):
             out.append(f"{tag}: no reasons given")
+        # After its release a record may gain two dated notes, `review` and
+        # `comment`. Each is dated ON OR AFTER the release -- the mirror of
+        # the rule for `made` -- so a note can never pass for something
+        # known before the print.
+        for key in ("review", "comment"):
+            note = rec.get(key)
+            if note is None:
+                continue
+            try:
+                dated = date.fromisoformat(note["dated"])
+            except (KeyError, TypeError, ValueError) as e:
+                out.append(f"{tag}: {key} dated missing or malformed ({e})")
+                continue
+            if dated < due:
+                out.append(f"{tag}: {key} dated {dated} is before the release {due}")
+            if not note.get("text"):
+                out.append(f"{tag}: {key} has no text")
     return out
 
 

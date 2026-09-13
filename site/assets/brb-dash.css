@@ -206,6 +206,24 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
           line-height: 1.45; max-width: 76ch; margin: 12px 0 0; padding-left: 1.4em; }
 .fc-why li { margin: 3px 0; }
 .fc-why b { color: var(--ink-2); font-weight: 600; }
+/* After the release: the review of the call and the comment on the print,
+   side by side under the reasons. One colour each, so a line about how the
+   call did is never read as a line about the data. The review takes the
+   series blue and the comment the series green -- both validated on --paper
+   for the charts, both over 4.5:1 as text. The colour is carried by a 3px
+   rule, the head and the bold leads; the running text stays ink, and there
+   is no fill, because nothing on the page has one. */
+.fc-post { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 32px; margin-top: 16px; }
+.fc-post section { border-left: 3px solid; padding: 2px 0 2px 14px; min-width: 0; }
+.fc-post .fc-post-review { border-color: var(--s1); } .fc .fc-post-review h4, .fc .fc-post-review b { color: var(--s1); }
+.fc-post .fc-post-comment { border-color: var(--s3); } .fc .fc-post-comment h4, .fc .fc-post-comment b { color: var(--s3); }
+.fc-post h4 { font-size: 10px; letter-spacing: .12em; margin-bottom: 2px; }
+.fc-post .meta { font-family: var(--mono), monospace; font-size: 10px; letter-spacing: .06em;
+                 color: var(--faint); margin-bottom: 6px; }
+.fc-post ol { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+              line-height: 1.45; margin: 0; padding-left: 1.4em; }
+.fc-post li { margin: 3px 0; }
+.fc-post b { font-weight: 600; }
 /* Section heads inside the block: the same small-caps register as the stamp. */
 .fc h4 { font-family: var(--mono), monospace; font-size: 9.5px; font-weight: 400; letter-spacing: .14em;
          text-transform: uppercase; color: var(--faint); margin: 0 0 6px; }
@@ -258,6 +276,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 @media (max-width:860px){ .fc-figs { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .fc-fig:nth-child(2) { border-right: none; }
   .fc-notes { grid-template-columns: minmax(0,1fr); }
+  .fc-post { grid-template-columns: minmax(0,1fr); gap: 16px 0; }
   .fc-src { margin-top: 16px; } }
 
 /* ---------- summary figures ---------- */

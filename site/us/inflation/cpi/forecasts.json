@@ -32,6 +32,30 @@
         "<b>Year over year:</b> August 2025 rose 0.29% n.s.a. and drops out of the window; +0.3% n.s.a. this August (the seasonal factor takes about 0.07 off the +0.4% s.a.) gives <b>3.4%</b> on the unadjusted series the release prints, from 3.4% in July. Core: August 2025 rose 0.31% s.a. and is replaced by about +0.24%, taking the s.a. twelve-month rate from 2.5% to <b>2.4%</b>.",
         "<b>What would make this wrong:</b> the headline&rsquo;s monthly standard deviation over the last three years is 0.21 points and core&rsquo;s 0.09, so the headline call is within one sigma of a 0.2 or a 0.6 and the core call sits on a rounding edge. Used cars are the most uncertain single line, and any lodging swing moves shelter by a tenth."
       ],
+      "review": {
+        "dated": "2026-09-13",
+        "text": [
+          "<b>The headline was right and the energy arithmetic was exact.</b> All items +0.4% (+0.40 unrounded) against +0.4% called; gasoline +3.9% s.a. against +3.9%; energy +2.1% against +2.2%. The 0.78&times; pass-through from the retail monthly average plus the August seasonal did its job. Electricity (&minus;0.2%) and utility gas (&minus;1.1%) were assumed modestly up and were not, worth about a hundredth of a point.",
+          "<b>Core printed +0.3% (+0.29) against +0.2% (+0.27 unrounded).</b> The record said the call sat on a rounding edge and needed shelter at +0.28% or a bigger airfare jump to tip over. Shelter came in at +0.26% and it tipped. In points the miss is 0.02; at the precision the release prints it is a tenth.",
+          "<b>Shelter +0.3% for the reason named.</b> Rent +0.17% and owners&rsquo; equivalent rent +0.19% were both softer than the +0.26% assumed and than July, but lodging away from home swung +2.4% after &minus;2.8%, the line the record flagged as moving shelter by a tenth.",
+          "<b>Used cars were called the wrong way:</b> +0.4% against &minus;0.3%. The Manheim fall of the first half of August (&minus;1.2%) did not reach the CPI, so the lag is running longer than the one to two months assumed and the drop is now expected in September or October. Worth about 0.02 points of core.",
+          "<b>The rest of core was offsetting misses.</b> Airfares +2.7% against +3 to +4%; motor vehicle insurance &minus;0.8% against flat; medical care services &minus;0.2% against +0.25%, with dental &minus;0.6%; new vehicles +0.3% against +0.1 to +0.2%. Communication +2.3% and education +0.8% were not in the call at all. Core goods +0.1% as called; apparel flat.",
+          "<b>Food +0.1% against +0.2%:</b> food at home flat, lettuce &minus;6.2% after &minus;16.4%, food away from home +0.3%. Worth 0.01 points.",
+          "<b>Both twelve-month rates were as called:</b> 3.4% on all items (3.40 unrounded, n.s.a.) and 2.4% on core (2.45), and the unadjusted month was +0.3%, as the record said the seasonal factor would make it.",
+          "<b>For the September call:</b> carry lodging apart from rent and owners&rsquo; equivalent rent rather than inside a shelter aggregate; lengthen the Manheim lag; add a line for communication, which has moved +0.6% and +2.3% in successive months."
+        ]
+      },
+      "comment": {
+        "dated": "2026-09-13",
+        "text": [
+          "<b>Gasoline did more than a third of the month.</b> All items +0.4% after +0.1%: gasoline +3.9% s.a. (+2.5% before adjustment), fuel oil +10.1%, energy +2.1% on the month and 16.3% on the year. The full point between the headline (3.4%) and core (2.4%) twelve-month rates is energy.",
+          "<b>Core +0.3% is the firmest since April&rsquo;s +0.4%,</b> yet the twelve-month core rate still edged down from 2.5% to 2.4%, because August 2025&rsquo;s +0.31% dropped out of the window. Services less energy services +0.3% and 3.0% on the year; core goods +0.1% and 0.7% on the year. The tariff pass-through in goods has faded to almost nothing; the fuel pass-through in services, airfares +23.4% on the year, has not.",
+          "<b>Shelter 3.0% on the year</b> and +0.3% on the month, of which rent +0.17% and owners&rsquo; equivalent rent +0.19% are the slow part and lodging away from home (+2.4%) the rest. At the rent lines&rsquo; August pace the shelter twelve-month rate keeps falling.",
+          "<b>Two lines are falling outright:</b> motor vehicle insurance &minus;0.8% after &minus;0.3%, and medical care &minus;0.2%, with dental services &minus;0.6% and hospital, physician and prescription drug prices all flat. Both now subtract from core services.",
+          "<b>Food is quiet:</b> +0.1% for a second month, food at home flat, fruit and vegetables &minus;0.4% on lettuce; 2.7% on the year, food away from home 3.4% and at home 2.2%.",
+          "<b>Unadjusted, the index rose 0.3% to 334.980.</b> Read with the PPI&rsquo;s diesel +24.1%, fuel oil +10.1% here says the second leg of this shock is in distillates rather than gasoline, and the CPI weights gasoline many times fuel oil, so it reaches consumers mostly through airfares and freight. Next: the September index on 14 October 2026."
+        ]
+      },
       "inputs": [
         { "label": "Retail gasoline, monthly average", "value": "$3.93 → $4.06, +3.2%" },
         { "label": "WTI, monthly average", "value": "$80.5 → $83.9" },

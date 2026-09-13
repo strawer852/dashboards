@@ -36,6 +36,30 @@
         "<b>Year over year:</b> August 2025 fell 0.18% s.a. (&minus;0.29% n.s.a.) and drops out of the window, so the twelve-month rate rises by more than the month adds, from 4.7% to about <b>5.3%</b> on the seasonally adjusted series this page draws; on the unadjusted basis the release prints, +0.4% for the month gives 5.4% and +0.3% gives 5.3%. Trader-implied odds were 73% on 5.1% or higher.",
         "<b>What would make this wrong:</b> July&rsquo;s 0.0% is itself revisable (PPI has revised 120 of the 139 months since 2015, median 0.13 index points); the headline&rsquo;s monthly standard deviation over the last three years is 0.32 points, so &plusmn;0.3 is one sigma, and nearly all of it is trade margins and energy."
       ],
+      "review": {
+        "dated": "2026-09-13",
+        "text": [
+          "<b>Right number, wrong parts.</b> Final demand printed +0.4% against the +0.4% called, and 5.4% unadjusted on the year against 5.4%, but the sum was reached by errors cancelling: energy and freight came in well above the call, services and trade margins well below.",
+          "<b>Energy was under-called:</b> +4.2% s.a. against +2.5%, worth +0.24 points of the headline rather than +0.14. Diesel jumped 24.1%. The record named diesel as the upside risk and then did not price it: the 1.06&times; pass-through was measured on gasoline, and a distillate squeeze does not travel through gasoline.",
+          "<b>Services less trade and transport were flat</b> against +0.3% called (+0.13 points). Portfolio management fell 1.6% unadjusted despite the S&amp;P 500&rsquo;s +2.7% August, so the fee line does not follow the index month for month; July&rsquo;s +6.5% was the move, and August gave some of it back.",
+          "<b>Trade margins compressed again,</b> &minus;0.2% against the +0.1% pencilled in, with fuels and lubricants retailing margins down 11.3%. The record described this pattern, margins narrowing when energy spikes, and then assumed a small positive anyway. The trade line should carry the opposite sign to the energy call.",
+          "<b>Transport and warehousing +2.3%</b> against +1.0%: truck freight +2.0% and airline passenger services rose with fuel. Core goods +0.4% against +0.3%, foods +0.1% against +0.2%, construction flat against +0.2%. Together the services side contributed +0.07 points where the call had about +0.20.",
+          "<b>Two of the five calls were a tenth out.</b> Less foods and energy printed +0.2% (+0.16 unrounded) against +0.3%, the services miss showing once energy is stripped out; the twelve-month rate on the s.a. series was 5.4% against 5.3%. Less foods, energy and trade printed +0.3% against +0.3%, and the unadjusted twelve-month rate 5.4% against 5.4%.",
+          "<b>July was revised up</b> from 0.0% to +0.1%, as the record said it might be, and June from &minus;0.3% to &minus;0.1%: the summer dip was shallower than first printed.",
+          "<b>For the September call:</b> price diesel and jet fuel apart from gasoline; give trade margins the opposite sign to energy; treat portfolio management as giving back part of any month above 3%."
+        ]
+      },
+      "comment": {
+        "dated": "2026-09-13",
+        "text": [
+          "<b>The second leg of the energy shock is in the pipeline.</b> Diesel +24.1%, processed energy goods for intermediate demand +7.3%, stage 1 intermediate demand +1.4% on the month and 11.3% on the year, processed goods 11.5% on the year. The relief of June and July has been reversed at the raw end before it reached the finished one.",
+          "<b>Final demand 5.4% on the year,</b> up from 4.8% in July and still under May&rsquo;s 5.9%. Less foods, energy and trade held at 4.7% for a second month, so the core rate has stopped rising for now.",
+          "<b>Services absorbed the shock.</b> Final demand services +0.1%: freight +2.3% up with fuel, trade margins &minus;0.2% down with it, everything else flat. Distributors are again eating the pump move rather than passing it on, as they did in May.",
+          "<b>Core goods +0.4%</b> after +0.2% in June and July, the first pick-up since the Section 122 pass-through peaked in the spring. Whether that is the Section 301 rates or fuel feeding into materials will show in September, when the diesel move has had a month to work through.",
+          "<b>What feeds PCE</b> points both ways: hospital inpatient care +0.5% and physician care +0.1% are firm, portfolio management &minus;1.6% is soft. Airline passenger services rose.",
+          "<b>Next:</b> the September index on 15 October 2026, priced on Tuesday 15 September, so the pump prices of that week are what will count."
+        ]
+      },
       "inputs": [
         { "label": "Retail gasoline, 14 Jul to 11 Aug", "value": "+3.9%" },
         { "label": "Retail diesel", "value": "+9.6%" },

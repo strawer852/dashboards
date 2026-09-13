@@ -1214,8 +1214,10 @@ mechanism is generic and lives in three places:
   entry per release: `for` (reference period), `made`, `release_at`, the
   `items` called (each names the bundle `series`, `transform`, `periods` and
   `format`, plus `value`, `consensus`, `range`), `reasons` (HTML fragments,
-  mechanism first, every figure dated), `inputs` and `sources`. **A record is
-  never edited after its release** -- it is a vintage of what was believed.
+  mechanism first, every figure dated), `inputs` and `sources`. **The call in a
+  record is never edited after its release** -- it is a vintage of what was
+  believed. The only keys a record gains afterwards are `review` and
+  `comment` (below).
 - **The exporter** ships `first_reported_pct` and `first_reported_yoy` for
   series the spec names under those keys: the percent change with both
   levels read at the vintage of the later one's first print, the same
@@ -1245,6 +1247,21 @@ that no panel draws -- so `coverage.py` counts them as consumed. The score
 shows the unrounded print beside the rounded one, in the figures, the
 table and the chart tooltip: a +0.35 called +0.3 is a coin flip, and only
 the second decimal says so.
+
+**After the release, two dated notes are written into the record** (since
+13 September 2026, at William's request): `review` -- the call graded
+against what printed, part by part, ending with what to change next time --
+and `comment` -- what the release itself says. Each is `{ "dated", "text":
+[html fragments] }`, one bold lead per point, the same grammar as
+`reasons`. The engine renders them side by side under the reasons
+(`.fc-post`), the review in the series blue `--s1` and the comment in the
+series green `--s3`, so a line grading the call is never read as a line
+about the data; each carries the period, the release date and the day it
+was written. `keycheck.py` refuses a note dated before its release, the
+mirror of the `made` rule. The colour must be set as `.fc-post
+.fc-post-review` and `.fc .fc-post-review h4`: a bare class loses to the
+`.fc-post section` border shorthand and to `.fc h4`, and the first draft
+rendered ink borders and faint heads for exactly that reason.
 
 **The reminder is calendar-driven.** `tools/forecast_reminder.py` runs from
 `systemd/macro-forecast-reminder.timer` at 08:00 Europe/London, the morning
@@ -1277,9 +1294,12 @@ bundle's `next_at`; PPI is 08:30 ET, typically the second week):
    the outcome part by part.
 3. Append the record with `made` = today, run `python3 tools/keycheck.py`,
    commit and push. The page renders it at once; nothing else changes.
-4. After the release, **do nothing**: the `--due` refresh exports the first
-   print and the page scores itself. Read the score before making the next
-   call, and if a component was wrong by a lot, say so in the next record.
+4. After the release the `--due` refresh exports the first print and the
+   page scores itself; the score needs nothing. Then, within a day or two,
+   **write the `review` and `comment`** into the record from the release
+   text (`bls.gov/news.release/ppi.nr0.htm`, `cpi.nr0.htm`) and the
+   bundle's component series, run keycheck, commit, push. The review's last
+   point is what to change in the next call; read it before making it.
 
 Trade services -- distributor margins, 19.8% of final demand -- have a monthly
 standard deviation of 0.88 points and no autocorrelation. They are the part
