@@ -66,80 +66,90 @@
     <div class="row one">
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Initial claims</span><span class="u">Persons, s.a.</span></div>
-        <p class="note">New applications for unemployment insurance. Weekly data is noisy, so the four-week average is the series to read.</p>
+        <p class="gist">New claims; read the four-week average.</p>
         <p class="key"><i class="k5">Weekly</i><i class="ks2">4-week average</i></p>
         <div class="chart" id="cIC" style="height:250px"></div>
+        <p class="note">New applications for unemployment insurance. Weekly data is noisy, so the four-week average is the series to read.</p>
       </div>
     </div>
 
     <div class="row">
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Continuing claims</span><span class="u">Persons, s.a.</span></div>
-        <p class="note">People still claiming after the first week. Rising continuing claims against flat initial claims means the newly unemployed are taking longer to find work. Continuing claims are published a week behind initial claims in the same Thursday report, so this table always ends a week before Table 1.</p>
+        <p class="gist">People still claiming after the first week.</p>
         <div class="chart" id="cCC" style="height:215px"></div>
+        <p class="note">People still claiming after the first week. Rising continuing claims against flat initial claims means the newly unemployed are taking longer to find work. Continuing claims are published a week behind initial claims in the same Thursday report, so this table always ends a week before Table 1.</p>
       </div>
       <div class="t" id="t3">
         <div class="th"><span class="n">Table 3</span><span class="ti">Insured unemployment rate</span><span class="u">Percent, s.a.</span></div>
-        <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation. Against the household survey&rsquo;s own rate, the gap is the share of unemployed people <b>drawing no benefit</b>: not covered, exhausted, or never having claimed. That gap is why claims can sit at historic lows while payroll growth stalls. The insured rate is published with continuing claims, a week behind initial claims, so this table ends a week before Table 1.</p>
+        <p class="gist">Claims as a share of covered jobs.</p>
         <p class="key"><i class="ks1">Insured unemployment rate</i><i class="k4">Unemployment rate, U-3</i></p>
         <div class="chart" id="cIUR" style="height:215px"></div>
+        <p class="note">Continuing claims as a share of covered employment &mdash; the claims equivalent of the unemployment rate, and unaffected by changes in labour force participation. Against the household survey&rsquo;s own rate, the gap is the share of unemployed people <b>drawing no benefit</b>: not covered, exhausted, or never having claimed. That gap is why claims can sit at historic lows while payroll growth stalls. The insured rate is published with continuing claims, a week behind initial claims, so this table ends a week before Table 1.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t4">
         <div class="th"><span class="n">Table 4</span><span class="ti">What seasonal adjustment removes</span><span class="u">Persons, 3 years</span></div>
-        <p class="note">The same series adjusted and unadjusted. January spikes above 300,000 every year without meaning anything; this is what the adjustment is for, and why the raw number is never the story.</p>
+        <p class="gist">Claims with and without seasonal adjustment.</p>
         <p class="key"><i class="ks1">Seasonally adjusted</i><i class="ks2">Not adjusted</i></p>
         <div class="chart" id="cSA" style="height:250px"></div>
+        <p class="note">The same series adjusted and unadjusted. January spikes above 300,000 every year without meaning anything; this is what the adjustment is for, and why the raw number is never the story.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t5">
         <div class="th"><span class="n">Table 5</span><span class="ti">Claims against payroll growth</span><span class="u">Indexed, 5 years ago = 100</span></div>
-        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. <b>Claims do not lead payrolls, and measurement says they never did.</b> Correlating the insured unemployment rate against twelve-month payroll growth at leads of nought to six months, the peak sits at <b>nought in every era</b> &mdash; &minus;0.66 in the 1970s and 80s, &minus;0.78 in the 1990s, &minus;0.96 in the 2000s. What claims give you is <b>timeliness</b>, not a lead: weekly, and three to four weeks before the payroll print covering the same week. Since 2021 the relationship has weakened and <b>changed sign</b>, almost certainly because both series fell together as the reopening faded; sixty-odd months is not enough to call that a relationship. Layoffs stayed low while hiring stalled, and claims only ever see the first of those.</p>
+        <p class="gist">Claims are timely, but they do not lead payrolls.</p>
         <p class="key"><i class="ks1">Initial claims, 4-week avg</i><i class="ks2">Nonfarm payrolls</i></p>
         <div class="chart" id="cLead" style="height:230px"></div>
+        <p class="note">Both indexed to the start of the window so turning points line up rather than levels. Payrolls are monthly on a weekly axis, so the line is carried through the intervening weeks. <b>Claims do not lead payrolls, and measurement says they never did.</b> Correlating the insured unemployment rate against twelve-month payroll growth at leads of nought to six months, the peak sits at <b>nought in every era</b> &mdash; &minus;0.66 in the 1970s and 80s, &minus;0.78 in the 1990s, &minus;0.96 in the 2000s. What claims give you is <b>timeliness</b>, not a lead: weekly, and three to four weeks before the payroll print covering the same week. Since 2021 the relationship has weakened and <b>changed sign</b>, almost certainly because both series fell together as the reopening faded; sixty-odd months is not enough to call that a relationship. Layoffs stayed low while hiring stalled, and claims only ever see the first of those.</p>
       </div>
     </div>
     <div class="row one">
       <div class="t" id="t6">
         <div class="th"><span class="n">Table 6</span><span class="ti">What the figure was when it was first published</span><span class="u">Persons, current less first print</span></div>
-        <p class="note">Two revisions sit in this one line, and they are different orders of magnitude. The <b>quiet recent stretch</b> is the weekly correction from state agencies reporting late: a median of about <b>+1,000</b>, half a percent of the level, which reverses the week-on-week move in roughly one week in sixteen. The <b>excursions further back</b> are the annual re-estimation of the seasonal factors, each spring since at least 2010, restating between 140 and 260 past weeks at once. Each year&rsquo;s lands on top of the last, so the older a figure the less it resembles its first print: weeks three to five years old sit a median <b>16,000</b> from it, <b>7.5%</b> of the level. <b>A figure noted down today is not the figure that will be here next year.</b> The line stops in 2009, where the vintage archive begins, and breaks in the autumn of 2025, when four weeks were published late &mdash; with no first print to compare against, unknown is not zero. <b>Analyst-derived</b> from the vintage history.</p>
+        <p class="gist">How far claims moved from their first print.</p>
         <div class="chart" id="cRev" style="height:230px"></div>
+        <p class="note">Two revisions sit in this one line, and they are different orders of magnitude. The <b>quiet recent stretch</b> is the weekly correction from state agencies reporting late: a median of about <b>+1,000</b>, half a percent of the level, which reverses the week-on-week move in roughly one week in sixteen. The <b>excursions further back</b> are the annual re-estimation of the seasonal factors, each spring since at least 2010, restating between 140 and 260 past weeks at once. Each year&rsquo;s lands on top of the last, so the older a figure the less it resembles its first print: weeks three to five years old sit a median <b>16,000</b> from it, <b>7.5%</b> of the level. <b>A figure noted down today is not the figure that will be here next year.</b> The line stops in 2009, where the vintage archive begins, and breaks in the autumn of 2025, when four weeks were published late &mdash; with no first print to compare against, unknown is not zero. <b>Analyst-derived</b> from the vintage history.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t7">
         <div class="th"><span class="n">Table 7</span><span class="ti">How many of the unemployed actually draw benefits</span><span class="u">Continuing claims as a share of total unemployment</span></div>
-        <p class="note">Continuing claims divided by the unemployment level &mdash; the recipiency rate. It is the number that decides how much of the labour market this dashboard can see at all: when it falls, claims describe a shrinking share of the unemployed and every reading here becomes a narrower measure. Five years rather than ten: in 2020 and 2021 the emergency programmes pushed insured unemployment <em>above</em> the measured unemployment level, and on a longer axis that peak flattens everything else into the floor. The numerator is weekly and the denominator monthly, so the monthly value is carried forward across the weeks that follow it rather than matched exactly. The break in late 2025 is real: the household survey published no unemployment level for <b>October 2025</b>, and a missing denominator is left as a gap rather than bridged. Continuing claims are published a week behind initial claims, so this table ends a week before Table 1. <b>Analyst-derived.</b></p>
+        <p class="gist">Share of the unemployed drawing benefits.</p>
         <div class="chart" id="cRecip" style="height:250px"></div>
+        <p class="note">Continuing claims divided by the unemployment level &mdash; the recipiency rate. It is the number that decides how much of the labour market this dashboard can see at all: when it falls, claims describe a shrinking share of the unemployed and every reading here becomes a narrower measure. Five years rather than ten: in 2020 and 2021 the emergency programmes pushed insured unemployment <em>above</em> the measured unemployment level, and on a longer axis that peak flattens everything else into the floor. The numerator is weekly and the denominator monthly, so the monthly value is carried forward across the weeks that follow it rather than matched exactly. The break in late 2025 is real: the household survey published no unemployment level for <b>October 2025</b>, and a missing denominator is left as a gap rather than bridged. Continuing claims are published a week behind initial claims, so this table ends a week before Table 1. <b>Analyst-derived.</b></p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t8">
         <div class="th"><span class="n">Table 8</span><span class="ti">How broad is the rise in claims?</span><span class="u">Share of 53 states and territories, %</span></div>
-        <p class="note">Every state compared with <b>itself a year earlier</b>, and the chart is the share standing higher. This answers what the national total cannot: whether a rise is general or the work of two large states. One state doubling moves the national figure and leaves this untouched; forty states drifting up moves this and may barely show nationally. Above 50 more states are rising than falling. States publish claims <b>unadjusted only</b>, which is exactly why the comparison is with the same week a year before &mdash; that carries the same seasonal position, so no adjustment is needed. The state figures come in the Labor Department&rsquo;s separate state report the day after the national one, so from Thursday&rsquo;s release until Friday&rsquo;s this table ends a week before Table 1.</p>
+        <p class="gist">Share of states with claims above a year ago.</p>
         <div class="chart" id="cBreadth" style="height:230px"></div>
+        <p class="note">Every state compared with <b>itself a year earlier</b>, and the chart is the share standing higher. This answers what the national total cannot: whether a rise is general or the work of two large states. One state doubling moves the national figure and leaves this untouched; forty states drifting up moves this and may barely show nationally. Above 50 more states are rising than falling. States publish claims <b>unadjusted only</b>, which is exactly why the comparison is with the same week a year before &mdash; that carries the same seasonal position, so no adjustment is needed. The state figures come in the Labor Department&rsquo;s separate state report the day after the national one, so from Thursday&rsquo;s release until Friday&rsquo;s this table ends a week before Table 1.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t9">
         <div class="th"><span class="n">Table 9</span><span class="ti">Initial claims by state</span><span class="u">Change on a year earlier, %, last 52 weeks</span></div>
-        <p class="note">The breadth measure above, shown as where. Each row is a state against its own level a year before, so the seasonality that dominates unadjusted claims is differenced out. Read it for <b>columns rather than cells</b>: a single dark row is one state&rsquo;s plant closure or storm, while a column darkening across many rows is the thing the national figure is about to show. Like Table 8, it waits for the Friday state report, so between Thursday&rsquo;s national release and Friday&rsquo;s its newest column is a week behind Table 1.</p>
+        <p class="gist">Each state against a year earlier.</p>
         <div class="chart" id="cStates" style="height:820px"></div>
+        <p class="note">The breadth measure above, shown as where. Each row is a state against its own level a year before, so the seasonality that dominates unadjusted claims is differenced out. Read it for <b>columns rather than cells</b>: a single dark row is one state&rsquo;s plant closure or storm, while a column darkening across many rows is the thing the national figure is about to show. Like Table 8, it waits for the Friday state report, so between Thursday&rsquo;s national release and Friday&rsquo;s its newest column is a week behind Table 1.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">How far claims sit above their own floor</span><span class="u">Per cent above the trailing 52-week low</span></div>
-        <p class="note">The level of claims that counts as high has drifted down for forty years as covered employment changed shape, so the usual reading is a rise off the cycle low rather than a level. <b>Measured, it is a poor warning.</b> At the 1990, 2007 and 2020 business-cycle peaks this stood at <b>+9%, +9% and +10%</b> against a median week of <b>+6%</b> &mdash; it did not distinguish those months from an ordinary one. Only 2001 was different, at +36%. It rises steeply <em>after</em> a downturn starts, which makes it a confirming measure and not a leading one. Shown because how far claims sit off their floor is worth knowing; captioned so it is not mistaken for a signal. <b>Analyst-derived.</b></p>
+        <p class="gist">Claims against their cycle low.</p>
         <div class="chart" id="cLow" style="height:230px"></div>
+        <p class="note">The level of claims that counts as high has drifted down for forty years as covered employment changed shape, so the usual reading is a rise off the cycle low rather than a level. <b>Measured, it is a poor warning.</b> At the 1990, 2007 and 2020 business-cycle peaks this stood at <b>+9%, +9% and +10%</b> against a median week of <b>+6%</b> &mdash; it did not distinguish those months from an ordinary one. Only 2001 was different, at +36%. It rises steeply <em>after</em> a downturn starts, which makes it a confirming measure and not a leading one. Shown because how far claims sit off their floor is worth knowing; captioned so it is not mistaken for a signal. <b>Analyst-derived.</b></p>
       </div>
     </div>
 

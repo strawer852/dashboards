@@ -1158,6 +1158,36 @@ nginx.conf, `dashboards.env`) and `~/bigricebowl/docker-compose.dashboards.yml`.
     engine, 0 after. **Test for the label a reader looks for, not only for
     labels that misbehave.**
 
+## Table layout (13 September 2026)
+
+Every table reads top to bottom as: heading (number, title, unit, **date**),
+a one-clause **gist** (`<p class="gist">`, about 60 characters, what the
+chart shows), the legend and chart, then the full **note** beneath the chart
+as its caption. William chose this after comparing four layouts; the
+two-column note it replaced split sentences across columns.
+
+- **Gists are authored**, one per table with a note, in the page HTML right
+  under `.th`. A new table needs one; the full note still carries the
+  argument. Plain words, no dashes-as-punctuation. The class is `gist`, not
+  `lede`, because `.lede` is already the page intro paragraph.
+- **Two-table rows align by gist height** (`alignGists`, run after fonts and
+  on resize), not by bottom-aligning charts: with notes below the charts,
+  bottom alignment no longer lines the charts up.
+- **The date is computed per table** (`tableStamps`): it walks each panel's
+  config for any string that names a bundle series, and takes the newest
+  non-null period **per frequency**. A table mixing frequencies shows each
+  (`Aug 26 · Q2 26`). Taking only the newest overall let a monthly series
+  hide a quarterly one: the payroll ECI table read `Aug 26` while its ECI
+  line ended in June. A period ending before the page's own `ref_period`
+  is oxblood (`.old`), so old data never passes for new: continuing claims
+  (`Wk 29 Aug 26`) on the claims page, ECI and productivity on payrolls.
+  Formats: `Aug 26`, `Q2 26`, `Wk 5 Sep 26`. Hover or focus names the
+  release and its date.
+- **`--s2` is amber `#f08c00`**, was dark blue `#1d5fa8`. The ink line and
+  the second line were dE 31 apart; now 55.9, and at least 16 from every
+  other slot and 28 from the `--pos` bars. A lighter blue failed at dE 5.8
+  from `--pos`. PCE draws core in `s1` on every chart, so it was left alone.
+
 ## Forecasts
 
 Since 9 September 2026 a dashboard may carry a **forecast record**: calls

@@ -14,9 +14,10 @@
 
      Deepening it to #1f6091 fixed the chroma but not the eye: a dark blue bar
      under a near-black line still reads as one thing. It also measured only
-     dE 3.8 from --s2, the series blue, so sign and identity were very nearly
-     the same colour across a page. Lifted again to a cyan-blue: dE 47.6 from
-     the ink line it sits under, against 28.9 before, and dE 18.9 from --s2.
+     dE 3.8 from --s2, then the series blue, so sign and identity were very
+     nearly the same colour across a page. Lifted again to a cyan-blue: dE 47.6
+     from the ink line it sits under, against 28.9 before. --s2 is amber since
+     Sept 2026, dE 28.3 from this.
 
      --neg stays oxblood deliberately. Every brighter red tested collided with
      a series colour -- #c0392b is dE 3.4 from --s1 terracotta -- because the
@@ -30,7 +31,12 @@
   /* Categorical series slots. Assign in order, never cycle; a ninth
      series folds into an 'other' bucket or becomes small multiples.
      Validated against --paper #f7f7f4, not against a generic white. */
-  --s1:#b5461c; --s2:#1d5fa8; --s3:#1f7a4d;
+  /* --s2 was dark blue #1d5fa8, only dE 31 from the ink line it most often
+     sits beside, so headline and core read as two dark lines. Amber since
+     Sept 2026: dE 55.9 from ink, 20.3 from --s1, 16.4 from --s5, 28.3 from
+     the --pos bars. Lighter on paper (2.3:1), which the legend, end labels
+     and tooltips carry. A lighter blue was rejected at dE 5.8 from --pos. */
+  --s1:#b5461c; --s2:#f08c00; --s3:#1f7a4d;
   --s4:#7a3f96; --s5:#9c7412; --s6:#a32f45;
   --serif:"Source Serif 4"; --sans:"Archivo"; --mono:"JetBrains Mono";
 }
@@ -284,11 +290,15 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
    reason to put them side by side. Grid stretches both cells to the taller
    one, so bottom-aligning the chart of a pair also aligns their tops. */
 .t { padding-top: 30px; min-width: 0; display: flex; flex-direction: column; }
-.t > .chart { margin-top: auto; }
-/* A legend describes the chart under it, so it travels with it rather than
-   staying stuck to the foot of a short caption with the gap in between. */
-.t > .key { margin-top: auto; }
-.t > .key ~ .chart { margin-top: 0; }
+/* Layout C (Sept 2026): a one-clause gist above the chart says what it
+   shows; the full note sits beneath the chart as its caption. Charts in a
+   two-table row start level because the engine gives both gists the taller
+   one's height (alignGists), which replaced bottom-aligning the charts under
+   notes of unequal length. */
+.gist {
+  font-family: var(--serif), Georgia, serif; font-size: 15.5px; line-height: 1.4;
+  color: var(--ink-2); margin: 9px 0 2px; max-width: 70ch; text-wrap: balance;
+}
 .th {
   display: flex; align-items: baseline; gap: 11px; flex-wrap: wrap;
   border-bottom: 1px solid var(--rule-hi); padding-bottom: 7px; margin-bottom: 3px;
@@ -296,18 +306,34 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .th .n { font-family: var(--mono), monospace; font-size: 10.5px; color: var(--neg); letter-spacing: .05em; }
 .th .ti { font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
 .th .u { margin-left: auto; font-family: var(--mono), monospace; font-size: 10px; color: var(--muted); letter-spacing: .05em; }
+/* The table's own newest period, set by the engine (tableStamps). Ink and a
+   touch heavier than the unit so it reads first; oxblood when the table's
+   data is older than the page's release. Hover or focus gives the period in
+   full and the release that published it. */
+.th .tdate {
+  position: relative; font-family: var(--mono), monospace; font-size: 10px; font-weight: 500;
+  letter-spacing: .05em; color: var(--ink); white-space: nowrap; cursor: help;
+  padding-left: 11px; border-left: 1px solid var(--rule-hi);
+}
+.th .tdate.solo { margin-left: auto; }
+.th .tdate .old { color: var(--neg); }
+.th .tdate > i { font-style: normal; color: var(--faint); font-weight: 400; }
+.th .tdate:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.th .tdate .pop {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
+  width: max-content; max-width: 280px; white-space: normal; text-align: left;
+  background: var(--panel); border: 1px solid var(--rule-hi); box-shadow: 0 3px 12px rgba(20,22,26,.08);
+  padding: 7px 10px; font-weight: 400; font-size: 10.5px; line-height: 1.55; letter-spacing: .02em; color: var(--ink-2);
+}
+.th .tdate .pop b { font-weight: 500; color: var(--ink); }
+.th .tdate:not(:hover):not(:focus-visible) .pop { display: none; }
 .note {
   font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
   margin: 7px 0 3px; max-width: 66ch; line-height: 1.45;
 }
 .note b { color: var(--ink-2); font-weight: 600; }
-/* A full-width table's note runs in two columns, with the gap of a two-chart
-   row so its columns line up with the pair of tables below. At 66ch in a
-   1100px table it filled the left half and left the right half empty. The
-   engine sets .cols only on a note long enough to fill both (trap: a two-line
-   note split in two breaks a sentence down the middle). */
-.row.one .note.cols { column-count: 2; column-gap: 44px; max-width: none; orphans: 2; widows: 2; }
-@media (max-width:860px){ .row.one .note.cols { column-count: 1; max-width: 66ch; } }
+/* The note as the chart's caption, under it. */
+.t > .chart ~ .note { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule); }
 .key {
   font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .06em;
   text-transform: uppercase; color: var(--muted); margin: 5px 0 0;

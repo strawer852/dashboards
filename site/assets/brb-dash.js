@@ -786,6 +786,128 @@
   }
   const lastNonNull = v => { for (let i = v.length - 1; i >= 0; i--) if (v[i] != null) return v[i]; return null; };
 
+  /* ---------- per-table date ----------------------------------------------
+   * Every table carries the newest period it actually draws, beside its
+   * units. It is read from the series the table's panels name, never copied
+   * from the page stamp, because a table fed by a slower release -- the ECI
+   * on the payroll page -- is older than the page it sits on. A table whose
+   * newest period ends before the page's own reference period is marked
+   * .lag, so old data never passes for new. Generic: it walks each panel's
+   * config for any string naming a bundle series, whatever the panel type
+   * calls the field, so a new panel type is dated without a line here.
+   */
+  const MLONG = ["January","February","March","April","May","June","July",
+                 "August","September","October","November","December"];
+  const FREQ_OF_CADENCE = { weekly: "W", quarterly: "Q", annual: "A", daily: "D" };
+  const UNIT_OF_FREQ = { M: "month", Q: "quarter", W: "week", D: "day", A: "year" };
+  const periodEnd = (iso, freq) => {
+    if (freq === "W" || freq === "D") return iso;
+    const [y, m] = iso.split("-").map(Number);
+    const first = freq === "Q" ? Math.floor((m - 1) / 3) * 3 : freq === "A" ? 0 : m - 1;
+    const len = freq === "Q" ? 3 : freq === "A" ? 12 : 1;
+    return new Date(Date.UTC(y, first + len, 0)).toISOString().slice(0, 10);
+  };
+  const periodLong = (iso, freq) => {
+    const [y, m] = iso.split("-").map(Number);
+    if (freq === "W") return `the week ending ${fmtDate(iso)}`;
+    if (freq === "D") return fmtDate(iso);
+    if (freq === "Q") return `${y} Q${Math.floor((m - 1) / 3) + 1}`;
+    if (freq === "A") return String(y);
+    return `${MLONG[m - 1]} ${y}`;
+  };
+  function seriesIn(ctx, p) {
+    const ids = new Set();
+    const walk = v => {
+      if (typeof v === "string") { if (ctx.bundle.series[v]) ids.add(v); }
+      else if (Array.isArray(v)) v.forEach(walk);
+      else if (v && typeof v === "object") Object.values(v).forEach(walk);
+    };
+    walk(p);
+    return [...ids];
+  }
+  function tableStamps(ctx, panels) {
+    const B = ctx.bundle, page = B.releases[B.release];
+    const pf = page ? (FREQ_OF_CADENCE[page.cadence] || "M") : null;
+    const pageEnd = page ? periodEnd(page.ref_period, pf) : null;
+    // Newest period per table AND per frequency. Taking only the newest
+    // overall let a monthly series hide a quarterly one in the same chart:
+    // the payroll page's ECI table read "Aug 26" while its ECI line ended in
+    // June. A mixed table shows each frequency's period, each dated on its own.
+    const newest = new Map();              // .t -> Map(freq -> candidate)
+    const keep = (t, c) => {
+      if (!newest.has(t)) newest.set(t, new Map());
+      const byF = newest.get(t), cur = byF.get(c.freq);
+      if (!cur || c.end > cur.end) byF.set(c.freq, c);
+    };
+    panels.forEach(p => {
+      const el = document.getElementById(p.el);
+      const t = el && el.closest(".t");
+      if (!t) return;
+      seriesIn(ctx, p).forEach(id => {
+        const s = B.series[id], cats = axis(s), v = s.values;
+        for (let i = v.length - 1; i >= 0; i--) if (v[i] != null) {
+          const freq = s.frequency || s.step || "M";
+          keep(t, { end: periodEnd(cats[i], freq), iso: cats[i], freq, s });
+          break;
+        }
+      });
+    });
+    // A numbered table with no chart of its own heads the unnumbered small
+    // multiples beneath it (JOLTS Table 9), so it takes their newest period.
+    let head = null;
+    document.querySelectorAll("main .t").forEach(t => {
+      if (t.querySelector(".th .n")) head = t.querySelector(".chart") ? null : t;
+      else if (head && newest.has(t)) newest.get(t).forEach(c => keep(head, c));
+    });
+    const ORDER = { D: 0, W: 1, M: 2, Q: 3, A: 4 };
+    newest.forEach((byF, t) => {
+      const th = t.querySelector(".th");
+      // `tdate`, not `stamp`: .stamp is the masthead's release line, a flex
+      // row in capitals, and a table date wearing it inherited both.
+      if (!th || th.querySelector(".tdate")) return;
+      const parts = [...byF.values()].sort((a, b) => (ORDER[a.freq] ?? 9) - (ORDER[b.freq] ?? 9));
+      const tags = [], lines = [];
+      let anyLag = false;
+      parts.forEach(c => {
+        const lag = pageEnd != null && c.end < pageEnd;
+        anyLag = anyLag || lag;
+        const rel = B.releases[c.s.release];
+        const tag = c.freq === "W" ? "Wk " + label(c.iso, "W") : label(c.iso, c.freq);
+        tags.push(`<span class="${lag ? "old" : "new"}">${tag}</span>`);
+        lines.push(`<b>${periodLong(c.iso, c.freq)}</b> is the newest ${UNIT_OF_FREQ[c.freq] || "period"} drawn` +
+          (rel ? `: ${rel.name}${rel.released_at ? `, released ${fmtDate(rel.released_at)}` : ""}` : "") + ".");
+      });
+      if (anyLag) lines.push(`Oxblood is older than the page itself, which runs to ${periodLong(page.ref_period, pf)}.`);
+      const sp = document.createElement("span");
+      sp.className = "tdate" + (anyLag ? " lag" : "") + (th.querySelector(".u") ? "" : " solo");
+      sp.tabIndex = 0;
+      sp.innerHTML = tags.join(`<i aria-hidden="true"> &middot; </i>`) +
+                     `<span class="pop" role="tooltip">${lines.join("<br>")}</span>`;
+      th.appendChild(sp);
+    });
+  }
+
+  // Two tables side by side are compared by eye, so their charts must start
+  // at the same height. Everything above a chart -- heading, gist, legend --
+  // takes the height of the taller one in its row, because any of the three
+  // can wrap: a long title pushes the date onto a second heading line, and
+  // a legend of three long names takes two. Aligning the gists alone left
+  // payroll Tables 27 and 28 a heading line apart. Skipped once the row has
+  // collapsed to one column.
+  function alignGists() {
+    document.querySelectorAll("main .row:not(.one)").forEach(row => {
+      const cells = [...row.querySelectorAll(":scope > .t")];
+      const single = getComputedStyle(row).gridTemplateColumns.split(" ").length < 2;
+      [".th", ".gist", ".key"].forEach(sel => {
+        const els = cells.map(t => t.querySelector(":scope > " + sel)).filter(Boolean);
+        els.forEach(x => { x.style.minHeight = ""; });
+        if (single || els.length < 2) return;
+        const h = Math.max(...els.map(x => x.offsetHeight));
+        els.forEach(x => { x.style.minHeight = h + "px"; });
+      });
+    });
+  }
+
   /* ---------- forecast record ---------------------------------------------
    * A page may carry a forecasts.json beside it: calls made BEFORE a release,
    * each dated, each naming the series and transform it is a call on. The
@@ -1040,13 +1162,6 @@
       stamp.innerHTML = bits.join("");
     }
 
-    // A full-width table's note runs in two columns when there is enough of
-    // it to fill both; under ~300 characters it is two lines at that width,
-    // and splitting it would break a sentence in half. Set before the panels
-    // mount, so each chart measures its cell with the note at its final height.
-    document.querySelectorAll(".row.one > .t > .note").forEach(n =>
-      n.classList.toggle("cols", n.textContent.trim().length > 300));
-
     if (cfg.summary) summary(document.getElementById("summary"), ctx, cfg.summary);
 
     // The forecast record, if the page has one. Loaded before the panels so
@@ -1074,6 +1189,11 @@
     if (document.fonts && document.fonts.ready)
       await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
 
+    // Gists measured in the real font, and before the charts mount.
+    alignGists();
+    let gistTimer;
+    addEventListener("resize", () => { clearTimeout(gistTimer); gistTimer = setTimeout(alignGists, 150); });
+
     cfg.panels.forEach(p => {
       const el = document.getElementById(p.el);
       if (!el) { console.warn("no element for panel", p.el); return; }
@@ -1083,6 +1203,9 @@
       catch (e) { console.error("panel " + p.el + " failed:", e);
                   el.innerHTML = `<div class="panel-error">${p.el}: ${e.message}</div>`; }
     });
+
+    try { tableStamps(ctx, cfg.panels); }
+    catch (e) { console.error("table dates failed:", e); }
 
     const gen = document.getElementById("generated");
     if (gen) gen.textContent = "Data generated " + fmtDate(bundle.generated_at);
