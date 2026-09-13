@@ -321,7 +321,7 @@
         <div class="th"><span class="n">&nbsp;</span><span class="ti">The same components, month by month</span><span class="u">Percent, 1-month change, 48 months</span></div>
         <p class="gist">The same components, month to month.</p>
         <div class="chart" id="cFdHeatM" style="height:760px"></div>
-        <p class="note">The same 33 components and row order as Table 21, on the <b>one-month</b> change. This is the newest reading of each component, and also the noisiest: a component&rsquo;s monthly sign matches the previous month&rsquo;s only 63% of the time, so read it for columns and runs rather than single cells, and use Table 22 below for direction. Capped at &plusmn;3%, which about nine readings in ten sit inside.</p>
+        <p class="note">The same 33 components and row order as Table 21, on the <b>one-month</b> change. This is the newest reading of each component, and also the noisiest: a component&rsquo;s monthly sign matches the previous month&rsquo;s only 63% of the time, so read it for columns and runs rather than single cells, and use Table 22 below for direction. Capped at &plusmn;6%, which 96% of monthly readings sit inside; energy, crude foods and trade margins still reach past it about one month in ten.</p>
       </div>
     </div>
     <div class="row one">
@@ -482,11 +482,14 @@ BRB.render({
                { id: "WPSFD431", label: "Construction, private" },
                { id: "WPSFD432", label: "Construction, government" }] },
     // The same 33 on the one-month change, under Table 21. All seasonally
-    // adjusted, so a monthly change is not the season. Capped at ±3%: about
-    // nine monthly readings in ten, 2022-26, sit inside it.
+    // adjusted, so a monthly change is not the season. Capped at ±6% (William,
+    // 13 Sept 2026, from ±3/6/10 rendered side by side): 96% of monthly
+    // readings 2022-26 sit inside, and the energy, crude food and trade rows
+    // show structure instead of solid blocks; at ±3% they were inside only
+    // 72% of the time.
     { el: "cFdHeatM", type: "heatmap", months: 48, transform: "yoy",
-      periods: 1, cap: 3, format: "pct", left: 214, tick: 5,
-      capText: ["≥ +3%", "≤ −3%"],
+      periods: 1, cap: 6, format: "pct", left: 214, tick: 5,
+      capText: ["≥ +6%", "≤ −6%"],
       series: [{ id: "WPSFD41113", label: "Consumer foods, crude" },
                { id: "WPSFD41112", label: "Consumer foods, processed" },
                { id: "WPSFD4112", label: "Gov. foods" },
