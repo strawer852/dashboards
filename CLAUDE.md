@@ -1170,6 +1170,14 @@ two-column note it replaced split sentences across columns.
   under `.th`. A new table needs one; the full note still carries the
   argument. Plain words, no dashes-as-punctuation. The class is `gist`, not
   `lede`, because `.lede` is already the page intro paragraph.
+- **The note under a chart renders as dash points** (`pointNotes`), one per
+  sentence, flowing across two columns on a full-width table. A point never
+  breaks across columns, which is what a two-column paragraph could not
+  promise: plain CSS columns and a split at the middle sentence both came
+  first and were replaced. Sentences under 50 characters join a neighbour;
+  a short closing "Analyst-derived." or "Source: ..." becomes a tag. The
+  authored HTML stays a paragraph, so write notes as whole sentences and the
+  points follow.
 - **Two-table rows align by gist height** (`alignGists`, run after fonts and
   on resize), not by bottom-aligning charts: with notes below the charts,
   bottom alignment no longer lines the charts up.

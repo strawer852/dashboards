@@ -334,6 +334,23 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .note b { color: var(--ink-2); font-weight: 600; }
 /* The note as the chart's caption, under it. */
 .t > .chart ~ .note { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule); }
+/* The note under a chart as dash points, one per sentence (pointNotes). On
+   a full-width table they flow across two columns with the two-table row's
+   gap, and a point never breaks across the columns. */
+.pts {
+  list-style: none; margin: 10px 0 0; padding: 9px 0 0; border-top: 1px solid var(--rule);
+  font-family: var(--serif), Georgia, serif; font-size: 13.5px; line-height: 1.45;
+  color: var(--muted); max-width: 66ch;
+}
+.row.one .pts { column-count: 2; column-gap: 44px; max-width: none; }
+.pts li { position: relative; padding-left: 17px; margin: 0 0 6px; break-inside: avoid; }
+.pts li::before { content: ""; position: absolute; left: 0; top: .74em; width: 8px; height: 1.5px; background: var(--rule-hi); }
+.pts b { color: var(--ink-2); font-weight: 600; }
+.pts-tag {
+  font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--faint); margin: 2px 0 0 17px;
+}
+@media (max-width:860px){ .row.one .pts { column-count: 1; max-width: 66ch; } }
 .key {
   font-family: var(--mono), monospace; font-size: 9.5px; letter-spacing: .06em;
   text-transform: uppercase; color: var(--muted); margin: 5px 0 0;

@@ -887,6 +887,78 @@
     });
   }
 
+  // A table's note, under its chart, becomes a list of dash points, one per
+  // sentence (William's choice, 13 Sept 2026, over numbers: the sentences are
+  // one explanation, not a sequence). On a full-width table the points flow
+  // across two columns, and a point never breaks across them, so no sentence
+  // is ever cut -- the fault in both the CSS-column note and the split-at-
+  // the-middle one before this. Sentences are found in the note's HTML
+  // outside any tag, so bold and links survive; a full stop counts only when
+  // whitespace and a capital (or opening tag, quote, bracket or digit)
+  // follow, never after an abbreviation the notes use. A sentence under 50
+  // characters joins the next (the last joins the one before), because
+  // "The same construction on core." read abrupt as a point of its own. A
+  // short closing "Analyst-derived." or "Source: ..." becomes a tag under the
+  // list rather than a point. The authored HTML keeps its paragraph; this is
+  // presentation only.
+  const NOTE_ABBR = /(?:\bs\.a|\bn\.s\.a|\bU\.S|\be\.g|\bi\.e|\bvs|\bNo|\bJan|\bFeb|\bAug|\bSept?|\bOct|\bNov|\bDec|\bSt|\bMr|\bDr)$/;
+  const plainOf = h => h.replace(/<[^>]+>/g, "").replace(/&[a-z#0-9]+;/gi, "x").trim();
+  function sentencesOf(src) {
+    const out = [];
+    let inTag = false, start = 0, text = "";
+    for (let i = 0; i < src.length; i++) {
+      const ch = src[i];
+      if (ch === "<") { inTag = true; continue; }
+      if (ch === ">") { inTag = false; continue; }
+      if (inTag) continue;
+      if (ch === "&") {
+        const j = src.indexOf(";", i);
+        if (j > i && j - i < 9) { i = j; text += "x"; continue; }
+      }
+      text += ch;
+      if (!".!?".includes(ch)) continue;
+      let k = i + 1;
+      for (let m; (m = src.slice(k).match(/^(<\/(b|em|i|strong|a)>|&rdquo;|”|\))/)); ) k += m[0].length;
+      const rest = src.slice(k);
+      if (!/^\s+/.test(rest) || NOTE_ABBR.test(text.slice(0, -1))) continue;
+      if (/^\s+(<[^\/][^>]*>)*[A-Z“"(&0-9]/.test(rest)) {
+        out.push(src.slice(start, k).trim()); start = k; i = k - 1;
+      }
+    }
+    out.push(src.slice(start).trim());
+    return out.filter(Boolean);
+  }
+  function pointNotes() {
+    document.querySelectorAll("main .t > .chart ~ .note").forEach(n => {
+      let parts = sentencesOf(n.innerHTML);
+      const tags = [];
+      while (parts.length > 1) {
+        const last = plainOf(parts[parts.length - 1]);
+        if (!/^(Analyst-derived|Source:)/i.test(last) || last.length > 60) break;
+        tags.unshift(last.replace(/\.$/, ""));
+        parts.pop();
+      }
+      const joined = [];
+      parts.forEach(p => {
+        const prev = joined[joined.length - 1];
+        if (prev != null && plainOf(prev).length < 50) joined[joined.length - 1] = prev + " " + p;
+        else joined.push(p);
+      });
+      if (joined.length > 1 && plainOf(joined[joined.length - 1]).length < 50)
+        joined[joined.length - 2] += " " + joined.pop();
+      const ul = document.createElement("ul");
+      ul.className = "pts";
+      ul.innerHTML = joined.map(p => `<li>${p}</li>`).join("");
+      n.replaceWith(ul);
+      if (tags.length) {
+        const tg = document.createElement("p");
+        tg.className = "pts-tag";
+        tg.textContent = tags.join(" · ");
+        ul.after(tg);
+      }
+    });
+  }
+
   // Two tables side by side are compared by eye, so their charts must start
   // at the same height. Everything above a chart -- heading, gist, legend --
   // takes the height of the taller one in its row, because any of the three
@@ -1189,7 +1261,8 @@
     if (document.fonts && document.fonts.ready)
       await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
 
-    // Gists measured in the real font, and before the charts mount.
+    // Notes as points, and gists measured in the real font, before the charts mount.
+    pointNotes();
     alignGists();
     let gistTimer;
     addEventListener("resize", () => { clearTimeout(gistTimer); gistTimer = setTimeout(alignGists, 150); });
