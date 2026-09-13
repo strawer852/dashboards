@@ -71,7 +71,7 @@
       <div class="t" id="t1">
         <div class="th"><span class="n">Table 1</span><span class="ti">Headline and core</span><span class="u">Twelve-month change, %</span></div>
         <p class="gist">Headline and core PCE inflation.</p>
-        <p class="key"><i class="kink">Headline</i><i class="ks1">Core</i></p>
+        <p class="key"><i class="kink">Headline</i><i class="ks2">Core</i></p>
         <div class="chart" id="cHead" style="height:250px"></div>
         <p class="note">The target is written on the headline. The case for watching core is that food and energy are volatile and largely outside policy&rsquo;s reach.</p>
       </div>
@@ -81,7 +81,7 @@
       <div class="t" id="t2">
         <div class="th"><span class="n">Table 2</span><span class="ti">Supercore</span><span class="u">Twelve-month change, %</span></div>
         <p class="gist">The part of PCE most tied to wages.</p>
-        <p class="key"><i class="kink">Services ex energy and housing</i><i class="ks1">Core</i><i class="ks2">All items ex food, energy and housing</i></p>
+        <p class="key"><i class="kink">Services ex energy and housing</i><i class="ks2">Core</i><i class="ks1">All items ex food, energy and housing</i></p>
         <div class="chart" id="cSuper" style="height:250px"></div>
         <p class="note">Services excluding energy and housing: what is left after the component that moves with commodity prices and the one that follows market rents with a lag of a year or more. It is the part of inflation most closely tied to wages.</p>
       </div>
@@ -160,7 +160,7 @@
       <div class="t" id="t10">
         <div class="th"><span class="n">Table 10</span><span class="ti">Where the level went</span><span class="u">Five years ago = 100</span></div>
         <p class="gist">Price levels, not rates.</p>
-        <p class="key"><i class="kink">PCE</i><i class="ks1">Core</i><i class="ks2">CPI</i></p>
+        <p class="key"><i class="kink">PCE</i><i class="ks2">Core</i><i class="ks1">CPI</i></p>
         <div class="chart" id="cLevel" style="height:250px"></div>
         <p class="note">Rates say how fast, this says how far. Prices do not return to an old level when inflation falls; they stop rising as quickly.</p>
       </div>
@@ -299,13 +299,13 @@ BRB.render({
                { label: "Excluded from core", a: 20.953, b: 10.881 }] },
     { el: "cHead", type: "line", format: "pct", tick: 11, left: 46, window: 120,
       series: [{ id: "PCEPI", label: "Headline", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
-               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" }] },
+               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s2" }] },
     { el: "cSuper", type: "line", format: "pct", tick: 11, left: 46, window: 120,
       series: [{ id: "IA001260M", label: "Services ex energy and housing", transform: "yoy", periods: 12,
                  color: "ink", width: 1.9 },
-               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s1" },
+               { id: "PCEPILFE", label: "Core", transform: "yoy", periods: 12, color: "s2" },
                { id: "IA001176M", label: "All items ex food, energy and housing",
-                 transform: "yoy", periods: 12, color: "s2" }] },
+                 transform: "yoy", periods: 12, color: "s1" }] },
     { el: "cVsCpi", type: "line", format: "pct", tick: 11, left: 46, window: 120,
       series: [{ id: "PCEPI", label: "PCE", transform: "yoy", periods: 12, color: "ink", width: 1.9 },
                { id: "CPIAUCSL", label: "CPI", transform: "yoy", periods: 12, color: "s1" },
@@ -348,8 +348,8 @@ BRB.render({
     // CLAUDE.md trap 16.
     { el: "cLevel", type: "line", format: "num", tick: 11, left: 42, window: 60,
       series: [{ id: "PCEPI", label: "PCE", rebase: "index", color: "ink", width: 1.9 },
-               { id: "PCEPILFE", label: "Core", rebase: "index", color: "s1" },
-               { id: "CPIAUCSL", label: "CPI", rebase: "index", color: "s2" }] },
+               { id: "PCEPILFE", label: "Core", rebase: "index", color: "s2" },
+               { id: "CPIAUCSL", label: "CPI", rebase: "index", color: "s1" }] },
   ],
 });
 </script>
