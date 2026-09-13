@@ -1583,6 +1583,15 @@ Do not touch, restart, recreate or rebuild: `caddy`, `everos`, `everos_mcp`,
 single-file bind mount, so **append in place** (`>>`) to preserve the inode, then
 validate *inside* the container and `caddy reload`, never restart.
 
+## Rail stays in view (13 September 2026)
+
+On wide screens (>980px) `.rail` is `position: sticky`, full window height,
+scrolling on its own when taller. `railSpy` marks the table being read
+(`.inpage a.here`: the last target whose top has passed 120px) and keeps
+that entry inside the rail's own scroll, never by scrolling the page. A
+jump to a contents link did not raise a scroll event in testing, so it
+also updates on `hashchange` and on click.
+
 ## CPI news release Table 6, filled (13 September 2026)
 
 At William's request the database now holds **every series behind CPI news

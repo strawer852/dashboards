@@ -988,6 +988,42 @@
     });
   }
 
+  // Mark the table being read in the rail's contents list, and keep that
+  // entry inside the rail's own scroll -- never by scrolling the page, which
+  // scrollIntoView would do. The current table is the last one whose top has
+  // passed a line 120px below the top of the window. Throttled to a frame.
+  function railSpy() {
+    const rail = document.querySelector(".rail");
+    const links = [...document.querySelectorAll('.rail .inpage a[href^="#"]')];
+    const pairs = links.map(a => [a, document.getElementById(a.getAttribute("href").slice(1))])
+                       .filter(([, t]) => t);
+    if (!rail || !pairs.length) return;
+    let cur = null, queued = false;
+    const update = () => {
+      queued = false;
+      let pick = pairs[0][0];
+      for (const [a, t] of pairs) if (t.getBoundingClientRect().top <= 120) pick = a;
+      if (pick === cur) return;
+      if (cur) cur.classList.remove("here");
+      pick.classList.add("here");
+      cur = pick;
+      if (rail.scrollHeight > rail.clientHeight) {
+        const r = rail.getBoundingClientRect(), l = pick.getBoundingClientRect();
+        if (l.top < r.top + 60 || l.bottom > r.bottom - 60)
+          rail.scrollTop += (l.top - r.top) - rail.clientHeight / 2;
+      }
+    };
+    const later = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    addEventListener("scroll", later, { passive: true });
+    addEventListener("resize", update);
+    // A jump to a contents link did not reliably raise a scroll event in
+    // testing, which left the highlight on the entry before the jump; the
+    // hash change and the click cover it.
+    addEventListener("hashchange", () => requestAnimationFrame(update));
+    links.forEach(a => a.addEventListener("click", () => setTimeout(update, 60)));
+    update();
+  }
+
   // Two tables side by side are compared by eye, so their charts must start
   // at the same height. Everything above a chart -- heading, gist, legend --
   // takes the height of the taller one in its row, because any of the three
@@ -1356,6 +1392,9 @@
         n.textContent = v == null ? "–" : fmtFor({ format: n.dataset.format || "pct" })(v);
       } catch (e) { n.textContent = "–"; }
     });
+
+    try { railSpy(); }
+    catch (e) { console.error("contents highlight failed:", e); }
 
     try { tableStamps(ctx, cfg.panels); }
     catch (e) { console.error("table dates failed:", e); }
