@@ -1191,7 +1191,7 @@ two-column note it replaced split sentences across columns.
   (`Wk 29 Aug 26`) on the claims page, ECI and productivity on payrolls.
   Formats: `Aug 26`, `Q2 26`, `Wk 5 Sep 26`. Hover or focus names the
   release and its date.
-- **The series slots are set A** (same day): blue `#2f5f9e`, amber
+- **The series slots are set A** (same day): blue `#1f66e0` (was `#2f5f9e`, see below), amber
   `#e8961c`, green `#1f7a4d`, violet `#7a5fc0`, rose `#b8466b`, olive
   `#8a6d12`. The set before opened terracotta then amber, two warm oranges,
   so two-part stacks read as one block. Chosen from four sets rendered on
@@ -1202,6 +1202,15 @@ two-column note it replaced split sentences across columns.
   blue). Every slot-1 series moved from terracotta to blue, including the
   PCE core line. Validate any new slot colour against `--paper` and
   `--pos`, not by eye.
+- **Slot 1 blue lifted to `#1f66e0`** (13 Sept 2026, evening). William found
+  black and dark blue hard to tell apart on multi-line charts: ink against
+  `#2f5f9e` measured dE 30.3, and ink then blue is the order of most of
+  them. Three fixes were rendered on PPI Tables 1 and 12 and payroll Table
+  33 -- brighter blue, amber as the second line, both -- and he chose the
+  brighter blue alone: dE 39.1 from ink, no series changes colour, and its
+  distance to violet (11.2) and the `--pos` bars (17.2) stays within 2 of
+  before. The forecast call colour and the bold blue heatmap labels read
+  the same token, so they brightened with it.
 
 ## Forecasts
 
@@ -1641,6 +1650,62 @@ hierarchy, three layers under all items plus the shelter split:
   drift with prices. Old Tables 28-33 are now 34-39. Six series only the old
   tables drew (`CUSR0000SAH3 SEEB SERA SETD SETE SETG01`) were set
   `publish=false`.
+
+## PPI news release Tables 1 and 2, filled (13 September 2026)
+
+At William's request the database holds **every series behind PPI news
+release Table 2** (597 rows of named goods and services under each FD-ID
+category) and the unadjusted Table 1 groupings that were missing. **All 440
+came from the BLS API** with his key through `add_series.py --source bls
+--no-publish`: 317 unadjusted commodity indexes (`WPU<code>`), the 108 of
+them BLS also adjusts (`WPS<code>`), nine unadjusted Table 1 aggregates
+(`WPUFD41` ... `WPUFD49104`), and six unadjusted indexes for items whose
+adjusted copy was already held from FRED (gasoline, diesel, truck freight,
+airline passengers, physician care, hospital inpatient care). 224,945
+observations to August 2026. Ids were checked by value before ingesting, and
+again from the database after: every August 12-month and 1-month change in
+Table 2 recomputed from stored indexes -- **634 reproduced, 0 disagree**. The
+release prints one row's code as `35-`; its series is `WPU35`. All 309 SA
+series of Table 1 were already held. The BLS API answered some 50-series
+catalog requests with REQUEST_FAILED; `add_series.py` in batches of 25 with a
+retry got through.
+
+**Truck freight is not seasonally adjusted any more.** WPS3012 ends in
+December 2016 in the database and the BLS API holds no data for it since,
+though its catalog block still says "Seasonally Adjusted". The release's
+1-month figure is WPU3012's change. There is nothing to switch it to.
+
+**On the PPI page (same day)** Tables 21-22 (33 components in one heatmap:
+year, month and three months) were replaced:
+
+- **Tables 21-29** are a heatmap per category, 12-month (unadjusted) and
+  1-month (s.a., or unadjusted where BLS does not adjust; the note gives the
+  count): foods, energy, core goods for households, core goods for business,
+  trade services, transport and warehousing, finance/insurance/health care,
+  media/professional/leisure, construction. The category on top (bold ink),
+  then Table 1's **split by buyer** with each row's share **of the category**
+  (`PPI.s_*`, first layer bold blue), then Table 2's named items under small
+  headings. The headings are a new heatmap row type, `{ head: "..." }`: a
+  label with no series and no cells. Table 2 carries no weights, so named
+  items have no share.
+- **Two splits are ours, not BLS's:** core goods into households and
+  business, and other services into finance, insurance and health care
+  against the rest. BLS lists each as one block; the notes say so.
+- **Tables 30-38** are stacked year/month pairs for goods, services, foods,
+  energy, core goods, trade, transport, other services and construction by
+  buyer (`PPI.k_*` contributions; the parts' weights sum to the parent's),
+  each heading carrying the category's share of final demand (`PPI.w_*`,
+  four new).
+- Shares and contributions are anchored on Table 1 relative importance, Dec.
+  2025, on the **adjusted** indexes, the basis Tables 4-6 already used, so a
+  category shows one share everywhere on the page. (The CPI page anchors its
+  heatmap shares on unadjusted indexes.) Old Table 23 (breadth) is now 39;
+  its 33 components are still drawn, as the buyer rows.
+- The spec names the 268 unpublished series the page draws (new and
+  previously held) in `include_series`, truncated to 96 observations. The
+  generator lives in the session scratchpad, like the CPI ones.
+- **Open:** the headings of Tables 3, 4, 5, 11-14, 17 and 18 wrap onto two
+  lines in a 1400px window. That predates this change.
 
 ## State as of 9 September 2026, end of day
 

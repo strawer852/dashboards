@@ -590,6 +590,10 @@
     // the same series the date axis is taken from, so the two cannot disagree.
     let cats = null, freq = "M";
     p.series.forEach((sp, yi) => {
+      // `head`: a label-only row naming the block of rows beneath it, so one
+      // heatmap can hold two kinds of row (the PPI tables put the weighted
+      // split by buyer above the unweighted named goods). No series, no cells.
+      if (sp.head) { names.push(sp.head); return; }
       const s = ctx.series(sp.id);
       const v = (tf === "none" ? s.values
                                : derive(s, { transform: tf, periods: p.periods }))
@@ -630,10 +634,12 @@
       yAxis: { type: "category", data: names, inverse: true, splitArea: { show: false },
         axisLabel: { color: P.ink2, fontSize: 10, fontFamily: P.mono,
           formatter: (v, i) => {
-            const em = p.series[i] && p.series[i].em;
-            return em ? `{${em === "top" ? "top" : "sub"}|${v}}` : v;
+            const sp = p.series[i] || {};
+            const em = sp.head ? "head" : sp.em;
+            return em ? `{${em === "top" || em === "head" ? em : "sub"}|${v}}` : v;
           },
           rich: {
+            head: { color: P.muted, fontWeight: 600, fontSize: 9, fontFamily: P.mono },
             top: { color: P.ink, fontWeight: 700, fontSize: 10, fontFamily: P.mono },
             sub: { color: P.s1, fontWeight: 700, fontSize: 10, fontFamily: P.mono },
           } },

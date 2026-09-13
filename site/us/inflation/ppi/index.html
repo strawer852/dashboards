@@ -55,9 +55,25 @@
         <a href="#t18"><span>18</span>Portfolio management</a>
         <a href="#t19"><span>19</span>Levels</a>
         <a href="#t20"><span>20</span>Revisions</a>
-        <a href="#t21"><span>21</span>Components</a>
-        <a href="#t22"><span>22</span>Three-month</a>
-        <a href="#t23"><span>23</span>Breadth</a>
+        <a href="#t21"><span>21</span>Foods by category</a>
+        <a href="#t22"><span>22</span>Energy by category</a>
+        <a href="#t23"><span>23</span>Core goods for households</a>
+        <a href="#t24"><span>24</span>Core goods for business</a>
+        <a href="#t25"><span>25</span>Trade services by category</a>
+        <a href="#t26"><span>26</span>Transport and warehousing by category</a>
+        <a href="#t27"><span>27</span>Finance, insurance and health care</a>
+        <a href="#t28"><span>28</span>Media, professional and leisure services</a>
+        <a href="#t29"><span>29</span>Construction by category</a>
+        <a href="#t30"><span>30</span>Goods</a>
+        <a href="#t31"><span>31</span>Services</a>
+        <a href="#t32"><span>32</span>Foods</a>
+        <a href="#t33"><span>33</span>Energy</a>
+        <a href="#t34"><span>34</span>Core goods</a>
+        <a href="#t35"><span>35</span>Trade services</a>
+        <a href="#t36"><span>36</span>Transport and warehousing</a>
+        <a href="#t37"><span>37</span>Other services</a>
+        <a href="#t38"><span>38</span>Construction</a>
+        <a href="#t39"><span>39</span>Breadth</a>
       </div>
 
     </nav>
@@ -310,32 +326,322 @@
 
     <div class="row one">
       <div class="t" id="t21">
-        <div class="th"><span class="n">Table 21</span><span class="ti">Where final demand inflation sits</span><span class="u">Percent, 12-month change, 48 months</span></div>
-        <p class="gist">33 components against a year earlier.</p>
-        <div class="chart" id="cFdHeat" style="height:760px"></div>
-        <p class="note">The 33 components that partition final demand, each against its own level a year earlier. The chain above says how a shock travels; this says <b>what is moving now</b>. Capped at &plusmn;15%, which covers about nine readings in ten. Read it for columns rather than cells. <b>ex TTW</b> is the source&rsquo;s own &ldquo;less trade, transportation, and warehousing&rdquo;.</p>
+        <div class="th"><span class="n">Table 21</span><span class="ti">Foods by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_foods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of foods, against a year earlier.</p>
+        <div class="chart" id="cCatfoodsY" style="height:688px"></div>
+        <p class="note">The figure beside a name is its share of foods, and foods are <span data-latest="PPI.w_foods" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named foods in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year.</p>
       </div>
     </div>
+
     <div class="row one">
       <div class="t">
-        <div class="th"><span class="n">&nbsp;</span><span class="ti">The same components, month by month</span><span class="u">Percent, 1-month change, 48 months</span></div>
-        <p class="gist">The same components, month to month.</p>
-        <div class="chart" id="cFdHeatM" style="height:760px"></div>
-        <p class="note">The same 33 components and row order as Table 21, on the <b>one-month</b> change. This is the newest reading of each component, and also the noisiest: a component&rsquo;s monthly sign matches the previous month&rsquo;s only 63% of the time, so read it for columns and runs rather than single cells, and use Table 22 below for direction. Capped at &plusmn;6%, which 96% of monthly readings sit inside; energy, crude foods and trade margins still reach past it about one month in ten.</p>
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Foods by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_foods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of foods, month on month.</p>
+        <div class="chart" id="cCatfoodsM" style="height:688px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 12 of the 20 named foods are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
       </div>
     </div>
+
     <div class="row one">
       <div class="t" id="t22">
-        <div class="th"><span class="n">Table 22</span><span class="ti">The same components, three months</span><span class="u">Percent, 3-month change, 48 months</span></div>
-        <p class="gist">The same components over three months.</p>
-        <div class="chart" id="cFd3m" style="height:760px"></div>
-        <p class="note">Table 21 carries eleven months of history and turns late; this one turns four times faster. It is also far steadier than the month-by-month panel above, which at this granularity is mostly noise: a component&rsquo;s monthly sign agrees with the previous month&rsquo;s only 63% of the time and its autocorrelation is 0.09, so each monthly cell is nearly independent of the one beside it. At three months that is 83% and 0.67, measured over 2010&ndash;2026. Capped at &plusmn;5% because the moves are a quarter the size. Not annualised.</p>
+        <div class="th"><span class="n">Table 22</span><span class="ti">Energy by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_energy" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of energy, against a year earlier.</p>
+        <div class="chart" id="cCatenergyY" style="height:314px"></div>
+        <p class="note">The figure beside a name is its share of energy, and energy is <span data-latest="PPI.w_energy" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named fuels and power in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_energy" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of energy, month on month.</p>
+        <div class="chart" id="cCatenergyM" style="height:314px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. Natural gas liquids is not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
       </div>
     </div>
 
     <div class="row one">
       <div class="t" id="t23">
-        <div class="th"><span class="n">Table 23</span><span class="ti">How broad is producer inflation?</span><span class="u">Share of 33 components above 3%, %</span></div>
+        <div class="th"><span class="n">Table 23</span><span class="ti">Core goods for households, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Household goods, against a year earlier.</p>
+        <div class="chart" id="cCatcorehhY" style="height:930px"></div>
+        <p class="note">The figure beside a name is its share of core goods, and core goods are <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named goods in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. BLS lists these goods in one block; splitting them between this table and Table 24 is ours. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core goods for households, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Household goods, month on month.</p>
+        <div class="chart" id="cCatcorehhM" style="height:930px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 22 of the 28 named goods are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t24">
+        <div class="th"><span class="n">Table 24</span><span class="ti">Core goods for business, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Business equipment and materials, against a year earlier.</p>
+        <div class="chart" id="cCatcorebizY" style="height:820px"></div>
+        <p class="note">The figure beside a name is its share of core goods, and core goods are <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named goods in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. BLS lists these goods in one block; splitting them between this table and Table 23 is ours. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core goods for business, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Business equipment and materials, month on month.</p>
+        <div class="chart" id="cCatcorebizM" style="height:820px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 20 of the 27 named goods are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t25">
+        <div class="th"><span class="n">Table 25</span><span class="ti">Trade services by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_trade" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of trade services, against a year earlier.</p>
+        <div class="chart" id="cCattradeY" style="height:820px"></div>
+        <p class="note">The figure beside a name is its share of trade services, and trade services are <span data-latest="PPI.w_trade" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named margins in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Trade services by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_trade" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of trade services, month on month.</p>
+        <div class="chart" id="cCattradeM" style="height:820px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 17 of the 25 named margins are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t26">
+        <div class="th"><span class="n">Table 26</span><span class="ti">Transport and warehousing by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_transport" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of transport and warehousing, against a year earlier.</p>
+        <div class="chart" id="cCattransportY" style="height:490px"></div>
+        <p class="note">The figure beside a name is its share of transport and warehousing, and transport and warehousing is <span data-latest="PPI.w_transport" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named services in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Transport and warehousing by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_transport" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of transport and warehousing, month on month.</p>
+        <div class="chart" id="cCattransportM" style="height:490px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 4 of the 6 named services are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t27">
+        <div class="th"><span class="n">Table 27</span><span class="ti">Finance, insurance and health care, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Finance, insurance and health care, against a year earlier.</p>
+        <div class="chart" id="cCatfinhealthY" style="height:644px"></div>
+        <p class="note">The figure beside a name is its share of other services, and other services are <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named services in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. BLS lists these services in one block; splitting them between this table and Table 28 is ours. Some of these indexes cover only part of an industry, which BLS marks as partial. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Finance, insurance and health care, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Finance, insurance and health care, month on month.</p>
+        <div class="chart" id="cCatfinhealthM" style="height:644px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 9 of the 17 named services are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t28">
+        <div class="th"><span class="n">Table 28</span><span class="ti">Media, professional and leisure services, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Media, professional and leisure services, against a year earlier.</p>
+        <div class="chart" id="cCatmediaY" style="height:688px"></div>
+        <p class="note">The rest of the named services BLS prints under other services, which are <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand. They carry no weights, so no row has a share. BLS lists these services in one block; splitting them between this table and Table 27 is ours. Some of these indexes cover only part of an industry, which BLS marks as partial. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Media, professional and leisure services, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Media, professional and leisure services, month on month.</p>
+        <div class="chart" id="cCatmediaM" style="height:688px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 13 of the 25 named services are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t29">
+        <div class="th"><span class="n">Table 29</span><span class="ti">Construction by category, year</span><span class="u">Percent, 12-month change &middot; <span data-latest="PPI.w_construction" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of construction, against a year earlier.</p>
+        <div class="chart" id="cCatconstructionY" style="height:270px"></div>
+        <p class="note">The figure beside a name is its share of construction, and construction is <span data-latest="PPI.w_construction" data-format="pct">&nbsp;</span> of final demand. Only the rows split by buyer carry one: BLS weights those in Table 1 but prints the named building types in Table 2 without weights. Shares are BLS&rsquo;s December 2025 relative importance, carried forward with prices each month. Unadjusted twelve-month change, the basis the release prints for the year.</p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Construction by category, month</span><span class="u">Percent, 1-month change, s.a. &middot; <span data-latest="PPI.w_construction" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">Every part of construction, month on month.</p>
+        <div class="chart" id="cCatconstructionM" style="height:270px"></div>
+        <p class="note">The same rows, one month on the last, seasonally adjusted. 5 of the 5 named building types are not seasonally adjusted by BLS, so the unadjusted change is used, as Table 2 prints it.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t30">
+        <div class="th"><span class="n">Table 30</span><span class="ti">Goods, year</span><span class="u">Points &middot; <span data-latest="PPI.w_goods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved goods over the year.</p>
+        <p class="key"><i class="k4">Goods (line)</i><i class="ks1">Foods</i><i class="ks2">Energy</i><i class="ks3">Core goods</i></p>
+        <div class="chart" id="cStfd41Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of goods at the start of the period, so the bars add up to the goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Goods, month</span><span class="u">Points &middot; <span data-latest="PPI.w_goods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved goods over the month.</p>
+        <p class="key"><i class="k4">Goods (line)</i><i class="ks1">Foods</i><i class="ks2">Energy</i><i class="ks3">Core goods</i></p>
+        <div class="chart" id="cStfd41M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of goods at the start of the period, so the bars add up to the goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t31">
+        <div class="th"><span class="n">Table 31</span><span class="ti">Services, year</span><span class="u">Points &middot; <span data-latest="PPI.w_services" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved services over the year.</p>
+        <p class="key"><i class="k4">Services (line)</i><i class="ks1">Trade</i><i class="ks2">Transport and warehousing</i><i class="ks3">Other services</i></p>
+        <div class="chart" id="cStfd42Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of services at the start of the period, so the bars add up to the services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Services, month</span><span class="u">Points &middot; <span data-latest="PPI.w_services" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved services over the month.</p>
+        <p class="key"><i class="k4">Services (line)</i><i class="ks1">Trade</i><i class="ks2">Transport and warehousing</i><i class="ks3">Other services</i></p>
+        <div class="chart" id="cStfd42M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of services at the start of the period, so the bars add up to the services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t32">
+        <div class="th"><span class="n">Table 32</span><span class="ti">Foods, year</span><span class="u">Points &middot; <span data-latest="PPI.w_foods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved foods over the year.</p>
+        <p class="key"><i class="k4">Foods (line)</i><i class="ks1">Consumer foods</i><i class="ks2">Government</i><i class="ks3">Exports</i></p>
+        <div class="chart" id="cStfd411Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of foods at the start of the period, so the bars add up to the foods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Foods, month</span><span class="u">Points &middot; <span data-latest="PPI.w_foods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved foods over the month.</p>
+        <p class="key"><i class="k4">Foods (line)</i><i class="ks1">Consumer foods</i><i class="ks2">Government</i><i class="ks3">Exports</i></p>
+        <div class="chart" id="cStfd411M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of foods at the start of the period, so the bars add up to the foods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t33">
+        <div class="th"><span class="n">Table 33</span><span class="ti">Energy, year</span><span class="u">Points &middot; <span data-latest="PPI.w_energy" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved energy over the year.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Consumer energy goods</i><i class="ks2">Government</i><i class="ks3">Exports</i></p>
+        <div class="chart" id="cStfd412Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of energy at the start of the period, so the bars add up to the energy line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Energy, month</span><span class="u">Points &middot; <span data-latest="PPI.w_energy" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved energy over the month.</p>
+        <p class="key"><i class="k4">Energy (line)</i><i class="ks1">Consumer energy goods</i><i class="ks2">Government</i><i class="ks3">Exports</i></p>
+        <div class="chart" id="cStfd412M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of energy at the start of the period, so the bars add up to the energy line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t34">
+        <div class="th"><span class="n">Table 34</span><span class="ti">Core goods, year</span><span class="u">Points &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved core goods over the year.</p>
+        <p class="key"><i class="k4">Core goods (line)</i><i class="ks1">Consumer goods</i><i class="ks2">Capital equipment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd413Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of core goods at the start of the period, so the bars add up to the core goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Core goods, month</span><span class="u">Points &middot; <span data-latest="PPI.w_coregoods" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved core goods over the month.</p>
+        <p class="key"><i class="k4">Core goods (line)</i><i class="ks1">Consumer goods</i><i class="ks2">Capital equipment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd413M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of core goods at the start of the period, so the bars add up to the core goods line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t35">
+        <div class="th"><span class="n">Table 35</span><span class="ti">Trade services, year</span><span class="u">Points &middot; <span data-latest="PPI.w_trade" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved trade services over the year.</p>
+        <p class="key"><i class="k4">Trade services (line)</i><i class="ks1">Consumer goods</i><i class="ks2">Capital equipment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd423Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of trade services at the start of the period, so the bars add up to the trade services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Trade services, month</span><span class="u">Points &middot; <span data-latest="PPI.w_trade" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved trade services over the month.</p>
+        <p class="key"><i class="k4">Trade services (line)</i><i class="ks1">Consumer goods</i><i class="ks2">Capital equipment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd423M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of trade services at the start of the period, so the bars add up to the trade services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t36">
+        <div class="th"><span class="n">Table 36</span><span class="ti">Transport, year</span><span class="u">Points &middot; <span data-latest="PPI.w_transport" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved transport and warehousing over the year.</p>
+        <p class="key"><i class="k4">Transport and warehousing (line)</i><i class="ks1">Passengers</i><i class="ks2">Finished goods</i><i class="ks3">Government goods</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd422Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of transport and warehousing at the start of the period, so the bars add up to the transport and warehousing line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. Finished goods are those bound for households and business investment. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Transport, month</span><span class="u">Points &middot; <span data-latest="PPI.w_transport" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved transport and warehousing over the month.</p>
+        <p class="key"><i class="k4">Transport and warehousing (line)</i><i class="ks1">Passengers</i><i class="ks2">Finished goods</i><i class="ks3">Government goods</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd422M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of transport and warehousing at the start of the period, so the bars add up to the transport and warehousing line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. Finished goods are those bound for households and business investment. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t37">
+        <div class="th"><span class="n">Table 37</span><span class="ti">Other services, year</span><span class="u">Points &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved other services over the year.</p>
+        <p class="key"><i class="k4">Other services (line)</i><i class="ks1">Consumer</i><i class="ks2">Capital investment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd421Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of other services at the start of the period, so the bars add up to the other services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Other services, month</span><span class="u">Points &middot; <span data-latest="PPI.w_otherservices" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved other services over the month.</p>
+        <p class="key"><i class="k4">Other services (line)</i><i class="ks1">Consumer</i><i class="ks2">Capital investment</i><i class="ks3">Government</i><i class="ks4">Exports</i></p>
+        <div class="chart" id="cStfd421M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of other services at the start of the period, so the bars add up to the other services line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="t" id="t38">
+        <div class="th"><span class="n">Table 38</span><span class="ti">Construction, year</span><span class="u">Points &middot; <span data-latest="PPI.w_construction" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved construction over the year.</p>
+        <p class="key"><i class="k4">Construction (line)</i><i class="ks1">Private</i><i class="ks2">Government</i></p>
+        <div class="chart" id="cStfd43Y" style="height:250px"></div>
+        <p class="note">Each part is its twelve-month change weighted by its share of construction at the start of the period, so the bars add up to the construction line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+      <div class="t">
+        <div class="th"><span class="n">&nbsp;</span><span class="ti">Construction, month</span><span class="u">Points &middot; <span data-latest="PPI.w_construction" data-format="pct">&nbsp;</span> of final demand</span></div>
+        <p class="gist">What moved construction over the month.</p>
+        <p class="key"><i class="k4">Construction (line)</i><i class="ks1">Private</i><i class="ks2">Government</i></p>
+        <div class="chart" id="cStfd43M" style="height:250px"></div>
+        <p class="note">Each part is its one-month change weighted by its share of construction at the start of the period, so the bars add up to the construction line; what is left over is rounding and the parts being seasonally adjusted on their own. Shares are anchored on BLS&rsquo;s December 2025 relative importance and carried forward with prices. <b>Analyst-derived.</b></p>
+      </div>
+    </div>
+
+    <div class="row one">
+      <div class="t" id="t39">
+        <div class="th"><span class="n">Table 39</span><span class="ti">How broad is producer inflation?</span><span class="u">Share of 33 components above 3%, %</span></div>
         <p class="gist">Share of components that are rising.</p>
         <div class="chart" id="cFdBreadth" style="height:230px"></div>
         <p class="note">Breadth rather than level: a final demand index held up by one violent component and one held up by a general rise read the same on the headline. <b>Counted, not weighted</b> &mdash; Table 1 is the only PPI table with relative importances, and its finest split leaves a single component worth 34% of the basket, so a weighted median would mostly be that one series. Counting is how the payroll diffusion indexes work.</p>
@@ -344,7 +650,7 @@
 
     <div class="src">
       <span id="generated"></span>
-      <span>Source: BLS Producer Price Index, via FRED</span>
+      <span>Source: BLS Producer Price Index, via FRED and the BLS API</span>
       <span>Seasonally adjusted</span>
       <span>Final Demand&ndash;Intermediate Demand framework; the older stage-of-processing series are discontinued</span>
     </div>
@@ -409,120 +715,684 @@ BRB.render({
     { el: "cFcErr", type: "forecast", format: "pt", tick: 1, left: 42,
       items: [{ key: "fd_mom", label: "Final demand", color: "ink" },
               { key: "core_mom", label: "Less foods, energy, trade", color: "s2" }] },
-    { el: "cFd3m", type: "heatmap", months: 48, transform: "yoy",
-      periods: 3, cap: 5, format: "pct", left: 214, tick: 5,
-      capText: ["\u2265 +5%", "\u2264 \u22125%"],
-      series: [{ id: "WPSFD41113", label: "Consumer foods, crude" },
-               { id: "WPSFD41112", label: "Consumer foods, processed" },
-               { id: "WPSFD4112", label: "Gov. foods" },
-               { id: "WPSFD4113", label: "Foods, export" },
-               { id: "WPSFD4121", label: "Consumer energy goods" },
-               { id: "WPSFD4122", label: "Gov. energy" },
-               { id: "WPSFD4123", label: "Energy, export" },
-               { id: "WPSFD413111", label: "Nondurable goods ex food/enrg" },
-               { id: "WPSFD413112", label: "Durable consumer goods" },
-               { id: "WPSFD413121", label: "Capital equipment, mfg" },
-               { id: "WPSFD413122", label: "Capital equipment, non-mfg" },
-               { id: "WPSFD41321", label: "Gov. goods, core" },
-               { id: "WPSFD41322", label: "Gov. capital equipment" },
-               { id: "WPSFD4133", label: "Goods, export, ex food/enrg" },
-               { id: "WPSFD42311", label: "Trade: consumer goods" },
-               { id: "WPSFD42312", label: "Trade: capital equipment" },
-               { id: "WPSFD42321", label: "Trade: gov. goods" },
-               { id: "WPSFD42322", label: "Trade: gov. capital equip." },
-               { id: "WPSFD4233", label: "Trade: exports" },
-               { id: "WPSFD42211", label: "Passengers: private" },
-               { id: "WPSFD42212", label: "Passengers: government" },
-               { id: "WPSFD42213", label: "Passengers: export" },
-               { id: "WPSFD422211", label: "Freight: consumer goods" },
-               { id: "WPSFD422212", label: "Freight: capital equipment" },
-               { id: "WPSFD42222", label: "Freight: gov. goods" },
-               { id: "WPSFD42223", label: "Freight: exports" },
-               { id: "WPSFD42111", label: "Consumer services ex TTW" },
-               { id: "WPSFD42112", label: "Capital inv. services ex TTW" },
-               { id: "WPSFD42121", label: "Gov. services ex TTW" },
-               { id: "WPSFD42122", label: "Gov. capital inv. svcs ex TTW" },
-               { id: "WPSFD4213", label: "Export services ex TTW" },
-               { id: "WPSFD431", label: "Construction, private" },
-               { id: "WPSFD432", label: "Construction, government" }] },
-    { el: "cFdHeat", type: "heatmap", months: 48, transform: "yoy",
-      periods: 12, cap: 15, format: "pct", left: 214, tick: 5,
-      capText: ["\u2265 +15%", "\u2264 \u221215%"],
-      series: [{ id: "WPSFD41113", label: "Consumer foods, crude" },
-               { id: "WPSFD41112", label: "Consumer foods, processed" },
-               { id: "WPSFD4112", label: "Gov. foods" },
-               { id: "WPSFD4113", label: "Foods, export" },
-               { id: "WPSFD4121", label: "Consumer energy goods" },
-               { id: "WPSFD4122", label: "Gov. energy" },
-               { id: "WPSFD4123", label: "Energy, export" },
-               { id: "WPSFD413111", label: "Nondurable goods ex food/enrg" },
-               { id: "WPSFD413112", label: "Durable consumer goods" },
-               { id: "WPSFD413121", label: "Capital equipment, mfg" },
-               { id: "WPSFD413122", label: "Capital equipment, non-mfg" },
-               { id: "WPSFD41321", label: "Gov. goods, core" },
-               { id: "WPSFD41322", label: "Gov. capital equipment" },
-               { id: "WPSFD4133", label: "Goods, export, ex food/enrg" },
-               { id: "WPSFD42311", label: "Trade: consumer goods" },
-               { id: "WPSFD42312", label: "Trade: capital equipment" },
-               { id: "WPSFD42321", label: "Trade: gov. goods" },
-               { id: "WPSFD42322", label: "Trade: gov. capital equip." },
-               { id: "WPSFD4233", label: "Trade: exports" },
-               { id: "WPSFD42211", label: "Passengers: private" },
-               { id: "WPSFD42212", label: "Passengers: government" },
-               { id: "WPSFD42213", label: "Passengers: export" },
-               { id: "WPSFD422211", label: "Freight: consumer goods" },
-               { id: "WPSFD422212", label: "Freight: capital equipment" },
-               { id: "WPSFD42222", label: "Freight: gov. goods" },
-               { id: "WPSFD42223", label: "Freight: exports" },
-               { id: "WPSFD42111", label: "Consumer services ex TTW" },
-               { id: "WPSFD42112", label: "Capital inv. services ex TTW" },
-               { id: "WPSFD42121", label: "Gov. services ex TTW" },
-               { id: "WPSFD42122", label: "Gov. capital inv. svcs ex TTW" },
-               { id: "WPSFD4213", label: "Export services ex TTW" },
-               { id: "WPSFD431", label: "Construction, private" },
-               { id: "WPSFD432", label: "Construction, government" }] },
-    // The same 33 on the one-month change, under Table 21. All seasonally
-    // adjusted, so a monthly change is not the season. Capped at ±6% (William,
-    // 13 Sept 2026, from ±3/6/10 rendered side by side): 96% of monthly
-    // readings 2022-26 sit inside, and the energy, crude food and trade rows
-    // show structure instead of solid blocks; at ±3% they were inside only
-    // 72% of the time.
-    { el: "cFdHeatM", type: "heatmap", months: 48, transform: "yoy",
-      periods: 1, cap: 6, format: "pct", left: 214, tick: 5,
+    { el: "cCatfoodsY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 30, left: 262, tick: 5,
+      capText: ["≥ +30%", "≤ −30%"],
+      series: [
+               { id: "WPUFD411", label: "FOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD4111", label: "Consumer foods", share: "PPI.s_fd4111", em: "sub" },
+               { id: "WPUFD41113", label: "· Crude", share: "PPI.s_fd41113" },
+               { id: "WPUFD41112", label: "· Processed", share: "PPI.s_fd41112" },
+               { id: "WPUFD4112", label: "Government", share: "PPI.s_fd4112", em: "sub" },
+               { id: "WPUFD4113", label: "Exports", share: "PPI.s_fd4113", em: "sub" },
+               { head: "FARM PRODUCTS" },
+               { id: "WPU0111", label: "Fresh fruits and melons" },
+               { id: "WPU0113", label: "Fresh and dry vegetables" },
+               { id: "WPU012", label: "Grains" },
+               { id: "WPU017107", label: "Eggs for fresh use" },
+               { id: "WPU018301", label: "Oilseeds" },
+               { head: "PROCESSED FOODS" },
+               { id: "WPU0211", label: "Bakery products" },
+               { id: "WPU0213", label: "Milled rice" },
+               { id: "WPU021402", label: "Pasta products" },
+               { id: "WPU022101", label: "Beef and veal" },
+               { id: "WPU022104", label: "Pork" },
+               { id: "WPU022203", label: "Chicken" },
+               { id: "WPU022206", label: "Turkey" },
+               { id: "WPU0223", label: "Fish and shellfish" },
+               { id: "WPU023", label: "Dairy products" },
+               { id: "WPU024", label: "Processed fruits and vegetables" },
+               { id: "WPU0255", label: "Confectionery end products" },
+               { id: "WPU0262", label: "Soft drinks" },
+               { id: "WPU026301", label: "Roasted coffee" },
+               { id: "WPU0278", label: "Shortening and cooking oils" },
+               { id: "WPU0285", label: "Frozen specialty food" }] },
+    { el: "cCatfoodsM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 8, left: 262, tick: 5,
+      capText: ["≥ +8%", "≤ −8%"],
+      series: [
+               { id: "PPIDFS", label: "FOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD4111", label: "Consumer foods", share: "PPI.s_fd4111", em: "sub" },
+               { id: "WPSFD41113", label: "· Crude", share: "PPI.s_fd41113" },
+               { id: "WPSFD41112", label: "· Processed", share: "PPI.s_fd41112" },
+               { id: "WPSFD4112", label: "Government", share: "PPI.s_fd4112", em: "sub" },
+               { id: "WPSFD4113", label: "Exports", share: "PPI.s_fd4113", em: "sub" },
+               { head: "FARM PRODUCTS" },
+               { id: "WPS0111", label: "Fresh fruits and melons" },
+               { id: "WPS0113", label: "Fresh and dry vegetables" },
+               { id: "WPS012", label: "Grains" },
+               { id: "WPU017107", label: "Eggs for fresh use" },
+               { id: "WPS018301", label: "Oilseeds" },
+               { head: "PROCESSED FOODS" },
+               { id: "WPU0211", label: "Bakery products" },
+               { id: "WPU0213", label: "Milled rice" },
+               { id: "WPU021402", label: "Pasta products" },
+               { id: "WPS022101", label: "Beef and veal" },
+               { id: "WPS022104", label: "Pork" },
+               { id: "WPS022203", label: "Chicken" },
+               { id: "WPU022206", label: "Turkey" },
+               { id: "WPS0223", label: "Fish and shellfish" },
+               { id: "WPU023", label: "Dairy products" },
+               { id: "WPU024", label: "Processed fruits and vegetables" },
+               { id: "WPU0255", label: "Confectionery end products" },
+               { id: "WPU0262", label: "Soft drinks" },
+               { id: "WPU026301", label: "Roasted coffee" },
+               { id: "WPU0278", label: "Shortening and cooking oils" },
+               { id: "WPU0285", label: "Frozen specialty food" }] },
+    { el: "cCatenergyY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 40, left: 262, tick: 5,
+      capText: ["≥ +40%", "≤ −40%"],
+      series: [
+               { id: "WPUFD412", label: "ENERGY", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD4121", label: "Consumer energy goods", share: "PPI.s_fd4121", em: "sub" },
+               { id: "WPUFD4122", label: "Government", share: "PPI.s_fd4122", em: "sub" },
+               { id: "WPUFD4123", label: "Exports", share: "PPI.s_fd4123", em: "sub" },
+               { head: "BY PRODUCT" },
+               { id: "WPU0532", label: "Natural gas liquids" },
+               { id: "WPU0541", label: "Residential electric power" },
+               { id: "WPU0551", label: "Residential natural gas" },
+               { id: "WPU0571", label: "Gasoline" },
+               { id: "WPU057302", label: "Home heating oil" },
+               { id: "WPU057303", label: "Diesel fuel" }] },
+    { el: "cCatenergyM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 10, left: 262, tick: 5,
+      capText: ["≥ +10%", "≤ −10%"],
+      series: [
+               { id: "PPIDES", label: "ENERGY", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD4121", label: "Consumer energy goods", share: "PPI.s_fd4121", em: "sub" },
+               { id: "WPSFD4122", label: "Government", share: "PPI.s_fd4122", em: "sub" },
+               { id: "WPSFD4123", label: "Exports", share: "PPI.s_fd4123", em: "sub" },
+               { head: "BY PRODUCT" },
+               { id: "WPU0532", label: "Natural gas liquids" },
+               { id: "WPS0541", label: "Residential electric power" },
+               { id: "WPS0551", label: "Residential natural gas" },
+               { id: "WPS0571", label: "Gasoline" },
+               { id: "WPS057302", label: "Home heating oil" },
+               { id: "WPS057303", label: "Diesel fuel" }] },
+    { el: "cCatcorehhY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 10, left: 262, tick: 5,
+      capText: ["≥ +10%", "≤ −10%"],
+      series: [
+               { id: "WPUFD413", label: "CORE GOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD41311", label: "Consumer goods", share: "PPI.s_fd41311", em: "sub" },
+               { id: "WPUFD413111", label: "· Nondurable", share: "PPI.s_fd413111" },
+               { id: "WPUFD413112", label: "· Durable", share: "PPI.s_fd413112" },
+               { id: "WPUFD4132", label: "Government", share: "PPI.s_fd4132", em: "sub" },
+               { id: "WPUFD41321", label: "· Goods", share: "PPI.s_fd41321" },
+               { id: "WPUFD41322", label: "· Capital equipment", share: "PPI.s_fd41322" },
+               { id: "WPUFD4133", label: "Exports", share: "PPI.s_fd4133", em: "sub" },
+               { head: "CLOTHING AND HOME" },
+               { id: "WPU038106", label: "Women's and girls' apparel" },
+               { id: "WPU038107", label: "Men's and boys' apparel" },
+               { id: "WPU0382", label: "Textile house furnishings" },
+               { id: "WPU121", label: "Household furniture" },
+               { id: "WPU123", label: "Floor coverings" },
+               { id: "WPU124", label: "Household appliances" },
+               { id: "WPU125", label: "Home electronic equipment" },
+               { id: "WPU1266", label: "Lawn and garden equipment" },
+               { id: "WPU159F2", label: "Footwear" },
+               { head: "PERSONAL AND HOUSEHOLD GOODS" },
+               { id: "WPU0261", label: "Alcoholic beverages" },
+               { id: "WPU029402", label: "Pet food" },
+               { id: "WPU0638", label: "Pharmaceuticals" },
+               { id: "WPU0671", label: "Soaps and detergents" },
+               { id: "WPU0672", label: "Cleaning products" },
+               { id: "WPU0675", label: "Cosmetics and toiletries" },
+               { id: "WPU072B", label: "Other consumer products" },
+               { id: "WPU091501", label: "Sanitary paper products" },
+               { id: "WPU1512", label: "Sporting and athletic goods" },
+               { id: "WPU1521", label: "Cigarettes" },
+               { id: "WPU156", label: "Medical and surgical devices" },
+               { id: "WPU159402", label: "Jewelry" },
+               { id: "WPU159404", label: "Costume jewelry" },
+               { head: "VEHICLES" },
+               { id: "WPU071201", label: "Tires" },
+               { id: "WPU141101", label: "Passenger cars" },
+               { id: "WPU141105", label: "Light trucks" },
+               { id: "WPU1412", label: "Vehicle parts" },
+               { id: "WPU1416", label: "Travel trailers and campers" },
+               { id: "WPU155", label: "Mobile homes" }] },
+    { el: "cCatcorehhM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 1, left: 262, tick: 5,
+      capText: ["≥ +1%", "≤ −1%"],
+      series: [
+               { id: "WPSFD413", label: "CORE GOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD41311", label: "Consumer goods", share: "PPI.s_fd41311", em: "sub" },
+               { id: "WPSFD413111", label: "· Nondurable", share: "PPI.s_fd413111" },
+               { id: "WPSFD413112", label: "· Durable", share: "PPI.s_fd413112" },
+               { id: "WPSFD4132", label: "Government", share: "PPI.s_fd4132", em: "sub" },
+               { id: "WPSFD41321", label: "· Goods", share: "PPI.s_fd41321" },
+               { id: "WPSFD41322", label: "· Capital equipment", share: "PPI.s_fd41322" },
+               { id: "WPSFD4133", label: "Exports", share: "PPI.s_fd4133", em: "sub" },
+               { head: "CLOTHING AND HOME" },
+               { id: "WPU038106", label: "Women's and girls' apparel" },
+               { id: "WPU038107", label: "Men's and boys' apparel" },
+               { id: "WPU0382", label: "Textile house furnishings" },
+               { id: "WPU121", label: "Household furniture" },
+               { id: "WPU123", label: "Floor coverings" },
+               { id: "WPU124", label: "Household appliances" },
+               { id: "WPU125", label: "Home electronic equipment" },
+               { id: "WPU1266", label: "Lawn and garden equipment" },
+               { id: "WPU159F2", label: "Footwear" },
+               { head: "PERSONAL AND HOUSEHOLD GOODS" },
+               { id: "WPS0261", label: "Alcoholic beverages" },
+               { id: "WPU029402", label: "Pet food" },
+               { id: "WPU0638", label: "Pharmaceuticals" },
+               { id: "WPU0671", label: "Soaps and detergents" },
+               { id: "WPU0672", label: "Cleaning products" },
+               { id: "WPU0675", label: "Cosmetics and toiletries" },
+               { id: "WPU072B", label: "Other consumer products" },
+               { id: "WPU091501", label: "Sanitary paper products" },
+               { id: "WPU1512", label: "Sporting and athletic goods" },
+               { id: "WPU1521", label: "Cigarettes" },
+               { id: "WPS156", label: "Medical and surgical devices" },
+               { id: "WPU159402", label: "Jewelry" },
+               { id: "WPU159404", label: "Costume jewelry" },
+               { head: "VEHICLES" },
+               { id: "WPU071201", label: "Tires" },
+               { id: "WPS141101", label: "Passenger cars" },
+               { id: "WPS141105", label: "Light trucks" },
+               { id: "WPS1412", label: "Vehicle parts" },
+               { id: "WPU1416", label: "Travel trailers and campers" },
+               { id: "WPS155", label: "Mobile homes" }] },
+    { el: "cCatcorebizY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 10, left: 262, tick: 5,
+      capText: ["≥ +10%", "≤ −10%"],
+      series: [
+               { id: "WPUFD413", label: "CORE GOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD41312", label: "Private capital equipment", share: "PPI.s_fd41312", em: "sub" },
+               { id: "WPUFD413121", label: "· For manufacturing", share: "PPI.s_fd413121" },
+               { id: "WPUFD413122", label: "· For other industries", share: "PPI.s_fd413122" },
+               { head: "MACHINERY AND EQUIPMENT" },
+               { id: "WPU111", label: "Farm machinery" },
+               { id: "WPU112", label: "Construction machinery" },
+               { id: "WPU1137", label: "Metal cutting tools" },
+               { id: "WPU1138", label: "Metal forming tools" },
+               { id: "WPU1139", label: "Tools, dies and molds" },
+               { id: "WPU1141", label: "Pumps and compressors" },
+               { id: "WPU1144", label: "Material handling equipment" },
+               { id: "WPU115", label: "Computers" },
+               { id: "WPU1161", label: "Food machinery" },
+               { id: "WPU1164", label: "Paper machinery" },
+               { id: "WPU1165", label: "Printing machinery" },
+               { id: "WPU1174", label: "Transformers" },
+               { id: "WPU1176", label: "Communication equipment" },
+               { id: "WPU1178", label: "Electronic components" },
+               { id: "WPU117905", label: "X-ray and electromedical" },
+               { id: "WPU1191", label: "Oil and gas field machinery" },
+               { id: "WPU1192", label: "Mining machinery" },
+               { id: "WPU1194", label: "Engines" },
+               { id: "WPU122", label: "Commercial furniture" },
+               { head: "TRANSPORT EQUIPMENT" },
+               { id: "WPU141106", label: "Heavy trucks" },
+               { id: "WPU1414", label: "Truck trailers" },
+               { id: "WPU1421", label: "Aircraft" },
+               { id: "WPU1431", label: "Ships" },
+               { id: "WPU144", label: "Railroad equipment" },
+               { head: "MATERIALS" },
+               { id: "WPU061", label: "Industrial chemicals" },
+               { id: "WPU1012", label: "Iron and steel scrap" },
+               { id: "WPU102", label: "Nonferrous metals" }] },
+    { el: "cCatcorebizM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 1.5, left: 262, tick: 5,
+      capText: ["≥ +1.5%", "≤ −1.5%"],
+      series: [
+               { id: "WPSFD413", label: "CORE GOODS", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD41312", label: "Private capital equipment", share: "PPI.s_fd41312", em: "sub" },
+               { id: "WPSFD413121", label: "· For manufacturing", share: "PPI.s_fd413121" },
+               { id: "WPSFD413122", label: "· For other industries", share: "PPI.s_fd413122" },
+               { head: "MACHINERY AND EQUIPMENT" },
+               { id: "WPU111", label: "Farm machinery" },
+               { id: "WPU112", label: "Construction machinery" },
+               { id: "WPU1137", label: "Metal cutting tools" },
+               { id: "WPU1138", label: "Metal forming tools" },
+               { id: "WPU1139", label: "Tools, dies and molds" },
+               { id: "WPU1141", label: "Pumps and compressors" },
+               { id: "WPU1144", label: "Material handling equipment" },
+               { id: "WPU115", label: "Computers" },
+               { id: "WPU1161", label: "Food machinery" },
+               { id: "WPU1164", label: "Paper machinery" },
+               { id: "WPU1165", label: "Printing machinery" },
+               { id: "WPU1174", label: "Transformers" },
+               { id: "WPS1176", label: "Communication equipment" },
+               { id: "WPS1178", label: "Electronic components" },
+               { id: "WPS117905", label: "X-ray and electromedical" },
+               { id: "WPU1191", label: "Oil and gas field machinery" },
+               { id: "WPU1192", label: "Mining machinery" },
+               { id: "WPU1194", label: "Engines" },
+               { id: "WPU122", label: "Commercial furniture" },
+               { head: "TRANSPORT EQUIPMENT" },
+               { id: "WPU141106", label: "Heavy trucks" },
+               { id: "WPU1414", label: "Truck trailers" },
+               { id: "WPS1421", label: "Aircraft" },
+               { id: "WPU1431", label: "Ships" },
+               { id: "WPU144", label: "Railroad equipment" },
+               { head: "MATERIALS" },
+               { id: "WPS061", label: "Industrial chemicals" },
+               { id: "WPS1012", label: "Iron and steel scrap" },
+               { id: "WPS102", label: "Nonferrous metals" }] },
+    { el: "cCattradeY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 20, left: 262, tick: 5,
+      capText: ["≥ +20%", "≤ −20%"],
+      series: [
+               { id: "WPUFD423", label: "TRADE SERVICES", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD42311", label: "Consumer goods", share: "PPI.s_fd42311", em: "sub" },
+               { id: "WPUFD42312", label: "Private capital equipment", share: "PPI.s_fd42312", em: "sub" },
+               { id: "WPUFD4232", label: "Government", share: "PPI.s_fd4232", em: "sub" },
+               { id: "WPUFD42321", label: "· Goods", share: "PPI.s_fd42321" },
+               { id: "WPUFD42322", label: "· Capital equipment", share: "PPI.s_fd42322" },
+               { id: "WPUFD4233", label: "Exports", share: "PPI.s_fd4233", em: "sub" },
+               { head: "WHOLESALE" },
+               { id: "WPU571102", label: "Machinery parts" },
+               { id: "WPU571103", label: "Machinery and vehicles" },
+               { id: "WPU571104", label: "Professional equipment" },
+               { id: "WPU572", label: "Furnishings" },
+               { id: "WPU575", label: "Chemicals" },
+               { id: "WPU576", label: "Paper and plastics" },
+               { id: "WPU577", label: "Apparel" },
+               { id: "WPU578", label: "Food and alcohol" },
+               { head: "RETAIL" },
+               { id: "WPU581", label: "Food and alcohol" },
+               { id: "WPU582", label: "Health and beauty" },
+               { id: "WPU583", label: "Apparel and jewelry" },
+               { id: "WPU584", label: "Computers" },
+               { id: "WPU585", label: "TV, video and photo" },
+               { id: "WPU586101", label: "Cars" },
+               { id: "WPU586102", label: "Auto parts and tires" },
+               { id: "WPU588", label: "RVs and campers" },
+               { id: "WPU589", label: "Sporting goods and boats" },
+               { id: "WPU58A", label: "Lawn, garden and farm" },
+               { id: "WPU58B", label: "Furniture" },
+               { id: "WPU58C", label: "Flooring" },
+               { id: "WPU58D", label: "Building materials" },
+               { id: "WPU58E", label: "Household appliances" },
+               { id: "WPU58F", label: "Fuels and lubricants" },
+               { id: "WPU58G", label: "Cleaning and paper" },
+               { id: "WPU58H", label: "Books" }] },
+    { el: "cCattradeM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 6, left: 262, tick: 5,
       capText: ["≥ +6%", "≤ −6%"],
-      series: [{ id: "WPSFD41113", label: "Consumer foods, crude" },
-               { id: "WPSFD41112", label: "Consumer foods, processed" },
-               { id: "WPSFD4112", label: "Gov. foods" },
-               { id: "WPSFD4113", label: "Foods, export" },
-               { id: "WPSFD4121", label: "Consumer energy goods" },
-               { id: "WPSFD4122", label: "Gov. energy" },
-               { id: "WPSFD4123", label: "Energy, export" },
-               { id: "WPSFD413111", label: "Nondurable goods ex food/enrg" },
-               { id: "WPSFD413112", label: "Durable consumer goods" },
-               { id: "WPSFD413121", label: "Capital equipment, mfg" },
-               { id: "WPSFD413122", label: "Capital equipment, non-mfg" },
-               { id: "WPSFD41321", label: "Gov. goods, core" },
-               { id: "WPSFD41322", label: "Gov. capital equipment" },
-               { id: "WPSFD4133", label: "Goods, export, ex food/enrg" },
-               { id: "WPSFD42311", label: "Trade: consumer goods" },
-               { id: "WPSFD42312", label: "Trade: capital equipment" },
-               { id: "WPSFD42321", label: "Trade: gov. goods" },
-               { id: "WPSFD42322", label: "Trade: gov. capital equip." },
-               { id: "WPSFD4233", label: "Trade: exports" },
-               { id: "WPSFD42211", label: "Passengers: private" },
-               { id: "WPSFD42212", label: "Passengers: government" },
-               { id: "WPSFD42213", label: "Passengers: export" },
-               { id: "WPSFD422211", label: "Freight: consumer goods" },
-               { id: "WPSFD422212", label: "Freight: capital equipment" },
-               { id: "WPSFD42222", label: "Freight: gov. goods" },
-               { id: "WPSFD42223", label: "Freight: exports" },
-               { id: "WPSFD42111", label: "Consumer services ex TTW" },
-               { id: "WPSFD42112", label: "Capital inv. services ex TTW" },
-               { id: "WPSFD42121", label: "Gov. services ex TTW" },
-               { id: "WPSFD42122", label: "Gov. capital inv. svcs ex TTW" },
-               { id: "WPSFD4213", label: "Export services ex TTW" },
-               { id: "WPSFD431", label: "Construction, private" },
-               { id: "WPSFD432", label: "Construction, government" }] },
+      series: [
+               { id: "PPITSS", label: "TRADE SERVICES", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD42311", label: "Consumer goods", share: "PPI.s_fd42311", em: "sub" },
+               { id: "WPSFD42312", label: "Private capital equipment", share: "PPI.s_fd42312", em: "sub" },
+               { id: "WPSFD4232", label: "Government", share: "PPI.s_fd4232", em: "sub" },
+               { id: "WPSFD42321", label: "· Goods", share: "PPI.s_fd42321" },
+               { id: "WPSFD42322", label: "· Capital equipment", share: "PPI.s_fd42322" },
+               { id: "WPSFD4233", label: "Exports", share: "PPI.s_fd4233", em: "sub" },
+               { head: "WHOLESALE" },
+               { id: "WPU571102", label: "Machinery parts" },
+               { id: "WPU571103", label: "Machinery and vehicles" },
+               { id: "WPU571104", label: "Professional equipment" },
+               { id: "WPU572", label: "Furnishings" },
+               { id: "WPU575", label: "Chemicals" },
+               { id: "WPU576", label: "Paper and plastics" },
+               { id: "WPU577", label: "Apparel" },
+               { id: "WPU578", label: "Food and alcohol" },
+               { head: "RETAIL" },
+               { id: "WPS581", label: "Food and alcohol" },
+               { id: "WPU582", label: "Health and beauty" },
+               { id: "WPS583", label: "Apparel and jewelry" },
+               { id: "WPU584", label: "Computers" },
+               { id: "WPS585", label: "TV, video and photo" },
+               { id: "WPS586101", label: "Cars" },
+               { id: "WPU586102", label: "Auto parts and tires" },
+               { id: "WPU588", label: "RVs and campers" },
+               { id: "WPS589", label: "Sporting goods and boats" },
+               { id: "WPU58A", label: "Lawn, garden and farm" },
+               { id: "WPU58B", label: "Furniture" },
+               { id: "WPU58C", label: "Flooring" },
+               { id: "WPS58D", label: "Building materials" },
+               { id: "WPS58E", label: "Household appliances" },
+               { id: "WPS58F", label: "Fuels and lubricants" },
+               { id: "WPU58G", label: "Cleaning and paper" },
+               { id: "WPU58H", label: "Books" }] },
+    { el: "cCattransportY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 15, left: 262, tick: 5,
+      capText: ["≥ +15%", "≤ −15%"],
+      series: [
+               { id: "WPUFD422", label: "TRANSPORT AND WAREHOUSING", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD4221", label: "Passengers", share: "PPI.s_fd4221", em: "sub" },
+               { id: "WPUFD42211", label: "· Private", share: "PPI.s_fd42211" },
+               { id: "WPUFD42212", label: "· Government", share: "PPI.s_fd42212" },
+               { id: "WPUFD42213", label: "· Exports", share: "PPI.s_fd42213" },
+               { id: "WPUFD4222", label: "Goods", share: "PPI.s_fd4222", em: "sub" },
+               { id: "WPUFD42221", label: "· Finished goods", share: "PPI.s_fd42221" },
+               { id: "WPUFD422211", label: "·· For consumers", share: "PPI.s_fd422211" },
+               { id: "WPUFD422212", label: "·· Capital equipment", share: "PPI.s_fd422212" },
+               { id: "WPUFD42222", label: "· Government", share: "PPI.s_fd42222" },
+               { id: "WPUFD42223", label: "· Exports", share: "PPI.s_fd42223" },
+               { head: "FREIGHT" },
+               { id: "WPU3011", label: "Rail freight" },
+               { id: "WPU3012", label: "Truck freight" },
+               { id: "WPU3014", label: "Air freight" },
+               { id: "WPU3016", label: "Courier and postal" },
+               { head: "PASSENGERS" },
+               { id: "WPU3021", label: "Rail passengers" },
+               { id: "WPU3022", label: "Airline passengers" }] },
+    { el: "cCattransportM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 3, left: 262, tick: 5,
+      capText: ["≥ +3%", "≤ −3%"],
+      series: [
+               { id: "PPIAWS", label: "TRANSPORT AND WAREHOUSING", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD4221", label: "Passengers", share: "PPI.s_fd4221", em: "sub" },
+               { id: "WPSFD42211", label: "· Private", share: "PPI.s_fd42211" },
+               { id: "WPSFD42212", label: "· Government", share: "PPI.s_fd42212" },
+               { id: "WPSFD42213", label: "· Exports", share: "PPI.s_fd42213" },
+               { id: "WPSFD4222", label: "Goods", share: "PPI.s_fd4222", em: "sub" },
+               { id: "WPSFD42221", label: "· Finished goods", share: "PPI.s_fd42221" },
+               { id: "WPSFD422211", label: "·· For consumers", share: "PPI.s_fd422211" },
+               { id: "WPSFD422212", label: "·· Capital equipment", share: "PPI.s_fd422212" },
+               { id: "WPSFD42222", label: "· Government", share: "PPI.s_fd42222" },
+               { id: "WPSFD42223", label: "· Exports", share: "PPI.s_fd42223" },
+               { head: "FREIGHT" },
+               { id: "WPU3011", label: "Rail freight" },
+               { id: "WPU3012", label: "Truck freight" },
+               { id: "WPU3014", label: "Air freight" },
+               { id: "WPS3016", label: "Courier and postal" },
+               { head: "PASSENGERS" },
+               { id: "WPU3021", label: "Rail passengers" },
+               { id: "WPS3022", label: "Airline passengers" }] },
+    { el: "cCatfinhealthY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 10, left: 262, tick: 5,
+      capText: ["≥ +10%", "≤ −10%"],
+      series: [
+               { id: "WPUFD421", label: "OTHER SERVICES", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD42111", label: "Consumer", share: "PPI.s_fd42111", em: "sub" },
+               { id: "WPUFD42112", label: "Capital investment", share: "PPI.s_fd42112", em: "sub" },
+               { id: "WPUFD4212", label: "Government", share: "PPI.s_fd4212", em: "sub" },
+               { id: "WPUFD42121", label: "· Services", share: "PPI.s_fd42121" },
+               { id: "WPUFD42122", label: "· Capital investment", share: "PPI.s_fd42122" },
+               { id: "WPUFD4213", label: "Exports", share: "PPI.s_fd4213", em: "sub" },
+               { head: "FINANCE AND INSURANCE" },
+               { id: "WPU3912", label: "Consumer loans" },
+               { id: "WPU392", label: "Deposit services" },
+               { id: "WPU393", label: "Other credit and trust" },
+               { id: "WPU401", label: "Securities brokerage" },
+               { id: "WPU402", label: "Portfolio management" },
+               { id: "WPU411101", label: "Life insurance" },
+               { id: "WPU411102", label: "Disability insurance" },
+               { id: "WPU411103", label: "Health insurance" },
+               { id: "WPU411104", label: "Property and casualty insurance" },
+               { id: "WPU412", label: "Annuities" },
+               { head: "HEALTH CARE" },
+               { id: "WPU511101", label: "Physician care" },
+               { id: "WPU511102", label: "Labs and imaging" },
+               { id: "WPU511103", label: "Home health and hospice" },
+               { id: "WPU511104", label: "Hospital outpatient" },
+               { id: "WPU511105", label: "Dental care" },
+               { id: "WPU512101", label: "Hospital inpatient" },
+               { id: "WPU512102", label: "Nursing homes" }] },
+    { el: "cCatfinhealthM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 2, left: 262, tick: 5,
+      capText: ["≥ +2%", "≤ −2%"],
+      series: [
+               { id: "PPITWS", label: "OTHER SERVICES", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD42111", label: "Consumer", share: "PPI.s_fd42111", em: "sub" },
+               { id: "WPSFD42112", label: "Capital investment", share: "PPI.s_fd42112", em: "sub" },
+               { id: "WPSFD4212", label: "Government", share: "PPI.s_fd4212", em: "sub" },
+               { id: "WPSFD42121", label: "· Services", share: "PPI.s_fd42121" },
+               { id: "WPSFD42122", label: "· Capital investment", share: "PPI.s_fd42122" },
+               { id: "WPSFD4213", label: "Exports", share: "PPI.s_fd4213", em: "sub" },
+               { head: "FINANCE AND INSURANCE" },
+               { id: "WPS3912", label: "Consumer loans" },
+               { id: "WPU392", label: "Deposit services" },
+               { id: "WPU393", label: "Other credit and trust" },
+               { id: "WPU401", label: "Securities brokerage" },
+               { id: "WPU402", label: "Portfolio management" },
+               { id: "WPU411101", label: "Life insurance" },
+               { id: "WPU411102", label: "Disability insurance" },
+               { id: "WPS411103", label: "Health insurance" },
+               { id: "WPU411104", label: "Property and casualty insurance" },
+               { id: "WPU412", label: "Annuities" },
+               { head: "HEALTH CARE" },
+               { id: "WPS511101", label: "Physician care" },
+               { id: "WPU511102", label: "Labs and imaging" },
+               { id: "WPS511103", label: "Home health and hospice" },
+               { id: "WPS511104", label: "Hospital outpatient" },
+               { id: "WPS511105", label: "Dental care" },
+               { id: "WPS512101", label: "Hospital inpatient" },
+               { id: "WPS512102", label: "Nursing homes" }] },
+    { el: "cCatmediaY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 8, left: 262, tick: 5,
+      capText: ["≥ +8%", "≤ −8%"],
+      series: [
+               { id: "WPUFD421", label: "OTHER SERVICES", em: "top" },
+               { head: "MEDIA AND TELECOM" },
+               { id: "WPU3311", label: "Books" },
+               { id: "WPU3312", label: "Periodicals and newspapers" },
+               { id: "WPU342", label: "Application software" },
+               { id: "WPU361", label: "Print advertising" },
+               { id: "WPU3711", label: "Residential wired telecom" },
+               { id: "WPU372", label: "Wireless telecom" },
+               { id: "WPU373", label: "Cable and satellite TV" },
+               { id: "WPU374", label: "Internet access" },
+               { id: "WPU375", label: "Bundled wired telecom" },
+               { head: "PROFESSIONAL SERVICES" },
+               { id: "WPU4321", label: "Residential property brokerage" },
+               { id: "WPU451", label: "Legal services" },
+               { id: "WPU452102", label: "Tax preparation" },
+               { id: "WPU453", label: "Architecture and engineering" },
+               { id: "WPU454", label: "Management consulting" },
+               { id: "WPU601", label: "Mining services" },
+               { head: "TRAVEL, LEISURE AND REPAIR" },
+               { id: "WPU441", label: "Car rental" },
+               { id: "WPU471", label: "Booking flights" },
+               { id: "WPU472", label: "Booking cars and lodging" },
+               { id: "WPU473", label: "Booking cruises and tours" },
+               { id: "WPU5311", label: "Hotels and lodging" },
+               { id: "WPU541", label: "Restaurant food and drink" },
+               { id: "WPU552", label: "Vehicle repair" },
+               { id: "WPU561", label: "Admissions and memberships" },
+               { id: "WPU562", label: "Recreation lessons" },
+               { id: "WPU563", label: "Gaming" }] },
+    { el: "cCatmediaM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 3, left: 262, tick: 5,
+      capText: ["≥ +3%", "≤ −3%"],
+      series: [
+               { id: "PPITWS", label: "OTHER SERVICES", em: "top" },
+               { head: "MEDIA AND TELECOM" },
+               { id: "WPS3311", label: "Books" },
+               { id: "WPS3312", label: "Periodicals and newspapers" },
+               { id: "WPU342", label: "Application software" },
+               { id: "WPU361", label: "Print advertising" },
+               { id: "WPU3711", label: "Residential wired telecom" },
+               { id: "WPS372", label: "Wireless telecom" },
+               { id: "WPS373", label: "Cable and satellite TV" },
+               { id: "WPU374", label: "Internet access" },
+               { id: "WPU375", label: "Bundled wired telecom" },
+               { head: "PROFESSIONAL SERVICES" },
+               { id: "WPS4321", label: "Residential property brokerage" },
+               { id: "WPS451", label: "Legal services" },
+               { id: "WPS452102", label: "Tax preparation" },
+               { id: "WPS453", label: "Architecture and engineering" },
+               { id: "WPU454", label: "Management consulting" },
+               { id: "WPU601", label: "Mining services" },
+               { head: "TRAVEL, LEISURE AND REPAIR" },
+               { id: "WPS441", label: "Car rental" },
+               { id: "WPS471", label: "Booking flights" },
+               { id: "WPU472", label: "Booking cars and lodging" },
+               { id: "WPU473", label: "Booking cruises and tours" },
+               { id: "WPS5311", label: "Hotels and lodging" },
+               { id: "WPU541", label: "Restaurant food and drink" },
+               { id: "WPU552", label: "Vehicle repair" },
+               { id: "WPS561", label: "Admissions and memberships" },
+               { id: "WPU562", label: "Recreation lessons" },
+               { id: "WPU563", label: "Gaming" }] },
+    { el: "cCatconstructionY", type: "heatmap", transform: "yoy", periods: 12, format: "pct",
+      months: 48, cap: 20, left: 262, tick: 5,
+      capText: ["≥ +20%", "≤ −20%"],
+      series: [
+               { id: "WPUFD43", label: "CONSTRUCTION", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPUFD431", label: "Private", share: "PPI.s_fd431", em: "sub" },
+               { id: "WPUFD432", label: "Government", share: "PPI.s_fd432", em: "sub" },
+               { head: "BY BUILDING" },
+               { id: "WPU801101", label: "Warehouses" },
+               { id: "WPU801102", label: "Schools" },
+               { id: "WPU801103", label: "Offices" },
+               { id: "WPU801104", label: "Industrial buildings" },
+               { id: "WPU801105", label: "Health care buildings" }] },
+    { el: "cCatconstructionM", type: "heatmap", transform: "yoy", periods: 1, format: "pct",
+      months: 48, cap: 1.5, left: 262, tick: 5,
+      capText: ["≥ +1.5%", "≤ −1.5%"],
+      series: [
+               { id: "PPIDCS", label: "CONSTRUCTION", em: "top" },
+               { head: "BY BUYER" },
+               { id: "WPSFD431", label: "Private", share: "PPI.s_fd431", em: "sub" },
+               { id: "WPSFD432", label: "Government", share: "PPI.s_fd432", em: "sub" },
+               { head: "BY BUILDING" },
+               { id: "WPU801101", label: "Warehouses" },
+               { id: "WPU801102", label: "Schools" },
+               { id: "WPU801103", label: "Offices" },
+               { id: "WPU801104", label: "Industrial buildings" },
+               { id: "WPU801105", label: "Health care buildings" }] },
+    { el: "cStfd41Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_goods",
+      total: { id: "PPIDGS", label: "Goods", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd411_y", label: "Foods" },
+               { id: "PPI.k_fd412_y", label: "Energy" },
+               { id: "PPI.k_fd413_y", label: "Core goods" }] },
+    { el: "cStfd41M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_goods",
+      total: { id: "PPIDGS", label: "Goods", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd411_m", label: "Foods" },
+               { id: "PPI.k_fd412_m", label: "Energy" },
+               { id: "PPI.k_fd413_m", label: "Core goods" }] },
+    { el: "cStfd42Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_services",
+      total: { id: "PPIDSS", label: "Services", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd423_y", label: "Trade" },
+               { id: "PPI.k_fd422_y", label: "Transport and warehousing" },
+               { id: "PPI.k_fd421_y", label: "Other services" }] },
+    { el: "cStfd42M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_services",
+      total: { id: "PPIDSS", label: "Services", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd423_m", label: "Trade" },
+               { id: "PPI.k_fd422_m", label: "Transport and warehousing" },
+               { id: "PPI.k_fd421_m", label: "Other services" }] },
+    { el: "cStfd411Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_foods",
+      total: { id: "PPIDFS", label: "Foods", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd4111_y", label: "Consumer foods" },
+               { id: "PPI.k_fd4112_y", label: "Government" },
+               { id: "PPI.k_fd4113_y", label: "Exports" }] },
+    { el: "cStfd411M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_foods",
+      total: { id: "PPIDFS", label: "Foods", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd4111_m", label: "Consumer foods" },
+               { id: "PPI.k_fd4112_m", label: "Government" },
+               { id: "PPI.k_fd4113_m", label: "Exports" }] },
+    { el: "cStfd412Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_energy",
+      total: { id: "PPIDES", label: "Energy", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd4121_y", label: "Consumer energy goods" },
+               { id: "PPI.k_fd4122_y", label: "Government" },
+               { id: "PPI.k_fd4123_y", label: "Exports" }] },
+    { el: "cStfd412M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_energy",
+      total: { id: "PPIDES", label: "Energy", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd4121_m", label: "Consumer energy goods" },
+               { id: "PPI.k_fd4122_m", label: "Government" },
+               { id: "PPI.k_fd4123_m", label: "Exports" }] },
+    { el: "cStfd413Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_coregoods",
+      total: { id: "WPSFD413", label: "Core goods", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd41311_y", label: "Consumer goods" },
+               { id: "PPI.k_fd41312_y", label: "Capital equipment" },
+               { id: "PPI.k_fd4132_y", label: "Government" },
+               { id: "PPI.k_fd4133_y", label: "Exports" }] },
+    { el: "cStfd413M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_coregoods",
+      total: { id: "WPSFD413", label: "Core goods", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd41311_m", label: "Consumer goods" },
+               { id: "PPI.k_fd41312_m", label: "Capital equipment" },
+               { id: "PPI.k_fd4132_m", label: "Government" },
+               { id: "PPI.k_fd4133_m", label: "Exports" }] },
+    { el: "cStfd423Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_trade",
+      total: { id: "PPITSS", label: "Trade services", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd42311_y", label: "Consumer goods" },
+               { id: "PPI.k_fd42312_y", label: "Capital equipment" },
+               { id: "PPI.k_fd4232_y", label: "Government" },
+               { id: "PPI.k_fd4233_y", label: "Exports" }] },
+    { el: "cStfd423M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_trade",
+      total: { id: "PPITSS", label: "Trade services", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd42311_m", label: "Consumer goods" },
+               { id: "PPI.k_fd42312_m", label: "Capital equipment" },
+               { id: "PPI.k_fd4232_m", label: "Government" },
+               { id: "PPI.k_fd4233_m", label: "Exports" }] },
+    { el: "cStfd422Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_transport",
+      total: { id: "PPIAWS", label: "Transport and warehousing", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd4221_y", label: "Passengers" },
+               { id: "PPI.k_fd42221_y", label: "Finished goods" },
+               { id: "PPI.k_fd42222_y", label: "Government goods" },
+               { id: "PPI.k_fd42223_y", label: "Exports" }] },
+    { el: "cStfd422M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_transport",
+      total: { id: "PPIAWS", label: "Transport and warehousing", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd4221_m", label: "Passengers" },
+               { id: "PPI.k_fd42221_m", label: "Finished goods" },
+               { id: "PPI.k_fd42222_m", label: "Government goods" },
+               { id: "PPI.k_fd42223_m", label: "Exports" }] },
+    { el: "cStfd421Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_otherservices",
+      total: { id: "PPITWS", label: "Other services", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd42111_y", label: "Consumer" },
+               { id: "PPI.k_fd42112_y", label: "Capital investment" },
+               { id: "PPI.k_fd4212_y", label: "Government" },
+               { id: "PPI.k_fd4213_y", label: "Exports" }] },
+    { el: "cStfd421M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_otherservices",
+      total: { id: "PPITWS", label: "Other services", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd42111_m", label: "Consumer" },
+               { id: "PPI.k_fd42112_m", label: "Capital investment" },
+               { id: "PPI.k_fd4212_m", label: "Government" },
+               { id: "PPI.k_fd4213_m", label: "Exports" }] },
+    { el: "cStfd43Y", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_construction",
+      total: { id: "PPIDCS", label: "Construction", transform: "yoy", periods: 12 },
+      series: [
+               { id: "PPI.k_fd431_y", label: "Private" },
+               { id: "PPI.k_fd432_y", label: "Government" }] },
+    { el: "cStfd43M", type: "stacked", format: "pp", axisFormat: "pt",
+      window: 48, tick: 11, left: 40, width: 6, share: "PPI.w_construction",
+      total: { id: "PPIDCS", label: "Construction", transform: "yoy", periods: 1 },
+      series: [
+               { id: "PPI.k_fd431_m", label: "Private" },
+               { id: "PPI.k_fd432_m", label: "Government" }] },
     { el: "cFdBreadth", type: "line", format: "pct", tick: 11, left: 48,
       window: 120, hline: 50, hlineLabel: "50",
       series: [{ id: "PPI.fd_breadth", label: "Components above 3%",

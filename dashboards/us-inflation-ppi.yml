@@ -18,13 +18,291 @@ include_releases:
   - bls.ppi
 
 # WPS3012 (Truck Transportation of Freight) is in the catalogue because the
-# release sweep above pulls everything tagged bls.ppi, but FRED stopped
-# publishing it in December 2011. It exported cleanly and reported full
+# release sweep above pulls everything tagged bls.ppi, but it ends in
+# December 2016: BLS stopped seasonally adjusting truck freight, and the BLS API
+# holds no WPS3012 data since (checked 13 September 2026; an earlier version of
+# this comment blamed FRED). The release prints WPU3012's change, which Tables
+# 26 and 36 draw. It exported cleanly and reported full
 # coverage for weeks while drawing an empty chart, which is exactly the
 # failure neither validation nor coverage can see. WPS301, Transportation of
 # Freight and Mail, is the live seasonally adjusted parent and replaces it.
 exclude_series:
   - WPS3012
+
+# ---- Analysis-only series for Tables 21-38, added 13 September 2026: Table 1's
+# split of each final-demand category by buyer (unadjusted for the year view,
+# adjusted for the month) and Table 2's named goods and services, all fetched
+# with the BLS API key. They stay out of the release sweep (publish=false);
+# naming them here is what brings them into the bundle.
+include_series:
+  - WPU0111
+  - WPU0113
+  - WPU012
+  - WPU017107
+  - WPU018301
+  - WPU0211
+  - WPU0213
+  - WPU021402
+  - WPU022101
+  - WPU022104
+  - WPU022203
+  - WPU022206
+  - WPU0223
+  - WPU023
+  - WPU024
+  - WPU0255
+  - WPU0261
+  - WPU0262
+  - WPU026301
+  - WPU0278
+  - WPU0285
+  - WPU029402
+  - WPU038106
+  - WPU038107
+  - WPU0382
+  - WPU0532
+  - WPU0541
+  - WPU0551
+  - WPU0571
+  - WPU057302
+  - WPU057303
+  - WPU061
+  - WPU0638
+  - WPU0671
+  - WPU0672
+  - WPU0675
+  - WPU071201
+  - WPU072B
+  - WPU091501
+  - WPU1012
+  - WPU102
+  - WPU111
+  - WPU112
+  - WPU1137
+  - WPU1138
+  - WPU1139
+  - WPU1141
+  - WPU1144
+  - WPU115
+  - WPU1161
+  - WPU1164
+  - WPU1165
+  - WPU1174
+  - WPU1176
+  - WPU1178
+  - WPU117905
+  - WPU1191
+  - WPU1192
+  - WPU1194
+  - WPU121
+  - WPU122
+  - WPU123
+  - WPU124
+  - WPU125
+  - WPU1266
+  - WPU141101
+  - WPU141105
+  - WPU141106
+  - WPU1412
+  - WPU1414
+  - WPU1416
+  - WPU1421
+  - WPU1431
+  - WPU144
+  - WPU1512
+  - WPU1521
+  - WPU155
+  - WPU156
+  - WPU159402
+  - WPU159404
+  - WPU159F2
+  - WPU3011
+  - WPU3012
+  - WPU3014
+  - WPU3016
+  - WPU3021
+  - WPU3022
+  - WPU3311
+  - WPU3312
+  - WPU342
+  - WPU361
+  - WPU3711
+  - WPU372
+  - WPU373
+  - WPU374
+  - WPU375
+  - WPU3912
+  - WPU392
+  - WPU393
+  - WPU401
+  - WPU402
+  - WPU411101
+  - WPU411102
+  - WPU411103
+  - WPU411104
+  - WPU412
+  - WPU4321
+  - WPU441
+  - WPU451
+  - WPU452102
+  - WPU453
+  - WPU454
+  - WPU471
+  - WPU472
+  - WPU473
+  - WPU511101
+  - WPU511102
+  - WPU511103
+  - WPU511104
+  - WPU511105
+  - WPU512101
+  - WPU512102
+  - WPU5311
+  - WPU541
+  - WPU552
+  - WPU561
+  - WPU562
+  - WPU563
+  - WPU571102
+  - WPU571103
+  - WPU571104
+  - WPU572
+  - WPU575
+  - WPU576
+  - WPU577
+  - WPU578
+  - WPU581
+  - WPU582
+  - WPU583
+  - WPU584
+  - WPU585
+  - WPU586101
+  - WPU586102
+  - WPU588
+  - WPU589
+  - WPU58A
+  - WPU58B
+  - WPU58C
+  - WPU58D
+  - WPU58E
+  - WPU58F
+  - WPU58G
+  - WPU58H
+  - WPU601
+  - WPU801101
+  - WPU801102
+  - WPU801103
+  - WPU801104
+  - WPU801105
+  - WPUFD411
+  - WPUFD4111
+  - WPUFD41112
+  - WPUFD41113
+  - WPUFD4112
+  - WPUFD4113
+  - WPUFD412
+  - WPUFD4121
+  - WPUFD4122
+  - WPUFD4123
+  - WPUFD413
+  - WPUFD41311
+  - WPUFD413111
+  - WPUFD413112
+  - WPUFD41312
+  - WPUFD413121
+  - WPUFD413122
+  - WPUFD4132
+  - WPUFD41321
+  - WPUFD41322
+  - WPUFD4133
+  - WPUFD421
+  - WPUFD42111
+  - WPUFD42112
+  - WPUFD4212
+  - WPUFD42121
+  - WPUFD42122
+  - WPUFD4213
+  - WPUFD422
+  - WPUFD4221
+  - WPUFD42211
+  - WPUFD42212
+  - WPUFD42213
+  - WPUFD4222
+  - WPUFD42221
+  - WPUFD422211
+  - WPUFD422212
+  - WPUFD42222
+  - WPUFD42223
+  - WPUFD423
+  - WPUFD42311
+  - WPUFD42312
+  - WPUFD4232
+  - WPUFD42321
+  - WPUFD42322
+  - WPUFD4233
+  - WPUFD43
+  - WPUFD431
+  - WPUFD432
+  - WPS0111
+  - WPS0113
+  - WPS012
+  - WPS018301
+  - WPS022101
+  - WPS022104
+  - WPS022203
+  - WPS0223
+  - WPS0261
+  - WPS0541
+  - WPS0551
+  - WPS057302
+  - WPS061
+  - WPS1012
+  - WPS102
+  - WPS1176
+  - WPS1178
+  - WPS117905
+  - WPS141101
+  - WPS141105
+  - WPS1412
+  - WPS1421
+  - WPS155
+  - WPS156
+  - WPS3016
+  - WPS3311
+  - WPS3312
+  - WPS372
+  - WPS373
+  - WPS3912
+  - WPS411103
+  - WPS4321
+  - WPS441
+  - WPS451
+  - WPS452102
+  - WPS453
+  - WPS471
+  - WPS511103
+  - WPS511104
+  - WPS511105
+  - WPS512102
+  - WPS5311
+  - WPS561
+  - WPS581
+  - WPS583
+  - WPS585
+  - WPS586101
+  - WPS589
+  - WPS58D
+  - WPS58E
+  - WPS58F
+  - WPSFD4111
+  - WPSFD41311
+  - WPSFD41312
+  - WPSFD4132
+  - WPSFD4212
+  - WPSFD4221
+  - WPSFD4222
+  - WPSFD42221
+  - WPSFD4232
 
 # The forecast record on the page (site/us/inflation/ppi/forecasts.json)
 # scores each call against the figure AS FIRST PRINTED, which the exporter
@@ -281,6 +559,919 @@ derived:
     unit: Percent of the basket
     importance: 3
 
+  # ---- Tables 21-38, added 13 September 2026. Anchored like the block above on
+  # Table 1's relative importance, Dec. 2025, and on the adjusted indexes, so every
+  # share on the page is on one basis. A row's share is of ITS CATEGORY; the
+  # category's share of final demand is the heading's figure (PPI.w_*).
+  - id: PPI.w_goods
+    kind: relative_importance
+    of: [PPIDGS, PPIFIS]
+    weight: 29.028
+    weight_date: "2025-12"
+    title: "Share of final demand taken by goods"
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_trade
+    kind: relative_importance
+    of: [PPITSS, PPIFIS]
+    weight: 19.755
+    weight_date: "2025-12"
+    title: "Share of final demand taken by trade services"
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_transport
+    kind: relative_importance
+    of: [PPIAWS, PPIFIS]
+    weight: 4.857
+    weight_date: "2025-12"
+    title: "Share of final demand taken by transport and warehousing"
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.w_otherservices
+    kind: relative_importance
+    of: [PPITWS, PPIFIS]
+    weight: 43.725
+    weight_date: "2025-12"
+    title: "Share of final demand taken by other services"
+    unit: Percent of the basket
+    importance: 3
+  - id: PPI.s_fd4111
+    kind: relative_importance
+    of: [WPSFD4111, PPIDFS]
+    weight: 78.558
+    weight_date: "2025-12"
+    title: "Share of foods taken by FD4111 (consumer foods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41113
+    kind: relative_importance
+    of: [WPSFD41113, PPIDFS]
+    weight: 7.007
+    weight_date: "2025-12"
+    title: "Share of foods taken by FD41113 (crude)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41112
+    kind: relative_importance
+    of: [WPSFD41112, PPIDFS]
+    weight: 71.552
+    weight_date: "2025-12"
+    title: "Share of foods taken by FD41112 (processed)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4112
+    kind: relative_importance
+    of: [WPSFD4112, PPIDFS]
+    weight: 7.447
+    weight_date: "2025-12"
+    title: "Share of foods taken by FD4112 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4113
+    kind: relative_importance
+    of: [WPSFD4113, PPIDFS]
+    weight: 13.995
+    weight_date: "2025-12"
+    title: "Share of foods taken by FD4113 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4121
+    kind: relative_importance
+    of: [WPSFD4121, PPIDES]
+    weight: 78.739
+    weight_date: "2025-12"
+    title: "Share of energy taken by FD4121 (consumer energy goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4122
+    kind: relative_importance
+    of: [WPSFD4122, PPIDES]
+    weight: 14.701
+    weight_date: "2025-12"
+    title: "Share of energy taken by FD4122 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4123
+    kind: relative_importance
+    of: [WPSFD4123, PPIDES]
+    weight: 6.56
+    weight_date: "2025-12"
+    title: "Share of energy taken by FD4123 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41311
+    kind: relative_importance
+    of: [WPSFD41311, WPSFD413]
+    weight: 30.656
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD41311 (consumer goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd413111
+    kind: relative_importance
+    of: [WPSFD413111, WPSFD413]
+    weight: 19.012
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD413111 (nondurable)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd413112
+    kind: relative_importance
+    of: [WPSFD413112, WPSFD413]
+    weight: 11.645
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD413112 (durable)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4132
+    kind: relative_importance
+    of: [WPSFD4132, WPSFD413]
+    weight: 10.635
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD4132 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41321
+    kind: relative_importance
+    of: [WPSFD41321, WPSFD413]
+    weight: 6.74
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD41321 (goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41322
+    kind: relative_importance
+    of: [WPSFD41322, WPSFD413]
+    weight: 3.894
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD41322 (capital equipment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4133
+    kind: relative_importance
+    of: [WPSFD4133, WPSFD413]
+    weight: 29.889
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD4133 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd41312
+    kind: relative_importance
+    of: [WPSFD41312, WPSFD413]
+    weight: 28.82
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD41312 (private capital equipment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd413121
+    kind: relative_importance
+    of: [WPSFD413121, WPSFD413]
+    weight: 7.005
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD413121 (for manufacturing)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd413122
+    kind: relative_importance
+    of: [WPSFD413122, WPSFD413]
+    weight: 21.815
+    weight_date: "2025-12"
+    title: "Share of core goods taken by FD413122 (for other industries)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42311
+    kind: relative_importance
+    of: [WPSFD42311, PPITSS]
+    weight: 69.081
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD42311 (consumer goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42312
+    kind: relative_importance
+    of: [WPSFD42312, PPITSS]
+    weight: 16.467
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD42312 (private capital equipment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4232
+    kind: relative_importance
+    of: [WPSFD4232, PPITSS]
+    weight: 4.08
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD4232 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42321
+    kind: relative_importance
+    of: [WPSFD42321, PPITSS]
+    weight: 2.485
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD42321 (goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42322
+    kind: relative_importance
+    of: [WPSFD42322, PPITSS]
+    weight: 1.595
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD42322 (capital equipment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4233
+    kind: relative_importance
+    of: [WPSFD4233, PPITSS]
+    weight: 10.372
+    weight_date: "2025-12"
+    title: "Share of trade services taken by FD4233 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4221
+    kind: relative_importance
+    of: [WPSFD4221, PPIAWS]
+    weight: 24.583
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD4221 (passengers)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42211
+    kind: relative_importance
+    of: [WPSFD42211, PPIAWS]
+    weight: 17.645
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42211 (private)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42212
+    kind: relative_importance
+    of: [WPSFD42212, PPIAWS]
+    weight: 1.935
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42212 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42213
+    kind: relative_importance
+    of: [WPSFD42213, PPIAWS]
+    weight: 5.003
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42213 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4222
+    kind: relative_importance
+    of: [WPSFD4222, PPIAWS]
+    weight: 75.417
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD4222 (goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42221
+    kind: relative_importance
+    of: [WPSFD42221, PPIAWS]
+    weight: 48.569
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42221 (finished goods)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd422211
+    kind: relative_importance
+    of: [WPSFD422211, PPIAWS]
+    weight: 39.242
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD422211 (for consumers)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd422212
+    kind: relative_importance
+    of: [WPSFD422212, PPIAWS]
+    weight: 9.327
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD422212 (capital equipment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42222
+    kind: relative_importance
+    of: [WPSFD42222, PPIAWS]
+    weight: 4.53
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42222 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42223
+    kind: relative_importance
+    of: [WPSFD42223, PPIAWS]
+    weight: 22.318
+    weight_date: "2025-12"
+    title: "Share of transport and warehousing taken by FD42223 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42111
+    kind: relative_importance
+    of: [WPSFD42111, PPITWS]
+    weight: 77.976
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD42111 (consumer)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42112
+    kind: relative_importance
+    of: [WPSFD42112, PPITWS]
+    weight: 9.832
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD42112 (capital investment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4212
+    kind: relative_importance
+    of: [WPSFD4212, PPITWS]
+    weight: 5.981
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD4212 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42121
+    kind: relative_importance
+    of: [WPSFD42121, PPITWS]
+    weight: 5.475
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD42121 (services)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd42122
+    kind: relative_importance
+    of: [WPSFD42122, PPITWS]
+    weight: 0.505
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD42122 (capital investment)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd4213
+    kind: relative_importance
+    of: [WPSFD4213, PPITWS]
+    weight: 6.212
+    weight_date: "2025-12"
+    title: "Share of other services taken by FD4213 (exports)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd431
+    kind: relative_importance
+    of: [WPSFD431, PPIDCS]
+    weight: 69.248
+    weight_date: "2025-12"
+    title: "Share of construction taken by FD431 (private)"
+    unit: Percent
+    importance: 3
+  - id: PPI.s_fd432
+    kind: relative_importance
+    of: [WPSFD432, PPIDCS]
+    weight: 30.752
+    weight_date: "2025-12"
+    title: "Share of construction taken by FD432 (government)"
+    unit: Percent
+    importance: 3
+  - id: PPI.k_fd411_y
+    kind: contribution
+    of: [PPIDFS, PPIDGS]
+    weight: 18.782
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of foods to goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd411_m
+    kind: contribution
+    of: [PPIDFS, PPIDGS]
+    weight: 18.782
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of foods to goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd412_y
+    kind: contribution
+    of: [PPIDES, PPIDGS]
+    weight: 17.435
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of energy to goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd412_m
+    kind: contribution
+    of: [PPIDES, PPIDGS]
+    weight: 17.435
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of energy to goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd413_y
+    kind: contribution
+    of: [WPSFD413, PPIDGS]
+    weight: 63.783
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of core goods to goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd413_m
+    kind: contribution
+    of: [WPSFD413, PPIDGS]
+    weight: 63.783
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of core goods to goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd423_y
+    kind: contribution
+    of: [PPITSS, PPIDSS]
+    weight: 28.908
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of trade to services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd423_m
+    kind: contribution
+    of: [PPITSS, PPIDSS]
+    weight: 28.908
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of trade to services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd422_y
+    kind: contribution
+    of: [PPIAWS, PPIDSS]
+    weight: 7.107
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of transport and warehousing to services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd422_m
+    kind: contribution
+    of: [PPIAWS, PPIDSS]
+    weight: 7.107
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of transport and warehousing to services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd421_y
+    kind: contribution
+    of: [PPITWS, PPIDSS]
+    weight: 63.983
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of other services to services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd421_m
+    kind: contribution
+    of: [PPITWS, PPIDSS]
+    weight: 63.983
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of other services to services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4111_y
+    kind: contribution
+    of: [WPSFD4111, PPIDFS]
+    weight: 78.558
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of consumer foods to foods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4111_m
+    kind: contribution
+    of: [WPSFD4111, PPIDFS]
+    weight: 78.558
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of consumer foods to foods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4112_y
+    kind: contribution
+    of: [WPSFD4112, PPIDFS]
+    weight: 7.447
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to foods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4112_m
+    kind: contribution
+    of: [WPSFD4112, PPIDFS]
+    weight: 7.447
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to foods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4113_y
+    kind: contribution
+    of: [WPSFD4113, PPIDFS]
+    weight: 13.995
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to foods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4113_m
+    kind: contribution
+    of: [WPSFD4113, PPIDFS]
+    weight: 13.995
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to foods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4121_y
+    kind: contribution
+    of: [WPSFD4121, PPIDES]
+    weight: 78.739
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of consumer energy goods to energy, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4121_m
+    kind: contribution
+    of: [WPSFD4121, PPIDES]
+    weight: 78.739
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of consumer energy goods to energy, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4122_y
+    kind: contribution
+    of: [WPSFD4122, PPIDES]
+    weight: 14.701
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to energy, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4122_m
+    kind: contribution
+    of: [WPSFD4122, PPIDES]
+    weight: 14.701
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to energy, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4123_y
+    kind: contribution
+    of: [WPSFD4123, PPIDES]
+    weight: 6.56
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to energy, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4123_m
+    kind: contribution
+    of: [WPSFD4123, PPIDES]
+    weight: 6.56
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to energy, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd41311_y
+    kind: contribution
+    of: [WPSFD41311, WPSFD413]
+    weight: 30.656
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of consumer goods to core goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd41311_m
+    kind: contribution
+    of: [WPSFD41311, WPSFD413]
+    weight: 30.656
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of consumer goods to core goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd41312_y
+    kind: contribution
+    of: [WPSFD41312, WPSFD413]
+    weight: 28.82
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of capital equipment to core goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd41312_m
+    kind: contribution
+    of: [WPSFD41312, WPSFD413]
+    weight: 28.82
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of capital equipment to core goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4132_y
+    kind: contribution
+    of: [WPSFD4132, WPSFD413]
+    weight: 10.635
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to core goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4132_m
+    kind: contribution
+    of: [WPSFD4132, WPSFD413]
+    weight: 10.635
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to core goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4133_y
+    kind: contribution
+    of: [WPSFD4133, WPSFD413]
+    weight: 29.889
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to core goods, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4133_m
+    kind: contribution
+    of: [WPSFD4133, WPSFD413]
+    weight: 29.889
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to core goods, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42311_y
+    kind: contribution
+    of: [WPSFD42311, PPITSS]
+    weight: 69.081
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of consumer goods to trade services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42311_m
+    kind: contribution
+    of: [WPSFD42311, PPITSS]
+    weight: 69.081
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of consumer goods to trade services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42312_y
+    kind: contribution
+    of: [WPSFD42312, PPITSS]
+    weight: 16.467
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of capital equipment to trade services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42312_m
+    kind: contribution
+    of: [WPSFD42312, PPITSS]
+    weight: 16.467
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of capital equipment to trade services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4232_y
+    kind: contribution
+    of: [WPSFD4232, PPITSS]
+    weight: 4.08
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to trade services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4232_m
+    kind: contribution
+    of: [WPSFD4232, PPITSS]
+    weight: 4.08
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to trade services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4233_y
+    kind: contribution
+    of: [WPSFD4233, PPITSS]
+    weight: 10.372
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to trade services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4233_m
+    kind: contribution
+    of: [WPSFD4233, PPITSS]
+    weight: 10.372
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to trade services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4221_y
+    kind: contribution
+    of: [WPSFD4221, PPIAWS]
+    weight: 24.583
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of passengers to transport and warehousing, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4221_m
+    kind: contribution
+    of: [WPSFD4221, PPIAWS]
+    weight: 24.583
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of passengers to transport and warehousing, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42221_y
+    kind: contribution
+    of: [WPSFD42221, PPIAWS]
+    weight: 48.569
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of finished goods to transport and warehousing, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42221_m
+    kind: contribution
+    of: [WPSFD42221, PPIAWS]
+    weight: 48.569
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of finished goods to transport and warehousing, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42222_y
+    kind: contribution
+    of: [WPSFD42222, PPIAWS]
+    weight: 4.53
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government goods to transport and warehousing, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42222_m
+    kind: contribution
+    of: [WPSFD42222, PPIAWS]
+    weight: 4.53
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government goods to transport and warehousing, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42223_y
+    kind: contribution
+    of: [WPSFD42223, PPIAWS]
+    weight: 22.318
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to transport and warehousing, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42223_m
+    kind: contribution
+    of: [WPSFD42223, PPIAWS]
+    weight: 22.318
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to transport and warehousing, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42111_y
+    kind: contribution
+    of: [WPSFD42111, PPITWS]
+    weight: 77.976
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of consumer to other services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42111_m
+    kind: contribution
+    of: [WPSFD42111, PPITWS]
+    weight: 77.976
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of consumer to other services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42112_y
+    kind: contribution
+    of: [WPSFD42112, PPITWS]
+    weight: 9.832
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of capital investment to other services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd42112_m
+    kind: contribution
+    of: [WPSFD42112, PPITWS]
+    weight: 9.832
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of capital investment to other services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4212_y
+    kind: contribution
+    of: [WPSFD4212, PPITWS]
+    weight: 5.981
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to other services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4212_m
+    kind: contribution
+    of: [WPSFD4212, PPITWS]
+    weight: 5.981
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to other services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4213_y
+    kind: contribution
+    of: [WPSFD4213, PPITWS]
+    weight: 6.212
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of exports to other services, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd4213_m
+    kind: contribution
+    of: [WPSFD4213, PPITWS]
+    weight: 6.212
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of exports to other services, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd431_y
+    kind: contribution
+    of: [WPSFD431, PPIDCS]
+    weight: 69.248
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of private to construction, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd431_m
+    kind: contribution
+    of: [WPSFD431, PPIDCS]
+    weight: 69.248
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of private to construction, over 1 month"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd432_y
+    kind: contribution
+    of: [WPSFD432, PPIDCS]
+    weight: 30.752
+    weight_date: "2025-12"
+    periods: 12
+    title: "Contribution of government to construction, over 12 months"
+    unit: Percentage points
+    importance: 3
+  - id: PPI.k_fd432_m
+    kind: contribution
+    of: [WPSFD432, PPIDCS]
+    weight: 30.752
+    weight_date: "2025-12"
+    periods: 1
+    title: "Contribution of government to construction, over 1 month"
+    unit: Percentage points
+    importance: 3
+
 # Drawn only in a 48-month heatmap of a twelve-month change and
 # through the breadth measure over 120 months; 180 covers both with
 # head room. export.py checks it against the page and refuses too small.
@@ -320,3 +1511,275 @@ truncate_history:
       - WPSFD4213
       - WPSFD431
       - WPSFD432
+  # Tables 21-38: drawn in 48-month heatmaps and stacks (48 months plus a
+  # 12-month lookback), and the Dec. 2025 weight anchor is inside the window.
+  - keep: 96
+    series:
+      - WPU0111
+      - WPU0113
+      - WPU012
+      - WPU017107
+      - WPU018301
+      - WPU0211
+      - WPU0213
+      - WPU021402
+      - WPU022101
+      - WPU022104
+      - WPU022203
+      - WPU022206
+      - WPU0223
+      - WPU023
+      - WPU024
+      - WPU0255
+      - WPU0261
+      - WPU0262
+      - WPU026301
+      - WPU0278
+      - WPU0285
+      - WPU029402
+      - WPU038106
+      - WPU038107
+      - WPU0382
+      - WPU0532
+      - WPU0541
+      - WPU0551
+      - WPU0571
+      - WPU057302
+      - WPU057303
+      - WPU061
+      - WPU0638
+      - WPU0671
+      - WPU0672
+      - WPU0675
+      - WPU071201
+      - WPU072B
+      - WPU091501
+      - WPU1012
+      - WPU102
+      - WPU111
+      - WPU112
+      - WPU1137
+      - WPU1138
+      - WPU1139
+      - WPU1141
+      - WPU1144
+      - WPU115
+      - WPU1161
+      - WPU1164
+      - WPU1165
+      - WPU1174
+      - WPU1176
+      - WPU1178
+      - WPU117905
+      - WPU1191
+      - WPU1192
+      - WPU1194
+      - WPU121
+      - WPU122
+      - WPU123
+      - WPU124
+      - WPU125
+      - WPU1266
+      - WPU141101
+      - WPU141105
+      - WPU141106
+      - WPU1412
+      - WPU1414
+      - WPU1416
+      - WPU1421
+      - WPU1431
+      - WPU144
+      - WPU1512
+      - WPU1521
+      - WPU155
+      - WPU156
+      - WPU159402
+      - WPU159404
+      - WPU159F2
+      - WPU3011
+      - WPU3012
+      - WPU3014
+      - WPU3016
+      - WPU3021
+      - WPU3022
+      - WPU3311
+      - WPU3312
+      - WPU342
+      - WPU361
+      - WPU3711
+      - WPU372
+      - WPU373
+      - WPU374
+      - WPU375
+      - WPU3912
+      - WPU392
+      - WPU393
+      - WPU401
+      - WPU402
+      - WPU411101
+      - WPU411102
+      - WPU411103
+      - WPU411104
+      - WPU412
+      - WPU4321
+      - WPU441
+      - WPU451
+      - WPU452102
+      - WPU453
+      - WPU454
+      - WPU471
+      - WPU472
+      - WPU473
+      - WPU511101
+      - WPU511102
+      - WPU511103
+      - WPU511104
+      - WPU511105
+      - WPU512101
+      - WPU512102
+      - WPU5311
+      - WPU541
+      - WPU552
+      - WPU561
+      - WPU562
+      - WPU563
+      - WPU571102
+      - WPU571103
+      - WPU571104
+      - WPU572
+      - WPU575
+      - WPU576
+      - WPU577
+      - WPU578
+      - WPU581
+      - WPU582
+      - WPU583
+      - WPU584
+      - WPU585
+      - WPU586101
+      - WPU586102
+      - WPU588
+      - WPU589
+      - WPU58A
+      - WPU58B
+      - WPU58C
+      - WPU58D
+      - WPU58E
+      - WPU58F
+      - WPU58G
+      - WPU58H
+      - WPU601
+      - WPU801101
+      - WPU801102
+      - WPU801103
+      - WPU801104
+      - WPU801105
+      - WPUFD411
+      - WPUFD4111
+      - WPUFD41112
+      - WPUFD41113
+      - WPUFD4112
+      - WPUFD4113
+      - WPUFD412
+      - WPUFD4121
+      - WPUFD4122
+      - WPUFD4123
+      - WPUFD413
+      - WPUFD41311
+      - WPUFD413111
+      - WPUFD413112
+      - WPUFD41312
+      - WPUFD413121
+      - WPUFD413122
+      - WPUFD4132
+      - WPUFD41321
+      - WPUFD41322
+      - WPUFD4133
+      - WPUFD421
+      - WPUFD42111
+      - WPUFD42112
+      - WPUFD4212
+      - WPUFD42121
+      - WPUFD42122
+      - WPUFD4213
+      - WPUFD422
+      - WPUFD4221
+      - WPUFD42211
+      - WPUFD42212
+      - WPUFD42213
+      - WPUFD4222
+      - WPUFD42221
+      - WPUFD422211
+      - WPUFD422212
+      - WPUFD42222
+      - WPUFD42223
+      - WPUFD423
+      - WPUFD42311
+      - WPUFD42312
+      - WPUFD4232
+      - WPUFD42321
+      - WPUFD42322
+      - WPUFD4233
+      - WPUFD43
+      - WPUFD431
+      - WPUFD432
+      - WPS0111
+      - WPS0113
+      - WPS012
+      - WPS018301
+      - WPS022101
+      - WPS022104
+      - WPS022203
+      - WPS0223
+      - WPS0261
+      - WPS0541
+      - WPS0551
+      - WPS057302
+      - WPS061
+      - WPS1012
+      - WPS102
+      - WPS1176
+      - WPS1178
+      - WPS117905
+      - WPS141101
+      - WPS141105
+      - WPS1412
+      - WPS1421
+      - WPS155
+      - WPS156
+      - WPS3016
+      - WPS3311
+      - WPS3312
+      - WPS372
+      - WPS373
+      - WPS3912
+      - WPS411103
+      - WPS4321
+      - WPS441
+      - WPS451
+      - WPS452102
+      - WPS453
+      - WPS471
+      - WPS511103
+      - WPS511104
+      - WPS511105
+      - WPS512102
+      - WPS5311
+      - WPS561
+      - WPS581
+      - WPS583
+      - WPS585
+      - WPS586101
+      - WPS589
+      - WPS58D
+      - WPS58E
+      - WPS58F
+      - WPSFD4111
+      - WPSFD41311
+      - WPSFD41312
+      - WPSFD4132
+      - WPSFD4212
+      - WPSFD4221
+      - WPSFD4222
+      - WPSFD42221
+      - WPSFD4232

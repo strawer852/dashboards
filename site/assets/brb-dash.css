@@ -37,12 +37,19 @@
      home) read as one muddy block. Blue first and warm second, then green,
      violet, rose, olive: no two neighbours share a temperature. Validated on
      --paper: adjacent CVD dE >= 8.6, normal-vision >= 16.9, all six clear of
-     the --pos bars by dE >= 17.7. Amber is light on paper (2.2:1), carried
+     the --pos bars by dE >= 17.2. Amber is light on paper (2.2:1), carried
      by legends, end labels and tooltips. Rejected: the same colours
      reordered (terracotta beside green, CVD dE 7.9) and Okabe-Ito (its sky
      dE 7.2 from --pos). --s2 stays amber, as chosen earlier the same day for
-     contrast against the ink line (dE ~55). */
-  --s1:#2f5f9e; --s2:#e8961c; --s3:#1f7a4d;
+     contrast against the ink line (dE ~55).
+     --s1 was #2f5f9e until the same evening. On thin lines that dark blue
+     read as near-black beside the ink series (dE 30.3), and ink then blue
+     is the order of most multi-line charts. #1f66e0 is dE 39.1 from ink,
+     further than before from amber (40.3) and green (25.1), and within 2 of
+     its old distance to violet (11.2) and the --pos bars (17.2). Chosen over
+     "amber second" and "both", rendered on PPI Tables 1 and 12 and payroll
+     Table 33, because no series changes colour. */
+  --s1:#1f66e0; --s2:#e8961c; --s3:#1f7a4d;
   --s4:#7a5fc0; --s5:#b8466b; --s6:#8a6d12;
   --serif:"Source Serif 4"; --sans:"Archivo"; --mono:"JetBrains Mono";
 }
