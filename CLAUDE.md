@@ -1253,15 +1253,33 @@ the second decimal says so.
 against what printed, part by part, ending with what to change next time --
 and `comment` -- what the release itself says. Each is `{ "dated", "text":
 [html fragments] }`, one bold lead per point, the same grammar as
-`reasons`. The engine renders them side by side under the reasons
-(`.fc-post`), the review in the series blue `--s1` and the comment in the
-series green `--s3`, so a line grading the call is never read as a line
-about the data; each carries the period, the release date and the day it
-was written. `keycheck.py` refuses a note dated before its release, the
-mirror of the `made` rule. The colour must be set as `.fc-post
-.fc-post-review` and `.fc .fc-post-review h4`: a bare class loses to the
-`.fc-post section` border shorthand and to `.fc h4`, and the first draft
-rendered ink borders and faint heads for exactly that reason.
+`reasons`. `keycheck.py` refuses a note dated before its release, the
+mirror of the `made` rule.
+
+**Layout of the forecast block (William, 13 September 2026)**, one colour
+system from top to bottom: **ink is the call, blue (`--s1`) is the released
+data, red (`--neg`) is grading.**
+
+- The header states the data period once and the two dates the comparison
+  rests on: "Called 9 Sep 2026 · 2 days before release" and "Actual released
+  11 Sep 2026 · first print" (or "Actual due"). The author is not in the
+  header; it closes the call note's date line ("made ... by ...").
+- Each figure shows the call and the actual side by side, each with a
+  dated label (`Call · 9 Sep` in ink, `Actual · 11 Sep` in blue), then
+  consensus, the unrounded print (blue) and the error (red when beyond
+  ±0.1). Before the release the actual is a faint dash labelled `Due · 15
+  Oct` -- not "Actual · due", which overran a five-figure PPI row.
+- Below, **the call and its review side by side** (`.fc-pair`): the reasons
+  left under an ink rule, the review right under a red rule, top-aligned
+  rather than matched point by point. Before the review is written the
+  right column is a dashed red placeholder naming when it is due.
+- **The comment on the release** sits apart underneath (`.fc-post`), full
+  width, blue, its points flowing across two columns without breaking.
+
+Colour rules need their container in the selector: the review lives in
+`.fc-pair`, and moving it there from `.fc-post` first rendered a black rule
+and a large sans date line, because those styles were scoped to the old
+parent.
 
 **The reminder is calendar-driven.** `tools/forecast_reminder.py` runs from
 `systemd/macro-forecast-reminder.timer` at 08:00 Europe/London, the morning

@@ -1043,39 +1043,67 @@
     // The unrounded print carries a sign only where the call does: +0.29 for
     // a monthly change, 3.40 for a twelve-month rate.
     const rawOf = x => (x.it.format || "spct") === "spct" ? sgn(x.actual, 2) : x.actual.toFixed(2);
-    let h = `<div class="fc-h"><span><b>Forecast</b> &middot; ${period(rec.for)} release, ${fmtDate(rec.release_at)}</span>` +
-            `<span>Made ${fmtDate(rec.made)} &middot; ${leadText}</span>` +
-            `<span class="who">${esc(doc.author || "")}</span></div>`;
-    // Each figure's detail is a short list, one fact to a line, rather than a
-    // sentence: consensus, the print with its unrounded figure, the error.
+    // Header (William, 13 Sept 2026): the data period once, then the two
+    // dates the comparison rests on -- when the call was made, and when the
+    // actual was released, as first printed, which is what the call is scored
+    // on. The author moved from here into the call note below.
+    const relInfo = ctx.bundle.releases[doc.release] || ctx.bundle.releases[ctx.bundle.release];
+    const anyPrint = cur.items.some(x => x.printed != null);
+    const dayMonth = iso => { const d = new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso); return `${d.getUTCDate()} ${MN[d.getUTCMonth()]}`; };
+    let h = `<div class="fc-h"><span><b>Forecast</b> &middot; ${period(rec.for)} data</span>` +
+            `<span class="d-call">Called <b>${fmtDate(rec.made)}</b> &middot; ${leadText}</span>` +
+            `<span class="d-act">${anyPrint ? "Actual released" : "Actual due"} <b>${fmtDate(rec.release_at)}</b>` +
+            `${anyPrint ? " &middot; first print" : ""}${relInfo ? ` &middot; ${esc(relInfo.name)}` : ""}</span></div>`;
+    // Each figure: the call and the actual side by side, the call in ink and
+    // the actual in the series blue -- the same colours as the call note and
+    // the comment on the release below, with red kept for grading (a miss).
+    // Beneath, one fact to a line: consensus, the unrounded print, the error.
     h += `<div class="fc-figs">` + cur.items.map(x => {
       const it = x.it, fmt = fmtFor({ format: it.format || "spct" });
+      const act = x.printed == null
+        // "Due", not "Actual · due": five figures across a PPI row leave
+        // each about 210px, and the longer label ran into the next figure.
+        ? `<div class="fc-v act pend"><span class="k">Due &middot; ${dayMonth(rec.release_at)}</span><span class="n">&mdash;</span></div>`
+        : `<div class="fc-v act"><span class="k">Actual &middot; ${dayMonth(rec.release_at)}</span><span class="n">${fmt(x.printed)}</span></div>`;
       const dl = [["Consensus", it.consensus == null ? `<span class="na">none</span>` : fmt(it.consensus)]];
-      if (x.printed == null) dl.push(["Printed", `<span class="na">pending</span>`]);
-      else {
-        dl.push(["Printed", `${fmt(x.printed)}<span class="raw">${rawOf(x)}</span>`]);
+      if (x.printed != null) {
+        dl.push(["Unrounded", `<span class="uv">${rawOf(x)}</span>`]);
         dl.push(["Error", `<span class="${Math.abs(x.err) <= 0.1 ? "hit" : "miss"}">${sgn(x.err, 1)}</span>` +
                           (x.basis === "latest vintage" ? `<span class="raw">latest vintage</span>` : "")]);
       }
       return `<div class="fc-fig"><div class="lb">${esc(it.label)}${it.note ? ` <i>${esc(it.note)}</i>` : ""}</div>` +
-             `<div class="vl">${fmt(it.value)}</div>` +
+             `<div class="fc-vs"><div class="fc-v call"><span class="k">Call &middot; ${dayMonth(rec.made)}</span>` +
+             `<span class="n">${fmt(it.value)}</span></div>${act}</div>` +
              `<dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></div>`;
     }).join("") + `</div>`;
-    if (rec.reasons && rec.reasons.length)
-      h += `<ol class="fc-why">` + rec.reasons.map(r => `<li>${r}</li>`).join("") + `</ol>`;
-    // After the release the record may carry two dated notes: a REVIEW of
-    // the call against what printed, part by part, and a COMMENT on the
-    // release itself. They sit side by side under the reasons, each in its
-    // own colour so a sentence grading yesterday's call is never read as a
-    // sentence about today's data, and each stamped with the data it is
-    // about (period and release date) and the day it was written.
-    const post = [["review", "Review of the call", rec.review], ["comment", "Comment on the release", rec.comment]]
-      .filter(([, , n]) => n && n.text && n.text.length)
-      .map(([cls, title, n]) =>
-        `<section class="fc-post-${cls}"><h4>${title}</h4>` +
-        `<div class="meta">${period(rec.for)} data &middot; released ${fmtDate(rec.release_at)} &middot; written ${fmtDate(n.dated)}</div>` +
-        `<ol>${n.text.map(t => `<li>${t}</li>`).join("")}</ol></section>`);
-    if (post.length) h += `<div class="fc-post">${post.join("")}</div>`;
+    // The call and its review, side by side (William, 13 Sept 2026): what was
+    // said before the release on the left, how it went on the right, so each
+    // reason can be read against its grade without scrolling between them.
+    // Top-aligned, not row-matched -- the review is organised by what moved,
+    // not reason by reason. Before the release the right column is a dashed
+    // placeholder naming when the review is due, so the pairing is visible
+    // from the day the call is made. The COMMENT on the release is about the
+    // data, not the call, so it sits apart underneath, full width. Each note
+    // keeps its own colour and its own date: a sentence grading yesterday's
+    // call is never read as a sentence about today's data.
+    const list = items => `<ol>${items.map(t => `<li>${t}</li>`).join("")}</ol>`;
+    const hasNote = n => n && n.text && n.text.length;
+    if (rec.reasons && rec.reasons.length) {
+      const call = `<section class="fc-call"><h4>The call</h4>` +
+        `<div class="meta">${period(rec.for)} data &middot; made ${fmtDate(rec.made)}${doc.author ? ` by ${esc(doc.author)}` : ""}</div>${list(rec.reasons)}</section>`;
+      const review = hasNote(rec.review)
+        ? `<section class="fc-post-review"><h4>Review of the call</h4>` +
+          `<div class="meta">against the ${fmtDate(rec.release_at)} print &middot; written ${fmtDate(rec.review.dated)}</div>` +
+          `${list(rec.review.text)}</section>`
+        : `<section class="fc-post-review pending"><h4>Review of the call</h4>` +
+          `<div class="meta">due after the ${fmtDate(rec.release_at)} release</div>` +
+          `<p class="wait">Written once the print is in: each part of the call graded against what the release showed.</p></section>`;
+      h += `<div class="fc-pair">${call}${review}</div>`;
+    }
+    if (hasNote(rec.comment))
+      h += `<div class="fc-post"><section class="fc-post-comment"><h4>Comment on the release</h4>` +
+           `<div class="meta">${period(rec.for)} data &middot; released ${fmtDate(rec.release_at)} &middot; written ${fmtDate(rec.comment.dated)}</div>` +
+           `${list(rec.comment.text)}</section></div>`;
     // Inputs as a two-column table and sources as a list, side by side: a
     // run-on line of label-value pairs gave the eye nothing to hold on to.
     const notes = [];
