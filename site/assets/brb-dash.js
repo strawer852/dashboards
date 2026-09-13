@@ -44,6 +44,15 @@
     return `${MN[+m - 1]} ${y.slice(2)}`;
   };
   const sgn = (v, dp) => (v > 0 ? "+" : "") + (dp == null ? v : v.toFixed(dp));
+  // A tooltip row's colour key, drawn from the series' own colour so a row is
+  // matched to its mark without going back to the legend: a square for a bar,
+  // a short rule for a line, dashed where the line is. Every series that uses
+  // it must carry `color` itself, not only `lineStyle.color` -- ECharts hands
+  // the tooltip the series colour, and a line coloured only through its style
+  // showed the library's default palette.
+  const swatch = (x, dash) => x.seriesType === "line"
+    ? `<span style="display:inline-block;width:12px;height:0;border-top:2px ${dash ? "dashed" : "solid"} ${x.color};vertical-align:middle;margin-right:7px"></span>`
+    : `<span style="display:inline-block;width:9px;height:9px;background:${x.color};vertical-align:-1px;margin-right:7px"></span>`;
 
   // The label interval a chart can afford, from the width it actually has and
   // the width its labels actually measure. `tick` is the page's choice for a
@@ -248,8 +257,8 @@
         trigger: "axis",
         formatter: ps => {
           let s = "<b>" + label(ps[0].axisValue, first.frequency) + "</b>";
-          ps.forEach(x => { s += "<br>" + x.seriesName + " " +
-            (x.data == null ? "not collected" : fmt(x.data)); });
+          ps.forEach(x => { s += "<br>" + swatch(x, p.series[x.seriesIndex] && p.series[x.seriesIndex].dash)
+            + x.seriesName + " " + (x.data == null ? "not collected" : fmt(x.data)); });
           return s;
         },
       }),
@@ -297,6 +306,7 @@
           // The full ladder, in the validated order. This stopped at three and
           // fell back to s4 for everything after, so a fourth, fifth and sixth
           // unnamed series would all have been the same colour.
+          color: P[sp.color || ["s1", "s2", "s3", "s4", "s5", "s6"][i] || "muted"],
           lineStyle: { color: P[sp.color || ["s1", "s2", "s3", "s4", "s5", "s6"][i] || "muted"],
                        width: sp.width || 1.6, type: sp.dash ? "dashed" : "solid" },
           markPoint: i === 0 ? endMarker(P, cats, data) : undefined,
@@ -327,7 +337,7 @@
     if (p.average) extra.push({
       name: `${p.average}-period average`, type: "line",
       data: tail(T.ma(full, p.average), p.window), symbol: "none",
-      lineStyle: { color: P.muted, width: 1.3 }, z: 3,
+      color: P.muted, lineStyle: { color: P.muted, width: 1.3 }, z: 3,
     });
     // "As first reported" comes precomputed from the exporter, which reads both
     // periods at the SAME vintage. Deriving it here by differencing first_print
@@ -336,8 +346,8 @@
     if (p.first_reported && s.first_reported_diff) {
       extra.push({ name: "as first reported", type: "line",
         data: tail(s.first_reported_diff, p.window), symbol: "none",
-        connectNulls: false,
-        lineStyle: { color: P.alt, width: 1.2, type: "dashed" }, z: 4 });
+        connectNulls: false, dash: true,
+        color: P.alt, lineStyle: { color: P.alt, width: 1.2, type: "dashed" }, z: 4 });
     } else if (p.first_reported) {
       console.warn("panel asked for first_reported but the bundle has no "
                    + "first_reported_diff for " + p.series.id);
@@ -350,7 +360,8 @@
       extra.push({
         name: sp.label || r.s.title, type: "line", symbol: "none",
         data: tail(alignAsOf(cats, r.cats, r.values), p.window),
-        connectNulls: !!sp.connect,
+        connectNulls: !!sp.connect, dash: !!sp.dash,
+        color: P[sp.color || ["ink", "s2", "s3"][i] || "muted"],
         lineStyle: { color: P[sp.color || ["ink", "s2", "s3"][i] || "muted"],
                      width: sp.width || 1.4, type: sp.dash ? "dashed" : "solid" },
         z: 5,
@@ -362,7 +373,9 @@
         trigger: "axis", axisPointer: { type: "shadow" },
         formatter: ps => {
           let out = "<b>" + label(ps[0].axisValue, s.frequency) + "</b>";
-          ps.forEach(x => { if (x.data != null) out += "<br>" + x.seriesName + " " + fmt(x.data); });
+          ps.forEach(x => { if (x.data != null) out += "<br>"
+            + swatch(x, x.seriesIndex > 0 && extra[x.seriesIndex - 1] && extra[x.seriesIndex - 1].dash)
+            + x.seriesName + " " + fmt(x.data); });
           return out;
         },
       }),
@@ -502,14 +515,8 @@
         trigger: "axis", axisPointer: { type: "shadow" },
         formatter: ps => {
           let out = "<b>" + label(ps[0].axisValue, first.frequency) + "</b>";
-          // A swatch in each series' own colour, so a row in the tooltip is
-          // matched to its bar without going back to the legend: a square for
-          // a stacked part, a short rule for the total line.
-          const sw = x => x.seriesType === "line"
-            ? `<span style="display:inline-block;width:12px;height:2px;background:${x.color};vertical-align:middle;margin-right:7px"></span>`
-            : `<span style="display:inline-block;width:9px;height:9px;background:${x.color};vertical-align:-1px;margin-right:7px"></span>`;
           ps.forEach(x => { if (x.data != null)
-            out += "<br>" + sw(x) + x.seriesName + " " + fmt(x.data); });
+            out += "<br>" + swatch(x) + x.seriesName + " " + fmt(x.data); });
           return out;
         },
       }),
@@ -554,7 +561,7 @@
       tooltip: Object.assign(base(P).tooltip, {
         trigger: "axis", axisPointer: { type: "shadow" },
         formatter: ps => "<b>" + ps[0].axisValue + "</b>" +
-          ps.map(x => "<br>" + x.seriesName + " " + fmt(x.data)).join(""),
+          ps.map(x => "<br>" + swatch(x) + x.seriesName + " " + fmt(x.data)).join(""),
       }),
       xAxis: Object.assign(yAxis(P, fmt), { type: "value", scale: false,
         interval: valueInterval(el, (p.left || 150) + (p.right || 54),
@@ -1274,7 +1281,7 @@
           return "<b>" + label(ps[0].axisValue, "M") + "</b>" + ps.map(x => {
             const pi = p.items.find(i => i.label === x.seriesName);
             const sc = r && pi ? r.items.find(z => z.it.key === pi.key) : null;
-            return "<br>" + x.seriesName + " " + (x.data == null ? "not scored"
+            return "<br>" + swatch(x) + x.seriesName + " " + (x.data == null ? "not scored"
               : fmt(x.data) + (sc ? ` (unrounded ${sgn(sc.errRaw, 2)}: called ${sgn(sc.it.value, 1)}, printed ${sgn(sc.actual, 2)})` : ""));
           }).join("");
         } }),
