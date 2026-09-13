@@ -489,6 +489,9 @@
         name: p.total.label || "Total", type: "line", symbol: "none",
         data: tail(alignAsOf(cats, r.cats, r.values), p.window),
         connectNulls: false, z: 6,
+        // The series colour too, not only the line's: the tooltip swatch
+        // reads it, and without it the total showed ECharts' default blue.
+        color: P.ink,
         lineStyle: { color: P.ink, width: p.total.width || 1.8 },
       });
     }
@@ -499,8 +502,14 @@
         trigger: "axis", axisPointer: { type: "shadow" },
         formatter: ps => {
           let out = "<b>" + label(ps[0].axisValue, first.frequency) + "</b>";
+          // A swatch in each series' own colour, so a row in the tooltip is
+          // matched to its bar without going back to the legend: a square for
+          // a stacked part, a short rule for the total line.
+          const sw = x => x.seriesType === "line"
+            ? `<span style="display:inline-block;width:12px;height:2px;background:${x.color};vertical-align:middle;margin-right:7px"></span>`
+            : `<span style="display:inline-block;width:9px;height:9px;background:${x.color};vertical-align:-1px;margin-right:7px"></span>`;
           ps.forEach(x => { if (x.data != null)
-            out += "<br>" + x.seriesName + " " + fmt(x.data); });
+            out += "<br>" + sw(x) + x.seriesName + " " + fmt(x.data); });
           return out;
         },
       }),
