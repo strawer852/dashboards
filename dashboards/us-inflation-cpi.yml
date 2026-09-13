@@ -2234,46 +2234,6 @@ derived:
     title: "Share of core taken by shelter"
     unit: Percent
     importance: 3
-  - id: CPI.r7_sas2rs
-    kind: relative_importance
-    of: [CUUR0000SAS2RS, CUUR0000SA0L1E]
-    weight: 44.309
-    weight_date: "2026-07"
-    title: "Share of core taken by rent of shelter"
-    unit: Percent
-    importance: 3
-  - id: CPI.r7_seha
-    kind: relative_importance
-    of: [CUUR0000SEHA, CUUR0000SA0L1E]
-    weight: 9.777
-    weight_date: "2026-07"
-    title: "Share of core taken by rent of primary residence"
-    unit: Percent
-    importance: 3
-  - id: CPI.r7_sehb
-    kind: relative_importance
-    of: [CUUR0000SEHB, CUUR0000SA0L1E]
-    weight: 1.772
-    weight_date: "2026-07"
-    title: "Share of core taken by lodging away from home"
-    unit: Percent
-    importance: 3
-  - id: CPI.r7_sehc
-    kind: relative_importance
-    of: [CUUR0000SEHC, CUUR0000SA0L1E]
-    weight: 32.76
-    weight_date: "2026-07"
-    title: "Share of core taken by owners' equivalent rent of residences"
-    unit: Percent
-    importance: 3
-  - id: CPI.r7_sehd
-    kind: relative_importance
-    of: [CUUR0000SEHD, CUUR0000SA0L1E]
-    weight: 0.364
-    weight_date: "2026-07"
-    title: "Share of core taken by tenants' and household insurance"
-    unit: Percent
-    importance: 3
   - id: CPI.r7_sehg
     kind: relative_importance
     of: [CUUR0000SEHG, CUUR0000SA0L1E]
@@ -2320,6 +2280,57 @@ derived:
     weight: 2.03
     weight_date: "2026-07"
     title: "Share of core taken by other personal services"
+    unit: Percent
+    importance: 3
+
+  # ---- Shares of shelter, for the shelter heatmap's row labels; and shelter's
+  # share of the CPI for its heading. Table 6 relative importance, Jul. 2026.
+  - id: CPI.r6_sah1
+    kind: relative_importance
+    of: [CUUR0000SAH1, CPIAUCNS]
+    weight: 35.343
+    weight_date: "2026-07"
+    title: Share of the CPI taken by shelter
+    unit: Percent of the basket
+    importance: 3
+  - id: CPI.r8_sas2rs
+    kind: relative_importance
+    of: [CUUR0000SAS2RS, CUUR0000SAH1]
+    weight: 99.185
+    weight_date: "2026-07"
+    title: "Share of shelter taken by rent of shelter"
+    unit: Percent
+    importance: 3
+  - id: CPI.r8_seha
+    kind: relative_importance
+    of: [CUUR0000SEHA, CUUR0000SAH1]
+    weight: 21.886
+    weight_date: "2026-07"
+    title: "Share of shelter taken by rent of primary residence"
+    unit: Percent
+    importance: 3
+  - id: CPI.r8_sehb
+    kind: relative_importance
+    of: [CUUR0000SEHB, CUUR0000SAH1]
+    weight: 3.967
+    weight_date: "2026-07"
+    title: "Share of shelter taken by lodging away from home"
+    unit: Percent
+    importance: 3
+  - id: CPI.r8_sehc
+    kind: relative_importance
+    of: [CUUR0000SEHC, CUUR0000SAH1]
+    weight: 73.333
+    weight_date: "2026-07"
+    title: "Share of shelter taken by owners' equivalent rent of residences"
+    unit: Percent
+    importance: 3
+  - id: CPI.r8_sehd
+    kind: relative_importance
+    of: [CUUR0000SEHD, CUUR0000SAH1]
+    weight: 0.815
+    weight_date: "2026-07"
+    title: "Share of shelter taken by tenants' and household insurance"
     unit: Percent
     importance: 3
 

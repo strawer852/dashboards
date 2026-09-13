@@ -1618,14 +1618,18 @@ hierarchy, three layers under all items plus the shelter split:
   category's share of the CPI (`CPI.r6_*`, filled by `data-latest`). The top
   row renders bold ink and the second layer bold blue (`em: "top"/"sub"` on a
   heatmap series). Caps are set per category from the 90th percentile.
-- **Tables 24-32** are stacked year/month pairs for food, energy, core and
+- **Table 24** is shelter by category (same day, later): SHELTER, rent of
+  shelter with rent of primary residence, lodging and owners' equivalent
+  rent, and tenants' insurance, each labelled with its share of shelter
+  (`CPI.r8_*`); the core heatmap keeps one `· Shelter` row.
+- **Tables 25-33** are stacked year/month pairs for food, energy, core and
   the six second-layer groups (`CPI.k6_*` contributions to the parent). Core
   goods and core services show their five largest parts plus `Other`
   (`CPI.o6_*`, a residual that now takes any number of inputs). Energy's
   yearly stack sits ~0.15pp off its total because its parts are adjusted
   separately; the notes say so.
 - All shares are anchored on Table 6 relative importance, Jul. 2026, and
-  drift with prices. Old Tables 28-33 are now 33-38. Six series only the old
+  drift with prices. Old Tables 28-33 are now 34-39. Six series only the old
   tables drew (`CUSR0000SAH3 SEEB SERA SETD SETE SETG01`) were set
   `publish=false`.
 
