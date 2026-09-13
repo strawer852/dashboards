@@ -388,7 +388,7 @@
           label: { show: false },
         } : undefined,
         // The cursor is ink and marks the latest period. It never encodes a
-        // value, so it cannot be confused with the terracotta of a loss.
+        // value, so it cannot be confused with the oxblood of a loss.
         markLine: {
           silent: true, symbol: "none", lineStyle: { color: P.cursor, width: 1 },
           label: { show: true, position: "end", color: P.cursor,

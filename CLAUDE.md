@@ -1191,10 +1191,17 @@ two-column note it replaced split sentences across columns.
   (`Wk 29 Aug 26`) on the claims page, ECI and productivity on payrolls.
   Formats: `Aug 26`, `Q2 26`, `Wk 5 Sep 26`. Hover or focus names the
   release and its date.
-- **`--s2` is amber `#f08c00`**, was dark blue `#1d5fa8`. The ink line and
-  the second line were dE 31 apart; now 55.9, and at least 16 from every
-  other slot and 28 from the `--pos` bars. A lighter blue failed at dE 5.8
-  from `--pos`. PCE draws core in `s1` on every chart, so it was left alone.
+- **The series slots are set A** (same day): blue `#2f5f9e`, amber
+  `#e8961c`, green `#1f7a4d`, violet `#7a5fc0`, rose `#b8466b`, olive
+  `#8a6d12`. The set before opened terracotta then amber, two warm oranges,
+  so two-part stacks read as one block. Chosen from four sets rendered on
+  the real CPI charts (comparison page in the session record); rejected
+  were the same colours reordered (terracotta beside green, CVD dE 7.9) and
+  Okabe-Ito (sky dE 7.2 from the `--pos` bars). Amber stays second because
+  it separates from the ink line (dE ~55, against 31 for the old dark
+  blue). Every slot-1 series moved from terracotta to blue, including the
+  PCE core line. Validate any new slot colour against `--paper` and
+  `--pos`, not by eye.
 
 ## Forecasts
 

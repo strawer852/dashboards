@@ -20,8 +20,8 @@
      Sept 2026, dE 28.3 from this.
 
      --neg stays oxblood deliberately. Every brighter red tested collided with
-     a series colour -- #c0392b is dE 3.4 from --s1 terracotta -- because the
-     categorical palette already holds two reds. So the pair is NOT balanced in
+     a series colour -- #c0392b was dE 3.4 from the old --s1 terracotta, and
+     set A (Sept 2026) still holds a warm red in --s5 rose. So the pair is NOT balanced in
      weight: a negative bar reads heavier than a positive one. Negatives are
      the rarer and more notable case, so it is tolerable, but it is a trade
      rather than a win, and worth revisiting if the reds are ever re-chosen. */
@@ -31,13 +31,19 @@
   /* Categorical series slots. Assign in order, never cycle; a ninth
      series folds into an 'other' bucket or becomes small multiples.
      Validated against --paper #f7f7f4, not against a generic white. */
-  /* --s2 was dark blue #1d5fa8, only dE 31 from the ink line it most often
-     sits beside, so headline and core read as two dark lines. Amber since
-     Sept 2026: dE 55.9 from ink, 20.3 from --s1, 16.4 from --s5, 28.3 from
-     the --pos bars. Lighter on paper (2.3:1), which the legend, end labels
-     and tooltips carry. A lighter blue was rejected at dE 5.8 from --pos. */
-  --s1:#b5461c; --s2:#f08c00; --s3:#1f7a4d;
-  --s4:#7a3f96; --s5:#9c7412; --s6:#a32f45;
+  /* Set A, chosen 13 Sept 2026 from four sets rendered on the real charts.
+     The set before it opened terracotta #b5461c then amber, two warm oranges
+     of similar weight, so every two-part stack (CPI Food: at home, away from
+     home) read as one muddy block. Blue first and warm second, then green,
+     violet, rose, olive: no two neighbours share a temperature. Validated on
+     --paper: adjacent CVD dE >= 8.6, normal-vision >= 16.9, all six clear of
+     the --pos bars by dE >= 17.7. Amber is light on paper (2.2:1), carried
+     by legends, end labels and tooltips. Rejected: the same colours
+     reordered (terracotta beside green, CVD dE 7.9) and Okabe-Ito (its sky
+     dE 7.2 from --pos). --s2 stays amber, as chosen earlier the same day for
+     contrast against the ink line (dE ~55). */
+  --s1:#2f5f9e; --s2:#e8961c; --s3:#1f7a4d;
+  --s4:#7a5fc0; --s5:#b8466b; --s6:#8a6d12;
   --serif:"Source Serif 4"; --sans:"Archivo"; --mono:"JetBrains Mono";
 }
 
