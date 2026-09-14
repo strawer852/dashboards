@@ -375,12 +375,13 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
    two-table row start level because the engine gives both gists the taller
    one's height (alignGists), which replaced bottom-aligning the charts under
    notes of unequal length. */
-/* Reading text is 10% larger since 14 Sept 2026: the gist 17px, notes, dash
-   points and the forecast write-up 15px, the lede 19px. Headings, units, dates,
+/* Reading text is 10% larger since 14 Sept 2026: notes, dash
+   points and the forecast write-up 15px, the lede 19px. The gist under each
+   heading is 14.5px, a step under the notes, as William asked. Headings, units, dates,
    keys and chart text keep their sizes. Raising everything 10% was previewed
    and wrapped 21 headings and cut labels on 16 charts; this changes neither. */
 .gist {
-  font-family: var(--serif), Georgia, serif; font-size: 17px; line-height: 1.4;
+  font-family: var(--serif), Georgia, serif; font-size: 14.5px; line-height: 1.4;
   color: var(--ink-2); margin: 9px 0 2px; max-width: 70ch; text-wrap: balance;
 }
 .th {
