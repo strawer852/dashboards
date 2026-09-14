@@ -1221,6 +1221,13 @@ two-column note it replaced split sentences across columns.
   alone is not enough. `alignGists` copies a wrapped heading's height to
   its neighbour, so clear `min-height` before measuring which one actually
   wraps. Narrower than about 1400px, some headings still wrap.
+- **Reading text is 10% larger** (14 September 2026): the gist 17px, notes,
+  dash points and the forecast write-up 15px, the lede 19px. Headings,
+  units, dates, keys and chart text keep their sizes. Raising everything by
+  10% was previewed first and would have wrapped 21 headings and cut labels
+  on 16 charts; raising only the reading text changed neither, and made the
+  pages 2-4% longer. A shortened set of headings for 1280px windows was
+  also previewed and rejected: 1440px is the width to design for.
 
 ## Forecasts
 

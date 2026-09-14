@@ -175,7 +175,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 }
 .stamp b { font-weight: 500; color: var(--ink-2); }
 .lede {
-  font-family: var(--serif), Georgia, serif; font-size: 17.5px; line-height: 1.5;
+  font-family: var(--serif), Georgia, serif; font-size: 19px; line-height: 1.5;
   max-width: 58ch; margin: 20px 0 4px; color: var(--ink-2);
 }
 .lede b { color: var(--ink); font-weight: 600; }
@@ -234,7 +234,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-fig .dl .raw { margin-left: 7px; }
 .fc .na { color: var(--faint); }
 .fc .hit { color: var(--ink-2); } .fc .miss { color: var(--neg); }
-.fc-why { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+.fc-why { font-family: var(--serif), Georgia, serif; font-size: 15px; color: var(--muted);
           line-height: 1.45; max-width: 76ch; margin: 12px 0 0; padding-left: 1.4em; }
 .fc-why li { margin: 3px 0; }
 .fc-why b { color: var(--ink-2); font-weight: 600; }
@@ -259,12 +259,12 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-pair h4 { font-size: 10px; letter-spacing: .12em; margin-bottom: 2px; }
 .fc-pair .meta { font-family: var(--mono), monospace; font-size: 10px; letter-spacing: .06em;
                  color: var(--faint); margin-bottom: 6px; }
-.fc-pair ol { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+.fc-pair ol { font-family: var(--serif), Georgia, serif; font-size: 15px; color: var(--muted);
               line-height: 1.45; margin: 0; padding-left: 1.4em; }
 .fc-pair li { margin: 3px 0; }
 .fc-pair b { font-weight: 600; } .fc .fc-call b { color: var(--ink-2); }
 .fc-pair .pending { border-left-style: dashed; }
-.fc-pair .pending .wait { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--faint);
+.fc-pair .pending .wait { font-family: var(--serif), Georgia, serif; font-size: 15px; color: var(--faint);
                           line-height: 1.45; margin: 0; max-width: 42ch; }
 .fc-post { margin-top: 20px; }
 .fc-post .fc-post-comment ol { column-count: 2; column-gap: 40px; }
@@ -274,7 +274,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .fc-post h4 { font-size: 10px; letter-spacing: .12em; margin-bottom: 2px; }
 .fc-post .meta { font-family: var(--mono), monospace; font-size: 10px; letter-spacing: .06em;
                  color: var(--faint); margin-bottom: 6px; }
-.fc-post ol { font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+.fc-post ol { font-family: var(--serif), Georgia, serif; font-size: 15px; color: var(--muted);
               line-height: 1.45; margin: 0; padding-left: 1.4em; }
 .fc-post li { margin: 3px 0; }
 .fc-post b { font-weight: 600; }
@@ -375,8 +375,12 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
    two-table row start level because the engine gives both gists the taller
    one's height (alignGists), which replaced bottom-aligning the charts under
    notes of unequal length. */
+/* Reading text is 10% larger since 14 Sept 2026: the gist 17px, notes, dash
+   points and the forecast write-up 15px, the lede 19px. Headings, units, dates,
+   keys and chart text keep their sizes. Raising everything 10% was previewed
+   and wrapped 21 headings and cut labels on 16 charts; this changes neither. */
 .gist {
-  font-family: var(--serif), Georgia, serif; font-size: 15.5px; line-height: 1.4;
+  font-family: var(--serif), Georgia, serif; font-size: 17px; line-height: 1.4;
   color: var(--ink-2); margin: 9px 0 2px; max-width: 70ch; text-wrap: balance;
 }
 .th {
@@ -408,7 +412,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
 .th .tdate .pop b { font-weight: 500; color: var(--ink); }
 .th .tdate:not(:hover):not(:focus-visible) .pop { display: none; }
 .note {
-  font-family: var(--serif), Georgia, serif; font-size: 13.5px; color: var(--muted);
+  font-family: var(--serif), Georgia, serif; font-size: 15px; color: var(--muted);
   margin: 7px 0 3px; max-width: 66ch; line-height: 1.45;
 }
 .note b { color: var(--ink-2); font-weight: 600; }
@@ -419,7 +423,7 @@ main { padding: 26px 34px 40px; min-width: 0; max-width: 1180px; }
    gap, and a point never breaks across the columns. */
 .pts {
   list-style: none; margin: 10px 0 0; padding: 9px 0 0; border-top: 1px solid var(--rule);
-  font-family: var(--serif), Georgia, serif; font-size: 13.5px; line-height: 1.45;
+  font-family: var(--serif), Georgia, serif; font-size: 15px; line-height: 1.45;
   color: var(--muted); max-width: 66ch;
 }
 .row.one .pts { column-count: 2; column-gap: 44px; max-width: none; }
